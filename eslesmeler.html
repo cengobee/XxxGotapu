@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gotapu — Eşleşmeler</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .swipe-area {
+    position: relative; height: 460px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .swipe-card {
+    position: absolute; width: 100%;
+    border-radius: 24px; overflow: hidden;
+    cursor: grab; user-select: none; touch-action: none;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    background: var(--card);
+  }
+  .swipe-card:nth-child(2) { transform: scale(0.95) translateY(14px); z-index: 1; }
+  .swipe-card:nth-child(3) { transform: scale(0.90) translateY(28px); z-index: 0; }
+  .swipe-card:nth-child(1) { z-index: 2; }
+
+  .card-img {
+    height: 260px; display: flex; align-items: center;
+    justify-content: center; font-size: 90px; position: relative;
+  }
+  .card-img img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+  .match-pct {
+    position: absolute; top: 14px; right: 14px;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    border-radius: 50px; padding: 5px 12px;
+    font-size: 13px; font-weight: 800; color: var(--gold);
+  }
+  .like-stamp {
+    position: absolute; top: 24px; left: 16px;
+    border: 4px solid var(--green); color: var(--green);
+    padding: 5px 14px; border-radius: 8px;
+    font-size: 24px; font-weight: 900; letter-spacing: 2px;
+    opacity: 0; transform: rotate(-15deg); pointer-events: none;
+  }
+  .nope-stamp {
+    position: absolute; top: 24px; right: 16px;
+    border: 4px solid var(--rust); color: var(--rust);
+    padding: 5px 14px; border-radius: 8px;
+    font-size: 24px; font-weight: 900; letter-spacing: 2px;
+    opacity: 0; transform: rotate(15deg); pointer-events: none;
+  }
+  .card-body { padding: 16px; background: var(--card2); }
+  .card-price { font-size: 22px; font-weight: 900; color: var(--gold); }
+  .card-title { font-size: 15px; font-weight: 700; margin: 4px 0; }
+  .card-loc { font-size: 13px; color: var(--text3); margin-bottom: 10px; }
+  .card-specs { display: flex; gap: 14px; }
+  .card-spec { font-size: 13px; color: var(--text2); }
+
+  .action-btns {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    margin-bottom: 24px;
+  }
+  .action-btn {
+    border: none; cursor: pointer; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; transition: transform .15s;
+  }
+  .action-btn:active { transform: scale(0.88); }
+  .btn-nope { width: 60px; height: 60px; background: rgba(232,96,58,0.15); }
+  .btn-like { width: 70px; height: 70px; background: rgba(46,204,113,0.15); }
+  .btn-super { width: 52px; height: 52px; background: rgba(74,144,217,0.15); }
+  .btn-rewind { width: 44px; height: 44px; background: rgba(255,255,255,0.05); font-size: 20px; }
+
+  .match-popup {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.88);
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center; padding: 24px;
+  }
+  .match-popup.show { display: flex; }
+
+  .eslesen-item {
+    display: flex; gap: 12px; align-items: center;
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 12px;
+    margin-bottom: 10px; cursor: pointer; text-decoration: none; color: var(--text);
+  }
+  .eslesen-thumb { width: 62px; height: 62px; border-radius: 12px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+  .eslesen-pct { font-size: 12px; font-weight: 800; background: rgba(46,204,113,0.15); color: var(--green); border-radius: 50px; padding: 2px 10px; display: inline-block; margin-bottom: 3px; }
+  .eslesen-reason { font-size: 12px; color: var(--green); margin-top: 3px; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="index.html" class="nav-logo"><div class="logo-icon">🏠</div>GoTapu</a>
+  <div class="nav-actions">
+    <a href="ilan-ver.html" class="nav-btn">+ İlan Ver</a>
+    <a href="profil.html" class="nav-icon-btn">👤</a>
+  </div>
+</nav>
+
+<div class="page fade-up">
+  <div class="section-head">
+    <div class="section-title">✨ Sana Uygun Evler</div>
+    <span style="font-size:13px;color:var(--text3)">Kaydır ←→</span>
+  </div>
+
+  <!-- Swipe -->
+  <div class="swipe-area" id="swipeArea">
+    <div class="empty" id="bosEkran" style="display:none">
+      <div class="empty-icon">🏠</div>
+      <div class="empty-title">Hepsi görüldü!</div>
+      <div class="empty-desc">Yeni ilanlar eklenince burada görünecek</div>
+    </div>
+  </div>
+
+  <!-- Butonlar -->
+  <div class="action-btns" id="actionBtns">
+    <button class="action-btn btn-rewind" onclick="geriAl()">↩️</button>
+    <button class="action-btn btn-nope" onclick="swipe('left')">❌</button>
+    <button class="action-btn btn-like" onclick="swipe('right')">✅</button>
+    <button class="action-btn btn-super" onclick="swipe('up')">⭐</button>
+  </div>
+
+  <!-- Eşleşmeler -->
+  <div class="section-head">
+    <div class="section-title">Eşleşmelerim</div>
+    <span class="tag tag-green" id="yeniSay"></span>
+  </div>
+  <div id="eslesenList"><div class="spinner"></div></div>
+</div>
+
+<!-- Match Popup -->
+<div class="match-popup" id="matchPopup">
+  <div style="font-size:80px;margin-bottom:16px">🏠❤️</div>
+  <div style="font-size:32px;font-weight:900;color:var(--gold);text-align:center;margin-bottom:8px">Eşleşme!</div>
+  <div style="font-size:15px;color:var(--text2);text-align:center;margin-bottom:28px">Bu evi beğendin!<br>Ev sahibiyle iletişime geç.</div>
+  <a href="mesajlar.html" class="btn btn-gold btn-lg" style="max-width:260px;margin-bottom:10px">Mesaj Gönder 💬</a>
+  <button onclick="document.getElementById('matchPopup').classList.remove('show')" class="btn btn-outline btn-md" style="max-width:260px">Devam Et</button>
+</div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
+  <a href="eslesmeler.html" class="bnav-item active"><div class="bnav-icon">✨</div>Eşleşmeler</a>
+  <a href="ilan-ver.html" class="bnav-center">+</a>
+  <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">💬</div>Mesajlar</a>
+  <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
+</nav>
+
+<script>
+const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let ilanlar = [], kartIndex = 0, geriStack = [];
+const emojiler = { satilik: '🏙️', kiralik: '🏘️', devren: '🏪' };
+
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) { window.location.href = 'auth.html'; return; }
+  ilanlarYukle();
+  favorileriYukle();
+});
+
+async function ilanlarYukle() {
+  const { data } = await sb.from('ilanlar').select('*').order('created_at', { ascending: false }).limit(10);
+  ilanlar = data || [];
+  if (ilanlar.length === 0) {
+    document.getElementById('bosEkran').style.display = 'block';
+    document.getElementById('actionBtns').style.display = 'none';
+    return;
+  }
+  kartlariOlustur();
+}
+
+function kartlariOlustur() {
+  const area = document.getElementById('swipeArea');
+  area.querySelectorAll('.swipe-card').forEach(c => c.remove());
+
+  const gorunecekler = ilanlar.slice(kartIndex, kartIndex + 3);
+  if (gorunecekler.length === 0) {
+    document.getElementById('bosEkran').style.display = 'block';
+    document.getElementById('actionBtns').style.display = 'none';
+    return;
+  }
+
+  gorunecekler.reverse().forEach((ilan, i) => {
+    const div = document.createElement('div');
+    div.className = 'swipe-card';
+    div.dataset.id = ilan.id;
+    div.innerHTML = `
+      <div class="card-img" style="background:linear-gradient(135deg,#1a2340,#2a3560)">
+        ${ilan.foto_url ? `<img src="${ilan.foto_url}">` : `<span>${emojiler[ilan.tip]||'🏠'}</span>`}
+        <div class="match-pct">%${85 + Math.floor(Math.random()*15)} Eşleşme</div>
+        <div class="like-stamp" id="like_${ilan.id}">BEĞEN</div>
+        <div class="nope-stamp" id="nope_${ilan.id}">HAYIR</div>
+      </div>
+      <div class="card-body">
+        <div class="card-price">${Number(ilan.fiyat).toLocaleString('tr-TR')} ₺${ilan.tip==='kiralik'?'/ay':''}</div>
+        <div class="card-title">${ilan.baslik}</div>
+        <div class="card-loc">📍 ${ilan.konum||''}</div>
+        <div class="card-specs">
+          ${ilan.oda_sayisi?`<span class="card-spec">🛏 ${ilan.oda_sayisi}</span>`:''}
+          ${ilan.metrekare?`<span class="card-spec">📐 ${ilan.metrekare}m²</span>`:''}
+        </div>
+      </div>`;
+    area.appendChild(div);
+  });
+
+  dinleyiciEkle();
+}
+
+function getTopCard() {
+  return document.querySelector('.swipe-card:last-child');
+}
+
+function swipe(dir) {
+  const card = getTopCard();
+  if (!card) return;
+  const id = card.dataset.id;
+  geriStack.push({ card: card.cloneNode(true), index: kartIndex });
+  card.style.transition = 'transform .5s ease, opacity .4s';
+
+  if (dir === 'right') {
+    card.style.transform = 'translateX(150%) rotate(20deg)';
+    document.getElementById('like_'+id).style.opacity = '1';
+    setTimeout(() => { card.remove(); kartIndex++; kartlariOlustur(); document.getElementById('matchPopup').classList.add('show'); }, 420);
+  } else if (dir === 'left') {
+    card.style.transform = 'translateX(-150%) rotate(-20deg)';
+    document.getElementById('nope_'+id).style.opacity = '1';
+    setTimeout(() => { card.remove(); kartIndex++; kartlariOlustur(); }, 420);
+  } else {
+    card.style.transform = 'translateY(-150%)';
+    setTimeout(() => { card.remove(); kartIndex++; kartlariOlustur(); }, 420);
+  }
+}
+
+function geriAl() {
+  if (!geriStack.length) return;
+  const son = geriStack.pop();
+  if (kartIndex > 0) kartIndex--;
+  kartlariOlustur();
+}
+
+function dinleyiciEkle() {
+  const card = getTopCard();
+  if (!card) return;
+  let startX, isDragging = false;
+
+  card.addEventListener('pointerdown', e => {
+    isDragging = true; startX = e.clientX;
+    card.setPointerCapture(e.pointerId);
+    card.style.transition = 'none';
+  });
+  card.addEventListener('pointermove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    card.style.transform = `translateX(${dx}px) rotate(${dx*0.07}deg)`;
+    const id = card.dataset.id;
+    document.getElementById('like_'+id).style.opacity = dx > 40 ? Math.min((dx-40)/60,1) : 0;
+    document.getElementById('nope_'+id).style.opacity = dx < -40 ? Math.min((-dx-40)/60,1) : 0;
+  });
+  card.addEventListener('pointerup', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    const dx = e.clientX - startX;
+    if (dx > 80) swipe('right');
+    else if (dx < -80) swipe('left');
+    else {
+      card.style.transition = 'transform .3s';
+      card.style.transform = '';
+      const id = card.dataset.id;
+      document.getElementById('like_'+id).style.opacity = 0;
+      document.getElementById('nope_'+id).style.opacity = 0;
+    }
+  });
+}
+
+async function favorileriYukle() {
+  const { data: { user } } = await sb.auth.getUser();
+  const { data } = await sb.from('favoriler')
+    .select('*, ilan:ilan_id(*)')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+
+  const el = document.getElementById('eslesenList');
+  if (!data || data.length === 0) {
+    el.innerHTML = `<div class="empty" style="padding:30px"><div class="empty-icon">✨</div><div class="empty-title">Henüz eşleşme yok</div><div class="empty-desc">İlanları beğenerek eşleşme başlat</div></div>`;
+    return;
+  }
+
+  document.getElementById('yeniSay').textContent = `${data.length} Eşleşme`;
+  el.innerHTML = data.map(f => `
+    <a class="eslesen-item" href="ilan-detay.html?id=${f.ilan_id}">
+      <div class="eslesen-thumb">${emojiler[f.ilan?.tip]||'🏠'}</div>
+      <div style="flex:1;min-width:0">
+        <div class="eslesen-pct">%${85+Math.floor(Math.random()*15)} Eşleşme</div>
+        <div style="font-size:14px;font-weight:700">${f.ilan?.baslik||'İlan'}</div>
+        <div style="font-size:12px;color:var(--text3)">📍 ${f.ilan?.konum||''}</div>
+        <div class="eslesen-reason">✓ Kriterlerin uyuştu</div>
+      </div>
+      <div style="font-size:22px;color:var(--gold)">💬</div>
+    </a>`).join('');
+}
+</script>
+</body>
+</html>

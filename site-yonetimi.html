@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gotapu — Site Yönetimi</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .site-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 14px;
+  }
+  .site-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+  .site-name { font-size: 16px; font-weight: 900; }
+  .site-loc { font-size: 12px; color: var(--text3); margin-top: 3px; }
+  .site-meta { display: flex; gap: 14px; margin: 8px 0 14px; }
+  .site-meta span { font-size: 13px; color: var(--text2); }
+  .site-actions { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .site-action {
+    background: var(--card2); border-radius: var(--radius-sm);
+    padding: 12px 8px; text-align: center; cursor: pointer;
+    border: 1px solid var(--border); transition: border-color .2s;
+  }
+  .site-action:active { border-color: var(--gold); }
+  .site-action-icon { font-size: 24px; display: block; margin-bottom: 5px; }
+  .site-action-lbl { font-size: 11px; font-weight: 700; color: var(--text2); }
+
+  .aidat-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .aidat-item:last-child { border-bottom: none; }
+  .aidat-ay { font-size: 15px; font-weight: 700; }
+  .aidat-tutar { font-size: 15px; font-weight: 900; color: var(--gold); }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="index.html" class="nav-logo"><div class="logo-icon">🏠</div>GoTapu</a>
+  <div class="nav-actions">
+    <a href="ilan-ver.html" class="nav-btn">+ İlan Ver</a>
+    <a href="profil.html" class="nav-icon-btn">👤</a>
+  </div>
+</nav>
+
+<div class="page fade-up">
+  <div class="back-header">
+    <a href="profil.html" class="back-btn">←</a>
+    <div class="back-title">Site Yönetimi</div>
+  </div>
+
+  <div id="sitelerList"><div class="spinner"></div></div>
+
+  <button class="btn btn-outline btn-lg" style="margin-top:4px" onclick="siteEkle()">
+    ➕ Siteye Kayıt Ol
+  </button>
+</div>
+
+<!-- Aidat Modal -->
+<div class="modal-overlay" id="aidatModal" onclick="if(event.target===this)kapat()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 style="font-size:20px;font-weight:900;margin-bottom:6px">💳 Aidat Öde</h3>
+    <p style="font-size:13px;color:var(--text3);margin-bottom:20px" id="aidatSiteName"></p>
+    <div id="aidatlar"></div>
+    <button class="btn btn-gold btn-lg" onclick="odemeYap()" id="odemeBtn">Ödemeyi Tamamla</button>
+  </div>
+</div>
+
+<!-- Duyuru Modal -->
+<div class="modal-overlay" id="duyuruModal" onclick="if(event.target===this)duyuruKapat()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 style="font-size:20px;font-weight:900;margin-bottom:16px">📢 Duyurular</h3>
+    <div id="duyuruList">
+      <div style="padding:16px;background:var(--card);border-radius:12px;margin-bottom:10px">
+        <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:4px">Bugün</div>
+        <div style="font-size:14px;font-weight:700">Su kesintisi hakkında</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px">Yarın 10:00-14:00 arası su kesintisi olacaktır.</div>
+      </div>
+      <div style="padding:16px;background:var(--card);border-radius:12px">
+        <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:4px">3 gün önce</div>
+        <div style="font-size:14px;font-weight:700">Genel kurul toplantısı</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px">15 Nisan Pazartesi saat 19:00'da toplantı yapılacaktır.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Arıza Modal -->
+<div class="modal-overlay" id="arizaModal" onclick="if(event.target===this)arizaKapat()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 style="font-size:20px;font-weight:900;margin-bottom:16px">🔧 Arıza Bildir</h3>
+    <div class="form-group" style="margin-bottom:14px">
+      <textarea class="input" id="arizaAciklama" rows="4" placeholder="Arızayı açıklayın..." style="resize:none"></textarea>
+    </div>
+    <button class="btn btn-rust btn-lg" onclick="arizaGonder()">Bildirimi Gönder</button>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
+  <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">✨</div>Eşleşmeler</a>
+  <a href="ilan-ver.html" class="bnav-center">+</a>
+  <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">💬</div>Mesajlar</a>
+  <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
+</nav>
+
+<script>
+const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let aktifSite = null;
+
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) { window.location.href = 'auth.html'; return; }
+  currentUser = data.session.user;
+  siteleriYukle();
+});
+
+async function siteleriYukle() {
+  const el = document.getElementById('sitelerList');
+  const { data } = await sb.from('site_sakinleri')
+    .select('*, site:site_id(*)')
+    .eq('user_id', currentUser.id);
+
+  if (!data || data.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🏢</div><div class="empty-title">Kayıtlı site yok</div><div class="empty-desc">Yaşadığınız sitenin yönetim sistemine katılın</div></div>`;
+    return;
+  }
+
+  el.innerHTML = data.map(s => `
+    <div class="site-card">
+      <div class="site-head">
+        <div>
+          <div class="site-name">🏙️ ${s.site.isim}</div>
+          <div class="site-loc">📍 ${s.site.konum || ''}</div>
+        </div>
+        <span class="tag ${s.rol === 'yonetici' ? 'tag-gold' : 'tag-blue'}">${s.rol === 'yonetici' ? 'Yönetici' : 'Sakin'}</span>
+      </div>
+      <div class="site-meta">
+        <span>🏠 ${s.site.daire_sayisi || 0} Daire</span>
+        <span>💰 ${s.site.aidat_tutari || 0} ₺/ay aidat</span>
+      </div>
+      <div class="site-actions">
+        <div class="site-action" onclick="duyuruAc()">
+          <span class="site-action-icon">📢</span>
+          <div class="site-action-lbl">Duyuru</div>
+        </div>
+        <div class="site-action" onclick="aidatAc('${s.site.isim}', ${s.site.aidat_tutari || 0})">
+          <span class="site-action-icon">💳</span>
+          <div class="site-action-lbl">Aidat Öde</div>
+        </div>
+        <div class="site-action" onclick="arizaAc()">
+          <span class="site-action-icon">🔧</span>
+          <div class="site-action-lbl">Arıza Bildir</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function aidatAc(siteName, tutar) {
+  aktifSite = siteName;
+  document.getElementById('aidatSiteName').textContent = siteName;
+  const aylar = ['Ocak 2026', 'Şubat 2026', 'Mart 2026'];
+  document.getElementById('aidatlar').innerHTML = aylar.map((ay, i) => `
+    <div class="aidat-item">
+      <div>
+        <div class="aidat-ay">${ay}</div>
+        <span class="tag ${i === 0 ? 'tag-green' : 'tag-rust'}" style="margin-top:4px">${i === 0 ? '✓ Ödendi' : '⚠ Bekliyor'}</span>
+      </div>
+      <div class="aidat-tutar">${tutar} ₺</div>
+    </div>`).join('');
+  document.getElementById('odemeBtn').textContent = `Toplam ${tutar * 2} ₺ Öde`;
+  document.getElementById('aidatModal').classList.add('open');
+}
+
+function odemeYap() {
+  document.getElementById('aidatModal').classList.remove('open');
+  setTimeout(() => alert('✅ Ödeme başarılı! Makbuzunuz e-postanıza gönderildi.'), 200);
+}
+
+function duyuruAc() { document.getElementById('duyuruModal').classList.add('open'); }
+function duyuruKapat() { document.getElementById('duyuruModal').classList.remove('open'); }
+function arizaAc() { document.getElementById('arizaModal').classList.add('open'); }
+function arizaKapat() { document.getElementById('arizaModal').classList.remove('open'); }
+function kapat() { document.getElementById('aidatModal').classList.remove('open'); }
+
+function arizaGonder() {
+  const aciklama = document.getElementById('arizaAciklama').value.trim();
+  if (!aciklama) return alert('Lütfen arızayı açıklayın!');
+  arizaKapat();
+  setTimeout(() => alert('✅ Arıza bildiriminiz alındı. En kısa sürede ilgilenilecektir.'), 200);
+}
+
+async function siteEkle() {
+  const kod = prompt('Site kayıt kodunu girin:');
+  if (!kod) return;
+  alert('Bu özellik yakında aktif olacak! 🏢');
+}
+</script>
+</body>
+</html>

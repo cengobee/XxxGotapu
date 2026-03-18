@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gotapu — Ana Sayfa</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .search-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--card); border: 1.5px solid var(--border);
+    border-radius: 50px; padding: 10px 16px; margin-bottom: 16px;
+  }
+  .search-bar input {
+    flex: 1; background: none; border: none; outline: none;
+    color: var(--text); font-family: 'Nunito', sans-serif; font-size: 15px;
+  }
+  .search-bar input::placeholder { color: var(--text3); }
+
+  .featured-card {
+    border-radius: var(--radius); overflow: hidden;
+    position: relative; margin-bottom: 20px; height: 220px;
+    cursor: pointer; transition: transform .2s;
+    background: linear-gradient(135deg, #1a2340, #2a3560);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .featured-card:active { transform: scale(0.98); }
+  .featured-emoji { font-size: 80px; }
+  .featured-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9));
+    padding: 40px 16px 16px;
+  }
+  .featured-tag {
+    background: var(--gold); color: var(--bg);
+    font-size: 11px; font-weight: 800; padding: 3px 10px;
+    border-radius: 50px; margin-bottom: 6px; display: inline-block;
+  }
+  .featured-price { font-size: 24px; font-weight: 900; color: var(--gold); }
+  .featured-title { font-size: 14px; font-weight: 700; color: white; }
+  .featured-loc { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 3px; }
+
+  .ilan-item {
+    display: flex; gap: 12px; align-items: center;
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 12px;
+    margin-bottom: 10px; cursor: pointer; transition: border-color .2s;
+    text-decoration: none; color: var(--text);
+  }
+  .ilan-item:active { border-color: var(--gold); }
+  .ilan-thumb {
+    width: 76px; height: 76px; border-radius: var(--radius-sm);
+    background: var(--card2); display: flex; align-items: center;
+    justify-content: center; font-size: 34px; flex-shrink: 0;
+    overflow: hidden;
+  }
+  .ilan-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .ilan-info { flex: 1; min-width: 0; }
+  .ilan-price { font-size: 16px; font-weight: 900; color: var(--gold); }
+  .ilan-title { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 2px 0; }
+  .ilan-loc { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+  .ilan-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .services-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+  .service-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 8px;
+    text-align: center; cursor: pointer; transition: border-color .2s;
+  }
+  .service-item:active { border-color: var(--gold); }
+  .service-em { font-size: 28px; display: block; margin-bottom: 6px; }
+  .service-lbl { font-size: 11px; font-weight: 700; color: var(--text2); }
+
+  .promo {
+    background: linear-gradient(135deg, #1a3a2a, #0f2018);
+    border-radius: var(--radius); padding: 18px;
+    border: 1px solid rgba(46,204,113,0.2);
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 20px;
+  }
+  .promo h3 { font-size: 15px; font-weight: 900; }
+  .promo p { font-size: 12px; color: var(--text2); margin-top: 3px; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="index.html" class="nav-logo">
+    <div class="logo-icon">🏠</div>GoTapu
+  </a>
+  <div class="nav-actions">
+    <a href="ilan-ver.html" class="nav-btn">+ İlan Ver</a>
+    <button class="nav-icon-btn" onclick="toggleBildirim()">🔔</button>
+    <a href="profil.html" class="nav-icon-btn" id="navAvatar">👤</a>
+  </div>
+</nav>
+
+<div class="page fade-up">
+
+  <!-- Arama -->
+  <div class="search-bar">
+    <span>🔍</span>
+    <input type="text" id="searchInput" placeholder="Şehir, ilçe veya mahalle..." oninput="aramaYap()">
+    <span style="font-size:20px;cursor:pointer" onclick="filtreAc()">⚙️</span>
+  </div>
+
+  <!-- Filtre Chips -->
+  <div class="chips" style="margin-bottom:20px" id="filterChips">
+    <div class="chip active" onclick="filtrele('tumu', this)">🏠 Tümü</div>
+    <div class="chip" onclick="filtrele('satilik', this)">💰 Satılık</div>
+    <div class="chip" onclick="filtrele('kiralik', this)">🔑 Kiralık</div>
+    <div class="chip" onclick="filtrele('devren', this)">🔄 Devren</div>
+  </div>
+
+  <!-- Öne Çıkan -->
+  <div id="featuredSection"></div>
+
+  <!-- İlanlar -->
+  <div class="section-head">
+    <div class="section-title">Son İlanlar</div>
+    <a href="#" class="section-link" onclick="tumIlanlariGoster()">Tümünü gör →</a>
+  </div>
+  <div id="ilanlarList"><div class="spinner"></div></div>
+
+  <!-- Hizmetler -->
+  <div class="section-head" style="margin-top:8px">
+    <div class="section-title">Ev Hizmetleri</div>
+  </div>
+  <div class="services-grid">
+    <div class="service-item"><span class="service-em">🧹</span><div class="service-lbl">Temizlik</div></div>
+    <div class="service-item"><span class="service-em">🎨</span><div class="service-lbl">Boya</div></div>
+    <div class="service-item"><span class="service-em">🚚</span><div class="service-lbl">Nakliye</div></div>
+    <div class="service-item"><span class="service-em">🔑</span><div class="service-lbl">Çilingir</div></div>
+    <div class="service-item"><span class="service-em">🔧</span><div class="service-lbl">Tadilat</div></div>
+    <div class="service-item"><span class="service-em">🛡️</span><div class="service-lbl">Sigorta</div></div>
+    <div class="service-item"><span class="service-em">❄️</span><div class="service-lbl">Klima</div></div>
+    <div class="service-item"><span class="service-em">🪲</span><div class="service-lbl">İlaçlama</div></div>
+  </div>
+
+  <!-- Promo -->
+  <div class="promo">
+    <div>
+      <h3>🏢 Site Yönetimi</h3>
+      <p>Aidatını online öde, arıza bildir</p>
+    </div>
+    <a href="site-yonetimi.html" class="btn btn-green btn-sm">Gir →</a>
+  </div>
+
+</div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bnav-item active"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
+  <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">✨</div><div class="bnav-badge" id="eslesmeBadge" style="display:none">0</div>Eşleşmeler</a>
+  <a href="ilan-ver.html" class="bnav-center">+</a>
+  <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">💬</div><div class="bnav-badge" id="mesajBadge" style="display:none">0</div>Mesajlar</a>
+  <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
+</nav>
+
+<script>
+const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let aktifFiltre = 'tumu';
+let tumIlanlar = [];
+
+// Giriş kontrolü
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) {
+    window.location.href = 'auth.html';
+  } else {
+    ilanlarYukle();
+    mesajSay();
+  }
+});
+
+const emojiler = { satilik: '🏙️', kiralik: '🏘️', devren: '🏪' };
+
+async function ilanlarYukle(filtre = 'tumu', arama = '') {
+  const listEl = document.getElementById('ilanlarList');
+  listEl.innerHTML = '<div class="spinner"></div>';
+
+  let query = sb.from('ilanlar').select('*').order('created_at', { ascending: false });
+  if (filtre !== 'tumu') query = query.eq('tip', filtre);
+  if (arama) query = query.ilike('baslik', `%${arama}%`);
+
+  const { data, error } = await query.limit(20);
+
+  if (error || !data || data.length === 0) {
+    listEl.innerHTML = `<div class="empty"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div><div class="empty-desc">İlk ilanı sen ver!</div></div>`;
+    document.getElementById('featuredSection').innerHTML = '';
+    return;
+  }
+
+  tumIlanlar = data;
+
+  // Öne çıkan
+  const oneCikan = data.find(i => i.one_cikan) || data[0];
+  document.getElementById('featuredSection').innerHTML = `
+    <div class="featured-card" onclick="location.href='ilan-detay.html?id=${oneCikan.id}'">
+      <div class="featured-emoji">${emojiler[oneCikan.tip] || '🏠'}</div>
+      <div class="featured-overlay">
+        <div class="featured-tag">⭐ ÖNE ÇIKAN</div>
+        <div class="featured-price">${formatFiyat(oneCikan.fiyat, oneCikan.tip)}</div>
+        <div class="featured-title">${oneCikan.baslik}</div>
+        <div class="featured-loc">📍 ${oneCikan.konum || ''}</div>
+      </div>
+    </div>`;
+
+  // Liste
+  listEl.innerHTML = data.slice(0, 10).map(ilan => `
+    <a class="ilan-item" href="ilan-detay.html?id=${ilan.id}">
+      <div class="ilan-thumb">${ilan.foto_url ? `<img src="${ilan.foto_url}">` : (emojiler[ilan.tip] || '🏠')}</div>
+      <div class="ilan-info">
+        <div class="ilan-price">${formatFiyat(ilan.fiyat, ilan.tip)}</div>
+        <div class="ilan-title">${ilan.baslik}</div>
+        <div class="ilan-loc">📍 ${ilan.konum || ''}</div>
+        <div class="ilan-tags">
+          <span class="tag ${ilan.tip === 'kiralik' ? 'tag-green' : ilan.tip === 'satilik' ? 'tag-rust' : 'tag-blue'}">${ilan.tip.toUpperCase()}</span>
+          ${ilan.oda_sayisi ? `<span class="tag tag-gold">🛏 ${ilan.oda_sayisi}</span>` : ''}
+          ${ilan.metrekare ? `<span class="tag tag-gold">📐 ${ilan.metrekare}m²</span>` : ''}
+        </div>
+      </div>
+    </a>`).join('');
+}
+
+function formatFiyat(fiyat, tip) {
+  const f = Number(fiyat).toLocaleString('tr-TR');
+  return tip === 'kiralik' ? `${f} ₺/ay` : `${f} ₺`;
+}
+
+function filtrele(tip, el) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  aktifFiltre = tip;
+  ilanlarYukle(tip, document.getElementById('searchInput').value);
+}
+
+let aramaTimeout;
+function aramaYap() {
+  clearTimeout(aramaTimeout);
+  aramaTimeout = setTimeout(() => {
+    ilanlarYukle(aktifFiltre, document.getElementById('searchInput').value);
+  }, 400);
+}
+
+async function mesajSay() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
+  const { count } = await sb.from('mesajlar').select('*', { count: 'exact', head: true })
+    .eq('alici_id', user.id).eq('okundu', false);
+  if (count > 0) {
+    const b = document.getElementById('mesajBadge');
+    b.textContent = count; b.style.display = 'flex';
+  }
+}
+
+function tumIlanlariGoster() {
+  ilanlarYukle(aktifFiltre, '');
+}
+function toggleBildirim() { alert('Bildirimler yakında aktif olacak! 🔔'); }
+function filtreAc() { alert('Gelişmiş filtre yakında! ⚙️'); }
+</script>
+</body>
+</html>

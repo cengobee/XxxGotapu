@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gotapu — Mesajlar</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .chat-item {
+    display: flex; gap: 12px; align-items: center;
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background .2s;
+  }
+  .chat-item:active { background: var(--card2); }
+  .chat-avatar {
+    width: 50px; height: 50px; border-radius: 50%;
+    background: var(--card2); display: flex; align-items: center;
+    justify-content: center; font-size: 24px; flex-shrink: 0;
+    position: relative;
+  }
+  .online-dot {
+    position: absolute; bottom: 2px; right: 2px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--green); border: 2px solid var(--bg2);
+  }
+  .chat-info { flex: 1; min-width: 0; }
+  .chat-name { font-size: 15px; font-weight: 800; }
+  .chat-ilan { font-size: 11px; color: var(--gold); font-weight: 700; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chat-preview { font-size: 13px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chat-meta { text-align: right; flex-shrink: 0; }
+  .chat-time { font-size: 11px; color: var(--text3); margin-bottom: 5px; }
+  .chat-unread {
+    background: var(--gold); color: var(--bg);
+    width: 20px; height: 20px; border-radius: 50%;
+    font-size: 11px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center; margin-left: auto;
+  }
+
+  /* CHAT EKRANI */
+  .chat-screen {
+    display: none; flex-direction: column;
+    position: fixed; inset: 0; top: var(--nav-h);
+    background: var(--bg); z-index: 100;
+  }
+  .chat-screen.open { display: flex; }
+  .chat-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .chat-header-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .chat-header-name { font-size: 16px; font-weight: 800; }
+  .chat-header-ilan { font-size: 12px; color: var(--gold); }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .msg { max-width: 75%; padding: 10px 14px; border-radius: 18px; font-size: 15px; line-height: 1.5; word-break: break-word; }
+  .msg-them { background: var(--card); border-bottom-left-radius: 4px; align-self: flex-start; }
+  .msg-me { background: var(--gold); color: var(--bg); border-bottom-right-radius: 4px; align-self: flex-end; font-weight: 700; }
+  .msg-time { font-size: 10px; opacity: 0.6; margin-top: 4px; }
+  .chat-input-row {
+    display: flex; gap: 10px; padding: 12px 16px;
+    border-top: 1px solid var(--border); background: var(--bg2);
+    padding-bottom: 24px;
+  }
+  .chat-input-row input {
+    flex: 1; background: var(--card); border: 1.5px solid var(--border);
+    border-radius: 50px; padding: 12px 16px; color: var(--text);
+    font-family: 'Nunito',sans-serif; font-size: 15px; outline: none;
+  }
+  .chat-input-row input::placeholder { color: var(--text3); }
+  .send-btn {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--gold); border: none; cursor: pointer;
+    font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="index.html" class="nav-logo"><div class="logo-icon">🏠</div>GoTapu</a>
+  <div class="nav-actions">
+    <a href="ilan-ver.html" class="nav-btn">+ İlan Ver</a>
+    <a href="profil.html" class="nav-icon-btn">👤</a>
+  </div>
+</nav>
+
+<div class="page fade-up" id="chatList">
+  <div class="section-head">
+    <div class="section-title">Mesajlar</div>
+    <span class="tag tag-rust" id="okunmamisSay" style="display:none">0 Okunmamış</span>
+  </div>
+  <div class="card" id="konusmalar">
+    <div class="spinner"></div>
+  </div>
+</div>
+
+<!-- CHAT EKRANI -->
+<div class="chat-screen" id="chatScreen">
+  <div class="chat-header">
+    <button onclick="kapat()" class="back-btn">←</button>
+    <div class="chat-header-avatar" id="chatAvatar">👤</div>
+    <div>
+      <div class="chat-header-name" id="chatName"></div>
+      <div class="chat-header-ilan" id="chatIlan"></div>
+    </div>
+  </div>
+  <div class="chat-messages" id="chatMessages"><div class="spinner"></div></div>
+  <div class="chat-input-row">
+    <input type="text" placeholder="Mesaj yazın..." id="msgInput" onkeydown="if(event.key==='Enter')gonder()">
+    <button class="send-btn" onclick="gonder()">▶</button>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
+  <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">✨</div>Eşleşmeler</a>
+  <a href="ilan-ver.html" class="bnav-center">+</a>
+  <a href="mesajlar.html" class="bnav-item active"><div class="bnav-icon">💬</div>Mesajlar</a>
+  <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
+</nav>
+
+<script>
+const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let aktifIlanId = null;
+let aktifKarsiId = null;
+let mesajKanal = null;
+
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) { window.location.href = 'auth.html'; return; }
+  currentUser = data.session.user;
+  konusmalariYukle();
+});
+
+async function konusmalariYukle() {
+  const { data, error } = await sb.from('mesajlar')
+    .select('*, ilan:ilan_id(baslik), gonderen:gonderen_id(full_name), alici:alici_id(full_name)')
+    .or(`gonderen_id.eq.${currentUser.id},alici_id.eq.${currentUser.id}`)
+    .order('created_at', { ascending: false });
+
+  const el = document.getElementById('konusmalar');
+
+  if (!data || data.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">💬</div><div class="empty-title">Henüz mesajınız yok</div><div class="empty-desc">İlan sahipleriyle iletişime geçin</div></div>`;
+    return;
+  }
+
+  // Benzersiz konuşmalar
+  const konusmalar = {};
+  data.forEach(m => {
+    const karsId = m.gonderen_id === currentUser.id ? m.alici_id : m.gonderen_id;
+    const key = `${karsId}_${m.ilan_id}`;
+    if (!konusmalar[key]) {
+      konusmalar[key] = { ...m, karsId, okunmamis: 0 };
+    }
+    if (!m.okundu && m.alici_id === currentUser.id) konusmalar[key].okunmamis++;
+  });
+
+  const liste = Object.values(konusmalar);
+  const toplamOkunmamis = liste.reduce((s, k) => s + k.okunmamis, 0);
+  if (toplamOkunmamis > 0) {
+    const b = document.getElementById('okunmamisSay');
+    b.textContent = `${toplamOkunmamis} Okunmamış`;
+    b.style.display = 'inline-flex';
+  }
+
+  el.innerHTML = liste.map(k => {
+    const isim = k.gonderen_id === currentUser.id ? (k.alici?.full_name || 'Kullanıcı') : (k.gonderen?.full_name || 'Kullanıcı');
+    const zaman = new Date(k.created_at).toLocaleDateString('tr-TR');
+    return `<div class="chat-item" onclick="acKonusma('${k.karsId}','${k.ilan_id}','${isim}','${k.ilan?.baslik || ''}')">
+      <div class="chat-avatar">👤</div>
+      <div class="chat-info">
+        <div class="chat-name">${isim}</div>
+        <div class="chat-ilan">🏠 ${k.ilan?.baslik || 'İlan'}</div>
+        <div class="chat-preview">${k.icerik}</div>
+      </div>
+      <div class="chat-meta">
+        <div class="chat-time">${zaman}</div>
+        ${k.okunmamis > 0 ? `<div class="chat-unread">${k.okunmamis}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function acKonusma(karsId, ilanId, isim, ilanBaslik) {
+  aktifKarsiId = karsId;
+  aktifIlanId = ilanId;
+  document.getElementById('chatName').textContent = isim;
+  document.getElementById('chatIlan').textContent = '🏠 ' + ilanBaslik;
+  document.getElementById('chatScreen').classList.add('open');
+  mesajlariYukle();
+
+  // Realtime dinle
+  if (mesajKanal) sb.removeChannel(mesajKanal);
+  mesajKanal = sb.channel('mesajlar').on('postgres_changes',
+    { event: 'INSERT', schema: 'public', table: 'mesajlar' },
+    payload => {
+      if ((payload.new.gonderen_id === aktifKarsiId || payload.new.alici_id === aktifKarsiId) && payload.new.ilan_id === aktifIlanId) {
+        mesajEkle(payload.new, false);
+      }
+    }
+  ).subscribe();
+}
+
+async function mesajlariYukle() {
+  const el = document.getElementById('chatMessages');
+  el.innerHTML = '<div class="spinner"></div>';
+
+  const { data } = await sb.from('mesajlar')
+    .select('*')
+    .eq('ilan_id', aktifIlanId)
+    .or(`and(gonderen_id.eq.${currentUser.id},alici_id.eq.${aktifKarsiId}),and(gonderen_id.eq.${aktifKarsiId},alici_id.eq.${currentUser.id})`)
+    .order('created_at', { ascending: true });
+
+  el.innerHTML = '';
+  if (data) data.forEach(m => mesajEkle(m, false));
+  el.scrollTop = el.scrollHeight;
+
+  // Okundu işaretle
+  await sb.from('mesajlar').update({ okundu: true })
+    .eq('alici_id', currentUser.id).eq('gonderen_id', aktifKarsiId);
+}
+
+function mesajEkle(m, scroll = true) {
+  const el = document.getElementById('chatMessages');
+  const benMi = m.gonderen_id === currentUser.id;
+  const div = document.createElement('div');
+  div.className = `msg ${benMi ? 'msg-me' : 'msg-them'}`;
+  div.innerHTML = `${m.icerik}<div class="msg-time">${new Date(m.created_at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</div>`;
+  el.appendChild(div);
+  if (scroll) el.scrollTop = el.scrollHeight;
+}
+
+async function gonder() {
+  const inp = document.getElementById('msgInput');
+  const icerik = inp.value.trim();
+  if (!icerik || !aktifKarsiId) return;
+  inp.value = '';
+
+  const yeniMesaj = {
+    gonderen_id: currentUser.id,
+    alici_id: aktifKarsiId,
+    ilan_id: aktifIlanId,
+    icerik,
+    okundu: false,
+    created_at: new Date().toISOString()
+  };
+
+  mesajEkle(yeniMesaj);
+  await sb.from('mesajlar').insert(yeniMesaj);
+}
+
+function kapat() {
+  document.getElementById('chatScreen').classList.remove('open');
+  if (mesajKanal) sb.removeChannel(mesajKanal);
+  konusmalariYukle();
+}
+</script>
+</body>
+</html>
