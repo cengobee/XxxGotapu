@@ -20,7 +20,7 @@
     position: absolute; bottom: 0; right: 0;
     background: var(--gold); border-radius: 50%;
     width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
+    font-size: 12px; z-index: 2;
   }
   .profile-name { font-size: 20px; font-weight: 900; }
   .profile-email { font-size: 13px; color: var(--text3); margin-top: 3px; }
@@ -39,7 +39,6 @@
   .menu-item:active { background: var(--card2); }
   .menu-icon { font-size: 20px; width: 28px; text-align: center; }
   .menu-text { flex: 1; font-size: 15px; font-weight: 700; }
-  .menu-badge { background: var(--gold); color: var(--bg); border-radius: 50px; padding: 2px 10px; font-size: 12px; font-weight: 800; }
   .menu-arrow { color: var(--text3); }
 
   .ilanim-item {
@@ -48,7 +47,8 @@
     cursor: pointer;
   }
   .ilanim-item:last-child { border-bottom: none; }
-  .ilanim-thumb { width: 60px; height: 60px; border-radius: 10px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+  .ilanim-thumb { width: 60px; height: 60px; border-radius: 10px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; overflow: hidden; }
+  .ilanim-thumb img { width: 100%; height: 100%; object-fit: cover; }
   .ilanim-price { font-size: 15px; font-weight: 900; color: var(--gold); }
   .ilanim-title { font-size: 13px; font-weight: 700; }
   .ilanim-loc { font-size: 12px; color: var(--text3); }
@@ -63,16 +63,16 @@
   </div>
 </nav>
 
+<input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="avatarDegistir(this)">
+
 <div class="page fade-up">
 
   <!-- Profil Başlık -->
   <div class="profile-header">
-    <div class="avatar" onclick="avatarTikla()">
+    <div class="avatar" onclick="document.getElementById('avatarInput').click()">
       <span id="avatarEmoji">👤</span>
       <img id="avatarImg" style="display:none">
       <div class="avatar-edit">✏️</div>
-      <input type="file" id="avatarInput" accept="image/*" style="position:absolute;width:100%;height:100%;opacity:0;cursor:pointer" onchange="avatarDegistir(this)">
-      
     </div>
     <div class="profile-name" id="profilAd">Yükleniyor...</div>
     <div class="profile-email" id="profilEmail"></div>
@@ -151,11 +151,13 @@ async function profilYukle() {
     if (profil.avatar_url) {
       document.getElementById('avatarEmoji').style.display = 'none';
       const img = document.getElementById('avatarImg');
-      img.src = profil.avatar_url; img.style.display = 'block';
+      img.src = profil.avatar_url;
+      img.style.display = 'block';
     }
+  } else {
+    document.getElementById('profilAd').textContent = currentUser.email;
   }
 
-  // İlanlarım
   const { data: ilanlar } = await sb.from('ilanlar').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   document.getElementById('ilanSayisi').textContent = ilanlar?.length || 0;
 
@@ -164,36 +166,37 @@ async function profilYukle() {
     kart.innerHTML = `<div class="empty" style="padding:30px"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div></div>`;
   } else {
     kart.innerHTML = ilanlar.map(i => `
-      <div class="ilanim-item">
-        <div class="ilanim-thumb">${i.tip === 'kiralik' ? '🏘️' : i.tip === 'devren' ? '🏪' : '🏙️'}</div>
+      <a class="ilanim-item" href="ilan-detay.html?id=${i.id}">
+        <div class="ilanim-thumb">${i.foto_url ? `<img src="${i.foto_url}">` : (i.tip === 'kiralik' ? '🏘️' : i.tip === 'devren' ? '🏪' : '🏙️')}</div>
         <div style="flex:1;min-width:0">
           <div class="ilanim-price">${Number(i.fiyat).toLocaleString('tr-TR')} ₺${i.tip==='kiralik'?'/ay':''}</div>
           <div class="ilanim-title">${i.baslik}</div>
           <div class="ilanim-loc">📍 ${i.konum || ''}</div>
         </div>
         <span class="tag ${i.tip==='kiralik'?'tag-green':i.tip==='satilik'?'tag-rust':'tag-blue'}">${i.tip.toUpperCase()}</span>
-      </div>`).join('');
+      </a>`).join('');
   }
 
-  // Mesaj sayısı
   const { count } = await sb.from('mesajlar').select('*', { count: 'exact', head: true }).or(`gonderen_id.eq.${currentUser.id},alici_id.eq.${currentUser.id}`);
   document.getElementById('mesajSayisi').textContent = count || 0;
+}
+
 async function avatarDegistir(input) {
   const file = input.files[0];
   if (!file) return;
   const fileName = `avatars/${currentUser.id}`;
-  const { error } = await sb.storage.from('avatarlar').upload(fileName, file, { upsert: true });
-  if (error) { alert('Yükleme hatası: ' + error.message); return; }
+  const { error: uploadError } = await sb.storage.from('avatarlar').upload(fileName, file, { upsert: true });
+  if (uploadError) {
+    alert('Fotoğraf yüklenemedi: ' + uploadError.message);
+    return;
+  }
   const { data } = sb.storage.from('avatarlar').getPublicUrl(fileName);
   await sb.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', currentUser.id);
   document.getElementById('avatarEmoji').style.display = 'none';
   const img = document.getElementById('avatarImg');
   img.src = data.publicUrl + '?t=' + Date.now();
   img.style.display = 'block';
-}
-
-function avatarTikla() {
-  document.getElementById('avatarInput').click();
+  alert('✅ Profil fotoğrafı güncellendi!');
 }
 
 async function profilDuzenle() {
