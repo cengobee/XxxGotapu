@@ -178,13 +178,12 @@ async function profilYukle() {
   // Mesaj sayısı
   const { count } = await sb.from('mesajlar').select('*', { count: 'exact', head: true }).or(`gonderen_id.eq.${currentUser.id},alici_id.eq.${currentUser.id}`);
   document.getElementById('mesajSayisi').textContent = count || 0;
-}
-
 async function avatarDegistir(input) {
   const file = input.files[0];
   if (!file) return;
   const fileName = `avatars/${currentUser.id}`;
-  await sb.storage.from('avatarlar').upload(fileName, file, { upsert: true });
+  const { error } = await sb.storage.from('avatarlar').upload(fileName, file, { upsert: true });
+  if (error) { alert('Yükleme hatası: ' + error.message); return; }
   const { data } = sb.storage.from('avatarlar').getPublicUrl(fileName);
   await sb.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', currentUser.id);
   document.getElementById('avatarEmoji').style.display = 'none';
