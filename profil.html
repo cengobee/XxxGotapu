@@ -67,11 +67,12 @@
 
   <!-- Profil Başlık -->
   <div class="profile-header">
-    <div class="avatar" onclick="document.getElementById('avatarInput').click()">
+    <div class="avatar" onclick="avatarTikla()">
       <span id="avatarEmoji">👤</span>
       <img id="avatarImg" style="display:none">
       <div class="avatar-edit">✏️</div>
-      <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="avatarDegistir(this)">
+      <input type="file" id="avatarInput" accept="image/*" style="position:absolute;width:100%;height:100%;opacity:0;cursor:pointer" onchange="avatarDegistir(this)">
+      
     </div>
     <div class="profile-name" id="profilAd">Yükleniyor...</div>
     <div class="profile-email" id="profilEmail"></div>
@@ -192,17 +193,17 @@ async function avatarDegistir(input) {
   img.style.display = 'block';
 }
 
-  async function profilDuzenle() {
+function avatarTikla() {
+  document.getElementById('avatarInput').click();
+}
+
+async function profilDuzenle() {
   const yeniAd = prompt('Adınız:', document.getElementById('profilAd').textContent);
   if (yeniAd) {
     const { error } = await sb.from('profiles').update({ full_name: yeniAd }).eq('id', currentUser.id);
-    if (error) {
-      alert('Hata: ' + error.message);
-    } else {
-      document.getElementById('profilAd').textContent = yeniAd;
-    }
+    if (error) { alert('Hata: ' + error.message); return; }
+    document.getElementById('profilAd').textContent = yeniAd;
   }
-  
 }
 
 async function cikisYap() {
