@@ -19,11 +19,6 @@
     justify-content: center; font-size: 24px; flex-shrink: 0;
     position: relative;
   }
-  .online-dot {
-    position: absolute; bottom: 2px; right: 2px;
-    width: 11px; height: 11px; border-radius: 50%;
-    background: var(--green); border: 2px solid var(--bg2);
-  }
   .chat-info { flex: 1; min-width: 0; }
   .chat-name { font-size: 15px; font-weight: 800; }
   .chat-ilan { font-size: 11px; color: var(--gold); font-weight: 700; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -101,7 +96,7 @@
     <button onclick="kapat()" class="back-btn">←</button>
     <div class="chat-header-avatar" id="chatAvatar">👤</div>
     <div>
-      <div class="chat-header-name" id="chatName"></div>
+      <div class="chat-header-name" id="chatName">Kullanıcı</div>
       <div class="chat-header-ilan" id="chatIlan"></div>
     </div>
   </div>
@@ -131,15 +126,32 @@ let aktifIlanId = null;
 let aktifKarsiId = null;
 let mesajKanal = null;
 
+const params = new URLSearchParams(window.location.search);
+const urlIlanId = params.get('ilan_id');
+const urlKarsiId = params.get('karsi_id');
+
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) { window.location.href = 'auth.html'; return; }
   currentUser = data.session.user;
   konusmalariYukle();
+
+  // URL'den geldiyse direkt konuşmayı aç
+  if (urlIlanId && urlKarsiId) {
+    ilanBilgisiAl(urlIlanId, urlKarsiId);
+  }
 });
 
+async function ilanBilgisiAl(ilanId, karsiId) {
+  const { data: ilan } = await sb.from('ilanlar').select('baslik').eq('id', ilanId).single();
+  const { data: profil } = await sb.from('profiles').select('full_name').eq('id', karsiId).single();
+  const isim = profil?.full_name || 'Kullanıcı';
+  const baslik = ilan?.baslik || 'İlan';
+  acKonusma(karsiId, ilanId, isim, baslik);
+}
+
 async function konusmalariYukle() {
-  const { data, error } = await sb.from('mesajlar')
-    .select('*, ilan:ilan_id(baslik), gonderen:gonderen_id(full_name), alici:alici_id(full_name)')
+  const { data } = await sb.from('mesajlar')
+    .select('*')
     .or(`gonderen_id.eq.${currentUser.id},alici_id.eq.${currentUser.id}`)
     .order('created_at', { ascending: false });
 
@@ -169,14 +181,29 @@ async function konusmalariYukle() {
     b.style.display = 'inline-flex';
   }
 
+  // İlan ve profil bilgilerini ayrı çek
+  const ilanIds = [...new Set(liste.map(k => k.ilan_id).filter(Boolean))];
+  const karsiIds = [...new Set(liste.map(k => k.karsId).filter(Boolean))];
+
+  const [ilanlar, profiller] = await Promise.all([
+    ilanIds.length ? sb.from('ilanlar').select('id,baslik').in('id', ilanIds) : { data: [] },
+    karsiIds.length ? sb.from('profiles').select('id,full_name').in('id', karsiIds) : { data: [] }
+  ]);
+
+  const ilanMap = {};
+  (ilanlar.data || []).forEach(i => ilanMap[i.id] = i);
+  const profilMap = {};
+  (profiller.data || []).forEach(p => profilMap[p.id] = p);
+
   el.innerHTML = liste.map(k => {
-    const isim = k.gonderen_id === currentUser.id ? (k.alici?.full_name || 'Kullanıcı') : (k.gonderen?.full_name || 'Kullanıcı');
+    const isim = profilMap[k.karsId]?.full_name || 'Kullanıcı';
+    const ilanBaslik = ilanMap[k.ilan_id]?.baslik || 'İlan';
     const zaman = new Date(k.created_at).toLocaleDateString('tr-TR');
-    return `<div class="chat-item" onclick="acKonusma('${k.karsId}','${k.ilan_id}','${isim}','${k.ilan?.baslik || ''}')">
+    return `<div class="chat-item" onclick="acKonusma('${k.karsId}','${k.ilan_id}','${isim}','${ilanBaslik}')">
       <div class="chat-avatar">👤</div>
       <div class="chat-info">
         <div class="chat-name">${isim}</div>
-        <div class="chat-ilan">🏠 ${k.ilan?.baslik || 'İlan'}</div>
+        <div class="chat-ilan">🏠 ${ilanBaslik}</div>
         <div class="chat-preview">${k.icerik}</div>
       </div>
       <div class="chat-meta">
@@ -195,13 +222,12 @@ async function acKonusma(karsId, ilanId, isim, ilanBaslik) {
   document.getElementById('chatScreen').classList.add('open');
   mesajlariYukle();
 
-  // Realtime dinle
   if (mesajKanal) sb.removeChannel(mesajKanal);
-  mesajKanal = sb.channel('mesajlar').on('postgres_changes',
+  mesajKanal = sb.channel('mesaj_kanal_' + ilanId).on('postgres_changes',
     { event: 'INSERT', schema: 'public', table: 'mesajlar' },
     payload => {
-      if ((payload.new.gonderen_id === aktifKarsiId || payload.new.alici_id === aktifKarsiId) && payload.new.ilan_id === aktifIlanId) {
-        mesajEkle(payload.new, false);
+      if (payload.new.gonderen_id !== currentUser.id) {
+        mesajEkle(payload.new, true);
       }
     }
   ).subscribe();
@@ -221,7 +247,6 @@ async function mesajlariYukle() {
   if (data) data.forEach(m => mesajEkle(m, false));
   el.scrollTop = el.scrollHeight;
 
-  // Okundu işaretle
   await sb.from('mesajlar').update({ okundu: true })
     .eq('alici_id', currentUser.id).eq('gonderen_id', aktifKarsiId);
 }
@@ -259,6 +284,8 @@ function kapat() {
   document.getElementById('chatScreen').classList.remove('open');
   if (mesajKanal) sb.removeChannel(mesajKanal);
   konusmalariYukle();
+  // URL parametrelerini temizle
+  window.history.replaceState({}, '', 'mesajlar.html');
 }
 </script>
 </body>
