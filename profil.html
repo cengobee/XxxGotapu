@@ -192,12 +192,17 @@ async function avatarDegistir(input) {
   img.style.display = 'block';
 }
 
-function profilDuzenle() {
+  async function profilDuzenle() {
   const yeniAd = prompt('Adınız:', document.getElementById('profilAd').textContent);
   if (yeniAd) {
-    sb.from('profiles').update({ full_name: yeniAd }).eq('id', currentUser.id);
-    document.getElementById('profilAd').textContent = yeniAd;
+    const { error } = await sb.from('profiles').update({ full_name: yeniAd }).eq('id', currentUser.id);
+    if (error) {
+      alert('Hata: ' + error.message);
+    } else {
+      document.getElementById('profilAd').textContent = yeniAd;
+    }
   }
+  
 }
 
 async function cikisYap() {
