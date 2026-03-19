@@ -197,7 +197,7 @@ async function ilanlarYukle(filtre = 'tumu', arama = '') {
 
   document.getElementById('featuredSection').innerHTML = `
     <div class="featured-card" onclick="location.href='ilan-detay.html?id=${oneCikan.id}'">
-      ${oneCikan.foto_url ? `<img src="${oneCikan.foto_url}">` : `<div class="featured-emoji">${emojiler[oneCikan.tip] || '🏠'}</div>`}
+      ${(oneCikan.foto_url || (oneCikan.foto_urls && oneCikan.foto_urls[0])) ? `<img src="${oneCikan.foto_url || oneCikan.foto_urls[0]}">` : `<div class="featured-emoji">${emojiler[oneCikan.tip] || '🏠'}</div>`}
       <div class="featured-overlay">
         <div class="featured-tag ${isPremium ? 'premium' : 'normal'}">${isPremium ? '⭐ ÖNE ÇIKAN' : '🏠 SON İLAN'}</div>
         <div class="featured-price">${formatFiyat(oneCikan.fiyat, oneCikan.tip)}</div>
