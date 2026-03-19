@@ -125,6 +125,7 @@
   <button class="tab-btn" onclick="sekmeAc('ilanlar', this)">🏠 İlanlar</button>
   <button class="tab-btn" onclick="sekmeAc('kullanicilar', this)">👥 Kullanıcılar</button>
   <button class="tab-btn" onclick="sekmeAc('mesajlar', this)">💬 Mesajlar</button>
+  <button class="tab-btn" onclick="sekmeAc('sikayetler', this)">🚨 Şikayetler</button>
 </div>
 
 <!-- Detay Modal -->
@@ -174,6 +175,17 @@
     <div id="mesajListesi"><div class="spinner"></div></div>
   </div>
 
+  <!-- ŞİKAYETLER -->
+  <div id="sekme-sikayetler" style="display:none">
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="sikayetFiltreler">
+      <button class="act-btn act-gold" onclick="sikayetFiltrele('tumu',this)">Tümü</button>
+      <button class="act-btn" onclick="sikayetFiltrele('bekliyor',this)">⏳ Bekliyor</button>
+      <button class="act-btn" onclick="sikayetFiltrele('inceleniyor',this)">🔍 İnceleniyor</button>
+      <button class="act-btn" onclick="sikayetFiltrele('cozuldu',this)">✅ Çözüldü</button>
+    </div>
+    <div id="sikayetListesi"><div class="spinner"></div></div>
+  </div>
+
 </div>
 
 <script>
@@ -202,7 +214,7 @@ sb.auth.getSession().then(({ data }) => {
 });
 
 async function tumunuYukle() {
-  await Promise.all([ozetYukle(), teklifleriYukle(), ilanlariYukle(), kullanicilariYukle(), mesajlariYukle()]);
+  await Promise.all([ozetYukle(), teklifleriYukle(), ilanlariYukle(), kullanicilariYukle(), mesajlariYukle(), sikayetleriYukle()]);
 }
 
 async function ozetYukle() {
@@ -413,7 +425,7 @@ function mesajlariGoster(liste) {
 }
 
 function sekmeAc(sekme, btn) {
-  ['ozet','teklifler','ilanlar','kullanicilar','mesajlar'].forEach(s => {
+  ['ozet','teklifler','ilanlar','kullanicilar','mesajlar','sikayetler'].forEach(s => {
     document.getElementById('sekme-'+s).style.display = s === sekme ? 'block' : 'none';
   });
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -422,6 +434,57 @@ function sekmeAc(sekme, btn) {
 
 function detayKapat() {
   document.getElementById('detayModal').classList.remove('open');
+}
+
+let tumSikayetler = [];
+
+async function sikayetleriYukle() {
+  const { data } = await sb.from('sikayetler').select('*').order('created_at', { ascending: false });
+  tumSikayetler = data || [];
+  sikayetleriGoster(tumSikayetler);
+}
+
+function sikayetleriGoster(liste) {
+  const el = document.getElementById('sikayetListesi');
+  if (!liste.length) { el.innerHTML = '<div class="empty" style="padding:30px"><div class="empty-icon">🚨</div><div class="empty-title">Şikayet bulunamadı</div></div>'; return; }
+  el.innerHTML = liste.map(s => {
+    const tarih = new Date(s.created_at).toLocaleDateString('tr-TR');
+    const tipIcon = s.hedef_tip === 'ilan' ? '🏠' : '💬';
+    return `<div class="admin-card">
+      <div class="admin-card-head">
+        <div>
+          <div class="admin-card-title">${tipIcon} ${s.sebep}</div>
+          <div class="admin-card-meta">${s.hedef_tip === 'ilan' ? 'İlan Şikayeti' : 'Kullanıcı Şikayeti'} • 📅 ${tarih}</div>
+          ${s.aciklama ? `<div style="font-size:12px;color:var(--text2);margin-top:4px">${s.aciklama}</div>` : ''}
+        </div>
+        <span class="durum-badge durum-${s.durum||'bekliyor'}">${s.durum||'bekliyor'}</span>
+      </div>
+      <div class="admin-card-actions">
+        ${s.hedef_tip === 'ilan' ? `<a href="ilan-detay.html?id=${s.hedef_id}" class="act-btn act-blue">👁️ İlanı Gör</a>` : ''}
+        <button class="act-btn act-blue" onclick="sikayetDurumGuncelle('${s.id}','inceleniyor')">🔍 İncele</button>
+        <button class="act-btn act-green" onclick="sikayetDurumGuncelle('${s.id}','cozuldu')">✅ Çözüldü</button>
+        <button class="act-btn act-rust" onclick="sikayetSilAdmin('${s.id}')">🗑️ Sil</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function sikayetFiltrele(filtre, el) {
+  document.querySelectorAll('#sikayetFiltreler .act-btn').forEach(b => b.classList.remove('act-gold'));
+  el.classList.add('act-gold');
+  const liste = filtre === 'tumu' ? tumSikayetler : tumSikayetler.filter(s => s.durum === filtre);
+  sikayetleriGoster(liste);
+}
+
+async function sikayetDurumGuncelle(id, durum) {
+  await sb.from('sikayetler').update({ durum }).eq('id', id);
+  await sikayetleriYukle();
+}
+
+async function sikayetSilAdmin(id) {
+  if (!confirm('Bu şikayeti silmek istediğinizden emin misiniz?')) return;
+  await sb.from('sikayetler').delete().eq('id', id);
+  await sikayetleriYukle();
 }
 
 async function cikis() {
