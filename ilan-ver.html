@@ -21,14 +21,25 @@
 
   .form-group { margin-bottom: 16px; }
   .form-label { font-size: 13px; font-weight: 800; color: var(--text2); margin-bottom: 8px; display: block; }
-  .type-row { display: flex; gap: 8px; }
+
+  .type-row { display: flex; gap: 8px; flex-wrap: wrap; }
   .type-btn {
-    flex: 1; padding: 12px 8px; border-radius: var(--radius-sm);
+    padding: 10px 14px; border-radius: var(--radius-sm);
     background: var(--card); border: 1.5px solid var(--border);
     color: var(--text2); font-family: 'Nunito',sans-serif;
-    font-size: 14px; font-weight: 700; cursor: pointer; transition: all .2s;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s;
   }
   .type-btn.active { background: rgba(245,200,66,0.1); border-color: var(--gold); color: var(--gold); }
+
+  .sec-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sec-btn {
+    padding: 8px 14px; border-radius: 50px;
+    background: var(--card); border: 1.5px solid var(--border);
+    color: var(--text2); font-family: 'Nunito',sans-serif;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s;
+    flex-shrink: 0;
+  }
+  .sec-btn.active { background: rgba(245,200,66,0.1); border-color: var(--gold); color: var(--gold); }
 
   .photo-add {
     width: 100%; height: 110px;
@@ -38,25 +49,19 @@
     cursor: pointer; color: var(--text3); font-weight: 700; font-size: 14px;
   }
   .photo-add span { font-size: 32px; }
-
-  .photo-preview {
-    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
-  }
-  .photo-thumb {
-    position: relative; width: 80px; height: 80px;
-  }
-  .photo-thumb img {
-    width: 80px; height: 80px; border-radius: 10px;
-    object-fit: cover; border: 1px solid var(--border);
-  }
+  .photo-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .photo-thumb { position: relative; width: 80px; height: 80px; }
+  .photo-thumb img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); }
   .photo-remove {
     position: absolute; top: -6px; right: -6px;
     width: 20px; height: 20px; border-radius: 50%;
     background: var(--rust); color: white; border: none;
     font-size: 12px; cursor: pointer; display: flex;
-    align-items: center; justify-content: center; font-weight: 900;
+    align-items: center; justify-content: center;
   }
   .foto-sayac { font-size: 12px; color: var(--text3); margin-top: 6px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
   .success-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.85);
@@ -64,9 +69,13 @@
     flex-direction: column; z-index: 999; padding: 24px;
   }
   .success-overlay.show { display: flex; }
-  .success-icon { font-size: 80px; margin-bottom: 20px; }
-  .success-title { font-size: 28px; font-weight: 900; margin-bottom: 8px; text-align: center; }
-  .success-desc { font-size: 15px; color: var(--text2); text-align: center; margin-bottom: 32px; }
+
+  .bolum-baslik {
+    font-size: 13px; font-weight: 900; color: var(--text3);
+    letter-spacing: 1px; text-transform: uppercase;
+    margin: 20px 0 12px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
 </style>
 </head>
 <body>
@@ -87,8 +96,9 @@
   </div>
   <p style="font-size:13px;color:var(--text3);margin-bottom:20px">Ücretsiz yayınla, komisyon ödemeden</p>
 
+  <!-- Kullanıcı Tipi -->
   <div style="font-size:12px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">BEN BİR...</div>
-  <div class="role-grid" style="grid-template-columns:1fr 1fr">
+  <div class="role-grid">
     <div class="role-card selected" onclick="secRole(this)">
       <div class="role-icon">🏠</div>
       <div class="role-name">Satıcı</div>
@@ -102,12 +112,30 @@
   </div>
 
   <div id="ilanForm">
+
+    <!-- TEMEL BİLGİLER -->
+    <div class="bolum-baslik">📋 Temel Bilgiler</div>
+
     <div class="form-group">
       <label class="form-label">İlan Tipi</label>
       <div class="type-row">
         <button class="type-btn active" onclick="secTip(this,'satilik')">Satılık</button>
         <button class="type-btn" onclick="secTip(this,'kiralik')">Kiralık</button>
         <button class="type-btn" onclick="secTip(this,'devren')">Devren</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Emlak Tipi</label>
+      <div class="sec-row" id="emlakTipi">
+        <button class="sec-btn active" onclick="secBtn(this,'emlakTipi')">🏢 Daire</button>
+        <button class="sec-btn" onclick="secBtn(this,'emlakTipi')">🏡 Villa</button>
+        <button class="sec-btn" onclick="secBtn(this,'emlakTipi')">🏠 Müstakil</button>
+        <button class="sec-btn" onclick="secBtn(this,'emlakTipi')">🏘️ Residence</button>
+        <button class="sec-btn" onclick="secBtn(this,'emlakTipi')">🏗️ Arsa</button>
+        <button class="sec-btn" onclick="secBtn(this,'emlakTipi')">🏪 İşyeri</button>
+        <button class="sec-btn" onclick="secBtn(this,'emlakTipi')">🏭 Depo/Fabrika</button>
+        <button class="sec-btn" onclick="secBtn(this,'emlakTipi')">🌳 Tarla/Bağ</button>
       </div>
     </div>
 
@@ -126,30 +154,232 @@
       <input class="input" type="text" id="konum" placeholder="ör. Çankaya, Ankara">
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="form-group">
-        <label class="form-label">Oda Sayısı</label>
-        <input class="input" type="text" id="oda" placeholder="ör. 3+1">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Metrekare</label>
-        <input class="input" type="number" id="m2" placeholder="ör. 120">
+    <!-- EMLAK ÖZELLİKLERİ -->
+    <div class="bolum-baslik">🏠 Emlak Özellikleri</div>
+
+    <div class="form-group">
+      <label class="form-label">Oda Sayısı</label>
+      <div class="sec-row" id="odaSayisi">
+        <button class="sec-btn" onclick="secBtn(this,'odaSayisi')">Stüdyo</button>
+        <button class="sec-btn" onclick="secBtn(this,'odaSayisi')">1+0</button>
+        <button class="sec-btn" onclick="secBtn(this,'odaSayisi')">1+1</button>
+        <button class="sec-btn" onclick="secBtn(this,'odaSayisi')">2+1</button>
+        <button class="sec-btn" onclick="secBtn(this,'odaSayisi')">3+1</button>
+        <button class="sec-btn" onclick="secBtn(this,'odaSayisi')">4+1</button>
+        <button class="sec-btn" onclick="secBtn(this,'odaSayisi')">5+1</button>
+        <button class="sec-btn" onclick="secBtn(this,'odaSayisi')">6+1 ve üzeri</button>
       </div>
     </div>
 
     <div class="form-group">
-      <label class="form-label">Fotoğraf Ekle (max 10)</label>
+      <label class="form-label">Banyo Sayısı</label>
+      <div class="sec-row" id="banyoSayisi">
+        <button class="sec-btn" onclick="secBtn(this,'banyoSayisi')">1</button>
+        <button class="sec-btn" onclick="secBtn(this,'banyoSayisi')">2</button>
+        <button class="sec-btn" onclick="secBtn(this,'banyoSayisi')">3</button>
+        <button class="sec-btn" onclick="secBtn(this,'banyoSayisi')">4+</button>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Net m²</label>
+        <input class="input" type="number" id="m2net" placeholder="ör. 100">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Brüt m²</label>
+        <input class="input" type="number" id="m2brut" placeholder="ör. 120">
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Bulunduğu Kat</label>
+        <div class="sec-row" id="kat" style="flex-direction:column;gap:6px">
+          <select class="input" id="katSec" style="padding:10px">
+            <option value="">Seçiniz</option>
+            <option>Bodrum Kat</option>
+            <option>Zemin Kat</option>
+            <option>Bahçe Katı</option>
+            <option>Yüksek Giriş</option>
+            <option>1. Kat</option>
+            <option>2. Kat</option>
+            <option>3. Kat</option>
+            <option>4. Kat</option>
+            <option>5. Kat</option>
+            <option>6. Kat</option>
+            <option>7. Kat</option>
+            <option>8. Kat</option>
+            <option>9. Kat</option>
+            <option>10. Kat</option>
+            <option>11-15. Kat</option>
+            <option>16-20. Kat</option>
+            <option>20+ Kat</option>
+            <option>Çatı Katı / Penthouse</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kat Sayısı</label>
+        <select class="input" id="katSayisi" style="padding:10px">
+          <option value="">Seçiniz</option>
+          <option>1</option><option>2</option><option>3</option>
+          <option>4</option><option>5</option><option>6</option>
+          <option>7</option><option>8</option><option>9</option>
+          <option>10</option><option>11-15</option><option>16-20</option><option>20+</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Bina Yaşı</label>
+      <div class="sec-row" id="binaYasi">
+        <button class="sec-btn" onclick="secBtn(this,'binaYasi')">0 (Sıfır)</button>
+        <button class="sec-btn" onclick="secBtn(this,'binaYasi')">1-5 Yıl</button>
+        <button class="sec-btn" onclick="secBtn(this,'binaYasi')">6-10 Yıl</button>
+        <button class="sec-btn" onclick="secBtn(this,'binaYasi')">11-15 Yıl</button>
+        <button class="sec-btn" onclick="secBtn(this,'binaYasi')">16-20 Yıl</button>
+        <button class="sec-btn" onclick="secBtn(this,'binaYasi')">21-30 Yıl</button>
+        <button class="sec-btn" onclick="secBtn(this,'binaYasi')">30+ Yıl</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Isıtma Tipi</label>
+      <div class="sec-row" id="isitma">
+        <button class="sec-btn" onclick="secBtn(this,'isitma')">🔥 Doğalgaz (Kombi)</button>
+        <button class="sec-btn" onclick="secBtn(this,'isitma')">🏢 Merkezi</button>
+        <button class="sec-btn" onclick="secBtn(this,'isitma')">❄️ Klima</button>
+        <button class="sec-btn" onclick="secBtn(this,'isitma')">🪵 Soba</button>
+        <button class="sec-btn" onclick="secBtn(this,'isitma')">🌡️ Yerden Isıtma</button>
+        <button class="sec-btn" onclick="secBtn(this,'isitma')">☀️ Güneş Enerjisi</button>
+        <button class="sec-btn" onclick="secBtn(this,'isitma')">Isıtma Yok</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Cephe</label>
+      <div class="sec-row" id="cephe">
+        <button class="sec-btn" onclick="secBtnCoklu(this,'cephe')">⬆️ Kuzey</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'cephe')">⬇️ Güney</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'cephe')">➡️ Doğu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'cephe')">⬅️ Batı</button>
+      </div>
+    </div>
+
+    <!-- KULLANIM DURUMU -->
+    <div class="bolum-baslik">📄 Kullanım & Tapu</div>
+
+    <div class="form-group">
+      <label class="form-label">Kullanım Durumu</label>
+      <div class="sec-row" id="kullanimDurumu">
+        <button class="sec-btn" onclick="secBtn(this,'kullanimDurumu')">🏠 Boş</button>
+        <button class="sec-btn" onclick="secBtn(this,'kullanimDurumu')">🔑 Kiracılı</button>
+        <button class="sec-btn" onclick="secBtn(this,'kullanimDurumu')">👤 Mülk Sahibi Kullanıyor</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Tapu Durumu</label>
+      <div class="sec-row" id="tapuDurumu">
+        <button class="sec-btn" onclick="secBtn(this,'tapuDurumu')">✅ Kat Mülkiyeti</button>
+        <button class="sec-btn" onclick="secBtn(this,'tapuDurumu')">📋 Kat İrtifakı</button>
+        <button class="sec-btn" onclick="secBtn(this,'tapuDurumu')">🤝 Hisseli Tapu</button>
+        <button class="sec-btn" onclick="secBtn(this,'tapuDurumu')">🌍 Arsa Tapusu</button>
+        <button class="sec-btn" onclick="secBtn(this,'tapuDurumu')">⏳ Tahsis</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Eşya Durumu</label>
+      <div class="sec-row" id="esyaDurumu">
+        <button class="sec-btn" onclick="secBtn(this,'esyaDurumu')">🪑 Eşyalı</button>
+        <button class="sec-btn" onclick="secBtn(this,'esyaDurumu')">📦 Yarı Eşyalı</button>
+        <button class="sec-btn" onclick="secBtn(this,'esyaDurumu')">🏚️ Boş</button>
+      </div>
+    </div>
+
+    <!-- İÇ ÖZELLİKLER -->
+    <div class="bolum-baslik">🪟 İç Özellikler</div>
+
+    <div class="form-group">
+      <label class="form-label">Özellikler (birden fazla seçebilirsiniz)</label>
+      <div class="sec-row" id="icOzellikler">
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🪟 Balkon</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🏡 Bahçe</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🚿 Ebeveyn Banyosu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">👕 Giyinme Odası</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🍽️ Amerikan Mutfak</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🛁 Küvet</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🪟 Çift Camlı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🔆 Aydınlık Daire</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">📺 Uydu/Kablo TV</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🌐 İnternet</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🔔 Alarm Sistemi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🔐 Çelik Kapı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🎨 Yerden Isıtma</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🪵 Parke/Laminat</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🪨 Seramik/Granit</button>
+      </div>
+    </div>
+
+    <!-- DIŞ ÖZELLİKLER -->
+    <div class="bolum-baslik">🏢 Dış Özellikler & Site</div>
+
+    <div class="form-group">
+      <label class="form-label">Dış Özellikler (birden fazla seçebilirsiniz)</label>
+      <div class="sec-row" id="disOzellikler">
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🛗 Asansör</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🅿️ Otopark (Kapalı)</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🚗 Otopark (Açık)</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🏊 Yüzme Havuzu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🏋️ Spor Salonu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">👮 Güvenlik/Kapıcı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">📷 Kamera Sistemi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🌳 Yeşil Alan</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🏸 Tenis Kortu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">⚽ Spor Alanı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🧒 Çocuk Parkı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🧹 Temizlik Hizmeti</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🛁 Sauna/Hamam</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🏪 Site İçi Market</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Site İçinde mi?</label>
+      <div class="sec-row" id="siteIcinde">
+        <button class="sec-btn" onclick="secBtn(this,'siteIcinde')">✅ Evet</button>
+        <button class="sec-btn" onclick="secBtn(this,'siteIcinde')">❌ Hayır</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Aidat</label>
+      <div class="sec-row" id="aidatDurumu" style="margin-bottom:8px">
+        <button class="sec-btn" onclick="secBtn(this,'aidatDurumu');toggleAidat(true)">✅ Var</button>
+        <button class="sec-btn" onclick="secBtn(this,'aidatDurumu');toggleAidat(false)">❌ Yok</button>
+      </div>
+      <input class="input" type="number" id="aidatTutar" placeholder="Aidat tutarı (₺/ay)" style="display:none">
+    </div>
+
+    <!-- FOTOĞRAF -->
+    <div class="bolum-baslik">📷 Fotoğraflar</div>
+
+    <div class="form-group">
       <div class="photo-add" onclick="document.getElementById('fotoInput').click()">
         <span>📷</span>
-        Fotoğraf Seç
+        Fotoğraf Seç (max 10)
       </div>
       <div class="foto-sayac" id="fotoSayac"></div>
       <div class="photo-preview" id="fotoPreview"></div>
     </div>
 
+    <!-- AÇIKLAMA -->
+    <div class="bolum-baslik">📝 Açıklama</div>
+
     <div class="form-group">
-      <label class="form-label">Açıklama</label>
-      <textarea class="input" id="aciklama" rows="4" placeholder="Evinizi tanıtın..." style="resize:none;line-height:1.6"></textarea>
+      <textarea class="input" id="aciklama" rows="5" placeholder="Evinizi tanıtın, özelliklerini belirtin..." style="resize:none;line-height:1.6"></textarea>
     </div>
 
     <div id="ilanError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
@@ -161,9 +391,9 @@
 </div>
 
 <div class="success-overlay" id="successOverlay">
-  <div class="success-icon">🎉</div>
-  <div class="success-title">İlan Yayınlandı!</div>
-  <div class="success-desc">İlanınız başarıyla yayınlandı. Diğer kullanıcılar artık görebilir.</div>
+  <div style="font-size:80px;margin-bottom:20px">🎉</div>
+  <div style="font-size:28px;font-weight:900;margin-bottom:8px;text-align:center">İlan Yayınlandı!</div>
+  <div style="font-size:15px;color:var(--text2);text-align:center;margin-bottom:32px">İlanınız başarıyla yayınlandı.</div>
   <a href="index.html" class="btn btn-gold btn-lg" style="max-width:280px">Ana Sayfaya Dön</a>
 </div>
 
@@ -201,12 +431,38 @@ function secTip(el, tip) {
   seciliTip = tip;
 }
 
+// Tek seçimlik buton
+function secBtn(el, grupId) {
+  const grup = document.getElementById(grupId) || el.parentElement;
+  grup.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Çoklu seçimlik buton
+function secBtnCoklu(el, grupId) {
+  el.classList.toggle('active');
+}
+
+function toggleAidat(goster) {
+  document.getElementById('aidatTutar').style.display = goster ? 'block' : 'none';
+}
+
+function getSecim(grupId) {
+  const grup = document.getElementById(grupId);
+  if (!grup) return null;
+  const aktif = grup.querySelector('.sec-btn.active');
+  return aktif ? aktif.textContent.trim() : null;
+}
+
+function getCokluSecim(grupId) {
+  const grup = document.getElementById(grupId);
+  if (!grup) return [];
+  return Array.from(grup.querySelectorAll('.sec-btn.active')).map(b => b.textContent.trim());
+}
+
 function fotosecildi(input) {
   const yeniler = Array.from(input.files);
-  yeniler.forEach(file => {
-    if (fotoFiles.length >= 10) return;
-    fotoFiles.push(file);
-  });
+  yeniler.forEach(f => { if (fotoFiles.length < 10) fotoFiles.push(f); });
   input.value = '';
   previewGuncelle();
 }
@@ -216,15 +472,12 @@ function previewGuncelle() {
   const sayac = document.getElementById('fotoSayac');
   preview.innerHTML = '';
   sayac.textContent = fotoFiles.length > 0 ? `${fotoFiles.length} fotoğraf seçildi` : '';
-
   fotoFiles.forEach((file, index) => {
     const reader = new FileReader();
     reader.onload = e => {
       const thumb = document.createElement('div');
       thumb.className = 'photo-thumb';
-      thumb.innerHTML = `
-        <img src="${e.target.result}">
-        <button class="photo-remove" onclick="fotosil(${index})">✕</button>`;
+      thumb.innerHTML = `<img src="${e.target.result}"><button class="photo-remove" onclick="fotosil(${index})">✕</button>`;
       preview.appendChild(thumb);
     };
     reader.readAsDataURL(file);
@@ -240,9 +493,6 @@ async function ilanYayinla() {
   const baslik = document.getElementById('baslik').value.trim();
   const fiyat = document.getElementById('fiyat').value;
   const konum = document.getElementById('konum').value.trim();
-  const oda = document.getElementById('oda').value.trim();
-  const m2 = document.getElementById('m2').value;
-  const aciklama = document.getElementById('aciklama').value.trim();
   const errEl = document.getElementById('ilanError');
 
   if (!baslik || !fiyat || !konum) {
@@ -256,23 +506,40 @@ async function ilanYayinla() {
   btn.disabled = true;
   errEl.style.display = 'none';
 
+  // Fotoğrafları yükle
   let foto_url = null;
   let foto_urls = [];
-
-  // Tüm fotoğrafları yükle
   for (let i = 0; i < fotoFiles.length; i++) {
     const file = fotoFiles[i];
     const fileName = `${currentUser.id}/${Date.now()}_${i}_${file.name}`;
     btn.textContent = `⏳ Fotoğraf yükleniyor ${i+1}/${fotoFiles.length}...`;
-    const { data: uploadData, error: uploadError } = await sb.storage
-      .from('ilan-fotograflar')
-      .upload(fileName, file);
-    if (!uploadError && uploadData) {
+    const { data: uploadData } = await sb.storage.from('ilan-fotograflar').upload(fileName, file);
+    if (uploadData) {
       const { data: urlData } = sb.storage.from('ilan-fotograflar').getPublicUrl(fileName);
       foto_urls.push(urlData.publicUrl);
       if (i === 0) foto_url = urlData.publicUrl;
     }
   }
+
+  // Tüm kriterleri topla
+  const kriterler = {
+    emlak_tipi: getSecim('emlakTipi'),
+    oda_sayisi: getSecim('odaSayisi'),
+    banyo_sayisi: getSecim('banyoSayisi'),
+    kat: document.getElementById('katSec').value || null,
+    kat_sayisi: document.getElementById('katSayisi').value || null,
+    bina_yasi: getSecim('binaYasi'),
+    isitma: getSecim('isitma'),
+    cephe: getCokluSecim('cephe'),
+    kullanim_durumu: getSecim('kullanimDurumu'),
+    tapu_durumu: getSecim('tapuDurumu'),
+    esya_durumu: getSecim('esyaDurumu'),
+    site_icinde: getSecim('siteIcinde'),
+    aidat: getSecim('aidatDurumu'),
+    aidat_tutar: document.getElementById('aidatTutar').value || null,
+    ic_ozellikler: getCokluSecim('icOzellikler'),
+    dis_ozellikler: getCokluSecim('disOzellikler'),
+  };
 
   const { error } = await sb.from('ilanlar').insert({
     user_id: currentUser.id,
@@ -280,11 +547,12 @@ async function ilanYayinla() {
     fiyat: Number(fiyat),
     tip: seciliTip,
     konum,
-    oda_sayisi: oda || null,
-    metrekare: m2 ? Number(m2) : null,
-    aciklama: aciklama || null,
+    oda_sayisi: getSecim('odaSayisi') || null,
+    metrekare: document.getElementById('m2net').value ? Number(document.getElementById('m2net').value) : null,
+    aciklama: document.getElementById('aciklama').value.trim() || null,
     foto_url,
-    foto_urls: foto_urls.length > 0 ? foto_urls : null
+    foto_urls: foto_urls.length > 0 ? foto_urls : null,
+    kriterler
   });
 
   if (error) {
