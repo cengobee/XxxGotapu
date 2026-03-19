@@ -290,6 +290,14 @@ async function teklifDetay(id) {
     ${d.aciklama ? `<div class="detay-row"><div class="detay-key">Açıklama</div><div class="detay-val">${d.aciklama}</div></div>` : ''}
     ${fotoHTML}
     <div style="margin-top:20px;display:flex;gap:8px;flex-wrap:wrap">
+      ${t.telefon ? `<a href="tel:${t.telefon}" class="act-btn act-green" style="flex:1;padding:12px;text-align:center">📞 Ara</a>` : ''}
+      <button class="act-btn act-blue" style="flex:1;padding:12px" onclick="adminMesajKutusu('${t.user_id}','${t.ad_soyad||'Kullanıcı'}')">💬 Mesaj Gönder</button>
+    </div>
+    <div id="adminMesajKutuDiv" style="display:none;margin-top:12px">
+      <textarea class="input" id="adminMesajMetin" rows="3" placeholder="Mesajınızı yazın..." style="resize:none;margin-bottom:8px"></textarea>
+      <button class="btn btn-gold btn-lg" onclick="adminMesajGonder('${t.user_id}')">📩 Gönder</button>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:8px">
       <button class="act-btn act-green" style="flex:1;padding:12px" onclick="durumGuncelle('${t.id}','isleniyor');detayKapat()">🔄 İşleme Al</button>
       <button class="act-btn act-gold" style="flex:1;padding:12px" onclick="durumGuncelle('${t.id}','tamamlandi');detayKapat()">✅ Tamamla</button>
     </div>
@@ -444,12 +452,44 @@ async function kullaniciDetay(id) {
         </a>`).join('')}` : ''}
 
     <div style="display:flex;gap:8px;margin-top:16px">
-      <button class="act-btn ${k.verified?'act-rust':'act-green'}" style="flex:1;padding:12px" onclick="kullaniciDogrula('${k.id}',${k.verified})">${k.verified?'✗ Doğrulamayı Kaldır':'✓ Doğrula'}</button>
-      <button class="act-btn act-rust" style="flex:1;padding:12px" onclick="if(confirm('Emin misiniz?'))kullaniciSil('${k.id}')">🗑️ Sil</button>
+      ${k.phone ? `<a href="tel:${k.phone}" class="act-btn act-green" style="flex:1;padding:12px;text-align:center">📞 Ara</a>` : ''}
+      <button class="act-btn act-blue" style="flex:1;padding:12px" onclick="adminMesajKutusu('${k.id}','${k.full_name||'Kullanıcı'}')">💬 Mesaj Gönder</button>
+      <button class="act-btn ${k.verified?'act-rust':'act-green'}" style="flex:1;padding:12px" onclick="kullaniciDogrula('${k.id}',${k.verified})">${k.verified?'✗ Kaldır':'✓ Doğrula'}</button>
     </div>
+    <div id="adminMesajKutuDiv" style="display:none;margin-top:12px">
+      <textarea class="input" id="adminMesajMetin" rows="3" placeholder="Mesajınızı yazın..." style="resize:none;margin-bottom:8px"></textarea>
+      <button class="btn btn-gold btn-lg" onclick="adminMesajGonder('${k.id}')">📩 Gönder</button>
+    </div>
+    <button class="act-btn act-rust" style="width:100%;padding:12px;margin-top:8px" onclick="if(confirm('Emin misiniz?'))kullaniciSil('${k.id}')">🗑️ Kullanıcıyı Sil</button>
     <button class="btn btn-outline btn-md" style="width:100%;margin-top:8px" onclick="detayKapat()">Kapat</button>`;
 
   document.getElementById('detayModal').classList.add('open');
+}
+
+function adminMesajKutusu(userId, isim) {
+  const div = document.getElementById('adminMesajKutuDiv');
+  div.style.display = div.style.display === 'none' ? 'block' : 'none';
+}
+
+async function adminMesajGonder(aliciId) {
+  const metin = document.getElementById('adminMesajMetin').value.trim();
+  if (!metin) { alert('Mesaj boş olamaz!'); return; }
+
+  const { data: { user } } = await sb.auth.getUser();
+
+  const { error } = await sb.from('mesajlar').insert({
+    gonderen_id: user.id,
+    alici_id: aliciId,
+    ilan_id: null,
+    icerik: '🏠 GoTapu: ' + metin,
+    okundu: false,
+    created_at: new Date().toISOString()
+  });
+
+  if (error) { alert('Hata: ' + error.message); return; }
+  document.getElementById('adminMesajMetin').value = '';
+  document.getElementById('adminMesajKutuDiv').style.display = 'none';
+  alert('✅ Mesaj gönderildi!');
 }
 
 async function kullaniciDogrula(id, mevcut) {
