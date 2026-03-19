@@ -65,7 +65,7 @@
 
   .chat-input-row {
     display: flex; gap: 10px;
-    padding: 12px 16px 80px;
+    padding: 12px 16px 20px;
     border-top: 1px solid var(--border);
     background: var(--bg2); flex-shrink: 0;
   }
@@ -80,6 +80,13 @@
     background: var(--gold); border: none; cursor: pointer;
     font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
+  .sikayet-btn {
+    width: 100%; padding: 14px 16px; border-radius: var(--radius-sm);
+    background: var(--card); border: 1.5px solid var(--border);
+    color: var(--text); font-family: 'Nunito', sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer; text-align: left;
+  }
+  .sikayet-btn.selected { border-color: var(--rust); background: rgba(232,96,58,0.08); color: var(--rust); }
 </style>
 </head>
 <body>
@@ -106,15 +113,34 @@
   <div class="chat-header">
     <button onclick="kapat()" class="back-btn">←</button>
     <div class="chat-header-avatar">👤</div>
-    <div>
+    <div style="flex:1">
       <div class="chat-header-name" id="chatName">Kullanıcı</div>
       <div class="chat-header-ilan" id="chatIlan"></div>
     </div>
+    <button onclick="mesajSikayetAc()" style="background:none;border:none;font-size:20px;cursor:pointer">⚠️</button>
   </div>
   <div class="chat-messages" id="chatMessages"><div class="spinner"></div></div>
   <div class="chat-input-row">
     <input type="text" placeholder="Mesaj yazın..." id="msgInput" onkeydown="if(event.key==='Enter')gonder()">
     <button class="send-btn" onclick="gonder()">▶</button>
+  </div>
+</div>
+
+<!-- Şikayet Modal -->
+<div class="modal-overlay" id="sikayetModal" onclick="if(event.target===this)sikayetKapat()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 style="font-size:18px;font-weight:900;margin-bottom:6px">⚠️ Kullanıcıyı Şikayet Et</h3>
+    <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Şikayet sebebini seçin</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+      <button class="sikayet-btn" onclick="mSikayetSec(this,'Spam')">📧 Spam</button>
+      <button class="sikayet-btn" onclick="mSikayetSec(this,'Dolandırıcılık')">💸 Dolandırıcılık</button>
+      <button class="sikayet-btn" onclick="mSikayetSec(this,'Hakaret/Küfür')">🤬 Hakaret/Küfür</button>
+      <button class="sikayet-btn" onclick="mSikayetSec(this,'Taciz')">🚫 Taciz</button>
+      <button class="sikayet-btn" onclick="mSikayetSec(this,'Diğer')">📝 Diğer</button>
+    </div>
+    <textarea class="input" id="mSikayetAciklama" rows="3" placeholder="Ek açıklama (isteğe bağlı)..." style="resize:none;margin-bottom:12px"></textarea>
+    <button style="width:100%;padding:16px;border-radius:50px;background:var(--rust);color:white;border:none;font-family:Nunito,sans-serif;font-size:15px;font-weight:800;cursor:pointer" onclick="mesajSikayetGonder()">⚠️ Şikayeti Gönder</button>
   </div>
 </div>
 
@@ -279,6 +305,41 @@ async function gonder() {
 
   mesajEkle(yeniMesaj);
   await sb.from('mesajlar').insert(yeniMesaj);
+}
+
+let seciliMSikayet = null;
+
+function mesajSikayetAc() {
+  seciliMSikayet = null;
+  document.querySelectorAll('.sikayet-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('mSikayetAciklama').value = '';
+  document.getElementById('sikayetModal').classList.add('open');
+}
+
+function sikayetKapat() {
+  document.getElementById('sikayetModal').classList.remove('open');
+}
+
+function mSikayetSec(el, sebep) {
+  seciliMSikayet = sebep;
+  document.querySelectorAll('.sikayet-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function mesajSikayetGonder() {
+  if (!seciliMSikayet) { alert('Lütfen bir şikayet sebebi seçin!'); return; }
+  const aciklama = document.getElementById('mSikayetAciklama').value.trim();
+  await sb.from('sikayetler').insert({
+    user_id: currentUser.id,
+    tip: 'mesaj',
+    sebep: seciliMSikayet,
+    hedef_id: aktifKarsiId,
+    hedef_tip: 'kullanici',
+    aciklama: aciklama || null,
+    durum: 'bekliyor'
+  });
+  sikayetKapat();
+  alert('✅ Şikayetiniz alındı. En kısa sürede incelenecektir.');
 }
 
 function kapat() {
