@@ -265,6 +265,7 @@ function teklifKartHTML(t) {
     </div>
     <div class="admin-card-actions">
       <button class="act-btn act-blue" onclick="teklifDetay('${t.id}')">👁️ Detay</button>
+      ${t.telefon ? `<a href="tel:${t.telefon}" class="act-btn act-green">📞 Ara</a>` : ''}
       <button class="act-btn act-green" onclick="durumGuncelle('${t.id}','isleniyor')">🔄 İşleme Al</button>
       <button class="act-btn act-gold" onclick="durumGuncelle('${t.id}','tamamlandi')">✅ Tamamla</button>
       <button class="act-btn act-rust" onclick="teklifSil('${t.id}')">🗑️ Sil</button>
@@ -282,7 +283,7 @@ async function teklifDetay(id) {
   document.getElementById('detayIcerik').innerHTML = `
     <div style="font-size:20px;font-weight:900;margin-bottom:16px">${kategoriEm[t.kategori]} ${kategoriAdlari[t.kategori]} Talebi</div>
     <div class="detay-row"><div class="detay-key">Ad Soyad</div><div class="detay-val">${t.ad_soyad||'-'}</div></div>
-    <div class="detay-row"><div class="detay-key">Telefon</div><div class="detay-val"><a href="tel:${t.telefon}" style="color:var(--gold)">${t.telefon||'-'}</a></div></div>
+    <div class="detay-row"><div class="detay-key">Telefon</div><div class="detay-val"><a href="tel:${t.telefon}" style="color:var(--gold);font-size:15px;font-weight:900">${t.telefon||'-'} 📞</a></div></div>
     <div class="detay-row"><div class="detay-key">Tarih</div><div class="detay-val">${new Date(t.created_at).toLocaleString('tr-TR')}</div></div>
     <div class="detay-row"><div class="detay-key">Durum</div><div class="detay-val"><span class="durum-badge durum-${t.durum||'bekliyor'}">${t.durum||'bekliyor'}</span></div></div>
     ${detaylar}
@@ -388,15 +389,79 @@ function kullanicilariGoster(liste) {
   const el = document.getElementById('kullaniciListesi');
   if (!liste.length) { el.innerHTML = '<div class="empty" style="padding:30px"><div class="empty-icon">👥</div><div class="empty-title">Kullanıcı bulunamadı</div></div>'; return; }
   el.innerHTML = liste.map(k => `
-    <div class="kullanici-item">
+    <div class="kullanici-item" onclick="kullaniciDetay('${k.id}')" style="cursor:pointer">
       <div class="kullanici-avatar">${k.avatar_url ? `<img src="${k.avatar_url}">` : '👤'}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:14px;font-weight:800">${k.full_name||'İsimsiz'}</div>
         <div style="font-size:12px;color:var(--text3)">${k.email||''}</div>
         ${k.phone ? `<div style="font-size:12px;color:var(--text3)">📞 ${k.phone}</div>` : ''}
       </div>
-      ${k.verified ? '<span class="tag tag-green">✓ Doğrulandı</span>' : ''}
+      ${k.verified ? '<span class="tag tag-green">✓ Doğrulandı</span>' : '<span class="tag">Doğrulanmadı</span>'}
     </div>`).join('');
+}
+
+async function kullaniciDetay(id) {
+  const k = tumKullanicilar.find(x => x.id === id);
+  if (!k) return;
+
+  // Bu kullanıcının ilanlarını ve tekliflerini çek
+  const [ilanlar, teklifler, mesajlar] = await Promise.all([
+    sb.from('ilanlar').select('*').eq('user_id', id).order('created_at', { ascending: false }),
+    sb.from('teklifler').select('*').eq('user_id', id).order('created_at', { ascending: false }),
+    sb.from('mesajlar').select('*', { count: 'exact', head: true }).or(`gonderen_id.eq.${id},alici_id.eq.${id}`)
+  ]);
+
+  document.getElementById('detayIcerik').innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;flex-shrink:0">
+        ${k.avatar_url ? `<img src="${k.avatar_url}" style="width:100%;height:100%;object-fit:cover">` : '👤'}
+      </div>
+      <div>
+        <div style="font-size:20px;font-weight:900">${k.full_name||'İsimsiz'}</div>
+        ${k.verified ? '<span class="tag tag-green">✓ Doğrulandı</span>' : ''}
+      </div>
+    </div>
+
+    <div class="detay-row"><div class="detay-key">📧 E-posta</div><div class="detay-val">${k.email||'-'}</div></div>
+    <div class="detay-row"><div class="detay-key">📞 Telefon</div><div class="detay-val"><a href="tel:${k.phone}" style="color:var(--gold)">${k.phone||'-'}</a></div></div>
+    <div class="detay-row"><div class="detay-key">🏙️ Şehir</div><div class="detay-val">${k.sehir||'-'}</div></div>
+    <div class="detay-row"><div class="detay-key">💼 Kullanıcı Tipi</div><div class="detay-val">${k.kullanici_tipi||'Bireysel'}</div></div>
+    <div class="detay-row"><div class="detay-key">🏠 İlan Sayısı</div><div class="detay-val">${ilanlar.data?.length||0}</div></div>
+    <div class="detay-row"><div class="detay-key">📋 Teklif Sayısı</div><div class="detay-val">${teklifler.data?.length||0}</div></div>
+    <div class="detay-row"><div class="detay-key">💬 Mesaj Sayısı</div><div class="detay-val">${mesajlar.count||0}</div></div>
+    ${k.hakkimda ? `<div class="detay-row"><div class="detay-key">📝 Hakkımda</div><div class="detay-val">${k.hakkimda}</div></div>` : ''}
+    <div class="detay-row"><div class="detay-key">📅 Kayıt Tarihi</div><div class="detay-val">${new Date(k.created_at).toLocaleDateString('tr-TR')}</div></div>
+
+    ${ilanlar.data?.length > 0 ? `
+      <div style="font-size:15px;font-weight:900;margin:16px 0 10px">🏠 İlanları</div>
+      ${ilanlar.data.map(i => `
+        <a href="ilan-detay.html?id=${i.id}" style="display:flex;gap:10px;align-items:center;background:var(--card);border-radius:10px;padding:10px;margin-bottom:8px;text-decoration:none;color:var(--text)">
+          ${i.foto_url ? `<img src="${i.foto_url}" style="width:48px;height:48px;border-radius:8px;object-fit:cover;flex-shrink:0">` : `<div style="width:48px;height:48px;border-radius:8px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${i.tip==='kiralik'?'🏘️':'🏙️'}</div>`}
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${i.baslik}</div>
+            <div style="font-size:12px;color:var(--gold)">${Number(i.fiyat).toLocaleString('tr-TR')} ₺</div>
+          </div>
+        </a>`).join('')}` : ''}
+
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="act-btn ${k.verified?'act-rust':'act-green'}" style="flex:1;padding:12px" onclick="kullaniciDogrula('${k.id}',${k.verified})">${k.verified?'✗ Doğrulamayı Kaldır':'✓ Doğrula'}</button>
+      <button class="act-btn act-rust" style="flex:1;padding:12px" onclick="if(confirm('Emin misiniz?'))kullaniciSil('${k.id}')">🗑️ Sil</button>
+    </div>
+    <button class="btn btn-outline btn-md" style="width:100%;margin-top:8px" onclick="detayKapat()">Kapat</button>`;
+
+  document.getElementById('detayModal').classList.add('open');
+}
+
+async function kullaniciDogrula(id, mevcut) {
+  await sb.from('profiles').update({ verified: !mevcut }).eq('id', id);
+  await kullanicilariYukle();
+  detayKapat();
+}
+
+async function kullaniciSil(id) {
+  await sb.from('profiles').delete().eq('id', id);
+  await kullanicilariYukle();
+  detayKapat();
 }
 
 function kullaniciAra(q) {
