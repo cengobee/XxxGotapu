@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gotapu — Favorilerim</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .fav-item {
+    display: flex; gap: 12px; align-items: center;
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 12px;
+    margin-bottom: 10px; cursor: pointer;
+    text-decoration: none; color: var(--text);
+    transition: border-color .2s; position: relative;
+  }
+  .fav-item:active { border-color: var(--gold); }
+  .fav-thumb {
+    width: 76px; height: 76px; border-radius: var(--radius-sm);
+    background: var(--card2); display: flex; align-items: center;
+    justify-content: center; font-size: 34px; flex-shrink: 0; overflow: hidden;
+  }
+  .fav-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .fav-info { flex: 1; min-width: 0; }
+  .fav-price { font-size: 16px; font-weight: 900; color: var(--gold); }
+  .fav-title { font-size: 14px; font-weight: 700; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fav-loc { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+  .fav-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .fav-remove {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(232,96,58,0.15); border: none;
+    border-radius: 50%; width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer; color: var(--rust);
+    transition: background .2s;
+  }
+  .fav-remove:active { background: rgba(232,96,58,0.3); }
+  .fav-date { font-size: 11px; color: var(--text3); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="javascript:history.back()" class="nav-logo" style="font-size:15px">
+    <div class="back-btn" style="margin-right:4px">←</div>
+    Favorilerim
+  </a>
+  <div class="nav-actions">
+    <span id="favSayac" style="font-size:13px;color:var(--text3);font-weight:700"></span>
+  </div>
+</nav>
+
+<div class="page fade-up">
+  <div id="favList"><div class="spinner"></div></div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
+  <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">✨</div>Eşleşmeler</a>
+  <a href="ilan-ver.html" class="bnav-center">+</a>
+  <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">💬</div>Mesajlar</a>
+  <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
+</nav>
+
+<script>
+const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const emojiler = { satilik: '🏙️', kiralik: '🏘️', devren: '🏪' };
+let currentUser = null;
+
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) { window.location.href = 'auth.html'; return; }
+  currentUser = data.session.user;
+  favorileriYukle();
+});
+
+async function favorileriYukle() {
+  const el = document.getElementById('favList');
+  const { data, error } = await sb.from('favoriler')
+    .select('*, ilan:ilan_id(*)')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false });
+
+  if (error || !data || data.length === 0) {
+    el.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">❤️</div>
+        <div class="empty-title">Favori ilan yok</div>
+        <div class="empty-desc">İlanları kalp ikonuna tıklayarak favorilere ekleyebilirsin</div>
+        <a href="index.html" class="btn btn-gold btn-md" style="margin-top:20px;max-width:200px">İlanlara Git</a>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('favSayac').textContent = `${data.length} ilan`;
+
+  el.innerHTML = data.map(f => {
+    const ilan = f.ilan;
+    if (!ilan) return '';
+    const tarih = new Date(f.created_at).toLocaleDateString('tr-TR');
+    return `
+      <div class="fav-item" onclick="location.href='ilan-detay.html?id=${ilan.id}'">
+        <div class="fav-thumb">
+          ${ilan.foto_url ? `<img src="${ilan.foto_url}">` : (emojiler[ilan.tip] || '🏠')}
+        </div>
+        <div class="fav-info">
+          <div class="fav-price">${Number(ilan.fiyat).toLocaleString('tr-TR')} ₺${ilan.tip === 'kiralik' ? '/ay' : ''}</div>
+          <div class="fav-title">${ilan.baslik}</div>
+          <div class="fav-loc">📍 ${ilan.konum || ''}</div>
+          <div class="fav-tags">
+            <span class="tag ${ilan.tip === 'kiralik' ? 'tag-green' : ilan.tip === 'satilik' ? 'tag-rust' : 'tag-blue'}">${ilan.tip.toUpperCase()}</span>
+            ${ilan.oda_sayisi ? `<span class="tag tag-gold">🛏 ${ilan.oda_sayisi}</span>` : ''}
+            ${ilan.metrekare ? `<span class="tag tag-gold">📐 ${ilan.metrekare}m²</span>` : ''}
+          </div>
+          <div class="fav-date">❤️ ${tarih} tarihinde eklendi</div>
+        </div>
+        <button class="fav-remove" onclick="favoriSil(event,'${f.id}')">🗑️</button>
+      </div>`;
+  }).join('');
+}
+
+async function favoriSil(e, favoriId) {
+  e.stopPropagation();
+  if (!confirm('Favorilerden kaldırmak istediğinden emin misin?')) return;
+  await sb.from('favoriler').delete().eq('id', favoriId);
+  favorileriYukle();
+}
+</script>
+</body>
+</html>
