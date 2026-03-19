@@ -25,7 +25,6 @@
   .profile-name { font-size: 20px; font-weight: 900; }
   .profile-email { font-size: 13px; color: var(--text3); margin-top: 3px; }
   .verified { display: inline-flex; align-items: center; gap: 5px; background: rgba(46,204,113,0.1); color: var(--green); border-radius: 50px; padding: 4px 12px; font-size: 12px; font-weight: 700; margin-top: 8px; }
-
   .menu-section { margin-bottom: 20px; }
   .menu-label { font-size: 12px; font-weight: 800; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; padding: 0 4px; }
   .menu-item {
@@ -40,11 +39,9 @@
   .menu-icon { font-size: 20px; width: 28px; text-align: center; }
   .menu-text { flex: 1; font-size: 15px; font-weight: 700; }
   .menu-arrow { color: var(--text3); }
-
   .ilanim-item {
     display: flex; gap: 12px; align-items: center;
-    padding: 12px 16px; border-bottom: 1px solid var(--border);
-    cursor: pointer;
+    padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer;
   }
   .ilanim-item:last-child { border-bottom: none; }
   .ilanim-thumb { width: 60px; height: 60px; border-radius: 10px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; overflow: hidden; }
@@ -67,7 +64,6 @@
 
 <div class="page fade-up">
 
-  <!-- Profil Başlık -->
   <div class="profile-header">
     <div class="avatar" onclick="document.getElementById('avatarInput').click()">
       <span id="avatarEmoji">👤</span>
@@ -83,22 +79,17 @@
     <div class="verified" id="verifiedBadge" style="display:none">✓ Doğrulanmış Üye</div>
   </div>
 
-  <!-- İstatistikler -->
   <div class="stat-row" style="margin-bottom:24px">
     <div class="stat-box"><div class="stat-num" id="ilanSayisi">0</div><div class="stat-lbl">İlan</div></div>
     <div class="stat-box"><div class="stat-num" id="goruntulenmeSayisi">0</div><div class="stat-lbl">Görüntülenme</div></div>
     <div class="stat-box"><div class="stat-num" id="mesajSayisi">0</div><div class="stat-lbl">Mesaj</div></div>
   </div>
 
-  <!-- İlanlarım -->
   <div class="menu-section">
     <div class="menu-label">İlanlarım</div>
-    <div class="card" id="ilanlarimCard">
-      <div class="spinner"></div>
-    </div>
+    <div class="card" id="ilanlarimCard"><div class="spinner"></div></div>
   </div>
 
-  <!-- Hizmetler -->
   <div class="menu-section">
     <div class="menu-label">🏠 Ev Hizmetleri</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
@@ -113,11 +104,12 @@
     </div>
   </div>
 
-  <!-- Hesap Menüsü -->
   <div class="menu-section">
     <div class="menu-label">Hesap</div>
+    <a href="favoriler.html" class="menu-item"><div class="menu-icon">❤️</div><div class="menu-text">Favorilerim</div><div class="menu-arrow">›</div></a>
     <a href="site-yonetimi.html" class="menu-item"><div class="menu-icon">🏢</div><div class="menu-text">Site Yönetimi</div><div class="menu-arrow">›</div></a>
     <a href="eslesmeler.html" class="menu-item"><div class="menu-icon">✨</div><div class="menu-text">Eşleşmelerim</div><div class="menu-arrow">›</div></a>
+    <a href="bildirimler.html" class="menu-item"><div class="menu-icon">🔔</div><div class="menu-text">Bildirimler</div><div class="menu-arrow">›</div></a>
     <div class="menu-item" onclick="profilDuzenle()"><div class="menu-icon">⚙️</div><div class="menu-text">Profili Düzenle</div><div class="menu-arrow">›</div></div>
     <div class="menu-item" onclick="cikisYap()" style="color:var(--rust)"><div class="menu-icon">🚪</div><div class="menu-text" style="color:var(--rust)">Çıkış Yap</div><div class="menu-arrow">›</div></div>
   </div>
@@ -152,24 +144,14 @@ async function profilYukle() {
     document.getElementById('profilAd').textContent = profil.full_name || 'İsimsiz';
     document.getElementById('profilEmail').textContent = profil.email || currentUser.email;
     if (profil.phone) document.getElementById('profilTel').textContent = '📞 ' + profil.phone;
-    if (profil.sehir) {
-      let sehirEl = document.getElementById('profilSehir');
-      if (sehirEl) sehirEl.textContent = '📍 ' + profil.sehir;
-    }
-    if (profil.kullanici_tipi) {
-      let tipEl = document.getElementById('profilTip');
-      if (tipEl) tipEl.textContent = profil.kullanici_tipi.charAt(0).toUpperCase() + profil.kullanici_tipi.slice(1);
-    }
-    if (profil.hakkimda) {
-      let hEl = document.getElementById('profilHakkimda');
-      if (hEl) { hEl.textContent = profil.hakkimda; hEl.style.display = 'block'; }
-    }
+    if (profil.sehir) { let s = document.getElementById('profilSehir'); if(s) s.textContent = '📍 ' + profil.sehir; }
+    if (profil.kullanici_tipi) { let t = document.getElementById('profilTip'); if(t) t.textContent = profil.kullanici_tipi.charAt(0).toUpperCase() + profil.kullanici_tipi.slice(1); }
+    if (profil.hakkimda) { let h = document.getElementById('profilHakkimda'); if(h) { h.textContent = profil.hakkimda; h.style.display = 'block'; } }
     if (profil.verified) document.getElementById('verifiedBadge').style.display = 'inline-flex';
     if (profil.avatar_url) {
       document.getElementById('avatarEmoji').style.display = 'none';
       const img = document.getElementById('avatarImg');
-      img.src = profil.avatar_url;
-      img.style.display = 'block';
+      img.src = profil.avatar_url; img.style.display = 'block';
     }
   } else {
     document.getElementById('profilAd').textContent = currentUser.email;
@@ -206,24 +188,17 @@ async function avatarDegistir(input) {
   if (!file) return;
   const fileName = `avatars/${currentUser.id}`;
   const { error: uploadError } = await sb.storage.from('avatarlar').upload(fileName, file, { upsert: true });
-  if (uploadError) {
-    alert('Fotoğraf yüklenemedi: ' + uploadError.message);
-    return;
-  }
+  if (uploadError) { alert('Fotoğraf yüklenemedi: ' + uploadError.message); return; }
   const { data } = sb.storage.from('avatarlar').getPublicUrl(fileName);
-  const avatarUrlWithTime = data.publicUrl + '?t=' + Date.now();
-  await sb.from('profiles').update({ avatar_url: avatarUrlWithTime }).eq('id', currentUser.id);
+  await sb.from('profiles').update({ avatar_url: data.publicUrl + '?t=' + Date.now() }).eq('id', currentUser.id);
   document.getElementById('avatarEmoji').style.display = 'none';
   const img = document.getElementById('avatarImg');
-  img.src = data.publicUrl + '?t=' + Date.now();
-  img.style.display = 'block';
+  img.src = data.publicUrl + '?t=' + Date.now(); img.style.display = 'block';
   alert('✅ Profil fotoğrafı güncellendi!');
 }
 
 async function profilDuzenle() {
   const { data: p } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
-  
-  // Modal oluştur
   const modal = document.createElement('div');
   modal.id = 'profilModal';
   modal.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end';
@@ -231,134 +206,28 @@ async function profilDuzenle() {
     <div style="background:var(--bg2);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-height:90vh;overflow-y:auto">
       <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
       <h3 style="font-size:20px;font-weight:900;margin-bottom:20px">⚙️ Profili Düzenle</h3>
-
-      <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">👤 Ad Soyad</label>
-        <input class="input" type="text" id="editAd" value="${p?.full_name||''}">
-      </div>
-
-      <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📞 Telefon</label>
-        <input class="input" type="tel" id="editTel" value="${p?.phone||''}" placeholder="05XX XXX XX XX">
-      </div>
-
-      <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏙️ Şehir/İlçe</label>
-        <input class="input" type="text" id="editSehir" value="${p?.sehir||''}" placeholder="ör. Ankara, Çankaya">
-      </div>
-
-      <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">💼 Kullanıcı Tipi</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          ${['Bireysel','Kurumsal','Emlakçı'].map(t => `
-            <button class="edit-tip-btn ${(p?.kullanici_tipi||'bireysel').toLowerCase()===t.toLowerCase()?'active':''}" 
-              onclick="editTipSec(this,'${t.toLowerCase()}')" 
-              style="padding:8px 16px;border-radius:50px;background:var(--card);border:1.5px solid var(--border);color:var(--text2);font-family:Nunito,sans-serif;font-size:13px;font-weight:700;cursor:pointer">
-              ${t}
-            </button>`).join('')}
-        </div>
-      </div>
-
-      <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏠 İlan Tercihleri</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          ${['Satılık','Kiralık','Devren'].map(t => `
-            <button class="edit-tercih-btn ${(p?.ilan_tercihi||[]).includes(t.toLowerCase())?'active':''}"
-              onclick="editTercihToggle(this,'${t.toLowerCase()}')"
-              style="padding:8px 16px;border-radius:50px;background:var(--card);border:1.5px solid var(--border);color:var(--text2);font-family:Nunito,sans-serif;font-size:13px;font-weight:700;cursor:pointer">
-              ${t}
-            </button>`).join('')}
-        </div>
-      </div>
-
-      <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Hakkımda</label>
-        <textarea class="input" id="editHakkimda" rows="3" style="resize:none" placeholder="Kendinizi tanıtın...">${p?.hakkimda||''}</textarea>
-      </div>
-
-      <div style="margin-bottom:20px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:12px;display:block">🔔 Bildirim Tercihleri</label>
-        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:10px;padding:12px 16px;margin-bottom:8px">
-          <div style="font-size:14px;font-weight:700">📧 E-posta Bildirimi</div>
-          <input type="checkbox" id="editBildirimEmail" ${p?.bildirim_email!==false?'checked':''} style="width:20px;height:20px;cursor:pointer">
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:10px;padding:12px 16px">
-          <div style="font-size:14px;font-weight:700">📱 SMS Bildirimi</div>
-          <input type="checkbox" id="editBildirimSms" ${p?.bildirim_sms?'checked':''} style="width:20px;height:20px;cursor:pointer">
-        </div>
-      </div>
-
+      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">👤 Ad Soyad</label><input class="input" type="text" id="editAd" value="${p?.full_name||''}"></div>
+      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📞 Telefon</label><input class="input" type="tel" id="editTel" value="${p?.phone||''}" placeholder="05XX XXX XX XX"></div>
+      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏙️ Şehir/İlçe</label><input class="input" type="text" id="editSehir" value="${p?.sehir||''}" placeholder="ör. Ankara, Çankaya"></div>
+      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Hakkımda</label><textarea class="input" id="editHakkimda" rows="3" style="resize:none" placeholder="Kendinizi tanıtın...">${p?.hakkimda||''}</textarea></div>
       <div id="editError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
-
       <button class="btn btn-gold btn-lg" onclick="profilKaydet()">✅ Kaydet</button>
       <button class="btn btn-outline btn-md" style="width:100%;margin-top:8px" onclick="document.getElementById('profilModal').remove()">İptal</button>
     </div>`;
-  
   document.body.appendChild(modal);
   modal.onclick = e => { if(e.target===modal) modal.remove(); };
-
-  // Aktif stilleri ayarla
-  document.querySelectorAll('.edit-tip-btn.active').forEach(b => {
-    b.style.borderColor = 'var(--gold)'; b.style.color = 'var(--gold)'; b.style.background = 'rgba(245,200,66,0.1)';
-  });
-  document.querySelectorAll('.edit-tercih-btn.active').forEach(b => {
-    b.style.borderColor = 'var(--gold)'; b.style.color = 'var(--gold)'; b.style.background = 'rgba(245,200,66,0.1)';
-  });
-}
-
-let editKullaniciTipi = null;
-let editTercihler = [];
-
-function editTipSec(el, tip) {
-  editKullaniciTipi = tip;
-  document.querySelectorAll('.edit-tip-btn').forEach(b => {
-    b.style.borderColor = 'var(--border)'; b.style.color = 'var(--text2)'; b.style.background = 'var(--card)';
-  });
-  el.style.borderColor = 'var(--gold)'; el.style.color = 'var(--gold)'; el.style.background = 'rgba(245,200,66,0.1)';
-}
-
-function editTercihToggle(el, tercih) {
-  const idx = editTercihler.indexOf(tercih);
-  if (idx === -1) {
-    editTercihler.push(tercih);
-    el.style.borderColor = 'var(--gold)'; el.style.color = 'var(--gold)'; el.style.background = 'rgba(245,200,66,0.1)';
-  } else {
-    editTercihler.splice(idx, 1);
-    el.style.borderColor = 'var(--border)'; el.style.color = 'var(--text2)'; el.style.background = 'var(--card)';
-  }
 }
 
 async function profilKaydet() {
   const ad = document.getElementById('editAd').value.trim();
-  const tel = document.getElementById('editTel').value.trim();
-  const sehir = document.getElementById('editSehir').value.trim();
-  const hakkimda = document.getElementById('editHakkimda').value.trim();
-  const bildirimEmail = document.getElementById('editBildirimEmail').checked;
-  const bildirimSms = document.getElementById('editBildirimSms').checked;
-
-  if (!ad) {
-    document.getElementById('editError').textContent = '⚠️ Ad soyad zorunludur!';
-    document.getElementById('editError').style.display = 'block';
-    return;
-  }
-
+  if (!ad) { document.getElementById('editError').textContent = '⚠️ Ad soyad zorunludur!'; document.getElementById('editError').style.display = 'block'; return; }
   const { error } = await sb.from('profiles').update({
     full_name: ad,
-    phone: tel || null,
-    sehir: sehir || null,
-    hakkimda: hakkimda || null,
-    kullanici_tipi: editKullaniciTipi || 'bireysel',
-    ilan_tercihi: editTercihler.length > 0 ? editTercihler : null,
-    bildirim_email: bildirimEmail,
-    bildirim_sms: bildirimSms
+    phone: document.getElementById('editTel').value.trim() || null,
+    sehir: document.getElementById('editSehir').value.trim() || null,
+    hakkimda: document.getElementById('editHakkimda').value.trim() || null,
   }).eq('id', currentUser.id);
-
-  if (error) {
-    document.getElementById('editError').textContent = 'Hata: ' + error.message;
-    document.getElementById('editError').style.display = 'block';
-    return;
-  }
-
+  if (error) { document.getElementById('editError').textContent = 'Hata: ' + error.message; document.getElementById('editError').style.display = 'block'; return; }
   document.getElementById('profilModal').remove();
   profilYukle();
 }
