@@ -15,7 +15,7 @@
   .swipe-card {
     position: absolute; width: 100%;
     border-radius: 24px; overflow: hidden;
-    cursor: grab; user-select: none; touch-action: pan-y;
+    cursor: grab; user-select: none; touch-action: none;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     background: var(--card);
     transition: transform .3s;
@@ -269,6 +269,8 @@ function dinleyiciEkle() {
   let startX, startY, isDragging = false;
 
   card.addEventListener('pointerdown', e => {
+    // Sadece kart üzerinde sürükleme başlat
+    if (!e.target.closest('.swipe-card')) return;
     isDragging = true;
     startX = e.clientX;
     startY = e.clientY;
