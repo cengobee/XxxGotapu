@@ -215,6 +215,7 @@ sb.auth.getSession().then(({ data }) => {
 
 async function tumunuYukle() {
   await Promise.all([ozetYukle(), teklifleriYukle(), ilanlariYukle(), kullanicilariYukle(), mesajlariYukle(), sikayetleriYukle()]);
+  baslangicSekmesi();
 }
 
 async function ozetYukle() {
@@ -563,6 +564,16 @@ function sekmeAc(sekme, btn) {
   });
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  window.location.hash = sekme;
+}
+
+function baslangicSekmesi() {
+  const hash = window.location.hash.replace('#', '');
+  const gecerli = ['ozet','teklifler','ilanlar','kullanicilar','mesajlar','sikayetler'];
+  const sekme = gecerli.includes(hash) ? hash : 'ozet';
+  const index = gecerli.indexOf(sekme);
+  const btn = document.querySelectorAll('.tab-btn')[index];
+  if (btn) sekmeAc(sekme, btn);
 }
 
 function detayKapat() {
