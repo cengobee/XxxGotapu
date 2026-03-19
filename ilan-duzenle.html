@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gotapu — İlan Düzenle</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 13px; font-weight: 800; color: var(--text2); margin-bottom: 8px; display: block; }
+  .type-row { display: flex; gap: 8px; }
+  .type-btn {
+    flex: 1; padding: 12px 8px; border-radius: var(--radius-sm);
+    background: var(--card); border: 1.5px solid var(--border);
+    color: var(--text2); font-family: 'Nunito',sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: all .2s;
+  }
+  .type-btn.active { background: rgba(245,200,66,0.1); border-color: var(--gold); color: var(--gold); }
+
+  .foto-mevcut {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .foto-thumb {
+    position: relative; width: 80px; height: 80px;
+  }
+  .foto-thumb img {
+    width: 80px; height: 80px; border-radius: 10px;
+    object-fit: cover; border: 2px solid var(--border);
+  }
+  .foto-thumb.one-cikan img { border-color: var(--gold); }
+  .foto-remove {
+    position: absolute; top: -6px; right: -6px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--rust); color: white; border: none;
+    font-size: 12px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; font-weight: 900;
+  }
+  .foto-add-btn {
+    width: 80px; height: 80px; border-radius: 10px;
+    background: var(--card); border: 2px dashed var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; cursor: pointer; flex-shrink: 0;
+  }
+
+  .one-cikan-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 16px;
+    margin-bottom: 16px;
+  }
+  .toggle {
+    width: 48px; height: 26px; border-radius: 13px;
+    background: var(--border); position: relative;
+    cursor: pointer; transition: background .2s; border: none;
+  }
+  .toggle.on { background: var(--gold); }
+  .toggle::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: white; transition: left .2s;
+  }
+  .toggle.on::after { left: 25px; }
+
+  .danger-zone {
+    background: rgba(232,96,58,0.05); border: 1px solid rgba(232,96,58,0.2);
+    border-radius: var(--radius); padding: 16px; margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="profil.html" class="nav-logo" style="font-size:15px">
+    <div class="back-btn" style="margin-right:4px">←</div>
+    İlan Düzenle
+  </a>
+</nav>
+
+<input type="file" id="yeniFotoInput" accept="image/*" multiple style="display:none" onchange="yeniFotoEkle(this)">
+
+<div class="page fade-up" id="icerik">
+  <div class="spinner"></div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
+  <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">✨</div>Eşleşmeler</a>
+  <a href="ilan-ver.html" class="bnav-center">+</a>
+  <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">💬</div>Mesajlar</a>
+  <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
+</nav>
+
+<script>
+const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const params = new URLSearchParams(window.location.search);
+const ilanId = params.get('id');
+let currentUser = null;
+let ilan = null;
+let seciliTip = 'satilik';
+let mevcutFotolar = [];
+let yeniFotolar = [];
+let oneCikan = false;
+
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) { window.location.href = 'auth.html'; return; }
+  currentUser = data.session.user;
+  ilanYukle();
+});
+
+async function ilanYukle() {
+  const { data, error } = await sb.from('ilanlar').select('*').eq('id', ilanId).single();
+  if (error || !data) { document.getElementById('icerik').innerHTML = '<div class="empty"><div class="empty-icon">😕</div><div class="empty-title">İlan bulunamadı</div></div>'; return; }
+  ilan = data;
+  seciliTip = ilan.tip;
+  mevcutFotolar = ilan.foto_urls || (ilan.foto_url ? [ilan.foto_url] : []);
+  oneCikan = ilan.one_cikan || false;
+  formOlustur();
+}
+
+function formOlustur() {
+  document.getElementById('icerik').innerHTML = `
+    <div class="form-group">
+      <label class="form-label">İlan Tipi</label>
+      <div class="type-row">
+        <button class="type-btn ${ilan.tip==='satilik'?'active':''}" onclick="secTip(this,'satilik')">Satılık</button>
+        <button class="type-btn ${ilan.tip==='kiralik'?'active':''}" onclick="secTip(this,'kiralik')">Kiralık</button>
+        <button class="type-btn ${ilan.tip==='devren'?'active':''}" onclick="secTip(this,'devren')">Devren</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">İlan Başlığı *</label>
+      <input class="input" type="text" id="baslik" value="${ilan.baslik || ''}">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Fiyat (₺) *</label>
+      <input class="input" type="number" id="fiyat" value="${ilan.fiyat || ''}">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Konum *</label>
+      <input class="input" type="text" id="konum" value="${ilan.konum || ''}">
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group">
+        <label class="form-label">Oda Sayısı</label>
+        <input class="input" type="text" id="oda" value="${ilan.oda_sayisi || ''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Metrekare</label>
+        <input class="input" type="number" id="m2" value="${ilan.metrekare || ''}">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Açıklama</label>
+      <textarea class="input" id="aciklama" rows="4" style="resize:none;line-height:1.6">${ilan.aciklama || ''}</textarea>
+    </div>
+
+    <!-- Öne Çıkar -->
+    <div class="one-cikan-bar">
+      <div>
+        <div style="font-size:14px;font-weight:800">⭐ Öne Çıkar</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">Ana sayfada önce göster</div>
+      </div>
+      <button class="toggle ${oneCikan?'on':''}" id="oneCikanToggle" onclick="toggleOneCikan()"></button>
+    </div>
+
+    <!-- Fotoğraflar -->
+    <div class="form-group">
+      <label class="form-label">Fotoğraflar</label>
+      <div class="foto-mevcut" id="fotoContainer"></div>
+    </div>
+
+    <div id="ilanError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
+
+    <button class="btn btn-gold btn-lg" onclick="kaydet()" id="kaydetBtn">✅ Değişiklikleri Kaydet</button>
+
+    <!-- Tehlikeli Bölge -->
+    <div class="danger-zone">
+      <div style="font-size:14px;font-weight:800;color:var(--rust);margin-bottom:8px">⚠️ Tehlikeli Bölge</div>
+      <button class="btn btn-lg" onclick="ilanSil()" style="background:var(--rust);color:white;width:100%">🗑️ İlanı Kalıcı Olarak Sil</button>
+    </div>
+  `;
+  fotoGuncelle();
+}
+
+function fotoGuncelle() {
+  const container = document.getElementById('fotoContainer');
+  if (!container) return;
+  container.innerHTML = mevcutFotolar.map((url, i) => `
+    <div class="foto-thumb">
+      <img src="${url}">
+      <button class="foto-remove" onclick="mevcutFotoSil(${i})">✕</button>
+    </div>`).join('') +
+    yeniFotolar.map((file, i) => {
+      const objUrl = URL.createObjectURL(file);
+      return `<div class="foto-thumb">
+        <img src="${objUrl}">
+        <button class="foto-remove" onclick="yeniFotoSil(${i})">✕</button>
+      </div>`;
+    }).join('') +
+    `<div class="foto-add-btn" onclick="document.getElementById('yeniFotoInput').click()">+</div>`;
+}
+
+function mevcutFotoSil(index) {
+  mevcutFotolar.splice(index, 1);
+  fotoGuncelle();
+}
+
+function yeniFotoSil(index) {
+  yeniFotolar.splice(index, 1);
+  fotoGuncelle();
+}
+
+function yeniFotoEkle(input) {
+  const dosyalar = Array.from(input.files);
+  dosyalar.forEach(f => {
+    if (mevcutFotolar.length + yeniFotolar.length < 10) yeniFotolar.push(f);
+  });
+  input.value = '';
+  fotoGuncelle();
+}
+
+function secTip(el, tip) {
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  seciliTip = tip;
+}
+
+function toggleOneCikan() {
+  oneCikan = !oneCikan;
+  const btn = document.getElementById('oneCikanToggle');
+  btn.classList.toggle('on', oneCikan);
+}
+
+async function kaydet() {
+  const baslik = document.getElementById('baslik').value.trim();
+  const fiyat = document.getElementById('fiyat').value;
+  const konum = document.getElementById('konum').value.trim();
+  const oda = document.getElementById('oda').value.trim();
+  const m2 = document.getElementById('m2').value;
+  const aciklama = document.getElementById('aciklama').value.trim();
+  const errEl = document.getElementById('ilanError');
+
+  if (!baslik || !fiyat || !konum) {
+    errEl.textContent = '⚠️ Başlık, fiyat ve konum zorunludur!';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('kaydetBtn');
+  btn.textContent = '⏳ Kaydediliyor...';
+  btn.disabled = true;
+
+  // Yeni fotoğrafları yükle
+  for (let i = 0; i < yeniFotolar.length; i++) {
+    const file = yeniFotolar[i];
+    const fileName = `${currentUser.id}/${Date.now()}_${i}_${file.name}`;
+    btn.textContent = `⏳ Fotoğraf yükleniyor ${i+1}/${yeniFotolar.length}...`;
+    const { data: uploadData, error: uploadError } = await sb.storage.from('ilan-fotograflar').upload(fileName, file);
+    if (!uploadError && uploadData) {
+      const { data: urlData } = sb.storage.from('ilan-fotograflar').getPublicUrl(fileName);
+      mevcutFotolar.push(urlData.publicUrl);
+    }
+  }
+
+  const foto_url = mevcutFotolar[0] || null;
+  const foto_urls = mevcutFotolar.length > 0 ? mevcutFotolar : null;
+
+  const { error } = await sb.from('ilanlar').update({
+    baslik, fiyat: Number(fiyat), tip: seciliTip,
+    konum, oda_sayisi: oda || null,
+    metrekare: m2 ? Number(m2) : null,
+    aciklama: aciklama || null,
+    foto_url, foto_urls, one_cikan: oneCikan
+  }).eq('id', ilanId).eq('user_id', currentUser.id);
+
+  if (error) {
+    errEl.textContent = 'Hata: ' + error.message;
+    errEl.style.display = 'block';
+    btn.textContent = '✅ Değişiklikleri Kaydet';
+    btn.disabled = false;
+    return;
+  }
+
+  alert('✅ İlan güncellendi!');
+  window.location.href = 'profil.html';
+}
+
+async function ilanSil() {
+  if (!confirm('Bu ilanı kalıcı olarak silmek istediğinizden emin misiniz?')) return;
+  const { error } = await sb.from('ilanlar').delete().eq('id', ilanId).eq('user_id', currentUser.id);
+  if (error) { alert('Hata: ' + error.message); return; }
+  alert('İlan silindi!');
+  window.location.href = 'profil.html';
+}
+</script>
+</body>
+</html>
