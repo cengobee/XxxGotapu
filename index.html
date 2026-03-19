@@ -105,7 +105,10 @@
   </a>
   <div class="nav-actions">
     <a href="ilan-ver.html" class="nav-btn">+ İlan Ver</a>
-    <button class="nav-icon-btn" onclick="toggleBildirim()">🔔</button>
+    <a href="bildirimler.html" class="nav-icon-btn" style="position:relative">
+      🔔
+      <span id="bildirimBadge" style="display:none;position:absolute;top:-2px;right:-2px;background:var(--rust);color:white;font-size:9px;font-weight:800;width:16px;height:16px;border-radius:50%;display:none;align-items:center;justify-content:center"></span>
+    </a>
     <a href="profil.html" class="nav-icon-btn" id="navAvatar">👤</a>
   </div>
 </nav>
@@ -273,14 +276,20 @@ async function mesajSay() {
     const b = document.getElementById('mesajBadge');
     b.textContent = count; b.style.display = 'flex';
   }
+
+  // Bildirim sayısı
+  const { count: bCount } = await sb.from('bildirimler')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id).eq('okundu', false);
+  if (bCount > 0) {
+    const bb = document.getElementById('bildirimBadge');
+    bb.textContent = bCount > 9 ? '9+' : bCount;
+    bb.style.display = 'flex';
+  }
 }
 
 function tumIlanlariGoster() {
   ilanlarYukle(aktifFiltre, '');
-}
-
-function toggleBildirim() {
-  alert('Bildirimler yakında aktif olacak! 🔔');
 }
 </script>
 </body>
