@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Gotapu — Ev Hizmetleri</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   .kategori-grid {
     display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;
@@ -21,53 +22,62 @@
   .kategori-lbl { font-size: 10px; font-weight: 700; color: var(--text2); }
 
   .hizmet-header {
-    background: var(--card); border-radius: var(--radius);
-    padding: 20px; margin-bottom: 20px;
-    border: 1px solid var(--border);
+    background: linear-gradient(135deg, #1a2340, #2a3560);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 20px;
     display: flex; align-items: center; gap: 16px;
   }
   .hizmet-icon { font-size: 52px; }
   .hizmet-title { font-size: 20px; font-weight: 900; }
   .hizmet-desc { font-size: 13px; color: var(--text3); margin-top: 4px; line-height: 1.5; }
 
-  .hizmet-card {
+  .teklif-form {
     background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
+    border-radius: var(--radius); padding: 20px;
   }
-  .hizmet-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-  .hizmet-card-avatar {
-    width: 48px; height: 48px; border-radius: 50%;
-    background: var(--card2); display: flex; align-items: center;
-    justify-content: center; font-size: 24px; flex-shrink: 0;
-  }
-  .hizmet-card-name { font-size: 15px; font-weight: 800; }
-  .hizmet-card-meta { font-size: 12px; color: var(--text3); margin-top: 2px; }
-  .hizmet-card-rating { color: var(--gold); font-size: 13px; font-weight: 700; }
-  .hizmet-card-desc { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 12px; }
-  .hizmet-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 13px; font-weight: 800; color: var(--text2); margin-bottom: 8px; display: block; }
 
-  .teklif-btn {
-    width: 100%; padding: 12px; border-radius: 50px;
-    background: var(--gold); color: var(--bg);
-    border: none; font-family: 'Nunito', sans-serif;
-    font-size: 14px; font-weight: 800; cursor: pointer;
+  .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .radio-btn {
+    padding: 8px 16px; border-radius: 50px;
+    background: var(--card2); border: 1.5px solid var(--border);
+    color: var(--text2); font-family: 'Nunito', sans-serif;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    transition: all .2s;
+  }
+  .radio-btn.selected { background: rgba(245,200,66,0.1); border-color: var(--gold); color: var(--gold); }
+
+  .foto-ekle-btn {
+    width: 100%; height: 90px;
+    background: var(--card2); border: 2px dashed var(--border);
+    border-radius: var(--radius-sm); display: flex;
+    align-items: center; justify-content: center;
+    gap: 10px; cursor: pointer; color: var(--text3);
+    font-weight: 700; font-size: 14px;
+  }
+  .foto-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .foto-thumb { position: relative; width: 72px; height: 72px; }
+  .foto-thumb img { width: 72px; height: 72px; border-radius: 10px; object-fit: cover; }
+  .foto-remove {
+    position: absolute; top: -6px; right: -6px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--rust); color: white; border: none;
+    font-size: 11px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
   }
 
-  /* Teklif Modal */
-  .teklif-modal {
-    position: fixed; inset: 0; z-index: 300;
-    background: rgba(0,0,0,0.7);
-    display: none; align-items: flex-end;
+  .kullanici-bilgi {
+    background: var(--card2); border-radius: var(--radius-sm);
+    padding: 12px 16px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
   }
-  .teklif-modal.open { display: flex; }
-  .teklif-sheet {
-    background: var(--bg2); border-radius: 24px 24px 0 0;
-    padding: 24px 20px 40px; width: 100%;
+
+  .success-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+    display: none; align-items: center; justify-content: center;
+    flex-direction: column; z-index: 999; padding: 24px; text-align: center;
   }
-  .teklif-handle {
-    width: 40px; height: 4px; background: var(--border);
-    border-radius: 2px; margin: 0 auto 20px;
-  }
+  .success-overlay.show { display: flex; }
 </style>
 </head>
 <body>
@@ -79,39 +89,42 @@
   </a>
 </nav>
 
-<!-- Teklif Modal -->
-<div class="teklif-modal" id="teklifModal" onclick="if(event.target===this)teklifKapat()">
-  <div class="teklif-sheet">
-    <div class="teklif-handle"></div>
-    <h3 style="font-size:20px;font-weight:900;margin-bottom:6px">📋 Teklif Al</h3>
-    <p style="font-size:13px;color:var(--text3);margin-bottom:20px" id="teklifFirmasi"></p>
-    <div class="form-group" style="margin-bottom:14px">
-      <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">Adınız Soyadınız</label>
-      <input class="input" type="text" id="teklifAd" placeholder="Ad Soyad">
-    </div>
-    <div class="form-group" style="margin-bottom:14px">
-      <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">Telefon Numaranız</label>
-      <input class="input" type="tel" id="teklifTel" placeholder="05XX XXX XX XX">
-    </div>
-    <div class="form-group" style="margin-bottom:14px">
-      <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">Açıklama</label>
-      <textarea class="input" id="teklifAciklama" rows="3" placeholder="Hizmet detaylarını yazın..." style="resize:none"></textarea>
-    </div>
-    <button class="btn btn-gold btn-lg" onclick="teklifGonder()">📩 Teklif İste</button>
-  </div>
+<input type="file" id="fotoInput" accept="image/*" multiple style="display:none" onchange="fotoSec(this)">
+
+<div class="success-overlay" id="successOverlay">
+  <div style="font-size:80px;margin-bottom:20px">✅</div>
+  <div style="font-size:24px;font-weight:900;margin-bottom:10px">Talebiniz Alındı!</div>
+  <div style="font-size:14px;color:var(--text2);margin-bottom:30px">En kısa sürede sizinle iletişime geçeceğiz.</div>
+  <a href="index.html" class="btn btn-gold btn-lg" style="max-width:260px">Ana Sayfaya Dön</a>
 </div>
 
 <div class="page fade-up">
-
-  <!-- Kategori Seçici -->
   <div class="kategori-grid" id="kategoriGrid"></div>
-
-  <!-- Seçili Kategori Başlık -->
   <div class="hizmet-header" id="hizmetHeader"></div>
-
-  <!-- Hizmet Kartları -->
-  <div id="hizmetListesi"></div>
-
+  <div class="teklif-form">
+    <div style="font-size:16px;font-weight:900;margin-bottom:16px">📋 Teklif Formu</div>
+    <div class="kullanici-bilgi" id="kullaniciBilgi">
+      <span style="font-size:24px">👤</span>
+      <div>
+        <div style="font-size:14px;font-weight:800" id="kullaniciAd">Yükleniyor...</div>
+        <div style="font-size:12px;color:var(--text3)" id="kullaniciTel"></div>
+      </div>
+    </div>
+    <div id="formAlanlari"></div>
+    <div class="form-group">
+      <label class="form-label">📸 Fotoğraf Ekle (isteğe bağlı)</label>
+      <div class="foto-ekle-btn" onclick="document.getElementById('fotoInput').click()">
+        <span style="font-size:28px">📷</span> Fotoğraf Seç
+      </div>
+      <div class="foto-preview" id="fotoPreview"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">📝 Ek Açıklama (isteğe bağlı)</label>
+      <textarea class="input" id="aciklama" rows="3" placeholder="Eklemek istediğiniz detaylar..." style="resize:none"></textarea>
+    </div>
+    <div id="formError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
+    <button class="btn btn-gold btn-lg" onclick="teklifGonder()" id="gonderBtn">📩 Teklif İste</button>
+  </div>
 </div>
 
 <nav class="bottom-nav">
@@ -123,98 +136,127 @@
 </nav>
 
 <script>
+const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const kategoriler = {
   temizlik: {
     em: '🧹', ad: 'Temizlik',
-    desc: 'Ev, ofis ve işyeri temizlik hizmetleri. Profesyonel ekipman ve ürünlerle hijyenik temizlik.',
-    hizmetler: [
-      { ad: 'Parıltı Temizlik', puan: '4.9', yorum: 128, meta: 'İstanbul geneli', desc: 'Ev, ofis ve inşaat sonrası temizlik. Haftalık ve aylık sözleşme seçenekleri mevcuttur.', etiketler: ['Ev Temizliği', 'Ofis', 'İnşaat Sonrası'] },
-      { ad: 'Temiz Yuva', puan: '4.7', yorum: 84, meta: 'Ankara & çevresi', desc: 'Derin temizlik uzmanı. Kanepe yıkama, cam silme ve balkon temizliği dahil paketler.', etiketler: ['Derin Temizlik', 'Kanepe Yıkama'] },
-      { ad: 'Pro Clean', puan: '4.8', yorum: 203, meta: 'Türkiye geneli', desc: 'Endüstriyel temizlik ekipmanlarıyla kurumsal ve bireysel temizlik hizmetleri.', etiketler: ['Kurumsal', 'Bireysel', '7/24'] },
+    desc: 'Ev, ofis ve işyeri temizlik hizmetleri.',
+    alanlar: [
+      { id: 'tip', label: 'Temizlik Tipi', tip: 'radio', secenekler: ['Düzenli Temizlik', 'Tek Seferlik', 'İnşaat Sonrası', 'Derin Temizlik'] },
+      { id: 'oda', label: 'Ev Kaç+Kaç?', tip: 'radio', secenekler: ['1+0', '1+1', '2+1', '3+1', '4+1', '5+1 ve üzeri'] },
+      { id: 'zaman', label: 'Ne Zaman?', tip: 'radio', secenekler: ['Bu hafta', 'Önümüzdeki hafta', 'Bu ay', 'Tarih belirlemedim'] },
     ]
   },
   boya: {
     em: '🖌️', ad: 'Boya & Badana',
-    desc: 'İç ve dış cephe boyama, dekoratif boya uygulamaları ve badana hizmetleri.',
-    hizmetler: [
-      { ad: 'Renkli Dünya', puan: '4.8', yorum: 96, meta: 'İstanbul & Ankara', desc: 'İç ve dış cephe boya uzmanları. Dekoratif boya, sıva ve alçıpan uygulamaları.', etiketler: ['İç Cephe', 'Dış Cephe', 'Dekoratif'] },
-      { ad: 'Usta Boyacı', puan: '4.6', yorum: 57, meta: 'İzmir geneli', desc: 'Uygun fiyatlı badana ve boya hizmetleri. Aynı gün servis imkânı.', etiketler: ['Badana', 'Uygun Fiyat', 'Hızlı Servis'] },
-      { ad: 'Boya Sanatı', puan: '4.9', yorum: 142, meta: 'Türkiye geneli', desc: 'Özel efekt boyalar, tekstür uygulamaları ve marka kurumsal boya işleri.', etiketler: ['Özel Efekt', 'Tekstür', 'Kurumsal'] },
+    desc: 'İç ve dış cephe boyama hizmetleri.',
+    alanlar: [
+      { id: 'durum', label: 'Ev Durumu', tip: 'radio', secenekler: ['Ev Boş', 'Ev Dolu (Eşyalar Var)'] },
+      { id: 'alan', label: 'Boya Alanı', tip: 'radio', secenekler: ['İç Cephe', 'Dış Cephe', 'Her İkisi'] },
+      { id: 'metrekare', label: 'Yaklaşık Metrekare', tip: 'radio', secenekler: ['50m² altı', '50-100m²', '100-150m²', '150m² üzeri'] },
+      { id: 'zaman', label: 'Ne Zaman?', tip: 'radio', secenekler: ['Bu hafta', 'Önümüzdeki hafta', 'Bu ay', 'Tarih belirlemedim'] },
     ]
   },
   nakliye: {
     em: '🚚', ad: 'Nakliye',
-    desc: 'Ev, ofis ve uluslararası taşımacılık hizmetleri. Sigortalı ve güvenli nakliye.',
-    hizmetler: [
-      { ad: 'Hızlı Nakliyat', puan: '4.7', yorum: 312, meta: 'Türkiye geneli', desc: 'Şehir içi ve şehirlerarası ev taşıma. Ambalajlama ve montaj hizmetleri dahil.', etiketler: ['Şehir İçi', 'Şehirlerarası', 'Ambalaj'] },
-      { ad: 'Güven Nakliye', puan: '4.8', yorum: 178, meta: 'Marmara Bölgesi', desc: 'Sigortalı taşımacılık. Antika ve değerli eşyalar için özel paketleme.', etiketler: ['Sigortalı', 'Antika', 'Değerli Eşya'] },
-      { ad: 'Ofis Taşıma Pro', puan: '4.6', yorum: 89, meta: 'İstanbul', desc: 'Kurumsal ofis taşımacılığı uzmanı. Hafta sonu ve gece taşıma seçeneği.', etiketler: ['Kurumsal', 'Hafta Sonu', 'Gece Taşıma'] },
+    desc: 'Ev ve ofis taşımacılık hizmetleri.',
+    alanlar: [
+      { id: 'tip', label: 'Taşıma Tipi', tip: 'radio', secenekler: ['Ev Taşıma', 'Ofis Taşıma', 'Parça Eşya'] },
+      { id: 'oda', label: 'Ev Kaç+Kaç?', tip: 'radio', secenekler: ['1+1', '2+1', '3+1', '4+1', '5+1 ve üzeri'] },
+      { id: 'asansor', label: 'Asansör Durumu', tip: 'radio', secenekler: ['Her iki binada var', 'Sadece birinde var', 'Her ikisinde de yok'] },
+      { id: 'zaman', label: 'Ne Zaman?', tip: 'radio', secenekler: ['Bu hafta', 'Önümüzdeki hafta', 'Bu ay', 'Tarih belirlemedim'] },
     ]
   },
   cilingir: {
     em: '🔑', ad: 'Çilingir',
-    desc: 'Kapı açma, kilit değiştirme, kasa açma ve güvenlik sistemleri hizmetleri.',
-    hizmetler: [
-      { ad: '7/24 Çilingir', puan: '4.9', yorum: 445, meta: 'İstanbul geneli', desc: 'Gece gündüz kapı açma, kilit değiştirme ve çoğaltma hizmetleri. 15 dakika içinde kapınızda.', etiketler: ['7/24', 'Acil', 'Hızlı Servis'] },
-      { ad: 'Güvenli Kilit', puan: '4.7', yorum: 167, meta: 'Ankara & İzmir', desc: 'Akıllı kilit sistemleri kurulumu ve bakımı. Kasa açma ve güvenlik danışmanlığı.', etiketler: ['Akıllı Kilit', 'Kasa', 'Güvenlik'] },
-      { ad: 'Usta Çilingir', puan: '4.8', yorum: 234, meta: 'Türkiye geneli', desc: 'Araç kapı açma, ev ve ofis kilitleri. Sigorta belgeli hizmet.', etiketler: ['Araç', 'Ev', 'Ofis', 'Belgeli'] },
+    desc: 'Kapı açma, kilit değiştirme hizmetleri.',
+    alanlar: [
+      { id: 'tip', label: 'Hizmet Tipi', tip: 'radio', secenekler: ['Kapı Açma (Acil)', 'Kilit Değiştirme', 'Anahtar Kopyalama', 'Kasa Açma'] },
+      { id: 'yer', label: 'Nerede?', tip: 'radio', secenekler: ['Ev Kapısı', 'Araç Kapısı', 'Ofis Kapısı', 'Diğer'] },
+      { id: 'acil', label: 'Aciliyet', tip: 'radio', secenekler: ['Şu An Acil', 'Bugün İçinde', 'Randevu Alayım'] },
     ]
   },
   tadilat: {
     em: '🔧', ad: 'Tadilat & Tamirat',
-    desc: 'Komple tadilat, banyodan mutfağa, elektrik ve tesisattan her türlü tamirat.',
-    hizmetler: [
-      { ad: 'Yapı Ustası', puan: '4.8', yorum: 198, meta: 'İstanbul', desc: 'Komple daire tadilatı, mutfak ve banyo yenileme. Anahtar teslim projeler.', etiketler: ['Komple Tadilat', 'Mutfak', 'Banyo'] },
-      { ad: 'Tamirat Merkezi', puan: '4.6', yorum: 113, meta: 'Ankara & çevresi', desc: 'Elektrik, tesisat, alçıpan ve döşeme işleri. Küçük ve büyük onarımlar.', etiketler: ['Elektrik', 'Tesisat', 'Alçıpan'] },
-      { ad: 'Ev Doktoru', puan: '4.9', yorum: 267, meta: 'Türkiye geneli', desc: 'Hızlı küçük tamiratlar. Su sızıntısı, elektrik arızası, kapı-pencere onarımı.', etiketler: ['Hızlı Tamirat', 'Su Sızıntısı', 'Arıza'] },
+    desc: 'Her türlü tadilat ve tamirat hizmetleri.',
+    alanlar: [
+      { id: 'tip', label: 'Tadilat Tipi', tip: 'radio', secenekler: ['Komple Tadilat', 'Banyo Yenileme', 'Mutfak Yenileme', 'Elektrik', 'Tesisat', 'Zemin/Döşeme'] },
+      { id: 'durum', label: 'Ev Durumu', tip: 'radio', secenekler: ['Ev Boş', 'Ev Dolu (Eşyalar Var)'] },
+      { id: 'metrekare', label: 'Yaklaşık Metrekare', tip: 'radio', secenekler: ['50m² altı', '50-100m²', '100-150m²', '150m² üzeri'] },
+      { id: 'zaman', label: 'Ne Zaman Başlanacak?', tip: 'radio', secenekler: ['Hemen', '1 ay içinde', '3 ay içinde', 'Henüz emin değilim'] },
     ]
   },
   sigorta: {
     em: '🛡️', ad: 'Konut Sigortası',
-    desc: 'Ev, eşya ve deprem sigortası. Hızlı hasar tespiti ve tazminat süreçleri.',
-    hizmetler: [
-      { ad: 'Güvence Sigorta', puan: '4.7', yorum: 89, meta: 'Türkiye geneli', desc: 'Konut, deprem ve eşya sigortası. Online poliçe düzenleme ve anında teklif.', etiketler: ['Konut', 'Deprem', 'Eşya'] },
-      { ad: 'Tam Koruma', puan: '4.8', yorum: 134, meta: 'Tüm iller', desc: 'Kapsamlı ev sigortası paketleri. 7/24 hasar ihbarı ve hızlı ekspertiz.', etiketler: ['Kapsamlı', 'Hasar İhbarı', '7/24'] },
-      { ad: 'Akıllı Sigorta', puan: '4.6', yorum: 67, meta: 'Online hizmet', desc: 'Dijital sigorta platformu. Uygun fiyatlı, şeffaf ve hızlı sigorta çözümleri.', etiketler: ['Dijital', 'Uygun Fiyat', 'Online'] },
+    desc: 'Ev ve eşya sigortası hizmetleri.',
+    alanlar: [
+      { id: 'tip', label: 'Sigorta Tipi', tip: 'radio', secenekler: ['Konut Sigortası', 'Deprem Sigortası (DASK)', 'Eşya Sigortası', 'Hepsi'] },
+      { id: 'konut', label: 'Konut Tipi', tip: 'radio', secenekler: ['Daire', 'Müstakil Ev', 'Villa', 'İşyeri'] },
+      { id: 'metrekare', label: 'Yaklaşık Metrekare', tip: 'radio', secenekler: ['50m² altı', '50-100m²', '100-150m²', '150m² üzeri'] },
     ]
   },
   teknik: {
     em: '📱', ad: 'Teknik Servis',
-    desc: 'Telefon, bilgisayar, beyaz eşya ve elektronik cihaz tamir ve bakım hizmetleri.',
-    hizmetler: [
-      { ad: 'Teknoloji Servis', puan: '4.8', yorum: 321, meta: 'İstanbul & Ankara', desc: 'Telefon ekran değişimi, batarya, anakart tamiri. Apple ve Android uzmanları.', etiketler: ['Telefon', 'Ekran', 'Batarya', 'Apple'] },
-      { ad: 'Bilgisayar Ustası', puan: '4.7', yorum: 156, meta: 'Türkiye geneli', desc: 'Laptop, masaüstü bilgisayar tamiri. Veri kurtarma ve yazılım kurulumu.', etiketler: ['Laptop', 'Masaüstü', 'Veri Kurtarma'] },
-      { ad: 'Ev Elektroniği', puan: '4.6', yorum: 98, meta: 'İzmir & çevresi', desc: 'Beyaz eşya, TV ve klima tamiri. Yerinde servis ve garanti seçenekleri.', etiketler: ['Beyaz Eşya', 'TV', 'Klima', 'Yerinde Servis'] },
+    desc: 'Elektronik cihaz tamir ve bakım hizmetleri.',
+    alanlar: [
+      { id: 'cihaz', label: 'Cihaz Türü', tip: 'radio', secenekler: ['Telefon', 'Laptop/Bilgisayar', 'Tablet', 'TV', 'Beyaz Eşya', 'Diğer'] },
+      { id: 'sorun', label: 'Sorun Tipi', tip: 'radio', secenekler: ['Ekran Kırık', 'Açılmıyor', 'Batarya', 'Yazılım Sorunu', 'Su Hasarı', 'Diğer'] },
+      { id: 'servis', label: 'Servis Şekli', tip: 'radio', secenekler: ['Yerinde Servis', 'Getirip Bırakayım'] },
     ]
   },
   dekorasyon: {
     em: '🛋️', ad: 'Dekorasyon',
-    desc: 'İç mimari danışmanlık, mobilya seçimi, aydınlatma ve dekoratif düzenleme.',
-    hizmetler: [
-      { ad: 'İç Mekân', puan: '4.9', yorum: 74, meta: 'İstanbul', desc: 'Profesyonel iç mimari ve dekorasyon danışmanlığı. 3D tasarım ve uygulama.', etiketler: ['İç Mimari', '3D Tasarım', 'Danışmanlık'] },
-      { ad: 'Dekor Studio', puan: '4.7', yorum: 112, meta: 'Ankara & İstanbul', desc: 'Mobilya seçimi, yerleşim planı ve dekoratif aksesuar danışmanlığı.', etiketler: ['Mobilya', 'Aksesuar', 'Yerleşim'] },
-      { ad: 'Yaşam Tasarım', puan: '4.8', yorum: 88, meta: 'Türkiye geneli', desc: 'Bütçe dostu dekorasyon çözümleri. Aydınlatma tasarımı ve perde-halı seçimi.', etiketler: ['Uygun Bütçe', 'Aydınlatma', 'Perde'] },
+    desc: 'İç mimari ve dekorasyon hizmetleri.',
+    alanlar: [
+      { id: 'tip', label: 'Hizmet Tipi', tip: 'radio', secenekler: ['Komple Dekorasyon', 'Sadece Danışmanlık', 'Mobilya Seçimi', 'Aydınlatma Tasarımı'] },
+      { id: 'oda', label: 'Kaç Oda?', tip: 'radio', secenekler: ['1+1', '2+1', '3+1', '4+1 ve üzeri'] },
+      { id: 'metrekare', label: 'Yaklaşık Metrekare', tip: 'radio', secenekler: ['50m² altı', '50-100m²', '100-150m²', '150m² üzeri'] },
+      { id: 'butce', label: 'Bütçe Aralığı', tip: 'radio', secenekler: ['10.000₺ altı', '10-25K₺', '25-50K₺', '50K₺ üzeri'] },
     ]
   }
 };
 
 const params = new URLSearchParams(window.location.search);
 let aktifKategori = params.get('kategori') || 'temizlik';
+let currentUser = null;
+let currentProfil = null;
+let fotoFiles = [];
+let secimler = {};
+
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) { window.location.href = 'auth.html'; return; }
+  currentUser = data.session.user;
+  profilYukle();
+});
+
+async function profilYukle() {
+  const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  currentProfil = data;
+  document.getElementById('kullaniciAd').textContent = data?.full_name || currentUser.email;
+  document.getElementById('kullaniciTel').textContent = data?.phone ? '📞 ' + data.phone : 'Telefon bilgisi yok';
+  sayfaOlustur();
+}
 
 function sayfaOlustur() {
-  // Kategori grid
   const grid = document.getElementById('kategoriGrid');
   grid.innerHTML = Object.entries(kategoriler).map(([key, val]) => `
     <div class="kategori-item ${key === aktifKategori ? 'active' : ''}" onclick="kategoriSec('${key}')">
       <span class="kategori-em">${val.em}</span>
       <div class="kategori-lbl">${val.ad}</div>
     </div>`).join('');
-
   kategoriGoster();
 }
 
 function kategoriSec(key) {
   aktifKategori = key;
+  secimler = {};
+  fotoFiles = [];
+  document.getElementById('fotoPreview').innerHTML = '';
+  document.getElementById('aciklama').value = '';
   document.querySelectorAll('.kategori-item').forEach((el, i) => {
     el.classList.toggle('active', Object.keys(kategoriler)[i] === key);
   });
@@ -223,7 +265,6 @@ function kategoriSec(key) {
 
 function kategoriGoster() {
   const kat = kategoriler[aktifKategori];
-
   document.getElementById('hizmetHeader').innerHTML = `
     <div class="hizmet-icon">${kat.em}</div>
     <div>
@@ -231,43 +272,96 @@ function kategoriGoster() {
       <div class="hizmet-desc">${kat.desc}</div>
     </div>`;
 
-  document.getElementById('hizmetListesi').innerHTML = kat.hizmetler.map((h, i) => `
-    <div class="hizmet-card">
-      <div class="hizmet-card-top">
-        <div class="hizmet-card-avatar">${kat.em}</div>
-        <div style="flex:1">
-          <div class="hizmet-card-name">${h.ad}</div>
-          <div class="hizmet-card-meta">📍 ${h.meta}</div>
-          <div class="hizmet-card-rating">⭐ ${h.puan} <span style="color:var(--text3);font-weight:400">(${h.yorum} yorum)</span></div>
-        </div>
+  document.getElementById('formAlanlari').innerHTML = kat.alanlar.map(alan => `
+    <div class="form-group">
+      <label class="form-label">${alan.label}</label>
+      <div class="radio-group">
+        ${alan.secenekler.map(s => `
+          <button class="radio-btn" onclick="secimYap('${alan.id}', '${s}', this)">${s}</button>
+        `).join('')}
       </div>
-      <div class="hizmet-card-desc">${h.desc}</div>
-      <div class="hizmet-card-tags">
-        ${h.etiketler.map(e => `<span class="tag tag-gold">${e}</span>`).join('')}
-      </div>
-      <button class="teklif-btn" onclick="teklifAc('${h.ad}')">📋 Teklif Al</button>
     </div>`).join('');
 }
 
-function teklifAc(firma) {
-  document.getElementById('teklifFirmasi').textContent = firma + ' - ' + kategoriler[aktifKategori].ad;
-  document.getElementById('teklifModal').classList.add('open');
+function secimYap(alanId, deger, el) {
+  secimler[alanId] = deger;
+  const grup = el.closest('.radio-group');
+  grup.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
 }
 
-function teklifKapat() {
-  document.getElementById('teklifModal').classList.remove('open');
+function fotoSec(input) {
+  Array.from(input.files).forEach(f => {
+    if (fotoFiles.length < 5) fotoFiles.push(f);
+  });
+  input.value = '';
+  fotoPreviewGuncelle();
 }
 
-function teklifGonder() {
-  const ad = document.getElementById('teklifAd').value.trim();
-  const tel = document.getElementById('teklifTel').value.trim();
-  const aciklama = document.getElementById('teklifAciklama').value.trim();
-  if (!ad || !tel) { alert('Lütfen adınızı ve telefonunuzu girin!'); return; }
-  teklifKapat();
-  setTimeout(() => alert('✅ Teklif talebiniz alındı! Firma en kısa sürede sizi arayacak.'), 200);
+function fotoPreviewGuncelle() {
+  const preview = document.getElementById('fotoPreview');
+  preview.innerHTML = fotoFiles.map((f, i) => {
+    const url = URL.createObjectURL(f);
+    return `<div class="foto-thumb"><img src="${url}"><button class="foto-remove" onclick="fotoSil(${i})">✕</button></div>`;
+  }).join('');
 }
 
-sayfaOlustur();
+function fotoSil(i) {
+  fotoFiles.splice(i, 1);
+  fotoPreviewGuncelle();
+}
+
+async function teklifGonder() {
+  const kat = kategoriler[aktifKategori];
+  const eksikAlanlar = kat.alanlar.filter(a => !secimler[a.id]);
+  if (eksikAlanlar.length > 0) {
+    const errEl = document.getElementById('formError');
+    errEl.textContent = `⚠️ Lütfen "${eksikAlanlar[0].label}" alanını seçin!`;
+    errEl.style.display = 'block';
+    return;
+  }
+  document.getElementById('formError').style.display = 'none';
+
+  const btn = document.getElementById('gonderBtn');
+  btn.textContent = '⏳ Gönderiliyor...';
+  btn.disabled = true;
+
+  // Fotoğrafları yükle
+  let foto_urls = [];
+  for (let i = 0; i < fotoFiles.length; i++) {
+    const file = fotoFiles[i];
+    const fileName = `teklifler/${currentUser.id}/${Date.now()}_${i}_${file.name}`;
+    btn.textContent = `⏳ Fotoğraf yükleniyor ${i+1}/${fotoFiles.length}...`;
+    const { data: uploadData } = await sb.storage.from('ilan-fotograflar').upload(fileName, file);
+    if (uploadData) {
+      const { data: urlData } = sb.storage.from('ilan-fotograflar').getPublicUrl(fileName);
+      foto_urls.push(urlData.publicUrl);
+    }
+  }
+
+  const { error } = await sb.from('teklifler').insert({
+    user_id: currentUser.id,
+    ad_soyad: currentProfil?.full_name || '',
+    telefon: currentProfil?.phone || '',
+    kategori: aktifKategori,
+    detaylar: {
+      ...secimler,
+      aciklama: document.getElementById('aciklama').value.trim(),
+      foto_urls
+    },
+    durum: 'bekliyor'
+  });
+
+  if (error) {
+    document.getElementById('formError').textContent = 'Hata: ' + error.message;
+    document.getElementById('formError').style.display = 'block';
+    btn.textContent = '📩 Teklif İste';
+    btn.disabled = false;
+    return;
+  }
+
+  document.getElementById('successOverlay').classList.add('show');
+}
 </script>
 </body>
 </html>
