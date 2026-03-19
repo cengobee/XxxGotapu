@@ -40,7 +40,6 @@
     border-radius: 50px; margin-bottom: 6px; display: inline-block;
   }
   .featured-tag.premium { background: var(--gold); color: var(--bg); }
-  .featured-tag.normal { background: rgba(255,255,255,0.2); color: white; }
   .featured-price { font-size: 24px; font-weight: 900; color: var(--gold); }
   .featured-title { font-size: 14px; font-weight: 700; color: white; }
   .featured-loc { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 3px; }
@@ -86,6 +85,16 @@
   }
   .promo h3 { font-size: 15px; font-weight: 900; }
   .promo p { font-size: 12px; color: var(--text2); margin-top: 3px; }
+
+  .premium-banner {
+    background: linear-gradient(135deg, rgba(245,200,66,0.1), rgba(245,200,66,0.05));
+    border: 1px solid rgba(245,200,66,0.2);
+    border-radius: var(--radius); padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .premium-banner span { font-size: 13px; color: var(--gold); font-weight: 700; }
+  .premium-banner p { font-size: 11px; color: var(--text3); margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -103,27 +112,30 @@
 
 <div class="page fade-up">
 
+  <!-- ARAMA -->
   <div class="search-bar">
     <span>🔍</span>
     <input type="text" id="searchInput" placeholder="Şehir, ilçe veya mahalle..." oninput="aramaYap()">
-    <span style="font-size:20px;cursor:pointer" onclick="filtreAc()">⚙️</span>
   </div>
 
+  <!-- FİLTRE — Devren kaldırıldı -->
   <div class="chips" style="margin-bottom:20px" id="filterChips">
     <div class="chip active" onclick="filtrele('tumu', this)">🏠 Tümü</div>
     <div class="chip" onclick="filtrele('satilik', this)">💰 Satılık</div>
     <div class="chip" onclick="filtrele('kiralik', this)">🔑 Kiralık</div>
-    <div class="chip" onclick="filtrele('devren', this)">🔄 Devren</div>
   </div>
 
+  <!-- ÖNCEKI İLAN (premium) -->
   <div id="featuredSection"></div>
 
+  <!-- SON İLANLAR -->
   <div class="section-head">
-    <div class="section-title">Son İlanlar</div>
+    <div class="section-title">Öne Çıkan İlanlar</div>
     <a href="#" class="section-link" onclick="tumIlanlariGoster()">Tümünü gör →</a>
   </div>
   <div id="ilanlarList"><div class="spinner"></div></div>
 
+  <!-- EV HİZMETLERİ -->
   <div class="section-head" style="margin-top:8px">
     <div class="section-title">Ev Hizmetleri</div>
   </div>
@@ -138,6 +150,7 @@
     <div class="service-item" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><span class="service-em">🛋️</span><div class="service-lbl">Dekorasyon</div></div>
   </div>
 
+  <!-- SİTE YÖNETİMİ PROMO -->
   <div class="promo">
     <div>
       <h3>🏢 Site Yönetimi</h3>
@@ -163,7 +176,6 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let aktifFiltre = 'tumu';
-let tumIlanlar = [];
 
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) { window.location.href = 'auth.html'; return; }
@@ -177,44 +189,53 @@ async function ilanlarYukle(filtre = 'tumu', arama = '') {
   const listEl = document.getElementById('ilanlarList');
   listEl.innerHTML = '<div class="spinner"></div>';
 
-  let query = sb.from('ilanlar').select('*').order('one_cikan', { ascending: false }).order('created_at', { ascending: false });
-  if (filtre !== 'tumu') query = query.eq('tip', filtre);
+  // Sadece satılık ve kiralık — devren ve alıcı/kiracı ilanları hariç
+  // one_cikan = true olan ilanlar gösterilecek
+  let query = sb.from('ilanlar')
+    .select('*')
+    .eq('one_cikan', true)          // Sadece premium ilanlar
+    .in('tip', ['satilik', 'kiralik']) // Devren yok
+    .order('created_at', { ascending: false });
+
+  if (filtre === 'satilik') query = query.eq('tip', 'satilik');
+  if (filtre === 'kiralik') query = query.eq('tip', 'kiralik');
   if (arama) query = query.ilike('baslik', `%${arama}%`);
 
   const { data, error } = await query.limit(20);
 
   if (error || !data || data.length === 0) {
-    listEl.innerHTML = `<div class="empty"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div><div class="empty-desc">İlk ilanı sen ver!</div></div>`;
+    listEl.innerHTML = `<div class="empty"><div class="empty-icon">🏠</div><div class="empty-title">Öne çıkan ilan yok</div><div class="empty-desc">Henüz premium ilan bulunmuyor</div></div>`;
     document.getElementById('featuredSection').innerHTML = '';
     return;
   }
 
-  tumIlanlar = data;
-
-  // Öne çıkan — one_cikan=true olan varsa onu göster, yoksa ilk ilanı
-  const oneCikan = data.find(i => i.one_cikan) || data[0];
-  const isPremium = oneCikan.one_cikan;
-
+  // Öne çıkan büyük kart
+  const oneCikan = data[0];
   document.getElementById('featuredSection').innerHTML = `
     <div class="featured-card" onclick="location.href='ilan-detay.html?id=${oneCikan.id}'">
-      ${(oneCikan.foto_url || (oneCikan.foto_urls && oneCikan.foto_urls[0])) ? `<img src="${oneCikan.foto_url || oneCikan.foto_urls[0]}">` : `<div class="featured-emoji">${emojiler[oneCikan.tip] || '🏠'}</div>`}
+      ${(oneCikan.foto_url || (oneCikan.foto_urls && oneCikan.foto_urls[0]))
+        ? `<img src="${oneCikan.foto_url || oneCikan.foto_urls[0]}">`
+        : `<div class="featured-emoji">${emojiler[oneCikan.tip] || '🏠'}</div>`}
       <div class="featured-overlay">
-        <div class="featured-tag ${isPremium ? 'premium' : 'normal'}">${isPremium ? '⭐ ÖNE ÇIKAN' : '🏠 SON İLAN'}</div>
+        <div class="featured-tag premium">⭐ ÖNE ÇIKAN</div>
         <div class="featured-price">${formatFiyat(oneCikan.fiyat, oneCikan.tip)}</div>
         <div class="featured-title">${oneCikan.baslik}</div>
         <div class="featured-loc">📍 ${oneCikan.konum || ''}</div>
       </div>
     </div>`;
 
-  listEl.innerHTML = data.slice(0, 10).map(ilan => `
-    <a class="ilan-item ${ilan.one_cikan ? 'one-cikan-ilan' : ''}" href="ilan-detay.html?id=${ilan.id}">
-      <div class="ilan-thumb">${ilan.foto_url ? `<img src="${ilan.foto_url}">` : (emojiler[ilan.tip] || '🏠')}</div>
+  // Liste
+  listEl.innerHTML = data.map(ilan => `
+    <a class="ilan-item one-cikan-ilan" href="ilan-detay.html?id=${ilan.id}">
+      <div class="ilan-thumb">
+        ${ilan.foto_url ? `<img src="${ilan.foto_url}">` : (emojiler[ilan.tip] || '🏠')}
+      </div>
       <div class="ilan-info">
-        <div class="ilan-price">${formatFiyat(ilan.fiyat, ilan.tip)} ${ilan.one_cikan ? '<span style="font-size:11px;color:var(--gold)">⭐</span>' : ''}</div>
+        <div class="ilan-price">${formatFiyat(ilan.fiyat, ilan.tip)} <span style="font-size:11px;color:var(--gold)">⭐</span></div>
         <div class="ilan-title">${ilan.baslik}</div>
         <div class="ilan-loc">📍 ${ilan.konum || ''}</div>
         <div class="ilan-tags">
-          <span class="tag ${ilan.tip === 'kiralik' ? 'tag-green' : ilan.tip === 'satilik' ? 'tag-rust' : 'tag-blue'}">${ilan.tip.toUpperCase()}</span>
+          <span class="tag ${ilan.tip === 'kiralik' ? 'tag-green' : 'tag-rust'}">${ilan.tip.toUpperCase()}</span>
           ${ilan.oda_sayisi ? `<span class="tag tag-gold">🛏 ${ilan.oda_sayisi}</span>` : ''}
           ${ilan.metrekare ? `<span class="tag tag-gold">📐 ${ilan.metrekare}m²</span>` : ''}
         </div>
@@ -245,7 +266,8 @@ function aramaYap() {
 async function mesajSay() {
   const { data: { user } } = await sb.auth.getUser();
   if (!user) return;
-  const { count } = await sb.from('mesajlar').select('*', { count: 'exact', head: true })
+  const { count } = await sb.from('mesajlar')
+    .select('*', { count: 'exact', head: true })
     .eq('alici_id', user.id).eq('okundu', false);
   if (count > 0) {
     const b = document.getElementById('mesajBadge');
@@ -253,9 +275,13 @@ async function mesajSay() {
   }
 }
 
-function tumIlanlariGoster() { ilanlarYukle(aktifFiltre, ''); }
-function toggleBildirim() { alert('Bildirimler yakında aktif olacak! 🔔'); }
-function filtreAc() { alert('Gelişmiş filtre yakında! ⚙️'); }
+function tumIlanlariGoster() {
+  ilanlarYukle(aktifFiltre, '');
+}
+
+function toggleBildirim() {
+  alert('Bildirimler yakında aktif olacak! 🔔');
+}
 </script>
 </body>
 </html>
