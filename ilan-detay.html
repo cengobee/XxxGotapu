@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -198,6 +199,17 @@ async function favoriKontrol() {
   favori = !!data;
   const btn = document.getElementById('favBtn');
   if (btn) btn.textContent = favori ? '❤️' : '🤍';
+}
+
+function fotoGaleriHTML(ilan) {
+  const urls = ilan.foto_urls && ilan.foto_urls.length > 0 ? ilan.foto_urls : (ilan.foto_url ? [ilan.foto_url] : []);
+  if (urls.length === 0) return `<span>${emojiler[ilan.tip] || '🏠'}</span>`;
+  if (urls.length === 1) return `<img src="${urls[0]}">`;
+  return `</div><div class="foto-galeri">${urls.map((url, i) => `
+    <div class="foto-galeri-item">
+      <img src="${url}">
+      ${i === 0 ? `<div class="foto-sayac-badge">1/${urls.length} 📷</div>` : ''}
+    </div>`).join('')}</div><div style="display:none">`;
 }
 
 function sayfayiOlustur() {
