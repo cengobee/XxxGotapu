@@ -166,15 +166,18 @@ async function profilYukle() {
     kart.innerHTML = `<div class="empty" style="padding:30px"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div></div>`;
   } else {
     kart.innerHTML = ilanlar.map(i => `
-      <a class="ilanim-item" href="ilan-detay.html?id=${i.id}">
+      <div class="ilanim-item">
         <div class="ilanim-thumb">${i.foto_url ? `<img src="${i.foto_url}">` : (i.tip === 'kiralik' ? '🏘️' : i.tip === 'devren' ? '🏪' : '🏙️')}</div>
         <div style="flex:1;min-width:0">
           <div class="ilanim-price">${Number(i.fiyat).toLocaleString('tr-TR')} ₺${i.tip==='kiralik'?'/ay':''}</div>
           <div class="ilanim-title">${i.baslik}</div>
           <div class="ilanim-loc">📍 ${i.konum || ''}</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <a href="ilan-duzenle.html?id=${i.id}" style="flex:1;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:6px;font-size:12px;font-weight:800;color:var(--text);text-align:center;text-decoration:none">✏️ Düzenle</a>
+            <button onclick="ilanSil('${i.id}')" style="flex:1;background:rgba(232,96,58,0.1);border:1px solid rgba(232,96,58,0.3);border-radius:8px;padding:6px;font-size:12px;font-weight:800;color:var(--rust);cursor:pointer;font-family:Nunito,sans-serif">🗑️ Sil</button>
+          </div>
         </div>
-        <span class="tag ${i.tip==='kiralik'?'tag-green':i.tip==='satilik'?'tag-rust':'tag-blue'}">${i.tip.toUpperCase()}</span>
-      </a>`).join('');
+      </div>`).join('');
   }
 
   const { count } = await sb.from('mesajlar').select('*', { count: 'exact', head: true }).or(`gonderen_id.eq.${currentUser.id},alici_id.eq.${currentUser.id}`);
@@ -207,6 +210,13 @@ async function profilDuzenle() {
     if (error) { alert('Hata: ' + error.message); return; }
     document.getElementById('profilAd').textContent = yeniAd;
   }
+}
+
+async function ilanSil(ilanId) {
+  if (!confirm('Bu ilanı silmek istediğinizden emin misiniz?')) return;
+  const { error } = await sb.from('ilanlar').delete().eq('id', ilanId).eq('user_id', currentUser.id);
+  if (error) { alert('Hata: ' + error.message); return; }
+  profilYukle();
 }
 
 async function cikisYap() {
