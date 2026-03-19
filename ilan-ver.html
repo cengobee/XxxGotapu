@@ -38,15 +38,25 @@
     cursor: pointer; color: var(--text3); font-weight: 700; font-size: 14px;
   }
   .photo-add span { font-size: 32px; }
-  .photo-add input { display: none; }
 
   .photo-preview {
     display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
   }
-  .photo-preview img {
+  .photo-thumb {
+    position: relative; width: 80px; height: 80px;
+  }
+  .photo-thumb img {
     width: 80px; height: 80px; border-radius: 10px;
     object-fit: cover; border: 1px solid var(--border);
   }
+  .photo-remove {
+    position: absolute; top: -6px; right: -6px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--rust); color: white; border: none;
+    font-size: 12px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; font-weight: 900;
+  }
+  .foto-sayac { font-size: 12px; color: var(--text3); margin-top: 6px; }
 
   .success-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.85);
@@ -68,6 +78,8 @@
   </div>
 </nav>
 
+<input type="file" id="fotoInput" accept="image/*" multiple style="display:none" onchange="fotosecildi(this)">
+
 <div class="page fade-up">
   <div class="back-header">
     <a href="index.html" class="back-btn">←</a>
@@ -75,7 +87,6 @@
   </div>
   <p style="font-size:13px;color:var(--text3);margin-bottom:20px">Ücretsiz yayınla, komisyon ödemeden</p>
 
-  <!-- Kullanıcı Tipi -->
   <div style="font-size:12px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">BEN BİR...</div>
   <div class="role-grid">
     <div class="role-card selected" onclick="secRole(this)">
@@ -100,7 +111,6 @@
     </div>
   </div>
 
-  <!-- Form -->
   <div id="ilanForm">
     <div class="form-group">
       <label class="form-label">İlan Tipi</label>
@@ -138,12 +148,12 @@
     </div>
 
     <div class="form-group">
-      <label class="form-label">Fotoğraf Ekle</label>
+      <label class="form-label">Fotoğraf Ekle (max 10)</label>
       <div class="photo-add" onclick="document.getElementById('fotoInput').click()">
         <span>📷</span>
         Fotoğraf Seç
-        <input type="file" id="fotoInput" accept="image/*" multiple onchange="fotoPonizle(this)">
       </div>
+      <div class="foto-sayac" id="fotoSayac"></div>
       <div class="photo-preview" id="fotoPreview"></div>
     </div>
 
@@ -160,7 +170,6 @@
   </div>
 </div>
 
-<!-- Başarı Overlay -->
 <div class="success-overlay" id="successOverlay">
   <div class="success-icon">🎉</div>
   <div class="success-title">İlan Yayınlandı!</div>
@@ -202,19 +211,39 @@ function secTip(el, tip) {
   seciliTip = tip;
 }
 
-function fotoPonizle(input) {
-  fotoFiles = Array.from(input.files);
+function fotosecildi(input) {
+  const yeniler = Array.from(input.files);
+  yeniler.forEach(file => {
+    if (fotoFiles.length >= 10) return;
+    fotoFiles.push(file);
+  });
+  input.value = '';
+  previewGuncelle();
+}
+
+function previewGuncelle() {
   const preview = document.getElementById('fotoPreview');
+  const sayac = document.getElementById('fotoSayac');
   preview.innerHTML = '';
-  fotoFiles.forEach(file => {
+  sayac.textContent = fotoFiles.length > 0 ? `${fotoFiles.length} fotoğraf seçildi` : '';
+
+  fotoFiles.forEach((file, index) => {
     const reader = new FileReader();
     reader.onload = e => {
-      const img = document.createElement('img');
-      img.src = e.target.result;
-      preview.appendChild(img);
+      const thumb = document.createElement('div');
+      thumb.className = 'photo-thumb';
+      thumb.innerHTML = `
+        <img src="${e.target.result}">
+        <button class="photo-remove" onclick="fotosil(${index})">✕</button>`;
+      preview.appendChild(thumb);
     };
     reader.readAsDataURL(file);
   });
+}
+
+function fotosil(index) {
+  fotoFiles.splice(index, 1);
+  previewGuncelle();
 }
 
 async function ilanYayinla() {
@@ -238,17 +267,20 @@ async function ilanYayinla() {
   errEl.style.display = 'none';
 
   let foto_url = null;
+  let foto_urls = [];
 
-  // Fotoğraf yükleme
-  if (fotoFiles.length > 0) {
-    const file = fotoFiles[0];
-    const fileName = `${currentUser.id}/${Date.now()}_${file.name}`;
+  // Tüm fotoğrafları yükle
+  for (let i = 0; i < fotoFiles.length; i++) {
+    const file = fotoFiles[i];
+    const fileName = `${currentUser.id}/${Date.now()}_${i}_${file.name}`;
+    btn.textContent = `⏳ Fotoğraf yükleniyor ${i+1}/${fotoFiles.length}...`;
     const { data: uploadData, error: uploadError } = await sb.storage
       .from('ilan-fotograflar')
       .upload(fileName, file);
     if (!uploadError && uploadData) {
       const { data: urlData } = sb.storage.from('ilan-fotograflar').getPublicUrl(fileName);
-      foto_url = urlData.publicUrl;
+      foto_urls.push(urlData.publicUrl);
+      if (i === 0) foto_url = urlData.publicUrl;
     }
   }
 
@@ -261,7 +293,8 @@ async function ilanYayinla() {
     oda_sayisi: oda || null,
     metrekare: m2 ? Number(m2) : null,
     aciklama: aciklama || null,
-    foto_url
+    foto_url,
+    foto_urls: foto_urls.length > 0 ? foto_urls : null
   });
 
   if (error) {
