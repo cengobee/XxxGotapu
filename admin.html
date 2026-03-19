@@ -266,9 +266,14 @@ function teklifKartHTML(t) {
     <div class="admin-card-actions">
       <button class="act-btn act-blue" onclick="teklifDetay('${t.id}')">👁️ Detay</button>
       ${t.telefon ? `<a href="tel:${t.telefon}" class="act-btn act-green">📞 Ara</a>` : ''}
+      <button class="act-btn act-blue" onclick="adminMesajKutusuGoster('${t.user_id}','mesaj_kutu_${t.id}')">💬 Mesaj</button>
       <button class="act-btn act-green" onclick="durumGuncelle('${t.id}','isleniyor')">🔄 İşleme Al</button>
       <button class="act-btn act-gold" onclick="durumGuncelle('${t.id}','tamamlandi')">✅ Tamamla</button>
       <button class="act-btn act-rust" onclick="teklifSil('${t.id}')">🗑️ Sil</button>
+    </div>
+    <div id="mesaj_kutu_${t.id}" style="display:none;margin-top:10px">
+      <textarea class="input" id="metin_${t.id}" rows="2" placeholder="Mesajınızı yazın..." style="resize:none;margin-bottom:8px;font-size:13px"></textarea>
+      <button class="act-btn act-gold" style="width:100%;padding:10px" onclick="adminMesajGonderKart('${t.user_id}','${t.id}')">📩 Gönder</button>
     </div>
   </div>`;
 }
@@ -464,6 +469,29 @@ async function kullaniciDetay(id) {
     <button class="btn btn-outline btn-md" style="width:100%;margin-top:8px" onclick="detayKapat()">Kapat</button>`;
 
   document.getElementById('detayModal').classList.add('open');
+}
+
+function adminMesajKutusuGoster(userId, kutuId) {
+  const div = document.getElementById(kutuId);
+  if (div) div.style.display = div.style.display === 'none' ? 'block' : 'none';
+}
+
+async function adminMesajGonderKart(aliciId, teklifId) {
+  const metin = document.getElementById('metin_' + teklifId).value.trim();
+  if (!metin) { alert('Mesaj boş olamaz!'); return; }
+  const { data: { user } } = await sb.auth.getUser();
+  const { error } = await sb.from('mesajlar').insert({
+    gonderen_id: user.id,
+    alici_id: aliciId,
+    ilan_id: null,
+    icerik: '📢 GoTapu: ' + metin,
+    okundu: false,
+    created_at: new Date().toISOString()
+  });
+  if (error) { alert('Hata: ' + error.message); return; }
+  document.getElementById('metin_' + teklifId).value = '';
+  document.getElementById('mesaj_kutu_' + teklifId).style.display = 'none';
+  alert('✅ Mesaj gönderildi!');
 }
 
 function adminMesajKutusu(userId, isim) {
