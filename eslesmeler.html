@@ -15,13 +15,11 @@
   .swipe-card {
     position: absolute; width: 100%;
     border-radius: 24px; overflow: hidden;
-    cursor: grab; user-select: none; touch-action: none;
+    cursor: grab; user-select: none; touch-action: pan-y;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     background: var(--card);
+    transition: transform .3s;
   }
-  .swipe-card:nth-child(2) { transform: scale(0.95) translateY(14px); z-index: 1; }
-  .swipe-card:nth-child(3) { transform: scale(0.90) translateY(28px); z-index: 0; }
-  .swipe-card:nth-child(1) { z-index: 2; }
 
   .card-img {
     height: 260px; display: flex; align-items: center;
@@ -105,7 +103,6 @@
     <span style="font-size:13px;color:var(--text3)">Kaydır ←→</span>
   </div>
 
-  <!-- Swipe -->
   <div class="swipe-area" id="swipeArea">
     <div class="empty" id="bosEkran" style="display:none">
       <div class="empty-icon">🏠</div>
@@ -114,7 +111,6 @@
     </div>
   </div>
 
-  <!-- Butonlar -->
   <div class="action-btns" id="actionBtns">
     <button class="action-btn btn-rewind" onclick="geriAl()">↩️</button>
     <button class="action-btn btn-nope" onclick="swipe('left')">❌</button>
@@ -122,7 +118,6 @@
     <button class="action-btn btn-super" onclick="swipe('up')">⭐</button>
   </div>
 
-  <!-- Eşleşmeler -->
   <div class="section-head">
     <div class="section-title">Eşleşmelerim</div>
     <span class="tag tag-green" id="yeniSay"></span>
@@ -130,7 +125,6 @@
   <div id="eslesenList"><div class="spinner"></div></div>
 </div>
 
-<!-- Match Popup -->
 <div class="match-popup" id="matchPopup">
   <div style="font-size:80px;margin-bottom:16px">🏠❤️</div>
   <div style="font-size:32px;font-weight:900;color:var(--gold);text-align:center;margin-bottom:8px">Eşleşme!</div>
@@ -163,7 +157,7 @@ sb.auth.getSession().then(({ data }) => {
 });
 
 async function ilanlarYukle() {
-  const { data } = await sb.from('ilanlar').select('*').order('created_at', { ascending: false }).limit(10);
+  const { data } = await sb.from('ilanlar').select('*').order('created_at', { ascending: false }).limit(20);
   ilanlar = data || [];
   if (ilanlar.length === 0) {
     document.getElementById('bosEkran').style.display = 'block';
@@ -184,10 +178,25 @@ function kartlariOlustur() {
     return;
   }
 
-  gorunecekler.reverse().forEach((ilan, i) => {
+  // Arka kartları önce ekle (z-index ile üste çıkacak olan en son eklenir)
+  gorunecekler.forEach((ilan, i) => {
     const div = document.createElement('div');
     div.className = 'swipe-card';
     div.dataset.id = ilan.id;
+    div.dataset.index = i;
+
+    // z-index ve scale: i=0 en üstte, i=1 ortada, i=2 en altta
+    if (i === 0) {
+      div.style.zIndex = '10';
+      div.style.transform = 'scale(1) translateY(0)';
+    } else if (i === 1) {
+      div.style.zIndex = '9';
+      div.style.transform = 'scale(0.95) translateY(14px)';
+    } else {
+      div.style.zIndex = '8';
+      div.style.transform = 'scale(0.90) translateY(28px)';
+    }
+
     div.innerHTML = `
       <div class="card-img" style="background:linear-gradient(135deg,#1a2340,#2a3560)">
         ${ilan.foto_url ? `<img src="${ilan.foto_url}">` : `<span>${emojiler[ilan.tip]||'🏠'}</span>`}
@@ -211,23 +220,36 @@ function kartlariOlustur() {
 }
 
 function getTopCard() {
-  return document.querySelector('.swipe-card:last-child');
+  // z-index 10 olan kart en üstte
+  const cards = document.querySelectorAll('.swipe-card');
+  let topCard = null;
+  let maxZ = -1;
+  cards.forEach(c => {
+    const z = parseInt(c.style.zIndex || 0);
+    if (z > maxZ) { maxZ = z; topCard = c; }
+  });
+  return topCard;
 }
 
 function swipe(dir) {
   const card = getTopCard();
   if (!card) return;
   const id = card.dataset.id;
-  geriStack.push({ card: card.cloneNode(true), index: kartIndex });
+  geriStack.push(kartIndex);
   card.style.transition = 'transform .5s ease, opacity .4s';
 
   if (dir === 'right') {
     card.style.transform = 'translateX(150%) rotate(20deg)';
-    document.getElementById('like_'+id).style.opacity = '1';
-    setTimeout(() => { card.remove(); kartIndex++; kartlariOlustur(); document.getElementById('matchPopup').classList.add('show'); }, 420);
+    const likeEl = document.getElementById('like_'+id);
+    if (likeEl) likeEl.style.opacity = '1';
+    setTimeout(() => {
+      card.remove(); kartIndex++; kartlariOlustur();
+      document.getElementById('matchPopup').classList.add('show');
+    }, 420);
   } else if (dir === 'left') {
     card.style.transform = 'translateX(-150%) rotate(-20deg)';
-    document.getElementById('nope_'+id).style.opacity = '1';
+    const nopeEl = document.getElementById('nope_'+id);
+    if (nopeEl) nopeEl.style.opacity = '1';
     setTimeout(() => { card.remove(); kartIndex++; kartlariOlustur(); }, 420);
   } else {
     card.style.transform = 'translateY(-150%)';
@@ -237,29 +259,34 @@ function swipe(dir) {
 
 function geriAl() {
   if (!geriStack.length) return;
-  const son = geriStack.pop();
-  if (kartIndex > 0) kartIndex--;
+  kartIndex = geriStack.pop();
   kartlariOlustur();
 }
 
 function dinleyiciEkle() {
   const card = getTopCard();
   if (!card) return;
-  let startX, isDragging = false;
+  let startX, startY, isDragging = false;
 
   card.addEventListener('pointerdown', e => {
-    isDragging = true; startX = e.clientX;
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
     card.setPointerCapture(e.pointerId);
     card.style.transition = 'none';
   });
+
   card.addEventListener('pointermove', e => {
     if (!isDragging) return;
     const dx = e.clientX - startX;
     card.style.transform = `translateX(${dx}px) rotate(${dx*0.07}deg)`;
     const id = card.dataset.id;
-    document.getElementById('like_'+id).style.opacity = dx > 40 ? Math.min((dx-40)/60,1) : 0;
-    document.getElementById('nope_'+id).style.opacity = dx < -40 ? Math.min((-dx-40)/60,1) : 0;
+    const likeEl = document.getElementById('like_'+id);
+    const nopeEl = document.getElementById('nope_'+id);
+    if (likeEl) likeEl.style.opacity = dx > 40 ? Math.min((dx-40)/60,1) : 0;
+    if (nopeEl) nopeEl.style.opacity = dx < -40 ? Math.min((-dx-40)/60,1) : 0;
   });
+
   card.addEventListener('pointerup', e => {
     if (!isDragging) return;
     isDragging = false;
@@ -268,10 +295,12 @@ function dinleyiciEkle() {
     else if (dx < -80) swipe('left');
     else {
       card.style.transition = 'transform .3s';
-      card.style.transform = '';
+      card.style.transform = 'scale(1) translateY(0)';
       const id = card.dataset.id;
-      document.getElementById('like_'+id).style.opacity = 0;
-      document.getElementById('nope_'+id).style.opacity = 0;
+      const likeEl = document.getElementById('like_'+id);
+      const nopeEl = document.getElementById('nope_'+id);
+      if (likeEl) likeEl.style.opacity = 0;
+      if (nopeEl) nopeEl.style.opacity = 0;
     }
   });
 }
