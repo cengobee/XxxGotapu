@@ -100,6 +100,43 @@
 
   /* extra bottom padding for fixed bar */
   .page { padding-bottom: 100px !important; }
+
+  /* Lightbox */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.97);
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); border: none;
+    color: white; font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lightbox-galeri {
+    display: flex; overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; width: 100%;
+  }
+  .lightbox-galeri::-webkit-scrollbar { display: none; }
+  .lightbox-item {
+    flex-shrink: 0; width: 100vw; height: 80vh;
+    scroll-snap-align: start;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lightbox-item img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain;
+  }
+  .lightbox-sayac {
+    position: absolute; bottom: 30px;
+    font-size: 14px; font-weight: 800; color: white;
+    background: rgba(255,255,255,0.15); border-radius: 50px;
+    padding: 6px 16px;
+  }
 </style>
 </head>
 <body>
@@ -122,6 +159,13 @@
 <div class="action-bottom" id="actionBottom" style="display:none">
   <button class="btn-ara" onclick="telefon()">📞 Ara</button>
   <button class="btn btn-gold btn-lg" onclick="mesajGonder()" style="flex:1">💬 Mesaj Gönder</button>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="lightboxKapat()">✕</button>
+  <div class="lightbox-galeri" id="lightboxGaleri"></div>
+  <div class="lightbox-sayac" id="lightboxSayac"></div>
 </div>
 
 <nav class="bottom-nav">
@@ -225,11 +269,11 @@ function sayfayiOlustur() {
     ? `<div class="detay-img"><img src="${urls[0]}"><span class="detay-tip-badge tag ${tipRenk[ilan.tip]}">${tipLabel[ilan.tip]}</span><button class="detay-fav-btn" id="favBtn" onclick="favoriToggle()">🤍</button></div>`
     : `<div style="position:relative;margin:-16px -16px 20px;width:calc(100% + 32px)">
         <div style="display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none" id="galeri">
-          ${urls.map((url, i) => `<div style="flex-shrink:0;width:100%;height:280px;scroll-snap-align:start;background:#1a2340"><img src="${url}" style="width:100%;height:100%;object-fit:cover"></div>`).join('')}
+          ${urls.map((url, i) => `<div style="flex-shrink:0;width:100%;height:280px;scroll-snap-align:start;background:#1a2340;cursor:pointer" onclick="lightboxAc(${i})"><img src="${url}" style="width:100%;height:100%;object-fit:cover"></div>`).join('')}
         </div>
         <span class="detay-tip-badge tag ${tipRenk[ilan.tip]}" style="position:absolute;top:16px;left:16px">${tipLabel[ilan.tip]}</span>
         <button class="detay-fav-btn" id="favBtn" onclick="favoriToggle()" style="position:absolute;top:16px;right:16px">🤍</button>
-        <div style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);border-radius:50px;padding:4px 10px;font-size:12px;font-weight:800;color:white" id="galeriSayac">1/${urls.length} 📷</div>
+        <div style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);border-radius:50px;padding:4px 10px;font-size:12px;font-weight:800;color:white">📷 ${urls.length}</div>
       </div>`;
 
   document.getElementById('icerik').innerHTML = `
@@ -335,6 +379,31 @@ function telefon() {
 function haritaAc() {
   const konum = ilan?.konum || '';
   window.open(`https://www.google.com/maps/search/${encodeURIComponent(konum)}`, '_blank');
+}
+
+function lightboxAc(index) {
+  const urls = ilan.foto_urls && ilan.foto_urls.length > 0 ? ilan.foto_urls : (ilan.foto_url ? [ilan.foto_url] : []);
+  const galeri = document.getElementById('lightboxGaleri');
+  galeri.innerHTML = urls.map(url => `
+    <div class="lightbox-item">
+      <img src="${url}">
+    </div>`).join('');
+  document.getElementById('lightboxSayac').textContent = `${index + 1} / ${urls.length}`;
+  document.getElementById('lightbox').classList.add('open');
+  // İlgili fotoğrafa kaydır
+  setTimeout(() => {
+    galeri.scrollLeft = index * window.innerWidth;
+  }, 50);
+
+  // Kaydırınca sayacı güncelle
+  galeri.onscroll = () => {
+    const i = Math.round(galeri.scrollLeft / window.innerWidth);
+    document.getElementById('lightboxSayac').textContent = `${i + 1} / ${urls.length}`;
+  };
+}
+
+function lightboxKapat() {
+  document.getElementById('lightbox').classList.remove('open');
 }
 
 function paylas() {
