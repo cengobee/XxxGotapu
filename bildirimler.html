@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gotapu — Bildirimler</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .bildirim-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background .15s; position: relative;
+  }
+  .bildirim-item:active { background: var(--card2); }
+  .bildirim-item.okunmamis { background: rgba(245,200,66,0.04); }
+  .bildirim-item.okunmamis::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--gold); border-radius: 0 2px 2px 0;
+  }
+  .bildirim-ikon {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .ikon-favori   { background: rgba(232,96,58,0.15); }
+  .ikon-eslesme  { background: rgba(245,200,66,0.15); }
+  .ikon-mesaj    { background: rgba(74,144,217,0.15); }
+  .ikon-sistem   { background: rgba(46,204,113,0.15); }
+  .bildirim-icerik { flex: 1; min-width: 0; }
+  .bildirim-baslik { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+  .bildirim-mesaj  { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .bildirim-zaman  { font-size: 11px; color: var(--text3); margin-top: 5px; }
+  .bildirim-nokta  {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold); flex-shrink: 0; margin-top: 6px;
+  }
+
+  .toplu-isle {
+    display: flex; gap: 8px; padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .toplu-btn {
+    padding: 7px 14px; border-radius: 50px;
+    background: var(--card); border: 1px solid var(--border);
+    font-size: 12px; font-weight: 700; color: var(--text2);
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    transition: all .2s;
+  }
+  .toplu-btn:active { background: var(--card2); }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="javascript:history.back()" class="nav-logo" style="font-size:15px">
+    <div class="back-btn" style="margin-right:4px">←</div>
+    Bildirimler
+  </a>
+  <div class="nav-actions">
+    <span id="okunmamisSayac" style="font-size:12px;color:var(--text3);font-weight:700"></span>
+  </div>
+</nav>
+
+<div class="toplu-isle">
+  <button class="toplu-btn" onclick="tumunuOkunduYap()">✓ Tümünü Okundu İşaretle</button>
+  <button class="toplu-btn" onclick="tumunuSil()">🗑️ Tümünü Sil</button>
+</div>
+
+<div id="bildirimList"><div class="spinner"></div></div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
+  <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">✨</div>Eşleşmeler</a>
+  <a href="ilan-ver.html" class="bnav-center">+</a>
+  <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">💬</div>Mesajlar</a>
+  <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
+</nav>
+
+<script>
+const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) { window.location.href = 'auth.html'; return; }
+  currentUser = data.session.user;
+  bildirimleriYukle();
+});
+
+const ikonMap = {
+  favori:  { em: '❤️', cls: 'ikon-favori' },
+  eslesme: { em: '✨', cls: 'ikon-eslesme' },
+  mesaj:   { em: '💬', cls: 'ikon-mesaj' },
+  sistem:  { em: '📢', cls: 'ikon-sistem' },
+};
+
+function zamanFarki(tarih) {
+  const fark = Date.now() - new Date(tarih).getTime();
+  const dk = Math.floor(fark / 60000);
+  const sa = Math.floor(dk / 60);
+  const gun = Math.floor(sa / 24);
+  if (dk < 1)  return 'Az önce';
+  if (dk < 60) return `${dk} dakika önce`;
+  if (sa < 24) return `${sa} saat önce`;
+  if (gun < 7) return `${gun} gün önce`;
+  return new Date(tarih).toLocaleDateString('tr-TR');
+}
+
+async function bildirimleriYukle() {
+  const el = document.getElementById('bildirimList');
+  const { data, error } = await sb.from('bildirimler')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false });
+
+  if (error || !data || data.length === 0) {
+    el.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🔔</div>
+        <div class="empty-title">Bildirim yok</div>
+        <div class="empty-desc">Yeni bildirimler burada görünecek</div>
+      </div>`;
+    return;
+  }
+
+  const okunmamis = data.filter(b => !b.okundu).length;
+  if (okunmamis > 0) {
+    document.getElementById('okunmamisSayac').textContent = `${okunmamis} okunmamış`;
+  }
+
+  el.innerHTML = data.map(b => {
+    const ikon = ikonMap[b.tip] || ikonMap.sistem;
+    return `
+      <div class="bildirim-item ${b.okundu ? '' : 'okunmamis'}"
+        onclick="bildirimTikla('${b.id}','${b.ilan_id || ''}','${b.tip}')">
+        <div class="bildirim-ikon ${ikon.cls}">${ikon.em}</div>
+        <div class="bildirim-icerik">
+          <div class="bildirim-baslik">${b.baslik}</div>
+          <div class="bildirim-mesaj">${b.mesaj}</div>
+          <div class="bildirim-zaman">${zamanFarki(b.created_at)}</div>
+        </div>
+        ${!b.okundu ? '<div class="bildirim-nokta"></div>' : ''}
+      </div>`;
+  }).join('');
+}
+
+async function bildirimTikla(id, ilanId, tip) {
+  // Okundu işaretle
+  await sb.from('bildirimler').update({ okundu: true }).eq('id', id);
+
+  // Yönlendir
+  if (ilanId && ilanId !== 'null') {
+    window.location.href = `ilan-detay.html?id=${ilanId}`;
+  } else if (tip === 'mesaj') {
+    window.location.href = 'mesajlar.html';
+  } else if (tip === 'eslesme') {
+    window.location.href = 'eslesmeler.html';
+  }
+
+  bildirimleriYukle();
+}
+
+async function tumunuOkunduYap() {
+  await sb.from('bildirimler')
+    .update({ okundu: true })
+    .eq('user_id', currentUser.id);
+  bildirimleriYukle();
+}
+
+async function tumunuSil() {
+  if (!confirm('Tüm bildirimleri silmek istediğinden emin misin?')) return;
+  await sb.from('bildirimler').delete().eq('user_id', currentUser.id);
+  bildirimleriYukle();
+}
+</script>
+</body>
+</html>
