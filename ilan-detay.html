@@ -137,6 +137,15 @@
     background: rgba(255,255,255,0.15); border-radius: 50px;
     padding: 6px 16px;
   }
+  .sikayet-sebep-btn {
+    width: 100%; padding: 14px 16px; border-radius: var(--radius-sm);
+    background: var(--card); border: 1.5px solid var(--border);
+    color: var(--text); font-family: 'Nunito', sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    text-align: left; transition: all .2s;
+  }
+  .sikayet-sebep-btn.selected { border-color: var(--rust); background: rgba(232,96,58,0.08); color: var(--rust); }
+  .btn-rust { background: var(--rust); color: white; }
 </style>
 </head>
 <body>
@@ -147,9 +156,28 @@
     İlan Detay
   </a>
   <div class="nav-actions">
+    <button class="nav-icon-btn" onclick="sikayetAc()" style="font-size:16px">⚠️</button>
     <button class="nav-icon-btn" onclick="paylas()">📤</button>
   </div>
 </nav>
+
+<!-- Şikayet Modal -->
+<div class="modal-overlay" id="sikayetModal" onclick="if(event.target===this)sikayetKapat()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 style="font-size:18px;font-weight:900;margin-bottom:6px">⚠️ İlanı Şikayet Et</h3>
+    <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Şikayet sebebini seçin</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+      <button class="sikayet-sebep-btn" onclick="sikayetSebepSec(this,'Sahte İlan')">🚫 Sahte İlan</button>
+      <button class="sikayet-sebep-btn" onclick="sikayetSebepSec(this,'Dolandırıcılık')">💸 Dolandırıcılık</button>
+      <button class="sikayet-sebep-btn" onclick="sikayetSebepSec(this,'Uygunsuz İçerik')">🔞 Uygunsuz İçerik</button>
+      <button class="sikayet-sebep-btn" onclick="sikayetSebepSec(this,'Yanlış Fiyat/Bilgi')">❌ Yanlış Fiyat/Bilgi</button>
+      <button class="sikayet-sebep-btn" onclick="sikayetSebepSec(this,'Diğer')">📝 Diğer</button>
+    </div>
+    <textarea class="input" id="sikayetAciklama" rows="3" placeholder="Ek açıklama (isteğe bağlı)..." style="resize:none;margin-bottom:12px"></textarea>
+    <button class="btn btn-rust btn-lg" onclick="sikayetGonder()">⚠️ Şikayeti Gönder</button>
+  </div>
+</div>
 
 <div class="page fade-up" id="icerik">
   <div class="spinner"></div>
@@ -404,6 +432,42 @@ function lightboxAc(index) {
 
 function lightboxKapat() {
   document.getElementById('lightbox').classList.remove('open');
+}
+
+let seciliSikayetSebep = null;
+
+function sikayetAc() {
+  seciliSikayetSebep = null;
+  document.querySelectorAll('.sikayet-sebep-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('sikayetAciklama').value = '';
+  document.getElementById('sikayetModal').classList.add('open');
+}
+
+function sikayetKapat() {
+  document.getElementById('sikayetModal').classList.remove('open');
+}
+
+function sikayetSebepSec(el, sebep) {
+  seciliSikayetSebep = sebep;
+  document.querySelectorAll('.sikayet-sebep-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function sikayetGonder() {
+  if (!seciliSikayetSebep) { alert('Lütfen bir şikayet sebebi seçin!'); return; }
+  const aciklama = document.getElementById('sikayetAciklama').value.trim();
+  const { error } = await sb.from('sikayetler').insert({
+    user_id: currentUser.id,
+    tip: 'ilan',
+    sebep: seciliSikayetSebep,
+    hedef_id: ilanId,
+    hedef_tip: 'ilan',
+    aciklama: aciklama || null,
+    durum: 'bekliyor'
+  });
+  if (error) { alert('Hata: ' + error.message); return; }
+  sikayetKapat();
+  alert('✅ Şikayetiniz alındı. En kısa sürede incelenecektir.');
 }
 
 function paylas() {
