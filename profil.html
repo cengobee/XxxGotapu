@@ -191,7 +191,8 @@ async function avatarDegistir(input) {
     return;
   }
   const { data } = sb.storage.from('avatarlar').getPublicUrl(fileName);
-  await sb.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', currentUser.id);
+  const avatarUrlWithTime = data.publicUrl + '?t=' + Date.now();
+await sb.from('profiles').update({ avatar_url: avatarUrlWithTime }).eq('id', currentUser.id);
   document.getElementById('avatarEmoji').style.display = 'none';
   const img = document.getElementById('avatarImg');
   img.src = data.publicUrl + '?t=' + Date.now();
