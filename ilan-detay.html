@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -218,14 +217,23 @@ function sayfayiOlustur() {
   const fiyatStr = Number(ilan.fiyat).toLocaleString('tr-TR');
   const fiyatEk = ilan.tip === 'kiralik' ? '/ay' : '';
   const sahip = ilan.profiles;
+  const urls = ilan.foto_urls && ilan.foto_urls.length > 0 ? ilan.foto_urls : (ilan.foto_url ? [ilan.foto_url] : []);
+
+  const fotoHTML = urls.length === 0
+    ? `<div class="detay-img"><span>${emojiler[ilan.tip] || '🏠'}</span><span class="detay-tip-badge tag ${tipRenk[ilan.tip]}">${tipLabel[ilan.tip]}</span><button class="detay-fav-btn" id="favBtn" onclick="favoriToggle()">🤍</button></div>`
+    : urls.length === 1
+    ? `<div class="detay-img"><img src="${urls[0]}"><span class="detay-tip-badge tag ${tipRenk[ilan.tip]}">${tipLabel[ilan.tip]}</span><button class="detay-fav-btn" id="favBtn" onclick="favoriToggle()">🤍</button></div>`
+    : `<div style="position:relative;margin:-16px -16px 20px;width:calc(100% + 32px)">
+        <div style="display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none" id="galeri">
+          ${urls.map((url, i) => `<div style="flex-shrink:0;width:100%;height:280px;scroll-snap-align:start;background:#1a2340"><img src="${url}" style="width:100%;height:100%;object-fit:cover"></div>`).join('')}
+        </div>
+        <span class="detay-tip-badge tag ${tipRenk[ilan.tip]}" style="position:absolute;top:16px;left:16px">${tipLabel[ilan.tip]}</span>
+        <button class="detay-fav-btn" id="favBtn" onclick="favoriToggle()" style="position:absolute;top:16px;right:16px">🤍</button>
+        <div style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);border-radius:50px;padding:4px 10px;font-size:12px;font-weight:800;color:white" id="galeriSayac">1/${urls.length} 📷</div>
+      </div>`;
 
   document.getElementById('icerik').innerHTML = `
-    <!-- Fotoğraf -->
-    <div class="detay-img">
-      ${ilan.foto_url ? `<img src="${ilan.foto_url}">` : `<span>${emojiler[ilan.tip] || '🏠'}</span>`}
-      <span class="detay-tip-badge tag ${tipRenk[ilan.tip]}">${tipLabel[ilan.tip]}</span>
-      <button class="detay-fav-btn" id="favBtn" onclick="favoriToggle()">🤍</button>
-    </div>
+    ${fotoHTML}
 
     <!-- Fiyat & Başlık -->
     <div class="detay-fiyat">${fiyatStr} ₺${fiyatEk}</div>
