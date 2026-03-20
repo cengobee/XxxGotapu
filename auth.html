@@ -24,6 +24,8 @@
   .error-msg { background: rgba(232,96,58,0.1); color: var(--rust); border-radius: 10px; padding: 12px 14px; font-size: 14px; font-weight: 700; display: none; }
   .success-msg { background: rgba(46,204,113,0.1); color: var(--green); border-radius: 10px; padding: 12px 14px; font-size: 14px; font-weight: 700; display: none; }
   .loading { display: none; text-align: center; padding: 12px; color: var(--text3); font-size: 14px; font-weight: 700; }
+  .forgot-link { text-align: right; font-size: 13px; color: var(--gold); cursor: pointer; font-weight: 700; margin-top: -6px; }
+  .forgot-link:active { opacity: 0.7; }
 </style>
 </head>
 <body>
@@ -33,10 +35,12 @@
     <h1>GoTapu</h1>
     <p>Evin Her Şeyi Burada</p>
   </div>
-  <div class="tabs">
+
+  <div class="tabs" id="tabBar">
     <button class="tab active" onclick="switchTab('giris')">Giriş Yap</button>
     <button class="tab" onclick="switchTab('kayit')">Kayıt Ol</button>
   </div>
+
   <div class="error-msg" id="errorMsg"></div>
   <div class="success-msg" id="successMsg"></div>
   <div class="loading" id="loading">⏳ Lütfen bekleyin...</div>
@@ -45,6 +49,7 @@
   <div class="form active" id="girisForm">
     <input class="input" type="email" id="girisEmail" placeholder="E-posta adresiniz">
     <input class="input" type="password" id="girisPassword" placeholder="Şifreniz">
+    <div class="forgot-link" onclick="switchTab('sifre')">Şifremi Unuttum →</div>
     <button class="btn btn-gold btn-lg" onclick="girisYap()">Giriş Yap →</button>
     <div class="divider">veya</div>
     <button class="btn-google" onclick="googleGiris()">🌐 Google ile Devam Et</button>
@@ -60,64 +65,107 @@
     <div class="divider">veya</div>
     <button class="btn-google" onclick="googleGiris()">🌐 Google ile Devam Et</button>
   </div>
+
+  <!-- ŞİFREMİ UNUTTUM -->
+  <div class="form" id="sifreForm">
+    <div style="text-align:center;font-size:40px;margin-bottom:4px">🔑</div>
+    <div style="text-align:center;font-size:16px;font-weight:900;margin-bottom:4px">Şifreni Sıfırla</div>
+    <div style="text-align:center;font-size:13px;color:var(--text3);margin-bottom:8px">E-posta adresine sıfırlama bağlantısı göndereceğiz</div>
+    <input class="input" type="email" id="sifreEmail" placeholder="E-posta adresiniz">
+    <button class="btn btn-gold btn-lg" onclick="sifreSifirla()">📧 Sıfırlama Bağlantısı Gönder</button>
+    <button class="btn btn-outline btn-md" onclick="switchTab('giris')" style="text-align:center">← Giriş Ekranına Dön</button>
+  </div>
 </div>
 
 <script>
-  const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
-  const { createClient } = supabase;
-  const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  sb.auth.getSession().then(({ data }) => {
-    if (data.session) window.location.href = 'index.html';
+sb.auth.getSession().then(({ data }) => {
+  if (data.session) window.location.href = 'index.html';
+});
+
+function switchTab(tab) {
+  // Tab bar — sadece giriş ve kayıt için göster
+  document.getElementById('tabBar').style.display = tab === 'sifre' ? 'none' : 'flex';
+
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', (i===0&&tab==='giris')||(i===1&&tab==='kayit'));
   });
 
-  function switchTab(tab) {
-    document.querySelectorAll('.tab').forEach((t, i) => {
-      t.classList.toggle('active', (i===0&&tab==='giris')||(i===1&&tab==='kayit'));
-    });
-    document.getElementById('girisForm').classList.toggle('active', tab==='giris');
-    document.getElementById('kayitForm').classList.toggle('active', tab==='kayit');
-    hideMessages();
-  }
+  document.getElementById('girisForm').classList.toggle('active', tab==='giris');
+  document.getElementById('kayitForm').classList.toggle('active', tab==='kayit');
+  document.getElementById('sifreForm').classList.toggle('active', tab==='sifre');
+  hideMessages();
+}
 
-  function showError(msg) { const e=document.getElementById('errorMsg'); e.textContent=msg; e.style.display='block'; document.getElementById('successMsg').style.display='none'; }
-  function showSuccess(msg) { const e=document.getElementById('successMsg'); e.textContent=msg; e.style.display='block'; document.getElementById('errorMsg').style.display='none'; }
-  function hideMessages() { document.getElementById('errorMsg').style.display='none'; document.getElementById('successMsg').style.display='none'; }
-  function setLoading(v) { document.getElementById('loading').style.display=v?'block':'none'; }
+function showError(msg) {
+  const e = document.getElementById('errorMsg');
+  e.textContent = msg; e.style.display = 'block';
+  document.getElementById('successMsg').style.display = 'none';
+}
+function showSuccess(msg) {
+  const e = document.getElementById('successMsg');
+  e.textContent = msg; e.style.display = 'block';
+  document.getElementById('errorMsg').style.display = 'none';
+}
+function hideMessages() {
+  document.getElementById('errorMsg').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'none';
+}
+function setLoading(v) {
+  document.getElementById('loading').style.display = v ? 'block' : 'none';
+}
 
-  async function girisYap() {
-    const email = document.getElementById('girisEmail').value.trim();
-    const password = document.getElementById('girisPassword').value;
-    if (!email||!password) return showError('E-posta ve şifre boş bırakılamaz!');
-    setLoading(true);
-    const { error } = await sb.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) return showError('Giriş başarısız: ' + error.message);
-    window.location.href = 'index.html';
-  }
+async function girisYap() {
+  const email = document.getElementById('girisEmail').value.trim();
+  const password = document.getElementById('girisPassword').value;
+  if (!email || !password) return showError('E-posta ve şifre boş bırakılamaz!');
+  setLoading(true);
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  setLoading(false);
+  if (error) return showError('Giriş başarısız: ' + error.message);
+  window.location.href = 'index.html';
+}
 
-  async function kayitOl() {
-    const ad = document.getElementById('kayitAd').value.trim();
-    const tel = document.getElementById('kayitTel').value.trim();
-    const email = document.getElementById('kayitEmail').value.trim();
-    const password = document.getElementById('kayitPassword').value;
-    if (!ad||!email||!password) return showError('Lütfen tüm alanları doldurun!');
-    if (password.length<6) return showError('Şifre en az 6 karakter olmalı!');
-    setLoading(true);
-    const { data, error } = await sb.auth.signUp({ email, password });
-    if (error) { setLoading(false); return showError('Kayıt başarısız: ' + error.message); }
-    if (data.user) {
-      await sb.from('profiles').insert({ id: data.user.id, full_name: ad, phone: tel, email });
-    }
-    setLoading(false);
-    showSuccess('✅ Kayıt başarılı! E-postanızı doğrulayın, ardından giriş yapabilirsiniz.');
+async function kayitOl() {
+  const ad = document.getElementById('kayitAd').value.trim();
+  const tel = document.getElementById('kayitTel').value.trim();
+  const email = document.getElementById('kayitEmail').value.trim();
+  const password = document.getElementById('kayitPassword').value;
+  if (!ad || !email || !password) return showError('Lütfen tüm alanları doldurun!');
+  if (password.length < 6) return showError('Şifre en az 6 karakter olmalı!');
+  setLoading(true);
+  const { data, error } = await sb.auth.signUp({ email, password });
+  if (error) { setLoading(false); return showError('Kayıt başarısız: ' + error.message); }
+  if (data.user) {
+    await sb.from('profiles').insert({ id: data.user.id, full_name: ad, phone: tel, email });
   }
+  setLoading(false);
+  showSuccess('✅ Kayıt başarılı! E-postanızı doğrulayın, ardından giriş yapabilirsiniz.');
+}
 
-  async function googleGiris() {
-    const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/index.html' } });
-    if (error) showError('Google girişi başarısız: ' + error.message);
-  }
+async function sifreSifirla() {
+  const email = document.getElementById('sifreEmail').value.trim();
+  if (!email) return showError('Lütfen e-posta adresinizi girin!');
+  setLoading(true);
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/auth.html'
+  });
+  setLoading(false);
+  if (error) return showError('Hata: ' + error.message);
+  showSuccess('✅ Sıfırlama bağlantısı e-posta adresinize gönderildi! Lütfen e-postanızı kontrol edin.');
+}
+
+async function googleGiris() {
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + '/index.html' }
+  });
+  if (error) showError('Google girişi başarısız: ' + error.message);
+}
 </script>
 </body>
 </html>
