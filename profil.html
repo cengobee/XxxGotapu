@@ -81,8 +81,7 @@
 
   <div class="stat-row" style="margin-bottom:24px">
     <div class="stat-box"><div class="stat-num" id="ilanSayisi">0</div><div class="stat-lbl">İlan</div></div>
-    <div class="stat-box"><div class="stat-num" id="goruntulenmeSayisi">0</div><div class="stat-lbl">Görüntülenme</div></div>
-    <div class="stat-box"><div class="stat-num" id="mesajSayisi">0</div><div class="stat-lbl">Mesaj</div></div>
+    <div class="stat-box"><div class="stat-num" id="hizmetSayisi">0</div><div class="stat-lbl">Hizmet</div></div>
   </div>
 
   <div class="menu-section">
@@ -179,8 +178,8 @@ async function profilYukle() {
       </div>`).join('');
   }
 
-  const { count } = await sb.from('mesajlar').select('*', { count: 'exact', head: true }).or(`gonderen_id.eq.${currentUser.id},alici_id.eq.${currentUser.id}`);
-  document.getElementById('mesajSayisi').textContent = count || 0;
+  const { count } = await sb.from('teklifler').select('*', { count: 'exact', head: true }).eq('user_id', currentUser.id);
+  document.getElementById('hizmetSayisi').textContent = count || 0;
 }
 
 async function avatarDegistir(input) {
