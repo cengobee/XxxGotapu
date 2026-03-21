@@ -65,7 +65,11 @@
   .foto-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
   .foto-grid img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; cursor: pointer; }
   .arama-input { width: 100%; background: var(--card); border: 1.5px solid var(--border); border-radius: 50px; padding: 10px 16px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; outline: none; margin-bottom: 14px; }
-  .mesaj-kutu { display: none; margin-top: 10px; }
+
+  /* RAPOR KART */
+  .rapor-kart { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
+  .rapor-kart-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .rapor-deger { font-size: 18px; font-weight: 900; color: var(--gold); }
 </style>
 </head>
 <body>
@@ -80,6 +84,7 @@
   <button class="tab-btn" onclick="sekmeAc('teklifler',this)">📋 Teklifler</button>
   <button class="tab-btn" onclick="sekmeAc('ilanlar',this)">🏠 İlanlar</button>
   <button class="tab-btn" onclick="sekmeAc('kullanicilar',this)">👥 Kullanıcılar</button>
+  <button class="tab-btn" onclick="sekmeAc('raporlar',this)">📈 Raporlar</button>
   <button class="tab-btn" onclick="sekmeAc('mesajlar',this)">💬 Mesajlar</button>
   <button class="tab-btn" onclick="sekmeAc('sikayetler',this)">🚨 Şikayetler</button>
 </div>
@@ -96,6 +101,7 @@
     <div class="section-head" style="margin-top:16px"><div class="section-title">Son İlanlar</div></div>
     <div id="sonIlanlar"><div class="spinner"></div></div>
   </div>
+
   <div id="sekme-teklifler" style="display:none">
     <input class="arama-input" placeholder="🔍 Ara..." oninput="teklifAra(this.value)">
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="teklifFiltreler">
@@ -106,17 +112,31 @@
     </div>
     <div id="teklifListesi"><div class="spinner"></div></div>
   </div>
+
   <div id="sekme-ilanlar" style="display:none">
     <input class="arama-input" placeholder="🔍 İlan ara..." oninput="ilanAra(this.value)">
     <div id="ilanListesi"><div class="spinner"></div></div>
   </div>
+
   <div id="sekme-kullanicilar" style="display:none">
     <input class="arama-input" placeholder="🔍 Kullanıcı ara..." oninput="kullaniciAra(this.value)">
     <div id="kullaniciListesi"><div class="spinner"></div></div>
   </div>
+
+  <!-- YENİ: RAPORLAR SEKMESİ -->
+  <div id="sekme-raporlar" style="display:none">
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="raporFiltreler">
+      <button class="act-btn act-gold" onclick="raporFiltrele('tumu',this)">Tümü</button>
+      <button class="act-btn" onclick="raporFiltrele('tamamlandi',this)">✅ Tamamlandı</button>
+      <button class="act-btn" onclick="raporFiltrele('bekliyor',this)">⏳ Bekliyor</button>
+    </div>
+    <div id="raporListesi"><div class="spinner"></div></div>
+  </div>
+
   <div id="sekme-mesajlar" style="display:none">
     <div id="mesajListesi"><div class="spinner"></div></div>
   </div>
+
   <div id="sekme-sikayetler" style="display:none">
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="sikayetFiltreler">
       <button class="act-btn act-gold" onclick="sikayetFiltrele('tumu',this)">Tümü</button>
@@ -138,7 +158,7 @@ const ADMIN_EMAILS = ['cengizhangazelci@gmail.com'];
 const kategoriAdlari = { temizlik:'Temizlik', boya:'Boya', nakliye:'Nakliye', cilingir:'Çilingir', tadilat:'Tadilat', sigorta:'Sigorta', teknik:'Teknik Servis', dekorasyon:'Dekorasyon' };
 const kategoriEm = { temizlik:'🧹', boya:'🖌️', nakliye:'🚚', cilingir:'🔑', tadilat:'🔧', sigorta:'🛡️', teknik:'📱', dekorasyon:'🛋️' };
 
-let tumTeklifler = [], tumIlanlar = [], tumKullanicilar = [], tumMesajlar = [], tumSikayetler = [];
+let tumTeklifler = [], tumIlanlar = [], tumKullanicilar = [], tumMesajlar = [], tumSikayetler = [], tumRaporlar = [];
 let adminUserId = null;
 
 sb.auth.getSession().then(({ data }) => {
@@ -149,14 +169,12 @@ sb.auth.getSession().then(({ data }) => {
     document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px"><div style="font-size:60px">🚫</div><div style="font-size:20px;font-weight:900">Yetkisiz Erişim</div><a href="index.html" style="color:var(--gold)">Ana Sayfaya Dön</a></div>';
     return;
   }
-  // Önce sekmeyi göster
   baslangicSekmesi();
-  // Sonra veri yükle
   tumunuYukle();
 });
 
 function sekmeAc(sekme, btn) {
-  ['ozet','teklifler','ilanlar','kullanicilar','mesajlar','sikayetler'].forEach(s => {
+  ['ozet','teklifler','ilanlar','kullanicilar','raporlar','mesajlar','sikayetler'].forEach(s => {
     document.getElementById('sekme-'+s).style.display = s === sekme ? 'block' : 'none';
   });
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -166,7 +184,7 @@ function sekmeAc(sekme, btn) {
 
 function baslangicSekmesi() {
   const hash = location.hash.replace('#','');
-  const gecerli = ['ozet','teklifler','ilanlar','kullanicilar','mesajlar','sikayetler'];
+  const gecerli = ['ozet','teklifler','ilanlar','kullanicilar','raporlar','mesajlar','sikayetler'];
   const sekme = gecerli.includes(hash) ? hash : 'ozet';
   const idx = gecerli.indexOf(sekme);
   const btn = document.querySelectorAll('.tab-btn')[idx];
@@ -174,21 +192,32 @@ function baslangicSekmesi() {
 }
 
 async function tumunuYukle() {
-  await Promise.all([ozetYukle(), teklifleriYukle(), ilanlariYukle(), kullanicilariYukle(), mesajlariYukle(), sikayetleriYukle()]);
+  await Promise.all([ozetYukle(), teklifleriYukle(), ilanlariYukle(), kullanicilariYukle(), raporlariYukle(), mesajlariYukle(), sikayetleriYukle()]);
 }
 
 async function ozetYukle() {
-  const [t, i, k, m] = await Promise.all([
+  const [t, i, k, m, r, b] = await Promise.all([
     sb.from('teklifler').select('*', { count: 'exact', head: true }),
     sb.from('ilanlar').select('*', { count: 'exact', head: true }),
     sb.from('profiles').select('*', { count: 'exact', head: true }),
     sb.from('mesajlar').select('*', { count: 'exact', head: true }),
+    sb.from('degerleme_raporlari').select('*', { count: 'exact', head: true }),
+    sb.from('bildirimler').select('*', { count: 'exact', head: true }).eq('okundu', false),
   ]);
+
+  // Rapor geliri hesapla
+  const { data: raporlar } = await sb.from('degerleme_raporlari').select('odeme_durumu').eq('odeme_durumu', 'odendi');
+  const raporGelir = (raporlar?.length || 0) * 800;
+
   document.getElementById('istatistikler').innerHTML = `
     <div class="stat-card"><div class="stat-card-icon">📋</div><div class="stat-card-num">${t.count||0}</div><div class="stat-card-lbl">Toplam Teklif</div></div>
     <div class="stat-card"><div class="stat-card-icon">🏠</div><div class="stat-card-num">${i.count||0}</div><div class="stat-card-lbl">Toplam İlan</div></div>
     <div class="stat-card"><div class="stat-card-icon">👥</div><div class="stat-card-num">${k.count||0}</div><div class="stat-card-lbl">Toplam Kullanıcı</div></div>
-    <div class="stat-card"><div class="stat-card-icon">💬</div><div class="stat-card-num">${m.count||0}</div><div class="stat-card-lbl">Toplam Mesaj</div></div>`;
+    <div class="stat-card"><div class="stat-card-icon">💬</div><div class="stat-card-num">${m.count||0}</div><div class="stat-card-lbl">Toplam Mesaj</div></div>
+    <div class="stat-card"><div class="stat-card-icon">📊</div><div class="stat-card-num">${r.count||0}</div><div class="stat-card-lbl">Ekspertiz Raporu</div></div>
+    <div class="stat-card"><div class="stat-card-icon">💰</div><div class="stat-card-num">${raporGelir.toLocaleString('tr-TR')} ₺</div><div class="stat-card-lbl">Rapor Geliri</div></div>
+    <div class="stat-card"><div class="stat-card-icon">🔔</div><div class="stat-card-num">${b.count||0}</div><div class="stat-card-lbl">Okunmamış Bildirim</div></div>`;
+
   const { data: sonT } = await sb.from('teklifler').select('*').order('created_at', { ascending: false }).limit(3);
   document.getElementById('sonTeklifler').innerHTML = (sonT||[]).map(t => teklifKartHTML(t)).join('') || '<div class="empty" style="padding:20px"><div class="empty-icon">📋</div><div class="empty-title">Teklif yok</div></div>';
   const { data: sonI } = await sb.from('ilanlar').select('*').order('created_at', { ascending: false }).limit(3);
@@ -211,8 +240,7 @@ function teklifleriGoster(liste) {
 function teklifKartHTML(t) {
   const tarih = new Date(t.created_at).toLocaleDateString('tr-TR');
   const durum = t.durum || 'bekliyor';
-  const uid = t.id.replace(/-/g,'').substring(0,8);
-  return `<div class="admin-card" id="tkart_${uid}">
+  return `<div class="admin-card">
     <div class="admin-card-head">
       <div>
         <div class="admin-card-title">${kategoriEm[t.kategori]||'📋'} ${kategoriAdlari[t.kategori]||t.kategori}</div>
@@ -230,24 +258,6 @@ function teklifKartHTML(t) {
   </div>`;
 }
 
-function teklifMesajToggle(uid) {
-  const kutu = document.getElementById('tkutu_' + uid);
-  if (kutu) kutu.style.display = kutu.style.display === 'none' ? 'block' : 'none';
-}
-
-async function teklifMesajGonder(aliciId, uid) {
-  const metin = document.getElementById('tmetin_' + uid).value.trim();
-  if (!metin) { alert('Mesaj boş olamaz!'); return; }
-  const { error } = await sb.from('mesajlar').insert({
-    gonderen_id: adminUserId, alici_id: aliciId, ilan_id: null,
-    icerik: '📢 GoTapu: ' + metin, okundu: false, created_at: new Date().toISOString()
-  });
-  if (error) { alert('Hata: ' + error.message); return; }
-  document.getElementById('tmetin_' + uid).value = '';
-  document.getElementById('tkutu_' + uid).style.display = 'none';
-  alert('✅ Mesaj gönderildi!');
-}
-
 async function teklifDetay(id) {
   const t = tumTeklifler.find(x => x.id === id);
   if (!t) return;
@@ -257,7 +267,7 @@ async function teklifDetay(id) {
   document.getElementById('detayIcerik').innerHTML = `
     <div style="font-size:20px;font-weight:900;margin-bottom:16px">${kategoriEm[t.kategori]} ${kategoriAdlari[t.kategori]} Talebi</div>
     <div class="detay-row"><div class="detay-key">Ad Soyad</div><div class="detay-val">${t.ad_soyad||'-'}</div></div>
-    <div class="detay-row"><div class="detay-key">Telefon</div><div class="detay-val"><a href="tel:${t.telefon}" style="color:var(--gold);font-size:15px;font-weight:900">${t.telefon||'-'} 📞</a></div></div>
+    <div class="detay-row"><div class="detay-key">Telefon</div><div class="detay-val"><a href="tel:${t.telefon}" style="color:var(--gold)">${t.telefon||'-'} 📞</a></div></div>
     <div class="detay-row"><div class="detay-key">Tarih</div><div class="detay-val">${new Date(t.created_at).toLocaleString('tr-TR')}</div></div>
     <div class="detay-row"><div class="detay-key">Durum</div><div class="detay-val"><span class="durum-badge durum-${t.durum||'bekliyor'}">${t.durum||'bekliyor'}</span></div></div>
     ${detaylar}
@@ -278,11 +288,7 @@ async function teklifDetay(id) {
 async function detayMesajGonder(aliciId) {
   const metin = document.getElementById('detayMesajMetin').value.trim();
   if (!metin) { alert('Mesaj boş olamaz!'); return; }
-  const { error } = await sb.from('mesajlar').insert({
-    gonderen_id: adminUserId, alici_id: aliciId, ilan_id: null,
-    icerik: '📢 GoTapu: ' + metin, okundu: false, created_at: new Date().toISOString()
-  });
-  if (error) { alert('Hata: ' + error.message); return; }
+  await sb.from('mesajlar').insert({ gonderen_id: adminUserId, alici_id: aliciId, ilan_id: null, icerik: '📢 GoTapu: ' + metin, okundu: false });
   document.getElementById('detayMesajMetin').value = '';
   alert('✅ Mesaj gönderildi!');
 }
@@ -301,17 +307,15 @@ async function teklifSil(id) {
 function teklifFiltrele(filtre, el) {
   document.querySelectorAll('#teklifFiltreler .act-btn').forEach(b => b.classList.remove('act-gold'));
   el.classList.add('act-gold');
-  const liste = filtre === 'tumu' ? tumTeklifler : tumTeklifler.filter(t => t.durum === filtre);
-  teklifleriGoster(liste);
+  teklifleriGoster(filtre === 'tumu' ? tumTeklifler : tumTeklifler.filter(t => t.durum === filtre));
 }
 
 function teklifAra(q) {
-  const liste = tumTeklifler.filter(t =>
+  teklifleriGoster(tumTeklifler.filter(t =>
     (t.ad_soyad||'').toLowerCase().includes(q.toLowerCase()) ||
     (t.telefon||'').includes(q) ||
     (kategoriAdlari[t.kategori]||'').toLowerCase().includes(q.toLowerCase())
-  );
-  teklifleriGoster(liste);
+  ));
 }
 
 // ===== İLANLAR =====
@@ -362,11 +366,10 @@ async function ilanSilAdmin(id) {
 }
 
 function ilanAra(q) {
-  const liste = tumIlanlar.filter(i =>
+  ilanlariGoster(tumIlanlar.filter(i =>
     (i.baslik||'').toLowerCase().includes(q.toLowerCase()) ||
     (i.konum||'').toLowerCase().includes(q.toLowerCase())
-  );
-  ilanlariGoster(liste);
+  ));
 }
 
 // ===== KULLANICILAR =====
@@ -394,10 +397,11 @@ function kullanicilariGoster(liste) {
 async function kullaniciDetay(id) {
   const k = tumKullanicilar.find(x => x.id === id);
   if (!k) return;
-  const [ilanlar, teklifler, mesajlar] = await Promise.all([
+  const [ilanlar, teklifler, mesajlar, raporlar] = await Promise.all([
     sb.from('ilanlar').select('*').eq('user_id', id).order('created_at', { ascending: false }),
     sb.from('teklifler').select('*').eq('user_id', id),
-    sb.from('mesajlar').select('*', { count: 'exact', head: true }).or(`gonderen_id.eq.${id},alici_id.eq.${id}`)
+    sb.from('mesajlar').select('*', { count: 'exact', head: true }).or(`gonderen_id.eq.${id},alici_id.eq.${id}`),
+    sb.from('degerleme_raporlari').select('*').eq('user_id', id)
   ]);
 
   document.getElementById('detayIcerik').innerHTML = `
@@ -405,43 +409,24 @@ async function kullaniciDetay(id) {
       <div style="width:64px;height:64px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;flex-shrink:0">
         ${k.avatar_url ? `<img src="${k.avatar_url}" style="width:100%;height:100%;object-fit:cover">` : '👤'}
       </div>
-      <div>
-        <div style="font-size:20px;font-weight:900">${k.full_name||'İsimsiz'}</div>
-        ${k.verified ? '<span class="tag tag-green">✓ Doğrulandı</span>' : ''}
-      </div>
+      <div><div style="font-size:20px;font-weight:900">${k.full_name||'İsimsiz'}</div>
+      ${k.verified ? '<span class="tag tag-green">✓ Doğrulandı</span>' : ''}</div>
     </div>
     <div class="detay-row"><div class="detay-key">📧 E-posta</div><div class="detay-val">${k.email||'-'}</div></div>
     <div class="detay-row"><div class="detay-key">📞 Telefon</div><div class="detay-val"><a href="tel:${k.phone}" style="color:var(--gold)">${k.phone||'-'}</a></div></div>
     <div class="detay-row"><div class="detay-key">🏙️ Şehir</div><div class="detay-val">${k.sehir||'-'}</div></div>
-    <div class="detay-row"><div class="detay-key">💼 Kullanıcı Tipi</div><div class="detay-val">${k.kullanici_tipi||'Bireysel'}</div></div>
-    <div class="detay-row"><div class="detay-key">🏠 İlan Sayısı</div><div class="detay-val">${ilanlar.data?.length||0}</div></div>
-    <div class="detay-row"><div class="detay-key">📋 Teklif Sayısı</div><div class="detay-val">${teklifler.data?.length||0}</div></div>
-    <div class="detay-row"><div class="detay-key">💬 Mesaj Sayısı</div><div class="detay-val">${mesajlar.count||0}</div></div>
-    ${k.hakkimda ? `<div class="detay-row"><div class="detay-key">📝 Hakkımda</div><div class="detay-val">${k.hakkimda}</div></div>` : ''}
-    <div class="detay-row"><div class="detay-key">📅 Kayıt Tarihi</div><div class="detay-val">${new Date(k.created_at).toLocaleDateString('tr-TR')}</div></div>
-
-    ${ilanlar.data?.length > 0 ? `
-      <div style="font-size:15px;font-weight:900;margin:16px 0 10px">🏠 İlanları</div>
-      ${ilanlar.data.map(i => `
-        <div style="display:flex;gap:10px;align-items:center;background:var(--card);border-radius:10px;padding:10px;margin-bottom:8px">
-          ${i.foto_url ? `<img src="${i.foto_url}" style="width:48px;height:48px;border-radius:8px;object-fit:cover;flex-shrink:0">` : `<div style="width:48px;height:48px;border-radius:8px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${i.tip==='kiralik'?'🏘️':'🏙️'}</div>`}
-          <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${i.baslik}</div>
-            <div style="font-size:12px;color:var(--gold)">${Number(i.fiyat).toLocaleString('tr-TR')} ₺</div>
-          </div>
-          <div style="display:flex;gap:6px">
-            <a href="ilan-detay.html?id=${i.id}" class="act-btn act-blue" style="font-size:11px">👁️</a>
-            <button class="act-btn act-rust" style="font-size:11px" onclick="ilanSilAdmin('${i.id}');kullaniciDetay('${k.id}')">🗑️</button>
-          </div>
-        </div>`).join('')}` : ''}
-
+    <div class="detay-row"><div class="detay-key">🏠 İlan</div><div class="detay-val">${ilanlar.data?.length||0}</div></div>
+    <div class="detay-row"><div class="detay-key">📋 Teklif</div><div class="detay-val">${teklifler.data?.length||0}</div></div>
+    <div class="detay-row"><div class="detay-key">💬 Mesaj</div><div class="detay-val">${mesajlar.count||0}</div></div>
+    <div class="detay-row"><div class="detay-key">📊 Rapor</div><div class="detay-val">${raporlar.data?.length||0}</div></div>
+    <div class="detay-row"><div class="detay-key">📅 Kayıt</div><div class="detay-val">${new Date(k.created_at).toLocaleDateString('tr-TR')}</div></div>
     <div style="margin-top:16px">
       <textarea class="input" id="kullaniciMesajMetin" rows="3" placeholder="Kullanıcıya mesaj yazın..." style="resize:none;margin-bottom:8px"></textarea>
       <button class="btn btn-gold btn-lg" onclick="kullaniciMesajGonder('${k.id}')">📩 Mesaj Gönder</button>
     </div>
     <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="act-btn ${k.verified?'act-rust':'act-green'}" style="flex:1;padding:12px" onclick="kullaniciDogrula('${k.id}',${k.verified})">${k.verified?'✗ Doğrulamayı Kaldır':'✓ Doğrula'}</button>
-      <button class="act-btn act-rust" style="flex:1;padding:12px" onclick="if(confirm('Emin misiniz?'))kullaniciSil('${k.id}')">🗑️ Kullanıcıyı Sil</button>
+      <button class="act-btn ${k.verified?'act-rust':'act-green'}" style="flex:1;padding:12px" onclick="kullaniciDogrula('${k.id}',${k.verified})">${k.verified?'✗ Kaldır':'✓ Doğrula'}</button>
+      <button class="act-btn act-rust" style="flex:1;padding:12px" onclick="if(confirm('Emin misiniz?'))kullaniciSil('${k.id}')">🗑️ Sil</button>
     </div>
     <button class="btn btn-outline btn-md" style="width:100%;margin-top:8px" onclick="detayKapat()">Kapat</button>`;
   document.getElementById('detayModal').classList.add('open');
@@ -450,47 +435,99 @@ async function kullaniciDetay(id) {
 async function kullaniciMesajGonder(aliciId) {
   const metin = document.getElementById('kullaniciMesajMetin').value.trim();
   if (!metin) { alert('Mesaj boş olamaz!'); return; }
-  const { error } = await sb.from('mesajlar').insert({
-    gonderen_id: adminUserId, alici_id: aliciId, ilan_id: null,
-    icerik: '📢 GoTapu: ' + metin, okundu: false, created_at: new Date().toISOString()
-  });
-  if (error) { alert('Hata: ' + error.message); return; }
+  await sb.from('mesajlar').insert({ gonderen_id: adminUserId, alici_id: aliciId, ilan_id: null, icerik: '📢 GoTapu: ' + metin, okundu: false });
   document.getElementById('kullaniciMesajMetin').value = '';
   alert('✅ Mesaj gönderildi!');
 }
 
 async function kullaniciDogrula(id, mevcut) {
   await sb.from('profiles').update({ verified: !mevcut }).eq('id', id);
-  await kullanicilariYukle();
-  detayKapat();
+  await kullanicilariYukle(); detayKapat();
 }
 
 async function kullaniciSil(id) {
   await sb.from('profiles').delete().eq('id', id);
-  await kullanicilariYukle();
-  detayKapat();
+  await kullanicilariYukle(); detayKapat();
 }
 
 function kullaniciAra(q) {
-  const liste = tumKullanicilar.filter(k =>
+  kullanicilariGoster(tumKullanicilar.filter(k =>
     (k.full_name||'').toLowerCase().includes(q.toLowerCase()) ||
     (k.email||'').toLowerCase().includes(q.toLowerCase()) ||
     (k.phone||'').includes(q)
-  );
-  kullanicilariGoster(liste);
+  ));
+}
+
+// ===== RAPORLAR =====
+async function raporlariYukle() {
+  const { data } = await sb.from('degerleme_raporlari')
+    .select('*, ilan:ilan_id(baslik, konum, fiyat)')
+    .order('created_at', { ascending: false });
+  tumRaporlar = data || [];
+  raporlariGoster(tumRaporlar);
+}
+
+function raporlariGoster(liste) {
+  const el = document.getElementById('raporListesi');
+  if (!liste.length) {
+    el.innerHTML = '<div class="empty" style="padding:30px"><div class="empty-icon">📊</div><div class="empty-title">Rapor bulunamadı</div></div>';
+    return;
+  }
+  const toplamGelir = liste.filter(r => r.odeme_durumu === 'odendi').length * 800;
+  el.innerHTML = `
+    <div style="background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.2);border-radius:var(--radius);padding:14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:12px;color:var(--text3);font-weight:700">TOPLAM RAPOR GELİRİ</div>
+        <div style="font-size:22px;font-weight:900;color:var(--gold)">${toplamGelir.toLocaleString('tr-TR')} ₺</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:12px;color:var(--text3)">Ödenen rapor</div>
+        <div style="font-size:18px;font-weight:900">${liste.filter(r=>r.odeme_durumu==='odendi').length}</div>
+      </div>
+    </div>
+    ${liste.map(r => {
+      const ilan = r.ilan;
+      const tarih = new Date(r.created_at).toLocaleDateString('tr-TR');
+      const rapor = r.rapor_verisi;
+      return `<div class="rapor-kart">
+        <div class="rapor-kart-head">
+          <div>
+            <div class="admin-card-title">📊 ${ilan?.baslik || 'İlan'}</div>
+            <div class="admin-card-meta">📍 ${ilan?.konum||''} • 📅 ${tarih}</div>
+            ${rapor ? `<div style="margin-top:4px;font-size:12px;color:var(--text2)">
+              Gerçekçi Değer: <strong style="color:var(--gold)">${Number(rapor.deger_tahmini?.gercekci||0).toLocaleString('tr-TR')} ₺</strong>
+            </div>` : ''}
+          </div>
+          <span class="durum-badge ${r.durum==='tamamlandi'?'durum-tamamlandi':'durum-bekliyor'}">${r.durum}</span>
+        </div>
+        <div class="admin-card-actions">
+          <a href="rapor.html?ilan_id=${r.ilan_id}" class="act-btn act-blue">👁️ Raporu Gör</a>
+          <a href="ilan-detay.html?id=${r.ilan_id}" class="act-btn act-gold">🏠 İlanı Gör</a>
+          <button class="act-btn act-rust" onclick="raporSilAdmin('${r.id}')">🗑️ Sil</button>
+        </div>
+      </div>`;
+    }).join('')}`;
+}
+
+function raporFiltrele(filtre, el) {
+  document.querySelectorAll('#raporFiltreler .act-btn').forEach(b => b.classList.remove('act-gold'));
+  el.classList.add('act-gold');
+  raporlariGoster(filtre === 'tumu' ? tumRaporlar : tumRaporlar.filter(r => r.durum === filtre));
+}
+
+async function raporSilAdmin(id) {
+  if (!confirm('Bu raporu silmek istediğinizden emin misiniz?')) return;
+  await sb.from('degerleme_raporlari').delete().eq('id', id);
+  await raporlariYukle(); await ozetYukle();
 }
 
 // ===== MESAJLAR =====
 async function mesajlariYukle() {
   const { data } = await sb.from('mesajlar').select('*').order('created_at', { ascending: false }).limit(50);
   tumMesajlar = data || [];
-  mesajlariGoster(tumMesajlar);
-}
-
-function mesajlariGoster(liste) {
   const el = document.getElementById('mesajListesi');
-  if (!liste.length) { el.innerHTML = '<div class="empty" style="padding:30px"><div class="empty-icon">💬</div><div class="empty-title">Mesaj bulunamadı</div></div>'; return; }
-  el.innerHTML = liste.map(m => `
+  if (!tumMesajlar.length) { el.innerHTML = '<div class="empty" style="padding:30px"><div class="empty-icon">💬</div><div class="empty-title">Mesaj bulunamadı</div></div>'; return; }
+  el.innerHTML = tumMesajlar.map(m => `
     <div class="admin-card">
       <div class="admin-card-title" style="font-size:13px">${m.icerik}</div>
       <div class="admin-card-meta" style="margin-top:6px">📅 ${new Date(m.created_at).toLocaleString('tr-TR')} • ${m.okundu ? '✅ Okundu' : '🔴 Okunmadı'}</div>
@@ -531,8 +568,7 @@ function sikayetleriGoster(liste) {
 function sikayetFiltrele(filtre, el) {
   document.querySelectorAll('#sikayetFiltreler .act-btn').forEach(b => b.classList.remove('act-gold'));
   el.classList.add('act-gold');
-  const liste = filtre === 'tumu' ? tumSikayetler : tumSikayetler.filter(s => s.durum === filtre);
-  sikayetleriGoster(liste);
+  sikayetleriGoster(filtre === 'tumu' ? tumSikayetler : tumSikayetler.filter(s => s.durum === filtre));
 }
 
 async function sikayetDurumGuncelle(id, durum) {
@@ -546,9 +582,7 @@ async function sikayetSilAdmin(id) {
   await sikayetleriYukle();
 }
 
-function detayKapat() {
-  document.getElementById('detayModal').classList.remove('open');
-}
+function detayKapat() { document.getElementById('detayModal').classList.remove('open'); }
 
 async function cikis() {
   await sb.auth.signOut();
