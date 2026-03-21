@@ -307,9 +307,63 @@ function sayfayiOlustur() {
         </div>
         <button class="btn btn-outline btn-sm" onclick="mesajGonder()">Mesaj →</button>
       </div>
-    </div>`;
+    </div>
+
+    <!-- EKSPERTİZ RAPORU -->
+    <div id="ekspertizBlok"></div>
+
+    <div style="height:80px"></div>`;
+
+  // Ekspertiz raporu kontrol et
+  ekspertizKontrolDetay();
 
   favoriKontrol();
+}
+
+async function ekspertizKontrolDetay() {
+  const el = document.getElementById('ekspertizBlok');
+  if (!el) return;
+
+  // Rapor var mı kontrol et
+  const { data: rapor } = await sb
+    .from('degerleme_raporlari')
+    .select('id')
+    .eq('ilan_id', ilanId)
+    .eq('durum', 'tamamlandi')
+    .limit(1)
+    .single();
+
+  if (rapor) {
+    // Rapor var → görüntüle butonu
+    el.innerHTML = `
+      <div style="background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.2);border-radius:var(--radius);padding:16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="font-size:24px">📊</span>
+          <div>
+            <div style="font-size:14px;font-weight:900;color:var(--gold)">Ekspertiz Raporu Mevcut</div>
+            <div style="font-size:12px;color:var(--text3)">Bu ilan profesyonel değerleme raporuna sahip</div>
+          </div>
+        </div>
+        <a href="rapor.html?ilan_id=${ilanId}" class="btn btn-gold btn-md" style="width:100%;text-align:center">
+          📊 Ekspertiz Değerini Gör
+        </a>
+      </div>`;
+  } else if (ilan && ilan.user_id === currentUser?.id) {
+    // Rapor yok, ilan sahibi → rapor al butonu
+    el.innerHTML = `
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="font-size:24px">📊</span>
+          <div>
+            <div style="font-size:14px;font-weight:900">Ekspertiz Raporu Al</div>
+            <div style="font-size:12px;color:var(--text3)">Yapay zeka ile profesyonel değerleme — 800 ₺</div>
+          </div>
+        </div>
+        <a href="degerleme.html?ilan_id=${ilanId}" class="btn btn-gold btn-md" style="width:100%;text-align:center">
+          📊 Rapor Al — 800 ₺
+        </a>
+      </div>`;
+  }
 }
 
 async function favoriToggle() {
