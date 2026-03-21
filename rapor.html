@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gotapu — Ekspertiz Raporu</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .rapor-header {
+    background: linear-gradient(135deg, #1a2340, #2a3560);
+    border-radius: var(--radius); padding: 20px;
+    margin-bottom: 20px; border: 1px solid rgba(245,200,66,0.2);
+  }
+  .rapor-header .logo { font-size: 13px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+  .rapor-header h1 { font-size: 18px; font-weight: 900; margin-bottom: 4px; }
+  .rapor-header .meta { font-size: 12px; color: var(--text3); }
+
+  .rapor-section {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px; margin-bottom: 14px;
+  }
+  .rapor-section-title {
+    font-size: 14px; font-weight: 900; color: var(--gold);
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+
+  .deger-kutu {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px;
+  }
+  .deger-item {
+    background: var(--card2); border-radius: var(--radius-sm);
+    padding: 12px; text-align: center;
+  }
+  .deger-item .d-label { font-size: 10px; color: var(--text3); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
+  .deger-item .d-val { font-size: 15px; font-weight: 900; color: var(--gold); }
+  .deger-item.ana { background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.2); }
+  .deger-item.ana .d-val { font-size: 18px; }
+
+  .foto-analiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .foto-item {
+    background: var(--card2); border-radius: var(--radius-sm); padding: 10px;
+  }
+  .foto-item .fi-label { font-size: 11px; color: var(--text3); font-weight: 700; margin-bottom: 4px; }
+  .foto-item .fi-val { font-size: 13px; font-weight: 800; }
+  .fi-iyi { color: var(--green); }
+  .fi-orta { color: var(--gold); }
+  .fi-kotu { color: var(--rust); }
+
+  .kriter-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .kriter-item:last-child { border-bottom: none; }
+  .kriter-etki { font-weight: 800; }
+  .etki-pos { color: var(--green); }
+  .etki-neg { color: var(--rust); }
+  .etki-ntr { color: var(--text3); }
+
+  .risk-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 800;
+  }
+  .risk-dusuk { background: rgba(46,204,113,0.15); color: var(--green); }
+  .risk-orta { background: rgba(245,200,66,0.15); color: var(--gold); }
+  .risk-yuksek { background: rgba(232,96,58,0.15); color: var(--rust); }
+
+  .puan-daire {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: conic-gradient(var(--gold) 0% var(--pct), var(--card2) var(--pct) 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; margin: 0 auto 12px;
+  }
+  .puan-daire::after {
+    content: ''; position: absolute;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: var(--card);
+  }
+  .puan-daire .puan-sayi {
+    position: relative; z-index: 1;
+    font-size: 20px; font-weight: 900; color: var(--gold);
+  }
+
+  .liste-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 6px 0; font-size: 13px; color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  .liste-item:last-child { border-bottom: none; }
+  .liste-item .li-ikon { flex-shrink: 0; }
+
+  .kira-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .kira-row:last-child { border-bottom: none; }
+  .kira-row .kr-label { color: var(--text3); font-weight: 700; }
+  .kira-row .kr-val { font-weight: 900; color: var(--text); }
+
+  .ilan-fiyat-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 800;
+    margin-top: 10px;
+  }
+  .fiyat-uygun { background: rgba(46,204,113,0.15); color: var(--green); }
+  .fiyat-yuksek { background: rgba(232,96,58,0.15); color: var(--rust); }
+  .fiyat-dusuk { background: rgba(74,144,217,0.15); color: var(--blue); }
+
+  .yasal-item {
+    display: flex; gap: 10px; padding: 8px 0;
+    border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .yasal-item:last-child { border-bottom: none; }
+
+  .rapor-footer {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    text-align: center; margin-bottom: 20px;
+  }
+  .rapor-footer p { font-size: 12px; color: var(--text3); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="javascript:history.back()" class="nav-logo" style="font-size:15px">
+    <div class="back-btn" style="margin-right:4px">←</div>
+    Ekspertiz Raporu
+  </a>
+</nav>
+
+<div class="page fade-up" id="raporIcerik">
+  <div class="spinner"></div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
+  <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">✨</div>Eşleşmeler</a>
+  <a href="ilan-ver.html" class="bnav-center">+</a>
+  <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">💬</div>Mesajlar</a>
+  <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
+</nav>
+
+<script>
+const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const params = new URLSearchParams(window.location.search);
+const ilanId = params.get('ilan_id');
+const raporId = params.get('rapor_id');
+
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) { window.location.href = 'auth.html'; return; }
+  raporYukle();
+});
+
+async function raporYukle() {
+  let query = sb.from('degerleme_raporlari').select('*, ilan:ilan_id(*)');
+  if (raporId) query = query.eq('id', raporId);
+  else if (ilanId) query = query.eq('ilan_id', ilanId).eq('durum', 'tamamlandi');
+  else {
+    document.getElementById('raporIcerik').innerHTML = '<div class="empty"><div class="empty-icon">😕</div><div class="empty-title">Rapor bulunamadı</div></div>';
+    return;
+  }
+
+  const { data, error } = await query.order('created_at', { ascending: false }).limit(1).single();
+
+  if (error || !data) {
+    document.getElementById('raporIcerik').innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">📊</div>
+        <div class="empty-title">Rapor bulunamadı</div>
+        <div class="empty-desc">Bu ilan için henüz ekspertiz raporu oluşturulmamış</div>
+        <a href="degerleme.html?ilan_id=${ilanId}" class="btn btn-gold btn-md" style="margin-top:20px;max-width:220px">Rapor Al — 800 ₺</a>
+      </div>`;
+    return;
+  }
+
+  raporGoster(data);
+}
+
+function formatPara(sayi) {
+  return Number(sayi).toLocaleString('tr-TR') + ' ₺';
+}
+
+function puanRenk(puan) {
+  if (puan >= 75) return 'var(--green)';
+  if (puan >= 50) return 'var(--gold)';
+  return 'var(--rust)';
+}
+
+function raporGoster(data) {
+  const r = data.rapor_verisi;
+  const ilan = data.ilan;
+  const fa = r.fotograf_analizi || {};
+  const dt = r.deger_tahmini || {};
+  const ka = r.kira_analizi || {};
+  const ra = r.risk_analizi || {};
+  const ya = r.yasal_durum || {};
+  const pa = r.piyasa_analizi || {};
+  const genel = r.genel_puan || 70;
+  const pct = `${genel}%`;
+
+  function durum(val) {
+    if (!val) return '';
+    const v = val.toLowerCase();
+    if (v.includes('iyi') || v.includes('yeni') || v.includes('bol')) return 'fi-iyi';
+    if (v.includes('kötü') || v.includes('eski') || v.includes('yetersiz') || v.includes('var')) return 'fi-kotu';
+    return 'fi-orta';
+  }
+
+  function etkiClass(etki) {
+    if (!etki) return 'etki-ntr';
+    if (etki.includes('+')) return 'etki-pos';
+    if (etki.includes('-')) return 'etki-neg';
+    return 'etki-ntr';
+  }
+
+  function riskClass(risk) {
+    if (!risk) return 'risk-orta';
+    const r = risk.toLowerCase();
+    if (r.includes('düşük')) return 'risk-dusuk';
+    if (r.includes('yüksek')) return 'risk-yuksek';
+    return 'risk-orta';
+  }
+
+  function fiyatClass(val) {
+    if (!val) return 'fiyat-uygun';
+    const v = val.toLowerCase();
+    if (v.includes('yüksek')) return 'fiyat-yuksek';
+    if (v.includes('düşük')) return 'fiyat-dusuk';
+    return 'fiyat-uygun';
+  }
+
+  document.getElementById('raporIcerik').innerHTML = `
+
+    <!-- HEADER -->
+    <div class="rapor-header">
+      <div class="logo">🏠 GoTapu Ekspertiz Raporu</div>
+      <h1>${ilan?.baslik || 'Gayrimenkul Ekspertiz Raporu'}</h1>
+      <div class="meta">📍 ${ilan?.konum || ''} &nbsp;·&nbsp; 📅 ${r.ekspertiz_tarihi || new Date().toLocaleDateString('tr-TR')}</div>
+    </div>
+
+    <!-- GENEL PUAN -->
+    <div class="rapor-section" style="text-align:center">
+      <div class="rapor-section-title" style="justify-content:center">📊 Genel Ekspertiz Puanı</div>
+      <div style="--pct:${pct}" class="puan-daire">
+        <span class="puan-sayi">${genel}</span>
+      </div>
+      <div style="font-size:13px;color:var(--text2);max-width:280px;margin:0 auto">${r.ozet || ''}</div>
+    </div>
+
+    <!-- DEĞER TAHMİNİ -->
+    <div class="rapor-section">
+      <div class="rapor-section-title">💰 Değer Tahmini</div>
+      <div class="deger-kutu">
+        <div class="deger-item">
+          <div class="d-label">Minimum</div>
+          <div class="d-val">${formatPara(dt.minimum)}</div>
+        </div>
+        <div class="deger-item ana">
+          <div class="d-label">Gerçekçi Değer</div>
+          <div class="d-val">${formatPara(dt.gercekci)}</div>
+        </div>
+        <div class="deger-item">
+          <div class="d-label">Maksimum</div>
+          <div class="d-val">${formatPara(dt.maksimum)}</div>
+        </div>
+      </div>
+      <div class="kira-row">
+        <span class="kr-label">⚡ Hızlı Satış Fiyatı (30 gün)</span>
+        <span class="kr-val">${formatPara(dt.hizli_satis)}</span>
+      </div>
+      <div class="kira-row">
+        <span class="kr-label">⏱️ Tahmini Satış Süresi</span>
+        <span class="kr-val">${dt.tahmini_satis_suresi || '-'} gün</span>
+      </div>
+      <div class="kira-row">
+        <span class="kr-label">🏷️ İlan Fiyatı</span>
+        <span class="kr-val">${formatPara(ilan?.fiyat)}</span>
+      </div>
+      ${dt.ilan_fiyati_degerlendirmesi ? `
+      <div style="margin-top:10px">
+        <span class="ilan-fiyat-badge ${fiyatClass(dt.ilan_fiyati_degerlendirmesi)}">
+          ${dt.ilan_fiyati_degerlendirmesi === 'uygun' ? '✓ Fiyat Uygun' : dt.ilan_fiyati_degerlendirmesi === 'yüksek' ? '↑ Fiyat Yüksek' : '↓ Fiyat Düşük'}
+        </span>
+        <div style="font-size:12px;color:var(--text3);margin-top:6px">${dt.ilan_fiyati_aciklama || ''}</div>
+      </div>` : ''}
+    </div>
+
+    <!-- KİRA ANALİZİ -->
+    <div class="rapor-section">
+      <div class="rapor-section-title">🏘️ Kira Analizi</div>
+      <div class="kira-row">
+        <span class="kr-label">Tahmini Kira Aralığı</span>
+        <span class="kr-val">${formatPara(ka.kira_min)} - ${formatPara(ka.kira_max)}</span>
+      </div>
+      <div class="kira-row">
+        <span class="kr-label">Yıllık Kira Getiri Oranı</span>
+        <span class="kr-val" style="color:var(--green)">%${ka.kira_getiri_orani || '-'}</span>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-top:10px">${ka.kira_degerlendirmesi || ''}</div>
+    </div>
+
+    <!-- FOTOĞRAF ANALİZİ -->
+    ${Object.keys(fa).length > 0 ? `
+    <div class="rapor-section">
+      <div class="rapor-section-title">📸 Fotoğraf Analizi</div>
+      <div class="foto-analiz-grid">
+        ${fa.mutfak ? `<div class="foto-item"><div class="fi-label">Mutfak</div><div class="fi-val ${durum(fa.mutfak)}">${fa.mutfak}</div>${fa.mutfak_aciklama ? `<div style="font-size:11px;color:var(--text3);margin-top:3px">${fa.mutfak_aciklama}</div>` : ''}</div>` : ''}
+        ${fa.banyo ? `<div class="foto-item"><div class="fi-label">Banyo</div><div class="fi-val ${durum(fa.banyo)}">${fa.banyo}</div>${fa.banyo_aciklama ? `<div style="font-size:11px;color:var(--text3);margin-top:3px">${fa.banyo_aciklama}</div>` : ''}</div>` : ''}
+        ${fa.zemin_tipi ? `<div class="foto-item"><div class="fi-label">Zemin</div><div class="fi-val">${fa.zemin_tipi}</div></div>` : ''}
+        ${fa.dogal_isik ? `<div class="foto-item"><div class="fi-label">Doğal Işık</div><div class="fi-val ${durum(fa.dogal_isik)}">${fa.dogal_isik}</div></div>` : ''}
+        ${fa.genel_temizlik ? `<div class="foto-item"><div class="fi-label">Temizlik</div><div class="fi-val ${durum(fa.genel_temizlik)}">${fa.genel_temizlik}</div></div>` : ''}
+        ${fa.tadilat_ihtiyaci ? `<div class="foto-item"><div class="fi-label">Tadilat İhtiyacı</div><div class="fi-val ${fa.tadilat_ihtiyaci === 'yok' ? 'fi-iyi' : fa.tadilat_ihtiyaci === 'az' ? 'fi-orta' : 'fi-kotu'}">${fa.tadilat_ihtiyaci}</div></div>` : ''}
+        ${fa.nem_iz ? `<div class="foto-item"><div class="fi-label">Nem / Çatlak</div><div class="fi-val ${fa.nem_iz === 'var' ? 'fi-kotu' : 'fi-iyi'}">${fa.nem_iz}</div>${fa.nem_aciklama ? `<div style="font-size:11px;color:var(--text3);margin-top:3px">${fa.nem_aciklama}</div>` : ''}</div>` : ''}
+        ${fa.manzara ? `<div class="foto-item"><div class="fi-label">Manzara</div><div class="fi-val">${fa.manzara}</div></div>` : ''}
+      </div>
+      ${fa.genel_puan ? `
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:13px;color:var(--text3);font-weight:700">Fotoğraf Puanı</span>
+        <span style="font-size:16px;font-weight:900;color:${puanRenk(fa.genel_puan)}">${fa.genel_puan}/100</span>
+      </div>` : ''}
+    </div>` : ''}
+
+    <!-- PİYASA ANALİZİ -->
+    <div class="rapor-section">
+      <div class="rapor-section-title">📈 Piyasa Analizi</div>
+      <div class="kira-row">
+        <span class="kr-label">Bölge Ortalama m² Fiyatı</span>
+        <span class="kr-val">${formatPara(pa.bolge_m2_fiyati)}</span>
+      </div>
+      <div class="kira-row">
+        <span class="kr-label">Fiyat Trendi</span>
+        <span class="kr-val" style="color:${pa.fiyat_trendi === 'yükselen' ? 'var(--green)' : pa.fiyat_trendi === 'düşen' ? 'var(--rust)' : 'var(--gold)'}">
+          ${pa.fiyat_trendi === 'yükselen' ? '↑ Yükselen' : pa.fiyat_trendi === 'düşen' ? '↓ Düşen' : '→ Stabil'}
+        </span>
+      </div>
+      ${pa.trend_aciklama ? `<div style="font-size:12px;color:var(--text3);margin-top:6px">${pa.trend_aciklama}</div>` : ''}
+      ${pa.karsilastirma ? `<div style="font-size:12px;color:var(--text2);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">${pa.karsilastirma}</div>` : ''}
+    </div>
+
+    <!-- KRİTER ETKİLERİ -->
+    ${r.kriter_etkileri && r.kriter_etkileri.length > 0 ? `
+    <div class="rapor-section">
+      <div class="rapor-section-title">📋 Değer Etkileyen Kriterler</div>
+      ${r.kriter_etkileri.map(k => `
+        <div class="kriter-item">
+          <span style="color:var(--text2)">${k.kriter}</span>
+          <div style="text-align:right">
+            <span class="kriter-etki ${etkiClass(k.etki)}">${k.etki}</span>
+            ${k.aciklama ? `<div style="font-size:10px;color:var(--text3)">${k.aciklama}</div>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>` : ''}
+
+    <!-- RİSK ANALİZİ -->
+    <div class="rapor-section">
+      <div class="rapor-section-title">⚠️ Risk Analizi</div>
+      <div style="margin-bottom:12px">
+        <span class="risk-badge ${riskClass(ra.risk_skoru)}">
+          ${ra.risk_skoru === 'Düşük' ? '✓ Düşük Risk' : ra.risk_skoru === 'Yüksek' ? '⚠ Yüksek Risk' : '⚡ Orta Risk'}
+        </span>
+      </div>
+      ${ra.riskler && ra.riskler.length > 0 ? `
+        <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:6px">Riskler:</div>
+        ${ra.riskler.map(r => `<div class="liste-item"><span class="li-ikon">⚠️</span>${r}</div>`).join('')}` : ''}
+      ${ra.dikkat_edilecekler && ra.dikkat_edilecekler.length > 0 ? `
+        <div style="font-size:12px;font-weight:700;color:var(--text3);margin-top:10px;margin-bottom:6px">Dikkat Edilecekler:</div>
+        ${ra.dikkat_edilecekler.map(d => `<div class="liste-item"><span class="li-ikon">👉</span>${d}</div>`).join('')}` : ''}
+    </div>
+
+    <!-- YASAL DURUM -->
+    <div class="rapor-section">
+      <div class="rapor-section-title">📜 Yasal Durum</div>
+      <div class="kira-row">
+        <span class="kr-label">Krediye Uygunluk</span>
+        <span class="kr-val" style="color:${ya.kredie_uygunluk === 'uygun' ? 'var(--green)' : 'var(--rust)'}">
+          ${ya.kredie_uygunluk === 'uygun' ? '✓ Uygun' : '✗ Uygun Değil'}
+        </span>
+      </div>
+      ${ya.tapu_degerlendirmesi ? `<div style="font-size:12px;color:var(--text2);margin-top:8px">${ya.tapu_degerlendirmesi}</div>` : ''}
+      ${ya.notlar ? `<div style="font-size:12px;color:var(--text3);margin-top:6px">${ya.notlar}</div>` : ''}
+    </div>
+
+    <!-- FOOTER -->
+    <div class="rapor-footer">
+      <p>Bu rapor GoTapu yapay zeka sistemi tarafından oluşturulmuştur.<br>
+      Resmi ekspertiz yerine geçmez, bilgilendirme amaçlıdır.<br>
+      <strong style="color:var(--gold)">GoTapu — Evin Her Şeyi Burada</strong></p>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
