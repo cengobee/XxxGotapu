@@ -66,7 +66,15 @@
     <button class="btn-google" onclick="googleGiris()">🌐 Google ile Devam Et</button>
   </div>
 
-  <!-- ŞİFREMİ UNUTTUM -->
+  <!-- YENİ ŞİFRE -->
+  <div class="form" id="yenisifreForm">
+    <div style="text-align:center;font-size:40px;margin-bottom:4px">🔐</div>
+    <div style="text-align:center;font-size:16px;font-weight:900;margin-bottom:4px">Yeni Şifre Belirle</div>
+    <div style="text-align:center;font-size:13px;color:var(--text3);margin-bottom:8px">Güvenli bir şifre seçin</div>
+    <input class="input" type="password" id="yeniSifre" placeholder="Yeni şifre (min 6 karakter)">
+    <input class="input" type="password" id="yeniSifreTekrar" placeholder="Yeni şifre tekrar">
+    <button class="btn btn-gold btn-lg" onclick="yeniSifreKaydet()">✅ Şifremi Güncelle</button>
+  </div>
   <div class="form" id="sifreForm">
     <div style="text-align:center;font-size:40px;margin-bottom:4px">🔑</div>
     <div style="text-align:center;font-size:16px;font-weight:900;margin-bottom:4px">Şifreni Sıfırla</div>
@@ -84,20 +92,33 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 sb.auth.getSession().then(({ data }) => {
+  // Şifre sıfırlama token'ı var mı kontrol et
+  const hash = window.location.hash;
+  if (hash.includes('type=recovery') && hash.includes('access_token')) {
+    // Token'ı parse et
+    const params = new URLSearchParams(hash.substring(1));
+    const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
+    if (accessToken) {
+      // Session'ı set et
+      sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).then(() => {
+        switchTab('yenisifre');
+      });
+      return;
+    }
+  }
   if (data.session) window.location.href = 'index.html';
 });
 
 function switchTab(tab) {
-  // Tab bar — sadece giriş ve kayıt için göster
-  document.getElementById('tabBar').style.display = tab === 'sifre' ? 'none' : 'flex';
-
+  document.getElementById('tabBar').style.display = (tab === 'sifre' || tab === 'yenisifre') ? 'none' : 'flex';
   document.querySelectorAll('.tab').forEach((t, i) => {
     t.classList.toggle('active', (i===0&&tab==='giris')||(i===1&&tab==='kayit'));
   });
-
   document.getElementById('girisForm').classList.toggle('active', tab==='giris');
   document.getElementById('kayitForm').classList.toggle('active', tab==='kayit');
   document.getElementById('sifreForm').classList.toggle('active', tab==='sifre');
+  document.getElementById('yenisifreForm').classList.toggle('active', tab==='yenisifre');
   hideMessages();
 }
 
@@ -145,6 +166,22 @@ async function kayitOl() {
   }
   setLoading(false);
   showSuccess('✅ Kayıt başarılı! E-postanızı doğrulayın, ardından giriş yapabilirsiniz.');
+}
+
+async function yeniSifreKaydet() {
+  const sifre = document.getElementById('yeniSifre').value;
+  const tekrar = document.getElementById('yeniSifreTekrar').value;
+  if (!sifre || !tekrar) return showError('Lütfen tüm alanları doldurun!');
+  if (sifre.length < 6) return showError('Şifre en az 6 karakter olmalı!');
+  if (sifre !== tekrar) return showError('Şifreler eşleşmiyor!');
+  setLoading(true);
+  const { error } = await sb.auth.updateUser({ password: sifre });
+  setLoading(false);
+  if (error) return showError('Hata: ' + error.message);
+  showSuccess('✅ Şifreniz güncellendi! Giriş yapabilirsiniz.');
+  setTimeout(() => {
+    switchTab('giris');
+  }, 2000);
 }
 
 async function sifreSifirla() {
