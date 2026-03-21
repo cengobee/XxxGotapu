@@ -91,20 +91,21 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-sb.auth.getSession().then(({ data }) => {
-  // Şifre sıfırlama token'ı var mı kontrol et
+sb.auth.getSession().then(async ({ data }) => {
   const hash = window.location.hash;
   if (hash.includes('type=recovery') && hash.includes('access_token')) {
-    // Token'ı parse et
     const params = new URLSearchParams(hash.substring(1));
     const accessToken = params.get('access_token');
     const refreshToken = params.get('refresh_token');
-    if (accessToken) {
-      // Session'ı set et
-      sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).then(() => {
-        switchTab('yenisifre');
+    if (accessToken && refreshToken) {
+      const { error } = await sb.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken
       });
-      return;
+      if (!error) {
+        switchTab('yenisifre');
+        return;
+      }
     }
   }
   if (data.session) window.location.href = 'index.html';
