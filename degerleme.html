@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gotapu — Ekspertiz Raporu</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .rapor-hero {
+    background: linear-gradient(135deg, #1a2340, #2a3560);
+    border-radius: var(--radius); padding: 24px;
+    text-align: center; margin-bottom: 20px;
+    border: 1px solid rgba(245,200,66,0.2);
+  }
+  .rapor-hero .ikon { font-size: 52px; display: block; margin-bottom: 12px; }
+  .rapor-hero h1 { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
+  .rapor-hero p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  .rapor-kapsam {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px; margin-bottom: 20px;
+  }
+  .kapsam-baslik { font-size: 14px; font-weight: 900; margin-bottom: 14px; color: var(--gold); }
+  .kapsam-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 13px; color: var(--text2);
+  }
+  .kapsam-item:last-child { border-bottom: none; }
+  .kapsam-item .ki { font-size: 18px; flex-shrink: 0; }
+
+  .fiyat-kutu {
+    background: linear-gradient(135deg, rgba(245,200,66,0.12), rgba(245,200,66,0.04));
+    border: 1px solid rgba(245,200,66,0.3);
+    border-radius: var(--radius); padding: 20px;
+    text-align: center; margin-bottom: 20px;
+  }
+  .fiyat-kutu .fiyat { font-size: 32px; font-weight: 900; color: var(--gold); }
+  .fiyat-kutu .fiyat-acik { font-size: 13px; color: var(--text3); margin-top: 4px; }
+
+  .ilan-bilgi {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 20px;
+  }
+
+  .yukleniyor-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85); z-index: 999;
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px;
+  }
+  .yukleniyor-overlay.show { display: flex; }
+  .yukleniyor-overlay p { font-size: 15px; font-weight: 700; color: var(--text2); text-align: center; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="profil.html" class="nav-logo" style="font-size:15px">
+    <div class="back-btn" style="margin-right:4px">←</div>
+    Ekspertiz Raporu
+  </a>
+</nav>
+
+<!-- Yükleniyor Overlay -->
+<div class="yukleniyor-overlay" id="yukleniyor">
+  <div class="spinner"></div>
+  <p id="yukleniyorMetin">Rapor hazırlanıyor...<br>Bu işlem birkaç dakika sürebilir.</p>
+</div>
+
+<div class="page fade-up">
+
+  <div class="rapor-hero">
+    <span class="ikon">📊</span>
+    <h1>Gayrimenkul Ekspertiz Raporu</h1>
+    <p>Yapay zeka destekli profesyonel değerleme raporu.<br>Fotoğraf analizi, piyasa karşılaştırması ve detaylı ekspertiz.</p>
+  </div>
+
+  <!-- İlan Bilgisi -->
+  <div class="ilan-bilgi" id="ilanBilgi">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Rapor Kapsamı -->
+  <div class="rapor-kapsam">
+    <div class="kapsam-baslik">📋 Rapor Kapsamı</div>
+    <div class="kapsam-item"><span class="ki">🏷️</span>Tahmini piyasa değeri aralığı</div>
+    <div class="kapsam-item"><span class="ki">📸</span>Fotoğraf AI analizi (mutfak, banyo, nem, çatlak...)</div>
+    <div class="kapsam-item"><span class="ki">📐</span>Kriter bazlı değer hesabı (200+ kriter)</div>
+    <div class="kapsam-item"><span class="ki">📈</span>Bölgesel fiyat trendi ve karşılaştırma</div>
+    <div class="kapsam-item"><span class="ki">💰</span>Kira getirisi ve yatırım analizi</div>
+    <div class="kapsam-item"><span class="ki">🤝</span>Pazarlık stratejisi önerisi</div>
+    <div class="kapsam-item"><span class="ki">⚠️</span>Risk analizi</div>
+    <div class="kapsam-item"><span class="ki">📜</span>Yasal durum değerlendirmesi</div>
+    <div class="kapsam-item"><span class="ki">🏠</span>Hızlı satış / maksimum değer tahmini</div>
+  </div>
+
+  <!-- Fiyat -->
+  <div class="fiyat-kutu">
+    <div class="fiyat">800 ₺</div>
+    <div class="fiyat-acik">Tek seferlik ödeme · PDF format · Anında teslim</div>
+  </div>
+
+  <button class="btn btn-gold btn-lg" onclick="raporAl()" id="raporBtn">
+    📊 Ekspertiz Raporu Al
+  </button>
+
+  <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--text3)">
+    🔒 Güvenli ödeme · iyzico altyapısı
+  </div>
+
+</div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
+  <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">✨</div>Eşleşmeler</a>
+  <a href="ilan-ver.html" class="bnav-center">+</a>
+  <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">💬</div>Mesajlar</a>
+  <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
+</nav>
+
+<script>
+const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const params = new URLSearchParams(window.location.search);
+const ilanId = params.get('ilan_id');
+let ilan = null;
+let currentUser = null;
+
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) { window.location.href = 'auth.html'; return; }
+  currentUser = data.session.user;
+  if (ilanId) ilanYukle();
+});
+
+async function ilanYukle() {
+  const { data } = await sb.from('ilanlar').select('*').eq('id', ilanId).single();
+  ilan = data;
+  const el = document.getElementById('ilanBilgi');
+  if (!data) { el.innerHTML = '<div class="empty"><div class="empty-title">İlan bulunamadı</div></div>'; return; }
+  el.innerHTML = `
+    <div style="display:flex;gap:12px;align-items:center">
+      <div style="width:60px;height:60px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;overflow:hidden">
+        ${data.foto_url ? `<img src="${data.foto_url}" style="width:100%;height:100%;object-fit:cover">` : '🏠'}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:800">${data.baslik}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">📍 ${data.konum || ''}</div>
+        <div style="font-size:13px;font-weight:900;color:var(--gold);margin-top:4px">${Number(data.fiyat).toLocaleString('tr-TR')} ₺</div>
+      </div>
+    </div>`;
+}
+
+async function raporAl() {
+  // Şimdilik demo rapor indir
+  // İleride: ödeme → Claude API → gerçek rapor
+  const btn = document.getElementById('raporBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Hazırlanıyor...';
+
+  document.getElementById('yukleniyor').classList.add('show');
+
+  // Simüle et — ileride gerçek API çağrısı olacak
+  setTimeout(() => {
+    document.getElementById('yukleniyor').classList.remove('show');
+    btn.disabled = false;
+    btn.textContent = '📊 Ekspertiz Raporu Al';
+    alert('🚧 Ödeme sistemi ve rapor motoru yakında aktif olacak!\n\nBu özellik geliştirme aşamasındadır.');
+  }, 2000);
+}
+</script>
+</body>
+</html>
