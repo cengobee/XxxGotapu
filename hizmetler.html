@@ -302,10 +302,14 @@ sb.auth.getSession().then(({ data }) => {
 });
 
 async function profilYukle() {
-  const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
-  currentProfil = data;
-  document.getElementById('kullaniciAd').textContent = data?.full_name || currentUser.email;
-  document.getElementById('kullaniciTel').textContent = data?.phone ? '📞 ' + data.phone : 'Telefon bilgisi yok';
+  try {
+    const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+    currentProfil = data;
+    document.getElementById('kullaniciAd').textContent = data?.full_name || currentUser.email;
+    document.getElementById('kullaniciTel').textContent = data?.phone ? '📞 ' + data.phone : '';
+  } catch(e) {
+    document.getElementById('kullaniciAd').textContent = currentUser.email;
+  }
   sayfaOlustur();
 }
 
