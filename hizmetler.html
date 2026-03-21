@@ -234,15 +234,34 @@ const kategoriler = {
   },
   arac_yikama: {
     em: '🚗', ad: 'Araç Yıkama',
-    desc: 'Yerinde araç yıkama ve detaylı temizlik hizmetleri.',
+    desc: 'Yerinde araç yıkama hizmetleri.',
     alanlar: [
-      { id: 'tip', label: 'Yıkama Paketi', secenekler: ['Dış Yıkama', 'İç Temizlik', 'İç + Dış Yıkama', 'Detaylı Temizlik (Detailing)', 'Motor Yıkama', 'Seramik Kaplama'] },
+      { id: 'tip', label: 'Yıkama Tipi', secenekler: ['Sadece Dış Yıkama', 'Sadece İç Temizlik', 'İç + Dış Yıkama'] },
       { id: 'arac', label: 'Araç Tipi', secenekler: ['Binek Araç', 'SUV/Arazi', 'Minivan/Panelvan', 'Kamyonet', 'Motosiklet'] },
-      { id: 'kirlillik', label: 'Kirlililik Durumu', secenekler: ['Normal', 'Çok Kirli', 'Pet/Çocuk Lekesi Var', 'Koku Giderme Gerekiyor'] },
-      { id: 'konum', label: 'Hizmet Yeri', secenekler: ['Evime Gelsin', 'İşyerime Gelsin', 'Servise Getireceğim'] },
       { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bugün', 'Yarın', 'Bu Hafta', 'Hafta Sonu', 'Tarih Belirlemedim'] },
     ]
   },
+  ilacalama: {
+    em: '🐛', ad: 'İlaçlama',
+    desc: 'Böcek, haşere ve fare ilaçlama hizmetleri.',
+    alanlar: [
+      { id: 'tip', label: 'İlaçlama Tipi', secenekler: ['Hamam Böceği', 'Pire/Bit', 'Karınca', 'Fare/Sıçan', 'Tahtakurusu', 'Genel İlaçlama (Hepsi)'] },
+      { id: 'mekan', label: 'Mekan Tipi', secenekler: ['Ev/Daire', 'İşyeri/Ofis', 'Depo/Bodrum', 'Bahçe/Dış Alan'] },
+      { id: 'metrekare', label: 'Yaklaşık Metrekare', secenekler: ['50m² altı', '50-100m²', '100-200m²', '200m² üzeri'] },
+      { id: 'acil', label: 'Aciliyet', secenekler: ['Acil (1-2 Gün İçinde)', 'Bu Hafta', 'Bu Ay', 'Fiyat Alıyorum'] },
+    ]
+  },
+  petek: {
+    em: '🔥', ad: 'Petek & Kombi',
+    desc: 'Petek temizleme ve kombi bakım hizmetleri.',
+    alanlar: [
+      { id: 'tip', label: 'Hizmet Tipi', secenekler: ['Petek Temizleme', 'Kombi Bakımı', 'Petek + Kombi Birlikte', 'Petek Sızdırmazlık', 'Kombi Arızası'] },
+      { id: 'petek_adet', label: 'Petek Adedi (yaklaşık)', secenekler: ['1-3 Petek', '4-6 Petek', '7-10 Petek', '10+ Petek'] },
+      { id: 'kombi', label: 'Kombi Markası', secenekler: ['Baymak', 'Demirdöküm', 'Vaillant', 'Bosch', 'Ariston', 'Diğer', 'Petek Yok'] },
+      { id: 'sorun', label: 'Mevcut Sorun Var mı?', secenekler: ['Hayır, Rutin Bakım', 'Isınmıyor/Az Isıtıyor', 'Su Kaçırıyor', 'Gürültü Yapıyor', 'Kombi Arızası'] },
+      { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Acil', 'Bu Hafta', 'Bu Ay', 'Kış Öncesi Hazırlık'] },
+    ]
+  }
   koltuk_yikama: {
     em: '🛋️', ad: 'Koltuk Yıkama',
     desc: 'Koltuk, kanepe ve döşeme yıkama hizmetleri.',
