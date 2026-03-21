@@ -217,6 +217,34 @@ const kategoriler = {
       { id: 'metrekare', label: 'Yaklaşık Metrekare', tip: 'radio', secenekler: ['50m² altı', '50-100m²', '100-150m²', '150m² üzeri'] },
       { id: 'butce', label: 'Bütçe Aralığı', tip: 'radio', secenekler: ['10.000₺ altı', '10-25K₺', '25-50K₺', '50K₺ üzeri'] },
     ]
+  },
+  arac_yikama: {
+    em: '🚗', ad: 'Araç Yıkama',
+    desc: 'Yerinde araç yıkama ve detaylı temizlik hizmetleri.',
+    alanlar: [
+      { id: 'tip', label: 'Yıkama Tipi', tip: 'radio', secenekler: ['Dış Yıkama', 'İç+Dış Yıkama', 'Detaylı Temizlik', 'Motor Yıkama'] },
+      { id: 'arac', label: 'Araç Tipi', tip: 'radio', secenekler: ['Binek Araç', 'SUV/Arazi', 'Minivan', 'Kamyonet'] },
+      { id: 'zaman', label: 'Ne Zaman?', tip: 'radio', secenekler: ['Bugün', 'Bu hafta', 'Hafta sonu', 'Tarih belirlemedim'] },
+    ]
+  },
+  koltuk_yikama: {
+    em: '🛋️', ad: 'Koltuk Yıkama',
+    desc: 'Koltuk, kanepe ve döşeme yıkama hizmetleri.',
+    alanlar: [
+      { id: 'tip', label: 'Ürün Tipi', tip: 'radio', secenekler: ['Koltuk Takımı', 'Tekli Koltuk', 'Kanepe', 'Sandalye', 'Yatak Başlığı'] },
+      { id: 'adet', label: 'Adet', tip: 'radio', secenekler: ['1-2 Adet', '3-5 Adet', '6-10 Adet', '10+ Adet'] },
+      { id: 'zaman', label: 'Ne Zaman?', tip: 'radio', secenekler: ['Bu hafta', 'Önümüzdeki hafta', 'Bu ay', 'Tarih belirlemedim'] },
+    ]
+  },
+  hali_yikama: {
+    em: '🪨', ad: 'Halı Yıkama',
+    desc: 'Halı, kilim ve yolluk yıkama hizmetleri.',
+    alanlar: [
+      { id: 'tip', label: 'Ürün Tipi', tip: 'radio', secenekler: ['Halı', 'Kilim', 'Yolluk', 'Paspas', 'Karma'] },
+      { id: 'adet', label: 'Yaklaşık Adet', tip: 'radio', secenekler: ['1-2 Adet', '3-5 Adet', '6-10 Adet', '10+ Adet'] },
+      { id: 'servis', label: 'Servis Şekli', tip: 'radio', secenekler: ['Evden Alıp Getirsinler', 'Yerinde Yıkama'] },
+      { id: 'zaman', label: 'Ne Zaman?', tip: 'radio', secenekler: ['Bu hafta', 'Önümüzdeki hafta', 'Bu ay', 'Tarih belirlemedim'] },
+    ]
   }
 };
 
@@ -326,7 +354,6 @@ async function teklifGonder() {
   btn.textContent = '⏳ Gönderiliyor...';
   btn.disabled = true;
 
-  // Fotoğrafları yükle
   let foto_urls = [];
   for (let i = 0; i < fotoFiles.length; i++) {
     const file = fotoFiles[i];
