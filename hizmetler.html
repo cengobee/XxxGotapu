@@ -232,7 +232,7 @@ const kategoriler = {
       { id: 'butce', label: 'Bütçe Aralığı', secenekler: ['10.000₺ altı', '10-30K₺', '30-75K₺', '75-150K₺', '150K₺ üzeri'] },
     ]
   },
-  arac_yikama: {
+  aracyikama: {
     em: '🚗', ad: 'Araç Yıkama',
     desc: 'Yerinde araç yıkama hizmetleri.',
     alanlar: [
@@ -262,7 +262,7 @@ const kategoriler = {
       { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Acil', 'Bu Hafta', 'Bu Ay', 'Kış Öncesi Hazırlık'] },
     ]
   }
-  koltuk_yikama: {
+  koltukyikama: {
     em: '🛋️', ad: 'Koltuk Yıkama',
     desc: 'Koltuk, kanepe ve döşeme yıkama hizmetleri.',
     alanlar: [
@@ -274,7 +274,7 @@ const kategoriler = {
       { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bu Hafta', 'Önümüzdeki Hafta', 'Bu Ay', 'Tarih Belirlemedim'] },
     ]
   },
-  hali_yikama: {
+  haliyikama: {
     em: '🪨', ad: 'Halı Yıkama',
     desc: 'Halı, kilim ve yolluk yıkama hizmetleri.',
     alanlar: [
@@ -344,15 +344,18 @@ function kategoriGoster() {
       <div class="hizmet-desc">${kat.desc}</div>
     </div>`;
 
-  document.getElementById('formAlanlari').innerHTML = kat.alanlar.map(alan => `
+  document.getElementById('formAlanlari').innerHTML = kat.alanlar.map(alan => {
+    const fnAdi = alan.coklu ? 'cokluSec' : 'tekSec';
+    return `
     <div class="form-group">
       <label class="form-label">${alan.label}</label>
       <div class="radio-group" id="grp_${alan.id}">
         ${alan.secenekler.map(s => `
-          <button class="radio-btn" onclick="${alan.coklu ? `cokluSec('${alan.id}',this)` : `tekSec('${alan.id}',this)`}">${s}</button>
+          <button class="radio-btn" onclick="${fnAdi}('${alan.id}',this)">${s}</button>
         `).join('')}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function tekSec(alanId, el) {
