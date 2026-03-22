@@ -9,26 +9,32 @@
 <style>
   .form-group { margin-bottom: 16px; }
   .form-label { font-size: 13px; font-weight: 800; color: var(--text2); margin-bottom: 8px; display: block; }
-  .type-row { display: flex; gap: 8px; }
+  .bolum-baslik {
+    font-size: 13px; font-weight: 900; color: var(--text3);
+    letter-spacing: 1px; text-transform: uppercase;
+    margin: 20px 0 12px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .type-row { display: flex; gap: 8px; flex-wrap: wrap; }
   .type-btn {
-    flex: 1; padding: 12px 8px; border-radius: var(--radius-sm);
+    padding: 10px 14px; border-radius: var(--radius-sm);
     background: var(--card); border: 1.5px solid var(--border);
     color: var(--text2); font-family: 'Nunito',sans-serif;
-    font-size: 14px; font-weight: 700; cursor: pointer; transition: all .2s;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s;
   }
   .type-btn.active { background: rgba(245,200,66,0.1); border-color: var(--gold); color: var(--gold); }
-
-  .foto-mevcut {
-    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;
+  .sec-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sec-btn {
+    padding: 8px 14px; border-radius: 50px;
+    background: var(--card); border: 1.5px solid var(--border);
+    color: var(--text2); font-family: 'Nunito',sans-serif;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s; flex-shrink: 0;
   }
-  .foto-thumb {
-    position: relative; width: 80px; height: 80px;
-  }
-  .foto-thumb img {
-    width: 80px; height: 80px; border-radius: 10px;
-    object-fit: cover; border: 2px solid var(--border);
-  }
-  .foto-thumb.one-cikan img { border-color: var(--gold); }
+  .sec-btn.active { background: rgba(245,200,66,0.1); border-color: var(--gold); color: var(--gold); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .foto-mevcut { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .foto-thumb { position: relative; width: 80px; height: 80px; }
+  .foto-thumb img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; border: 2px solid var(--border); }
   .foto-remove {
     position: absolute; top: -6px; right: -6px;
     width: 20px; height: 20px; border-radius: 50%;
@@ -42,17 +48,17 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 28px; cursor: pointer; flex-shrink: 0;
   }
-
+  /* ÖNE ÇIKAR */
   .one-cikan-bar {
     display: flex; align-items: center; justify-content: space-between;
     background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 12px 16px;
-    margin-bottom: 16px;
+    border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 16px;
   }
+  .one-cikan-bar.aktif { border-color: rgba(245,200,66,0.4); background: rgba(245,200,66,0.05); }
   .toggle {
     width: 48px; height: 26px; border-radius: 13px;
     background: var(--border); position: relative;
-    cursor: pointer; transition: background .2s; border: none;
+    cursor: pointer; transition: background .2s; border: none; flex-shrink: 0;
   }
   .toggle.on { background: var(--gold); }
   .toggle::after {
@@ -61,7 +67,6 @@
     background: white; transition: left .2s;
   }
   .toggle.on::after { left: 25px; }
-
   .danger-zone {
     background: rgba(232,96,58,0.05); border: 1px solid rgba(232,96,58,0.2);
     border-radius: var(--radius); padding: 16px; margin-top: 20px;
@@ -99,12 +104,9 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const params = new URLSearchParams(window.location.search);
 const ilanId = params.get('id');
-let currentUser = null;
-let ilan = null;
+let currentUser = null, ilan = null;
 let seciliTip = 'satilik';
-let mevcutFotolar = [];
-let yeniFotolar = [];
-let oneCikan = false;
+let mevcutFotolar = [], yeniFotolar = [], oneCikan = false;
 
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) { window.location.href = 'auth.html'; return; }
@@ -123,7 +125,12 @@ async function ilanYukle() {
 }
 
 function formOlustur() {
+  const k = ilan.kriterler || {};
   document.getElementById('icerik').innerHTML = `
+
+    <!-- TEMEL BİLGİLER -->
+    <div class="bolum-baslik">📋 Temel Bilgiler</div>
+
     <div class="form-group">
       <label class="form-label">İlan Tipi</label>
       <div class="type-row">
@@ -148,48 +155,189 @@ function formOlustur() {
       <input class="input" type="text" id="konum" value="${ilan.konum || ''}">
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="form-group">
-        <label class="form-label">Oda Sayısı</label>
-        <input class="input" type="text" id="oda" value="${ilan.oda_sayisi || ''}">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Metrekare</label>
-        <input class="input" type="number" id="m2" value="${ilan.metrekare || ''}">
+    <!-- EMLAK ÖZELLİKLERİ -->
+    <div class="bolum-baslik">🏠 Emlak Özellikleri</div>
+
+    <div class="form-group">
+      <label class="form-label">Emlak Tipi</label>
+      <div class="sec-row" id="emlakTipi">
+        ${['🏢 Daire','🏡 Villa','🏠 Müstakil','🏘️ Residence','🏗️ Arsa','🏪 İşyeri','🏭 Depo/Fabrika','🌳 Tarla/Bağ'].map(s=>`
+          <button class="sec-btn ${k.emlak_tipi===s?'active':''}" onclick="secBtn(this,'emlakTipi')">${s}</button>`).join('')}
       </div>
     </div>
 
     <div class="form-group">
-      <label class="form-label">Açıklama</label>
-      <textarea class="input" id="aciklama" rows="4" style="resize:none;line-height:1.6">${ilan.aciklama || ''}</textarea>
+      <label class="form-label">Oda Sayısı</label>
+      <div class="sec-row" id="odaSayisi">
+        ${['Stüdyo','1+0','1+1','2+1','3+1','4+1','5+1','6+1 ve üzeri'].map(s=>`
+          <button class="sec-btn ${(k.oda_sayisi===s||ilan.oda_sayisi===s)?'active':''}" onclick="secBtn(this,'odaSayisi')">${s}</button>`).join('')}
+      </div>
     </div>
 
-    <!-- Öne Çıkar -->
-    <div class="one-cikan-bar">
+    <div class="form-group">
+      <label class="form-label">Banyo Sayısı</label>
+      <div class="sec-row" id="banyoSayisi">
+        ${['1','2','3','4+'].map(s=>`
+          <button class="sec-btn ${k.banyo_sayisi===s?'active':''}" onclick="secBtn(this,'banyoSayisi')">${s}</button>`).join('')}
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Net m²</label>
+        <input class="input" type="number" id="m2net" value="${ilan.metrekare || ''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Brüt m²</label>
+        <input class="input" type="number" id="m2brut" value="${k.m2brut || ''}">
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Bulunduğu Kat</label>
+        <select class="input" id="katSec" style="padding:10px">
+          <option value="">Seçiniz</option>
+          ${['Bodrum Kat','Zemin Kat','Bahçe Katı','Yüksek Giriş','1. Kat','2. Kat','3. Kat','4. Kat','5. Kat','6. Kat','7. Kat','8. Kat','9. Kat','10. Kat','11-15. Kat','16-20. Kat','20+ Kat','Çatı Katı / Penthouse'].map(s=>`
+            <option ${k.kat===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kat Sayısı</label>
+        <select class="input" id="katSayisi" style="padding:10px">
+          <option value="">Seçiniz</option>
+          ${['1','2','3','4','5','6','7','8','9','10','11-15','16-20','20+'].map(s=>`
+            <option ${k.kat_sayisi===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Bina Yaşı</label>
+      <div class="sec-row" id="binaYasi">
+        ${['0 (Sıfır)','1-5 Yıl','6-10 Yıl','11-15 Yıl','16-20 Yıl','21-30 Yıl','30+ Yıl'].map(s=>`
+          <button class="sec-btn ${k.bina_yasi===s?'active':''}" onclick="secBtn(this,'binaYasi')">${s}</button>`).join('')}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Isıtma Tipi</label>
+      <div class="sec-row" id="isitma">
+        ${['🔥 Doğalgaz (Kombi)','🏢 Merkezi','❄️ Klima','🪵 Soba','🌡️ Yerden Isıtma','☀️ Güneş Enerjisi','Isıtma Yok'].map(s=>`
+          <button class="sec-btn ${k.isitma===s?'active':''}" onclick="secBtn(this,'isitma')">${s}</button>`).join('')}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Cephe</label>
+      <div class="sec-row" id="cephe">
+        ${['⬆️ Kuzey','⬇️ Güney','➡️ Doğu','⬅️ Batı'].map(s=>`
+          <button class="sec-btn ${(k.cephe&&k.cephe.includes(s))?'active':''}" onclick="secBtnCoklu(this,'cephe')">${s}</button>`).join('')}
+      </div>
+    </div>
+
+    <!-- KULLANIM & TAPU -->
+    <div class="bolum-baslik">📄 Kullanım & Tapu</div>
+
+    <div class="form-group">
+      <label class="form-label">Kullanım Durumu</label>
+      <div class="sec-row" id="kullanimDurumu">
+        ${['🏠 Boş','🔑 Kiracılı','👤 Mülk Sahibi Kullanıyor'].map(s=>`
+          <button class="sec-btn ${k.kullanim_durumu===s?'active':''}" onclick="secBtn(this,'kullanimDurumu')">${s}</button>`).join('')}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Tapu Durumu</label>
+      <div class="sec-row" id="tapuDurumu">
+        ${['✅ Kat Mülkiyeti','📋 Kat İrtifakı','🤝 Hisseli Tapu','🌍 Arsa Tapusu','⏳ Tahsis'].map(s=>`
+          <button class="sec-btn ${k.tapu_durumu===s?'active':''}" onclick="secBtn(this,'tapuDurumu')">${s}</button>`).join('')}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Eşya Durumu</label>
+      <div class="sec-row" id="esyaDurumu">
+        ${['🪑 Eşyalı','📦 Yarı Eşyalı','🏚️ Boş'].map(s=>`
+          <button class="sec-btn ${k.esya_durumu===s?'active':''}" onclick="secBtn(this,'esyaDurumu')">${s}</button>`).join('')}
+      </div>
+    </div>
+
+    <!-- İÇ ÖZELLİKLER -->
+    <div class="bolum-baslik">🪟 İç Özellikler</div>
+
+    <div class="form-group">
+      <label class="form-label">İç Özellikler (birden fazla seçebilirsiniz)</label>
+      <div class="sec-row" id="icOzellikler">
+        ${['🪟 Balkon','🏡 Bahçe','🚿 Ebeveyn Banyosu','👕 Giyinme Odası','🍽️ Amerikan Mutfak','🛁 Küvet','🪟 Çift Camlı','🔆 Aydınlık Daire','📺 Uydu/Kablo TV','🌐 İnternet','🔔 Alarm Sistemi','🔐 Çelik Kapı','🎨 Yerden Isıtma','🪵 Parke/Laminat','🪨 Seramik/Granit'].map(s=>`
+          <button class="sec-btn ${(k.ic_ozellikler&&k.ic_ozellikler.includes(s))?'active':''}" onclick="secBtnCoklu(this,'icOzellikler')">${s}</button>`).join('')}
+      </div>
+    </div>
+
+    <!-- DIŞ ÖZELLİKLER -->
+    <div class="bolum-baslik">🏢 Dış Özellikler & Site</div>
+
+    <div class="form-group">
+      <label class="form-label">Dış Özellikler (birden fazla seçebilirsiniz)</label>
+      <div class="sec-row" id="disOzellikler">
+        ${['🛗 Asansör','🅿️ Otopark (Kapalı)','🚗 Otopark (Açık)','🏊 Yüzme Havuzu','🏋️ Spor Salonu','👮 Güvenlik/Kapıcı','📷 Kamera Sistemi','🌳 Yeşil Alan','🏸 Tenis Kortu','⚽ Spor Alanı','🧒 Çocuk Parkı','🧹 Temizlik Hizmeti','🛁 Sauna/Hamam','🏪 Site İçi Market'].map(s=>`
+          <button class="sec-btn ${(k.dis_ozellikler&&k.dis_ozellikler.includes(s))?'active':''}" onclick="secBtnCoklu(this,'disOzellikler')">${s}</button>`).join('')}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Site İçinde mi?</label>
+      <div class="sec-row" id="siteIcinde">
+        ${['✅ Evet','❌ Hayır'].map(s=>`
+          <button class="sec-btn ${k.site_icinde===s?'active':''}" onclick="secBtn(this,'siteIcinde')">${s}</button>`).join('')}
+      </div>
+    </div>
+
+    <!-- ÖZEL SEÇENEKLER -->
+    <div class="bolum-baslik">⭐ Özel Seçenekler</div>
+
+    <div class="one-cikan-bar ${oneCikan?'aktif':''}" id="oneCikanBar">
       <div>
         <div style="font-size:14px;font-weight:800">⭐ Öne Çıkar</div>
         <div style="font-size:12px;color:var(--text3);margin-top:2px">Ana sayfada önce göster</div>
+        <div style="font-size:11px;color:var(--gold);margin-top:4px;${oneCikan?'':'display:none'}" id="oneCikanAktifYazi">✓ Aktif — İlanın öne çıkacak</div>
       </div>
       <button class="toggle ${oneCikan?'on':''}" id="oneCikanToggle" onclick="toggleOneCikan()"></button>
     </div>
 
-    <!-- Fotoğraflar -->
+    <!-- FOTOĞRAFLAR -->
+    <div class="bolum-baslik">📷 Fotoğraflar</div>
     <div class="form-group">
-      <label class="form-label">Fotoğraflar</label>
       <div class="foto-mevcut" id="fotoContainer"></div>
+    </div>
+
+    <!-- AÇIKLAMA -->
+    <div class="bolum-baslik">📝 Açıklama</div>
+
+    <div class="form-group">
+      <textarea class="input" id="aciklama" rows="4" style="resize:none;line-height:1.6">${ilan.aciklama || ''}</textarea>
     </div>
 
     <div id="ilanError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
 
     <button class="btn btn-gold btn-lg" onclick="kaydet()" id="kaydetBtn">✅ Değişiklikleri Kaydet</button>
 
-    <!-- Tehlikeli Bölge -->
     <div class="danger-zone">
       <div style="font-size:14px;font-weight:800;color:var(--rust);margin-bottom:8px">⚠️ Tehlikeli Bölge</div>
       <button class="btn btn-lg" onclick="ilanSil()" style="background:var(--rust);color:white;width:100%">🗑️ İlanı Kalıcı Olarak Sil</button>
     </div>
   `;
   fotoGuncelle();
+}
+
+function toggleOneCikan() {
+  oneCikan = !oneCikan;
+  const btn = document.getElementById('oneCikanToggle');
+  const bar = document.getElementById('oneCikanBar');
+  const yazi = document.getElementById('oneCikanAktifYazi');
+  btn.classList.toggle('on', oneCikan);
+  bar.classList.toggle('aktif', oneCikan);
+  if (yazi) yazi.style.display = oneCikan ? 'block' : 'none';
 }
 
 function fotoGuncelle() {
@@ -210,87 +358,92 @@ function fotoGuncelle() {
     `<div class="foto-add-btn" onclick="document.getElementById('yeniFotoInput').click()">+</div>`;
 }
 
-function mevcutFotoSil(index) {
-  mevcutFotolar.splice(index, 1);
-  fotoGuncelle();
-}
-
-function yeniFotoSil(index) {
-  yeniFotolar.splice(index, 1);
-  fotoGuncelle();
-}
-
+function mevcutFotoSil(i) { mevcutFotolar.splice(i,1); fotoGuncelle(); }
+function yeniFotoSil(i) { yeniFotolar.splice(i,1); fotoGuncelle(); }
 function yeniFotoEkle(input) {
-  const dosyalar = Array.from(input.files);
-  dosyalar.forEach(f => {
-    if (mevcutFotolar.length + yeniFotolar.length < 10) yeniFotolar.push(f);
-  });
-  input.value = '';
-  fotoGuncelle();
+  Array.from(input.files).forEach(f => { if (mevcutFotolar.length+yeniFotolar.length < 10) yeniFotolar.push(f); });
+  input.value = ''; fotoGuncelle();
 }
 
 function secTip(el, tip) {
   document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  seciliTip = tip;
+  el.classList.add('active'); seciliTip = tip;
 }
+function secBtn(el, grupId) {
+  document.getElementById(grupId).querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+function secBtnCoklu(el) { el.classList.toggle('active'); }
 
-function toggleOneCikan() {
-  oneCikan = !oneCikan;
-  const btn = document.getElementById('oneCikanToggle');
-  btn.classList.toggle('on', oneCikan);
+function getSecim(grupId) {
+  const el = document.getElementById(grupId);
+  if (!el) return null;
+  const a = el.querySelector('.sec-btn.active');
+  return a ? a.textContent.trim() : null;
+}
+function getCokluSecim(grupId) {
+  const el = document.getElementById(grupId);
+  if (!el) return [];
+  return Array.from(el.querySelectorAll('.sec-btn.active')).map(b => b.textContent.trim());
 }
 
 async function kaydet() {
   const baslik = document.getElementById('baslik').value.trim();
   const fiyat = document.getElementById('fiyat').value;
   const konum = document.getElementById('konum').value.trim();
-  const oda = document.getElementById('oda').value.trim();
-  const m2 = document.getElementById('m2').value;
-  const aciklama = document.getElementById('aciklama').value.trim();
   const errEl = document.getElementById('ilanError');
 
   if (!baslik || !fiyat || !konum) {
     errEl.textContent = '⚠️ Başlık, fiyat ve konum zorunludur!';
-    errEl.style.display = 'block';
-    return;
+    errEl.style.display = 'block'; return;
   }
 
   const btn = document.getElementById('kaydetBtn');
-  btn.textContent = '⏳ Kaydediliyor...';
-  btn.disabled = true;
+  btn.textContent = '⏳ Kaydediliyor...'; btn.disabled = true;
 
-  // Yeni fotoğrafları yükle
   for (let i = 0; i < yeniFotolar.length; i++) {
     const file = yeniFotolar[i];
     const fileName = `${currentUser.id}/${Date.now()}_${i}_${file.name}`;
     btn.textContent = `⏳ Fotoğraf yükleniyor ${i+1}/${yeniFotolar.length}...`;
-    const { data: uploadData, error: uploadError } = await sb.storage.from('ilan-fotograflar').upload(fileName, file);
-    if (!uploadError && uploadData) {
-      const { data: urlData } = sb.storage.from('ilan-fotograflar').getPublicUrl(fileName);
-      mevcutFotolar.push(urlData.publicUrl);
+    const { data: ud } = await sb.storage.from('ilan-fotograflar').upload(fileName, file);
+    if (ud) {
+      const { data: url } = sb.storage.from('ilan-fotograflar').getPublicUrl(fileName);
+      mevcutFotolar.push(url.publicUrl);
     }
   }
 
-  const foto_url = mevcutFotolar[0] || null;
-  const foto_urls = mevcutFotolar.length > 0 ? mevcutFotolar : null;
+  const kriterler = {
+    emlak_tipi: getSecim('emlakTipi'),
+    oda_sayisi: getSecim('odaSayisi'),
+    banyo_sayisi: getSecim('banyoSayisi'),
+    kat: document.getElementById('katSec').value || null,
+    kat_sayisi: document.getElementById('katSayisi').value || null,
+    bina_yasi: getSecim('binaYasi'),
+    isitma: getSecim('isitma'),
+    cephe: getCokluSecim('cephe'),
+    kullanim_durumu: getSecim('kullanimDurumu'),
+    tapu_durumu: getSecim('tapuDurumu'),
+    esya_durumu: getSecim('esyaDurumu'),
+    site_icinde: getSecim('siteIcinde'),
+    ic_ozellikler: getCokluSecim('icOzellikler'),
+    dis_ozellikler: getCokluSecim('disOzellikler'),
+  };
 
   const { error } = await sb.from('ilanlar').update({
-    baslik, fiyat: Number(fiyat), tip: seciliTip,
-    konum, oda_sayisi: oda || null,
-    metrekare: m2 ? Number(m2) : null,
-    aciklama: aciklama || null,
-    foto_url, foto_urls, one_cikan: oneCikan
+    baslik, fiyat: Number(fiyat), tip: seciliTip, konum,
+    oda_sayisi: getSecim('odaSayisi') || null,
+    metrekare: document.getElementById('m2net').value ? Number(document.getElementById('m2net').value) : null,
+    aciklama: document.getElementById('aciklama').value.trim() || null,
+    foto_url: mevcutFotolar[0] || null,
+    foto_urls: mevcutFotolar.length > 0 ? mevcutFotolar : null,
+    one_cikan: oneCikan, kriterler
   }).eq('id', ilanId).eq('user_id', currentUser.id);
 
   if (error) {
     errEl.textContent = 'Hata: ' + error.message;
     errEl.style.display = 'block';
-    btn.textContent = '✅ Değişiklikleri Kaydet';
-    btn.disabled = false;
-    return;
+    btn.textContent = '✅ Değişiklikleri Kaydet'; btn.disabled = false; return;
   }
-
   alert('✅ İlan güncellendi!');
   window.location.href = 'profil.html';
 }
