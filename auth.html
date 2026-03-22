@@ -75,6 +75,8 @@
     <input class="input" type="password" id="yeniSifreTekrar" placeholder="Yeni şifre tekrar">
     <button class="btn btn-gold btn-lg" onclick="yeniSifreKaydet()">✅ Şifremi Güncelle</button>
   </div>
+
+  <!-- ŞİFRE SIFIRLAMA -->
   <div class="form" id="sifreForm">
     <div style="text-align:center;font-size:40px;margin-bottom:4px">🔑</div>
     <div style="text-align:center;font-size:16px;font-weight:900;margin-bottom:4px">Şifreni Sıfırla</div>
@@ -91,31 +93,50 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Şifre sıfırlama için auth state dinle
+// Auth state değişikliklerini dinle — en güvenilir yöntem
 sb.auth.onAuthStateChange(async (event, session) => {
   if (event === 'PASSWORD_RECOVERY') {
+    // Token geçerli, yeni şifre ekranını göster
     switchTab('yenisifre');
-  } else if (event === 'SIGNED_IN' && window.location.hash.includes('type=recovery')) {
-    switchTab('yenisifre');
+    hideMessages();
+  } else if (event === 'SIGNED_IN') {
+    const hash = window.location.hash;
+    if (hash.includes('type=recovery')) {
+      // Recovery ile giriş yapıldı, şifre güncelleme ekranı
+      switchTab('yenisifre');
+    } else {
+      // Normal giriş
+      window.location.href = 'index.html';
+    }
   }
 });
 
-sb.auth.getSession().then(({ data }) => {
+// Sayfa yüklenince hash kontrolü
+window.addEventListener('load', () => {
   const hash = window.location.hash;
   const params = new URLSearchParams(hash.substring(1));
   const type = params.get('type');
+  const accessToken = params.get('access_token');
 
-  // Recovery token varsa index'e gitme, yeni şifre ekranı göster
-  if (type === 'recovery') {
-    switchTab('yenisifre');
-    return;
+  if (type === 'recovery' && accessToken) {
+    // Supabase token'ı session'a çevir
+    sb.auth.setSession({
+      access_token: accessToken,
+      refresh_token: params.get('refresh_token') || ''
+    }).then(({ error }) => {
+      if (error) {
+        showError('Bağlantı süresi dolmuş. Yeni sıfırlama talebi gönderin.');
+        switchTab('sifre');
+      } else {
+        switchTab('yenisifre');
+      }
+    });
   }
-
-  if (data.session) window.location.href = 'index.html';
 });
 
 function switchTab(tab) {
-  document.getElementById('tabBar').style.display = (tab === 'sifre' || tab === 'yenisifre') ? 'none' : 'flex';
+  document.getElementById('tabBar').style.display =
+    (tab === 'sifre' || tab === 'yenisifre') ? 'none' : 'flex';
   document.querySelectorAll('.tab').forEach((t, i) => {
     t.classList.toggle('active', (i===0&&tab==='giris')||(i===1&&tab==='kayit'));
   });
@@ -183,9 +204,7 @@ async function yeniSifreKaydet() {
   setLoading(false);
   if (error) return showError('Hata: ' + error.message);
   showSuccess('✅ Şifreniz güncellendi! Giriş yapabilirsiniz.');
-  setTimeout(() => {
-    switchTab('giris');
-  }, 2000);
+  setTimeout(() => { switchTab('giris'); }, 2000);
 }
 
 async function sifreSifirla() {
@@ -193,11 +212,11 @@ async function sifreSifirla() {
   if (!email) return showError('Lütfen e-posta adresinizi girin!');
   setLoading(true);
   const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/auth.html'
+    redirectTo: window.location.origin + '/kimlik%20do%C4%9Frulama.html'
   });
   setLoading(false);
   if (error) return showError('Hata: ' + error.message);
-  showSuccess('✅ Sıfırlama bağlantısı e-posta adresinize gönderildi! Lütfen e-postanızı kontrol edin.');
+  showSuccess('✅ Sıfırlama bağlantısı e-posta adresinize gönderildi!');
 }
 
 async function googleGiris() {
