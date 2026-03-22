@@ -76,6 +76,26 @@
     margin: 20px 0 12px; padding-bottom: 8px;
     border-bottom: 1px solid var(--border);
   }
+
+  /* ÖNE ÇIKAR TOGGLE */
+  .one-cikan-bar {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 16px;
+    margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .one-cikan-bar.aktif { border-color: rgba(245,200,66,0.4); background: rgba(245,200,66,0.05); }
+  .toggle {
+    width: 48px; height: 26px; border-radius: 13px;
+    background: var(--border); position: relative;
+    cursor: pointer; transition: background .2s; border: none; flex-shrink: 0;
+  }
+  .toggle.on { background: var(--gold); }
+  .toggle::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: white; transition: left .2s;
+  }
+  .toggle.on::after { left: 25px; }
 </style>
 </head>
 <body>
@@ -195,38 +215,23 @@
     <div class="two-col">
       <div class="form-group">
         <label class="form-label">Bulunduğu Kat</label>
-        <div class="sec-row" id="kat" style="flex-direction:column;gap:6px">
-          <select class="input" id="katSec" style="padding:10px">
-            <option value="">Seçiniz</option>
-            <option>Bodrum Kat</option>
-            <option>Zemin Kat</option>
-            <option>Bahçe Katı</option>
-            <option>Yüksek Giriş</option>
-            <option>1. Kat</option>
-            <option>2. Kat</option>
-            <option>3. Kat</option>
-            <option>4. Kat</option>
-            <option>5. Kat</option>
-            <option>6. Kat</option>
-            <option>7. Kat</option>
-            <option>8. Kat</option>
-            <option>9. Kat</option>
-            <option>10. Kat</option>
-            <option>11-15. Kat</option>
-            <option>16-20. Kat</option>
-            <option>20+ Kat</option>
-            <option>Çatı Katı / Penthouse</option>
-          </select>
-        </div>
+        <select class="input" id="katSec" style="padding:10px">
+          <option value="">Seçiniz</option>
+          <option>Bodrum Kat</option><option>Zemin Kat</option><option>Bahçe Katı</option>
+          <option>Yüksek Giriş</option><option>1. Kat</option><option>2. Kat</option>
+          <option>3. Kat</option><option>4. Kat</option><option>5. Kat</option>
+          <option>6. Kat</option><option>7. Kat</option><option>8. Kat</option>
+          <option>9. Kat</option><option>10. Kat</option><option>11-15. Kat</option>
+          <option>16-20. Kat</option><option>20+ Kat</option><option>Çatı Katı / Penthouse</option>
+        </select>
       </div>
       <div class="form-group">
         <label class="form-label">Kat Sayısı</label>
         <select class="input" id="katSayisi" style="padding:10px">
           <option value="">Seçiniz</option>
-          <option>1</option><option>2</option><option>3</option>
-          <option>4</option><option>5</option><option>6</option>
-          <option>7</option><option>8</option><option>9</option>
-          <option>10</option><option>11-15</option><option>16-20</option><option>20+</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option>
+          <option>5</option><option>6</option><option>7</option><option>8</option>
+          <option>9</option><option>10</option><option>11-15</option><option>16-20</option><option>20+</option>
         </select>
       </div>
     </div>
@@ -363,6 +368,20 @@
       <input class="input" type="number" id="aidatTutar" placeholder="Aidat tutarı (₺/ay)" style="display:none">
     </div>
 
+    <!-- ÖZEL SEÇENEKLER -->
+    <div class="bolum-baslik">⭐ Özel Seçenekler</div>
+
+    <div class="one-cikan-bar" id="oneCikanBar">
+      <div>
+        <div style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px">
+          ⭐ <span>Öne Çıkar</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:3px">İlanın ana sayfada önce gösterilsin</div>
+        <div style="font-size:11px;color:var(--gold);margin-top:4px;display:none" id="oneCikanAktifYazi">✓ Aktif — İlanın öne çıkacak</div>
+      </div>
+      <button class="toggle" id="oneCikanToggle" onclick="toggleOneCikan()"></button>
+    </div>
+
     <!-- FOTOĞRAF -->
     <div class="bolum-baslik">📷 Fotoğraflar</div>
 
@@ -414,11 +433,22 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 let seciliTip = 'satilik';
 let currentUser = null;
 let fotoFiles = [];
+let oneCikan = false;
 
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) window.location.href = 'auth.html';
   else currentUser = data.session.user;
 });
+
+function toggleOneCikan() {
+  oneCikan = !oneCikan;
+  const btn = document.getElementById('oneCikanToggle');
+  const bar = document.getElementById('oneCikanBar');
+  const yazi = document.getElementById('oneCikanAktifYazi');
+  btn.classList.toggle('on', oneCikan);
+  bar.classList.toggle('aktif', oneCikan);
+  yazi.style.display = oneCikan ? 'block' : 'none';
+}
 
 function secRole(el) {
   document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
@@ -431,14 +461,12 @@ function secTip(el, tip) {
   seciliTip = tip;
 }
 
-// Tek seçimlik buton
 function secBtn(el, grupId) {
   const grup = document.getElementById(grupId) || el.parentElement;
   grup.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
 }
 
-// Çoklu seçimlik buton
 function secBtnCoklu(el, grupId) {
   el.classList.toggle('active');
 }
@@ -506,7 +534,6 @@ async function ilanYayinla() {
   btn.disabled = true;
   errEl.style.display = 'none';
 
-  // Fotoğrafları yükle
   let foto_url = null;
   let foto_urls = [];
   for (let i = 0; i < fotoFiles.length; i++) {
@@ -521,7 +548,6 @@ async function ilanYayinla() {
     }
   }
 
-  // Tüm kriterleri topla
   const kriterler = {
     emlak_tipi: getSecim('emlakTipi'),
     oda_sayisi: getSecim('odaSayisi'),
@@ -543,15 +569,13 @@ async function ilanYayinla() {
 
   const { error } = await sb.from('ilanlar').insert({
     user_id: currentUser.id,
-    baslik,
-    fiyat: Number(fiyat),
-    tip: seciliTip,
+    baslik, fiyat: Number(fiyat), tip: seciliTip,
     konum,
     oda_sayisi: getSecim('odaSayisi') || null,
     metrekare: document.getElementById('m2net').value ? Number(document.getElementById('m2net').value) : null,
     aciklama: document.getElementById('aciklama').value.trim() || null,
-    foto_url,
-    foto_urls: foto_urls.length > 0 ? foto_urls : null,
+    foto_url, foto_urls: foto_urls.length > 0 ? foto_urls : null,
+    one_cikan: oneCikan,
     kriterler
   });
 
