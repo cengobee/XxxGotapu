@@ -7,29 +7,12 @@
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  .admin-nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-    height: 56px; background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 16px;
-  }
+  .admin-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 56px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
   .admin-logo { font-size: 18px; font-weight: 900; display: flex; align-items: center; gap: 8px; }
   .admin-badge { background: var(--rust); color: white; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 50px; }
-  .tab-bar {
-    display: flex; overflow-x: auto; gap: 0;
-    background: var(--bg2); border-bottom: 1px solid var(--border);
-    position: fixed; top: 56px; left: 0; right: 0; z-index: 199;
-    scrollbar-width: none;
-  }
+  .tab-bar { display: flex; overflow-x: auto; gap: 0; background: var(--bg2); border-bottom: 1px solid var(--border); position: fixed; top: 56px; left: 0; right: 0; z-index: 199; scrollbar-width: none; }
   .tab-bar::-webkit-scrollbar { display: none; }
-  .tab-btn {
-    flex-shrink: 0; padding: 12px 16px;
-    font-size: 13px; font-weight: 800; cursor: pointer;
-    border: none; background: none; color: var(--text3);
-    border-bottom: 3px solid transparent;
-    font-family: 'Nunito', sans-serif; transition: all .2s;
-  }
+  .tab-btn { flex-shrink: 0; padding: 12px 16px; font-size: 13px; font-weight: 800; cursor: pointer; border: none; background: none; color: var(--text3); border-bottom: 3px solid transparent; font-family: 'Nunito', sans-serif; transition: all .2s; }
   .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
   .admin-page { padding: 120px 16px 40px; max-width: 600px; margin: 0 auto; }
   .stat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
@@ -65,11 +48,8 @@
   .foto-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
   .foto-grid img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; cursor: pointer; }
   .arama-input { width: 100%; background: var(--card); border: 1.5px solid var(--border); border-radius: 50px; padding: 10px 16px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; outline: none; margin-bottom: 14px; }
-
-  /* RAPOR KART */
   .rapor-kart { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
   .rapor-kart-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-  .rapor-deger { font-size: 18px; font-weight: 900; color: var(--gold); }
 </style>
 </head>
 <body>
@@ -123,7 +103,6 @@
     <div id="kullaniciListesi"><div class="spinner"></div></div>
   </div>
 
-  <!-- YENİ: RAPORLAR SEKMESİ -->
   <div id="sekme-raporlar" style="display:none">
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="raporFiltreler">
       <button class="act-btn act-gold" onclick="raporFiltrele('tumu',this)">Tümü</button>
@@ -204,11 +183,8 @@ async function ozetYukle() {
     sb.from('degerleme_raporlari').select('*', { count: 'exact', head: true }),
     sb.from('bildirimler').select('*', { count: 'exact', head: true }).eq('okundu', false),
   ]);
-
-  // Rapor geliri hesapla
   const { data: raporlar } = await sb.from('degerleme_raporlari').select('odeme_durumu').eq('odeme_durumu', 'odendi');
   const raporGelir = (raporlar?.length || 0) * 800;
-
   document.getElementById('istatistikler').innerHTML = `
     <div class="stat-card"><div class="stat-card-icon">📋</div><div class="stat-card-num">${t.count||0}</div><div class="stat-card-lbl">Toplam Teklif</div></div>
     <div class="stat-card"><div class="stat-card-icon">🏠</div><div class="stat-card-num">${i.count||0}</div><div class="stat-card-lbl">Toplam İlan</div></div>
@@ -217,14 +193,12 @@ async function ozetYukle() {
     <div class="stat-card"><div class="stat-card-icon">📊</div><div class="stat-card-num">${r.count||0}</div><div class="stat-card-lbl">Ekspertiz Raporu</div></div>
     <div class="stat-card"><div class="stat-card-icon">💰</div><div class="stat-card-num">${raporGelir.toLocaleString('tr-TR')} ₺</div><div class="stat-card-lbl">Rapor Geliri</div></div>
     <div class="stat-card"><div class="stat-card-icon">🔔</div><div class="stat-card-num">${b.count||0}</div><div class="stat-card-lbl">Okunmamış Bildirim</div></div>`;
-
   const { data: sonT } = await sb.from('teklifler').select('*').order('created_at', { ascending: false }).limit(3);
   document.getElementById('sonTeklifler').innerHTML = (sonT||[]).map(t => teklifKartHTML(t)).join('') || '<div class="empty" style="padding:20px"><div class="empty-icon">📋</div><div class="empty-title">Teklif yok</div></div>';
   const { data: sonI } = await sb.from('ilanlar').select('*').order('created_at', { ascending: false }).limit(3);
   document.getElementById('sonIlanlar').innerHTML = (sonI||[]).map(i => ilanKartHTML(i)).join('') || '<div class="empty" style="padding:20px"><div class="empty-icon">🏠</div><div class="empty-title">İlan yok</div></div>';
 }
 
-// ===== TEKLİFLER =====
 async function teklifleriYukle() {
   const { data } = await sb.from('teklifler').select('*').order('created_at', { ascending: false });
   tumTeklifler = data || [];
@@ -318,7 +292,6 @@ function teklifAra(q) {
   ));
 }
 
-// ===== İLANLAR =====
 async function ilanlariYukle() {
   const { data } = await sb.from('ilanlar').select('*').order('created_at', { ascending: false });
   tumIlanlar = data || [];
@@ -372,7 +345,6 @@ function ilanAra(q) {
   ));
 }
 
-// ===== KULLANICILAR =====
 async function kullanicilariYukle() {
   const { data } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
   tumKullanicilar = data || [];
@@ -420,12 +392,26 @@ async function kullaniciDetay(id) {
     <div class="detay-row"><div class="detay-key">💬 Mesaj</div><div class="detay-val">${mesajlar.count||0}</div></div>
     <div class="detay-row"><div class="detay-key">📊 Rapor</div><div class="detay-val">${raporlar.data?.length||0}</div></div>
     <div class="detay-row"><div class="detay-key">📅 Kayıt</div><div class="detay-val">${new Date(k.created_at).toLocaleDateString('tr-TR')}</div></div>
+
+    <!-- MESAJ GÖNDER -->
     <div style="margin-top:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px">📩 Mesaj Gönder</div>
       <textarea class="input" id="kullaniciMesajMetin" rows="3" placeholder="Kullanıcıya mesaj yazın..." style="resize:none;margin-bottom:8px"></textarea>
       <button class="btn btn-gold btn-lg" onclick="kullaniciMesajGonder('${k.id}')">📩 Mesaj Gönder</button>
     </div>
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="act-btn ${k.verified?'act-rust':'act-green'}" style="flex:1;padding:12px" onclick="kullaniciDogrula('${k.id}',${k.verified})">${k.verified?'✗ Kaldır':'✓ Doğrula'}</button>
+
+    <!-- ŞİFRE DEĞİŞTİR -->
+    <div style="margin-top:16px;background:rgba(74,144,217,0.06);border:1px solid rgba(74,144,217,0.2);border-radius:var(--radius);padding:14px">
+      <div style="font-size:13px;font-weight:800;color:var(--blue);margin-bottom:10px">🔐 Şifre Değiştir</div>
+      <input class="input" type="password" id="yeniSifreInput" placeholder="Yeni şifre (min 6 karakter)" style="margin-bottom:8px">
+      <input class="input" type="password" id="yeniSifreTekrarInput" placeholder="Şifre tekrar" style="margin-bottom:8px">
+      <button class="btn btn-lg" style="background:var(--blue);color:white;width:100%" onclick="kullaniciSifreDegistir('${k.id}')">🔐 Şifreyi Güncelle</button>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center">⚠️ Bu işlem Supabase Admin API gerektirir. Kullanıcıya şifre sıfırlama maili göndermek daha güvenlidir.</div>
+      <button class="act-btn act-blue" style="width:100%;margin-top:8px;padding:10px;justify-content:center" onclick="sifreSifirlamaMailiGonder('${k.email}')">📧 Şifre Sıfırlama Maili Gönder</button>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="act-btn ${k.verified?'act-rust':'act-green'}" style="flex:1;padding:12px" onclick="kullaniciDogrula('${k.id}',${k.verified})">${k.verified?'✗ Doğrulamayı Kaldır':'✓ Doğrula'}</button>
       <button class="act-btn act-rust" style="flex:1;padding:12px" onclick="if(confirm('Emin misiniz?'))kullaniciSil('${k.id}')">🗑️ Sil</button>
     </div>
     <button class="btn btn-outline btn-md" style="width:100%;margin-top:8px" onclick="detayKapat()">Kapat</button>`;
@@ -438,6 +424,25 @@ async function kullaniciMesajGonder(aliciId) {
   await sb.from('mesajlar').insert({ gonderen_id: adminUserId, alici_id: aliciId, ilan_id: null, icerik: '📢 GoTapu: ' + metin, okundu: false });
   document.getElementById('kullaniciMesajMetin').value = '';
   alert('✅ Mesaj gönderildi!');
+}
+
+async function sifreSifirlamaMailiGonder(email) {
+  if (!email) { alert('Kullanıcının e-posta adresi yok!'); return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://cengobee.github.io/XxxGotapu/auth.html'
+  });
+  if (error) { alert('Hata: ' + error.message); return; }
+  alert(`✅ ${email} adresine şifre sıfırlama maili gönderildi!`);
+}
+
+async function kullaniciSifreDegistir(userId) {
+  const sifre = document.getElementById('yeniSifreInput').value;
+  const tekrar = document.getElementById('yeniSifreTekrarInput').value;
+  if (!sifre || sifre.length < 6) { alert('Şifre en az 6 karakter olmalı!'); return; }
+  if (sifre !== tekrar) { alert('Şifreler eşleşmiyor!'); return; }
+  // Not: Supabase'de başka kullanıcının şifresini değiştirmek Admin API gerektirir
+  // Bunun yerine şifre sıfırlama maili daha pratik
+  alert('⚠️ Başka kullanıcının şifresini doğrudan değiştirmek için Supabase Admin API key gereklidir. Bunun yerine "Şifre Sıfırlama Maili Gönder" butonunu kullanın.');
 }
 
 async function kullaniciDogrula(id, mevcut) {
@@ -458,32 +463,22 @@ function kullaniciAra(q) {
   ));
 }
 
-// ===== RAPORLAR =====
 async function raporlariYukle() {
-  const { data } = await sb.from('degerleme_raporlari')
-    .select('*, ilan:ilan_id(baslik, konum, fiyat)')
-    .order('created_at', { ascending: false });
+  const { data } = await sb.from('degerleme_raporlari').select('*, ilan:ilan_id(baslik, konum, fiyat)').order('created_at', { ascending: false });
   tumRaporlar = data || [];
   raporlariGoster(tumRaporlar);
 }
 
 function raporlariGoster(liste) {
   const el = document.getElementById('raporListesi');
-  if (!liste.length) {
-    el.innerHTML = '<div class="empty" style="padding:30px"><div class="empty-icon">📊</div><div class="empty-title">Rapor bulunamadı</div></div>';
-    return;
-  }
+  if (!liste.length) { el.innerHTML = '<div class="empty" style="padding:30px"><div class="empty-icon">📊</div><div class="empty-title">Rapor bulunamadı</div></div>'; return; }
   const toplamGelir = liste.filter(r => r.odeme_durumu === 'odendi').length * 800;
   el.innerHTML = `
     <div style="background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.2);border-radius:var(--radius);padding:14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <div style="font-size:12px;color:var(--text3);font-weight:700">TOPLAM RAPOR GELİRİ</div>
-        <div style="font-size:22px;font-weight:900;color:var(--gold)">${toplamGelir.toLocaleString('tr-TR')} ₺</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-size:12px;color:var(--text3)">Ödenen rapor</div>
-        <div style="font-size:18px;font-weight:900">${liste.filter(r=>r.odeme_durumu==='odendi').length}</div>
-      </div>
+      <div><div style="font-size:12px;color:var(--text3);font-weight:700">TOPLAM RAPOR GELİRİ</div>
+      <div style="font-size:22px;font-weight:900;color:var(--gold)">${toplamGelir.toLocaleString('tr-TR')} ₺</div></div>
+      <div style="text-align:right"><div style="font-size:12px;color:var(--text3)">Ödenen rapor</div>
+      <div style="font-size:18px;font-weight:900">${liste.filter(r=>r.odeme_durumu==='odendi').length}</div></div>
     </div>
     ${liste.map(r => {
       const ilan = r.ilan;
@@ -492,11 +487,9 @@ function raporlariGoster(liste) {
       return `<div class="rapor-kart">
         <div class="rapor-kart-head">
           <div>
-            <div class="admin-card-title">📊 ${ilan?.baslik || 'İlan'}</div>
+            <div class="admin-card-title">📊 ${ilan?.baslik||'İlan'}</div>
             <div class="admin-card-meta">📍 ${ilan?.konum||''} • 📅 ${tarih}</div>
-            ${rapor ? `<div style="margin-top:4px;font-size:12px;color:var(--text2)">
-              Gerçekçi Değer: <strong style="color:var(--gold)">${Number(rapor.deger_tahmini?.gercekci||0).toLocaleString('tr-TR')} ₺</strong>
-            </div>` : ''}
+            ${rapor?`<div style="margin-top:4px;font-size:12px;color:var(--text2)">Gerçekçi Değer: <strong style="color:var(--gold)">${Number(rapor.deger_tahmini?.gercekci||0).toLocaleString('tr-TR')} ₺</strong></div>`:''}
           </div>
           <span class="durum-badge ${r.durum==='tamamlandi'?'durum-tamamlandi':'durum-bekliyor'}">${r.durum}</span>
         </div>
@@ -521,7 +514,6 @@ async function raporSilAdmin(id) {
   await raporlariYukle(); await ozetYukle();
 }
 
-// ===== MESAJLAR =====
 async function mesajlariYukle() {
   const { data } = await sb.from('mesajlar').select('*').order('created_at', { ascending: false }).limit(50);
   tumMesajlar = data || [];
@@ -530,11 +522,10 @@ async function mesajlariYukle() {
   el.innerHTML = tumMesajlar.map(m => `
     <div class="admin-card">
       <div class="admin-card-title" style="font-size:13px">${m.icerik}</div>
-      <div class="admin-card-meta" style="margin-top:6px">📅 ${new Date(m.created_at).toLocaleString('tr-TR')} • ${m.okundu ? '✅ Okundu' : '🔴 Okunmadı'}</div>
+      <div class="admin-card-meta" style="margin-top:6px">📅 ${new Date(m.created_at).toLocaleString('tr-TR')} • ${m.okundu?'✅ Okundu':'🔴 Okunmadı'}</div>
     </div>`).join('');
 }
 
-// ===== ŞİKAYETLER =====
 async function sikayetleriYukle() {
   const { data } = await sb.from('sikayetler').select('*').order('created_at', { ascending: false });
   tumSikayetler = data || [];
@@ -551,12 +542,12 @@ function sikayetleriGoster(liste) {
         <div>
           <div class="admin-card-title">${s.hedef_tip==='ilan'?'🏠':'💬'} ${s.sebep}</div>
           <div class="admin-card-meta">${s.hedef_tip==='ilan'?'İlan Şikayeti':'Kullanıcı Şikayeti'} • 📅 ${tarih}</div>
-          ${s.aciklama ? `<div style="font-size:12px;color:var(--text2);margin-top:4px">${s.aciklama}</div>` : ''}
+          ${s.aciklama?`<div style="font-size:12px;color:var(--text2);margin-top:4px">${s.aciklama}</div>`:''}
         </div>
         <span class="durum-badge durum-${s.durum||'bekliyor'}">${s.durum||'bekliyor'}</span>
       </div>
       <div class="admin-card-actions">
-        ${s.hedef_tip==='ilan' ? `<a href="ilan-detay.html?id=${s.hedef_id}" class="act-btn act-blue">👁️ İlanı Gör</a>` : ''}
+        ${s.hedef_tip==='ilan'?`<a href="ilan-detay.html?id=${s.hedef_id}" class="act-btn act-blue">👁️ İlanı Gör</a>`:''}
         <button class="act-btn act-blue" onclick="sikayetDurumGuncelle('${s.id}','inceleniyor')">🔍 İncele</button>
         <button class="act-btn act-green" onclick="sikayetDurumGuncelle('${s.id}','cozuldu')">✅ Çözüldü</button>
         <button class="act-btn act-rust" onclick="sikayetSilAdmin('${s.id}')">🗑️ Sil</button>
