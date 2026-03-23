@@ -45,7 +45,6 @@
   <div class="success-msg" id="successMsg"></div>
   <div class="loading" id="loading">⏳ Lütfen bekleyin...</div>
 
-  <!-- GİRİŞ -->
   <div class="form active" id="girisForm">
     <input class="input" type="email" id="girisEmail" placeholder="E-posta adresiniz">
     <input class="input" type="password" id="girisPassword" placeholder="Şifreniz">
@@ -55,7 +54,6 @@
     <button class="btn-google" onclick="googleGiris()">🌐 Google ile Devam Et</button>
   </div>
 
-  <!-- KAYIT -->
   <div class="form" id="kayitForm">
     <input class="input" type="text" id="kayitAd" placeholder="Ad Soyad">
     <input class="input" type="tel" id="kayitTel" placeholder="Telefon (05XX XXX XX XX)">
@@ -66,7 +64,6 @@
     <button class="btn-google" onclick="googleGiris()">🌐 Google ile Devam Et</button>
   </div>
 
-  <!-- YENİ ŞİFRE -->
   <div class="form" id="yenisifreForm">
     <div style="text-align:center;font-size:40px;margin-bottom:4px">🔐</div>
     <div style="text-align:center;font-size:16px;font-weight:900;margin-bottom:4px">Yeni Şifre Belirle</div>
@@ -76,7 +73,6 @@
     <button class="btn btn-gold btn-lg" onclick="yeniSifreKaydet()">✅ Şifremi Güncelle</button>
   </div>
 
-  <!-- ŞİFRE SIFIRLAMA -->
   <div class="form" id="sifreForm">
     <div style="text-align:center;font-size:40px;margin-bottom:4px">🔑</div>
     <div style="text-align:center;font-size:16px;font-weight:900;margin-bottom:4px">Şifreni Sıfırla</div>
@@ -93,24 +89,52 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-sb.auth.onAuthStateChange(async (event, session) => {
+// EN ÖNEMLİ KISIM - auth state değişikliğini dinle
+sb.auth.onAuthStateChange((event, session) => {
   if (event === 'PASSWORD_RECOVERY') {
+    // Supabase token'ı otomatik doğruladı, şifre ekranını aç
     switchTab('yenisifre');
-  } else if (event === 'SIGNED_IN' && window.location.hash.includes('type=recovery')) {
-    switchTab('yenisifre');
+    hideMessages();
+  } else if (event === 'SIGNED_IN' && session) {
+    const hash = window.location.hash;
+    if (hash.includes('type=recovery')) {
+      switchTab('yenisifre');
+    } else {
+      window.location.href = 'index.html';
+    }
   }
 });
 
-sb.auth.getSession().then(({ data }) => {
+// Sayfa yüklenince kontrol et
+(async () => {
   const hash = window.location.hash;
-  const params = new URLSearchParams(hash.substring(1));
-  const type = params.get('type');
-  if (type === 'recovery') {
-    switchTab('yenisifre');
+  
+  // Eski implicit flow token varsa işle
+  if (hash.includes('access_token') && hash.includes('type=recovery')) {
+    const params = new URLSearchParams(hash.substring(1));
+    const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token') || '';
+    
+    try {
+      const { error } = await sb.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken
+      });
+      if (error) throw error;
+      switchTab('yenisifre');
+    } catch(e) {
+      showError('Link geçersiz veya süresi dolmuş. Yeni sıfırlama talebi gönderin.');
+      switchTab('sifre');
+    }
     return;
   }
-  if (data.session) window.location.href = 'index.html';
-});
+
+  // Normal session kontrolü
+  const { data } = await sb.auth.getSession();
+  if (data.session && !hash.includes('type=recovery')) {
+    window.location.href = 'index.html';
+  }
+})();
 
 function switchTab(tab) {
   document.getElementById('tabBar').style.display = (tab === 'sifre' || tab === 'yenisifre') ? 'none' : 'flex';
@@ -180,7 +204,7 @@ async function yeniSifreKaydet() {
   const { error } = await sb.auth.updateUser({ password: sifre });
   setLoading(false);
   if (error) return showError('Hata: ' + error.message);
-  showSuccess('✅ Şifreniz güncellendi! Giriş yapabilirsiniz.');
+  showSuccess('✅ Şifreniz güncellendi!');
   setTimeout(() => { switchTab('giris'); }, 2000);
 }
 
@@ -189,7 +213,7 @@ async function sifreSifirla() {
   if (!email) return showError('Lütfen e-posta adresinizi girin!');
   setLoading(true);
   const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/XxxGotapu/auth.html'
+    redirectTo: 'https://cengobee.github.io/XxxGotapu/auth.html'
   });
   setLoading(false);
   if (error) return showError('Hata: ' + error.message);
@@ -199,7 +223,7 @@ async function sifreSifirla() {
 async function googleGiris() {
   const { error } = await sb.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin + '/XxxGotapu/index.html' }
+    options: { redirectTo: 'https://cengobee.github.io/XxxGotapu/index.html' }
   });
   if (error) showError('Google girişi başarısız: ' + error.message);
 }
