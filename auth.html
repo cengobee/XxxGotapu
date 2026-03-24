@@ -89,15 +89,17 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// EN ÖNEMLİ KISIM - auth state değişikliğini dinle
+// Auth state değişikliğini dinle
 sb.auth.onAuthStateChange((event, session) => {
   if (event === 'PASSWORD_RECOVERY') {
-    // Supabase token'ı otomatik doğruladı, şifre ekranını aç
+    // Supabase token'ı otomatik doğruladı, yeni şifre ekranını aç
     switchTab('yenisifre');
     hideMessages();
   } else if (event === 'SIGNED_IN' && session) {
     const hash = window.location.hash;
-    if (hash.includes('type=recovery')) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const isRecovery = hash.includes('type=recovery') || urlParams.get('type') === 'recovery';
+    if (isRecovery) {
       switchTab('yenisifre');
     } else {
       window.location.href = 'index.html';
@@ -108,13 +110,20 @@ sb.auth.onAuthStateChange((event, session) => {
 // Sayfa yüklenince kontrol et
 (async () => {
   const hash = window.location.hash;
-  
-  // Eski implicit flow token varsa işle
+  const urlParams = new URLSearchParams(window.location.search);
+
+  // PKCE flow: ?code=... parametresi varsa Supabase otomatik işler,
+  // onAuthStateChange PASSWORD_RECOVERY veya SIGNED_IN fırlatır — bekle
+  if (urlParams.get('code')) {
+    // Supabase SDK kodu otomatik exchange eder, onAuthStateChange'i bekle
+    return;
+  }
+
+  // Eski implicit flow: #access_token + type=recovery
   if (hash.includes('access_token') && hash.includes('type=recovery')) {
     const params = new URLSearchParams(hash.substring(1));
     const accessToken = params.get('access_token');
     const refreshToken = params.get('refresh_token') || '';
-    
     try {
       const { error } = await sb.auth.setSession({
         access_token: accessToken,
@@ -131,7 +140,7 @@ sb.auth.onAuthStateChange((event, session) => {
 
   // Normal session kontrolü
   const { data } = await sb.auth.getSession();
-  if (data.session && !hash.includes('type=recovery')) {
+  if (data.session) {
     window.location.href = 'index.html';
   }
 })();
