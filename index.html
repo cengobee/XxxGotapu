@@ -189,11 +189,16 @@ let aktifSayfa = 1;
 let toplamSayfa = 1;
 const emojiler = { satilik: '🏙️', kiralik: '🏘️', devren: '🏪' };
 
-sb.auth.getSession().then(({ data }) => {
-  if (!data.session) { window.location.href = 'auth.html'; return; }
-  ilanlarYukle();
-  mesajSay();
-});
+// Şifre sıfırlama linki mi? Varsa auth.html'e yönlendir
+if (new URLSearchParams(window.location.search).get('code')) {
+  window.location.replace('auth.html' + window.location.search);
+} else {
+  sb.auth.getSession().then(({ data }) => {
+    if (!data.session) { window.location.href = 'auth.html'; return; }
+    ilanlarYukle();
+    mesajSay();
+  });
+}
 
 async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
   aktifSayfa = sayfa;
@@ -201,7 +206,6 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
   listEl.innerHTML = '<div class="spinner"></div>';
   document.getElementById('pagination').innerHTML = '';
 
-  // Toplam sayı
   let countQuery = sb.from('ilanlar')
     .select('*', { count: 'exact', head: true })
     .eq('one_cikan', true)
@@ -214,7 +218,6 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
   toplamSayfa = Math.ceil((count || 0) / SAYFA_BOYUTU);
   document.getElementById('sayfaBilgi').textContent = count > 0 ? `${sayfa}/${toplamSayfa} sayfa` : '';
 
-  // Veri çek
   const from = (sayfa - 1) * SAYFA_BOYUTU;
   const to = from + SAYFA_BOYUTU - 1;
 
@@ -254,28 +257,19 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
       </div>
     </a>`).join('');
 
-  // Sayfalama butonları
   if (toplamSayfa > 1) {
     const pag = document.getElementById('pagination');
     const style = 'padding:8px 14px;border-radius:50px;font-size:13px;font-weight:800;cursor:pointer;border:1.5px solid;font-family:Nunito,sans-serif;';
-
-    // Önceki
     if (sayfa > 1) {
       pag.innerHTML += `<button onclick="ilanlarYukle('${filtre}','${arama}',${sayfa-1})" style="${style}background:var(--card);color:var(--text);border-color:var(--border)">← Önceki</button>`;
     }
-
-    // Sayfa numaraları
     for (let i = 1; i <= toplamSayfa; i++) {
       const aktif = i === sayfa;
       pag.innerHTML += `<button onclick="ilanlarYukle('${filtre}','${arama}',${i})" style="${style}background:${aktif ? 'var(--gold)' : 'var(--card)'};color:${aktif ? 'var(--bg)' : 'var(--text)'};border-color:${aktif ? 'var(--gold)' : 'var(--border)'}">${i}</button>`;
     }
-
-    // Sonraki
     if (sayfa < toplamSayfa) {
       pag.innerHTML += `<button onclick="ilanlarYukle('${filtre}','${arama}',${sayfa+1})" style="${style}background:var(--gold);color:var(--bg);border-color:var(--gold)">Sonraki →</button>`;
     }
-
-    // Sayfanın üstüne scroll
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
