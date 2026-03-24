@@ -96,19 +96,22 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Şifre sıfırlama linki mi? Bunu en başta sakla
+const urlParams = new URLSearchParams(window.location.search);
+const isPasswordReset = urlParams.get('code') !== null;
+
 // Auth state değişikliğini dinle
 sb.auth.onAuthStateChange((event, session) => {
   if (event === 'PASSWORD_RECOVERY') {
-    // Supabase token'ı otomatik doğruladı, yeni şifre ekranını aç
     switchTab('yenisifre');
     hideMessages();
   } else if (event === 'SIGNED_IN' && session) {
-    const hash = window.location.hash;
-    const urlParams = new URLSearchParams(window.location.search);
-    const isRecovery = hash.includes('type=recovery') || urlParams.get('type') === 'recovery';
-    if (isRecovery) {
+    if (isPasswordReset) {
+      // Şifre sıfırlama linkinden gelindi — yeni şifre ekranını aç
       switchTab('yenisifre');
+      hideMessages();
     } else {
+      // Normal giriş — ana sayfaya git
       window.location.href = 'index.html';
     }
   }
@@ -116,26 +119,17 @@ sb.auth.onAuthStateChange((event, session) => {
 
 // Sayfa yüklenince kontrol et
 (async () => {
-  const hash = window.location.hash;
-  const urlParams = new URLSearchParams(window.location.search);
-
-  // PKCE flow: ?code=... parametresi varsa Supabase otomatik işler,
-  // onAuthStateChange PASSWORD_RECOVERY veya SIGNED_IN fırlatır — bekle
-  if (urlParams.get('code')) {
-    // Supabase SDK kodu otomatik exchange eder, onAuthStateChange'i bekle
-    return;
-  }
+  // ?code= varsa PKCE flow — onAuthStateChange halleder, bekle
+  if (isPasswordReset) return;
 
   // Eski implicit flow: #access_token + type=recovery
+  const hash = window.location.hash;
   if (hash.includes('access_token') && hash.includes('type=recovery')) {
     const params = new URLSearchParams(hash.substring(1));
     const accessToken = params.get('access_token');
     const refreshToken = params.get('refresh_token') || '';
     try {
-      const { error } = await sb.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken
-      });
+      const { error } = await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
       if (error) throw error;
       switchTab('yenisifre');
     } catch(e) {
@@ -145,11 +139,9 @@ sb.auth.onAuthStateChange((event, session) => {
     return;
   }
 
-  // Normal session kontrolü
+  // Normal session kontrolü — giriş yapmışsa ana sayfaya
   const { data } = await sb.auth.getSession();
-  if (data.session) {
-    window.location.href = 'index.html';
-  }
+  if (data.session) window.location.href = 'index.html';
 })();
 
 function switchTab(tab) {
