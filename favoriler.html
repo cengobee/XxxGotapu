@@ -38,6 +38,13 @@
   .fav-remove:active { background: rgba(232,96,58,0.3); }
   .fav-date { font-size: 11px; color: var(--text3); margin-top: 4px; }
 </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f5c518">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GoTapu">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
 
@@ -129,6 +136,12 @@ async function favoriSil(e, favoriId) {
   await sb.from('favoriler').delete().eq('id', favoriId);
   favorileriYukle();
 }
+</script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/XxxGotapu/sw.js", { scope: "/XxxGotapu/" })
+      .catch(e => console.log("SW error:", e));
+  }
 </script>
 </body>
 </html>

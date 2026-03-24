@@ -137,6 +137,13 @@
   .fav-toast.show { display: flex; animation: toastIn .3s ease; }
   @keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(10px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
 </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f5c518">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GoTapu">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
 
@@ -472,6 +479,12 @@ function paylas() {
     alert('Link kopyalandı! 📋');
   }
 }
+</script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/XxxGotapu/sw.js", { scope: "/XxxGotapu/" })
+      .catch(e => console.log("SW error:", e));
+  }
 </script>
 </body>
 </html>
