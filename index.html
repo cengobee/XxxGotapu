@@ -96,13 +96,6 @@
   .premium-banner span { font-size: 13px; color: var(--gold); font-weight: 700; }
   .premium-banner p { font-size: 11px; color: var(--text3); margin-top: 2px; }
 </style>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f5c518">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="GoTapu">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
 
@@ -135,15 +128,15 @@
     <div class="chip" onclick="filtrele('kiralik', this)">🔑 Kiralık</div>
   </div>
 
-  <!-- ÖNCEKI İLAN (premium) -->
-  <div id="featuredSection"></div>
-
-  <!-- SON İLANLAR -->
+  <!-- ÖNE ÇIKAN İLANLAR -->
   <div class="section-head">
     <div class="section-title">Öne Çıkan İlanlar</div>
-    <a href="#" class="section-link" onclick="tumIlanlariGoster()">Tümünü gör →</a>
+    <span id="sayfaBilgi" style="font-size:12px;color:var(--text3);font-weight:700"></span>
   </div>
   <div id="ilanlarList"><div class="spinner"></div></div>
+
+  <!-- SAYFALAMA -->
+  <div id="pagination" style="display:flex;gap:8px;justify-content:center;margin:16px 0;flex-wrap:wrap"></div>
 
   <!-- EV HİZMETLERİ -->
   <div class="section-head" style="margin-top:8px">
@@ -190,7 +183,11 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+const SAYFA_BOYUTU = 10;
 let aktifFiltre = 'tumu';
+let aktifSayfa = 1;
+let toplamSayfa = 1;
+const emojiler = { satilik: '🏙️', kiralik: '🏘️', devren: '🏪' };
 
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) { window.location.href = 'auth.html'; return; }
@@ -198,52 +195,52 @@ sb.auth.getSession().then(({ data }) => {
   mesajSay();
 });
 
-const emojiler = { satilik: '🏙️', kiralik: '🏘️', devren: '🏪' };
-
-async function ilanlarYukle(filtre = 'tumu', arama = '') {
+async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
+  aktifSayfa = sayfa;
   const listEl = document.getElementById('ilanlarList');
   listEl.innerHTML = '<div class="spinner"></div>';
+  document.getElementById('pagination').innerHTML = '';
 
-  // Sadece satılık ve kiralık — devren ve alıcı/kiracı ilanları hariç
-  // one_cikan = true olan ilanlar gösterilecek
+  // Toplam sayı
+  let countQuery = sb.from('ilanlar')
+    .select('*', { count: 'exact', head: true })
+    .eq('one_cikan', true)
+    .in('tip', ['satilik', 'kiralik']);
+  if (filtre === 'satilik') countQuery = countQuery.eq('tip', 'satilik');
+  if (filtre === 'kiralik') countQuery = countQuery.eq('tip', 'kiralik');
+  if (arama) countQuery = countQuery.ilike('baslik', `%${arama}%`);
+  const { count } = await countQuery;
+
+  toplamSayfa = Math.ceil((count || 0) / SAYFA_BOYUTU);
+  document.getElementById('sayfaBilgi').textContent = count > 0 ? `${sayfa}/${toplamSayfa} sayfa` : '';
+
+  // Veri çek
+  const from = (sayfa - 1) * SAYFA_BOYUTU;
+  const to = from + SAYFA_BOYUTU - 1;
+
   let query = sb.from('ilanlar')
     .select('*')
-    .eq('one_cikan', true)          // Sadece premium ilanlar
-    .in('tip', ['satilik', 'kiralik']) // Devren yok
-    .order('created_at', { ascending: false });
-
+    .eq('one_cikan', true)
+    .in('tip', ['satilik', 'kiralik'])
+    .order('created_at', { ascending: false })
+    .range(from, to);
   if (filtre === 'satilik') query = query.eq('tip', 'satilik');
   if (filtre === 'kiralik') query = query.eq('tip', 'kiralik');
   if (arama) query = query.ilike('baslik', `%${arama}%`);
 
-  const { data, error } = await query.limit(20);
+  const { data, error } = await query;
 
   if (error || !data || data.length === 0) {
     listEl.innerHTML = `<div class="empty"><div class="empty-icon">🏠</div><div class="empty-title">Öne çıkan ilan yok</div><div class="empty-desc">Henüz premium ilan bulunmuyor</div></div>`;
-    document.getElementById('featuredSection').innerHTML = '';
     return;
   }
 
-  // Öne çıkan büyük kart
-  const oneCikan = data[0];
-  document.getElementById('featuredSection').innerHTML = `
-    <div class="featured-card" onclick="location.href='ilan-detay.html?id=${oneCikan.id}'">
-      ${(oneCikan.foto_url || (oneCikan.foto_urls && oneCikan.foto_urls[0]))
-        ? `<img src="${oneCikan.foto_url || oneCikan.foto_urls[0]}">`
-        : `<div class="featured-emoji">${emojiler[oneCikan.tip] || '🏠'}</div>`}
-      <div class="featured-overlay">
-        <div class="featured-tag premium">⭐ ÖNE ÇIKAN</div>
-        <div class="featured-price">${formatFiyat(oneCikan.fiyat, oneCikan.tip)}</div>
-        <div class="featured-title">${oneCikan.baslik}</div>
-        <div class="featured-loc">📍 ${oneCikan.konum || ''}</div>
-      </div>
-    </div>`;
-
-  // Liste
   listEl.innerHTML = data.map(ilan => `
     <a class="ilan-item one-cikan-ilan" href="ilan-detay.html?id=${ilan.id}">
       <div class="ilan-thumb">
-        ${ilan.foto_url ? `<img src="${ilan.foto_url}">` : (emojiler[ilan.tip] || '🏠')}
+        ${(ilan.foto_url || (ilan.foto_urls && ilan.foto_urls[0]))
+          ? `<img src="${ilan.foto_url || ilan.foto_urls[0]}">`
+          : (emojiler[ilan.tip] || '🏠')}
       </div>
       <div class="ilan-info">
         <div class="ilan-price">${formatFiyat(ilan.fiyat, ilan.tip)} <span style="font-size:11px;color:var(--gold)">⭐</span></div>
@@ -256,6 +253,31 @@ async function ilanlarYukle(filtre = 'tumu', arama = '') {
         </div>
       </div>
     </a>`).join('');
+
+  // Sayfalama butonları
+  if (toplamSayfa > 1) {
+    const pag = document.getElementById('pagination');
+    const style = 'padding:8px 14px;border-radius:50px;font-size:13px;font-weight:800;cursor:pointer;border:1.5px solid;font-family:Nunito,sans-serif;';
+
+    // Önceki
+    if (sayfa > 1) {
+      pag.innerHTML += `<button onclick="ilanlarYukle('${filtre}','${arama}',${sayfa-1})" style="${style}background:var(--card);color:var(--text);border-color:var(--border)">← Önceki</button>`;
+    }
+
+    // Sayfa numaraları
+    for (let i = 1; i <= toplamSayfa; i++) {
+      const aktif = i === sayfa;
+      pag.innerHTML += `<button onclick="ilanlarYukle('${filtre}','${arama}',${i})" style="${style}background:${aktif ? 'var(--gold)' : 'var(--card)'};color:${aktif ? 'var(--bg)' : 'var(--text)'};border-color:${aktif ? 'var(--gold)' : 'var(--border)'}">${i}</button>`;
+    }
+
+    // Sonraki
+    if (sayfa < toplamSayfa) {
+      pag.innerHTML += `<button onclick="ilanlarYukle('${filtre}','${arama}',${sayfa+1})" style="${style}background:var(--gold);color:var(--bg);border-color:var(--gold)">Sonraki →</button>`;
+    }
+
+    // Sayfanın üstüne scroll
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
 function formatFiyat(fiyat, tip) {
@@ -267,14 +289,14 @@ function filtrele(tip, el) {
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   aktifFiltre = tip;
-  ilanlarYukle(tip, document.getElementById('searchInput').value);
+  ilanlarYukle(tip, document.getElementById('searchInput').value, 1);
 }
 
 let aramaTimeout;
 function aramaYap() {
   clearTimeout(aramaTimeout);
   aramaTimeout = setTimeout(() => {
-    ilanlarYukle(aktifFiltre, document.getElementById('searchInput').value);
+    ilanlarYukle(aktifFiltre, document.getElementById('searchInput').value, 1);
   }, 400);
 }
 
@@ -288,8 +310,6 @@ async function mesajSay() {
     const b = document.getElementById('mesajBadge');
     b.textContent = count; b.style.display = 'flex';
   }
-
-  // Bildirim sayısı
   const { count: bCount } = await sb.from('bildirimler')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', user.id).eq('okundu', false);
@@ -299,16 +319,6 @@ async function mesajSay() {
     bb.style.display = 'flex';
   }
 }
-
-function tumIlanlariGoster() {
-  ilanlarYukle(aktifFiltre, '');
-}
-</script>
-<script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/XxxGotapu/sw.js", { scope: "/XxxGotapu/" })
-      .catch(e => console.log("SW error:", e));
-  }
 </script>
 </body>
 </html>
