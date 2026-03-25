@@ -17,33 +17,6 @@
     color: var(--text); font-family: 'Nunito', sans-serif; font-size: 15px;
   }
   .search-bar input::placeholder { color: var(--text3); }
-
-  .featured-card {
-    border-radius: var(--radius); overflow: hidden;
-    position: relative; margin-bottom: 20px; height: 220px;
-    cursor: pointer; transition: transform .2s;
-    background: linear-gradient(135deg, #1a2340, #2a3560);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .featured-card img {
-    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  }
-  .featured-card:active { transform: scale(0.98); }
-  .featured-emoji { font-size: 80px; }
-  .featured-overlay {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.9));
-    padding: 40px 16px 16px;
-  }
-  .featured-tag {
-    font-size: 11px; font-weight: 800; padding: 3px 10px;
-    border-radius: 50px; margin-bottom: 6px; display: inline-block;
-  }
-  .featured-tag.premium { background: var(--gold); color: var(--bg); }
-  .featured-price { font-size: 24px; font-weight: 900; color: var(--gold); }
-  .featured-title { font-size: 14px; font-weight: 700; color: white; }
-  .featured-loc { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 3px; }
-
   .ilan-item {
     display: flex; gap: 12px; align-items: center;
     background: var(--card); border-radius: var(--radius);
@@ -56,8 +29,7 @@
   .ilan-thumb {
     width: 76px; height: 76px; border-radius: var(--radius-sm);
     background: var(--card2); display: flex; align-items: center;
-    justify-content: center; font-size: 34px; flex-shrink: 0;
-    overflow: hidden;
+    justify-content: center; font-size: 34px; flex-shrink: 0; overflow: hidden;
   }
   .ilan-thumb img { width: 100%; height: 100%; object-fit: cover; }
   .ilan-info { flex: 1; min-width: 0; }
@@ -65,7 +37,6 @@
   .ilan-title { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 2px 0; }
   .ilan-loc { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
   .ilan-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-
   .services-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
   .service-item {
     background: var(--card); border: 1px solid var(--border);
@@ -75,7 +46,6 @@
   .service-item:active { border-color: var(--gold); }
   .service-em { font-size: 28px; display: block; margin-bottom: 6px; }
   .service-lbl { font-size: 11px; font-weight: 700; color: var(--text2); }
-
   .promo {
     background: linear-gradient(135deg, #1a3a2a, #0f2018);
     border-radius: var(--radius); padding: 18px;
@@ -85,16 +55,6 @@
   }
   .promo h3 { font-size: 15px; font-weight: 900; }
   .promo p { font-size: 12px; color: var(--text2); margin-top: 3px; }
-
-  .premium-banner {
-    background: linear-gradient(135deg, rgba(245,200,66,0.1), rgba(245,200,66,0.05));
-    border: 1px solid rgba(245,200,66,0.2);
-    border-radius: var(--radius); padding: 12px 16px;
-    margin-bottom: 16px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .premium-banner span { font-size: 13px; color: var(--gold); font-weight: 700; }
-  .premium-banner p { font-size: 11px; color: var(--text3); margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -107,38 +67,32 @@
     <a href="ilan-ver.html" class="nav-btn">+ İlan Ver</a>
     <a href="bildirimler.html" class="nav-icon-btn" style="position:relative">
       🔔
-      <span id="bildirimBadge" style="display:none;position:absolute;top:-2px;right:-2px;background:var(--rust);color:white;font-size:9px;font-weight:800;width:16px;height:16px;border-radius:50%;display:none;align-items:center;justify-content:center"></span>
+      <span id="bildirimBadge" style="display:none;position:absolute;top:-2px;right:-2px;background:var(--rust);color:white;font-size:9px;font-weight:800;width:16px;height:16px;border-radius:50%;align-items:center;justify-content:center"></span>
     </a>
-    <a href="profil.html" class="nav-icon-btn" id="navAvatar">👤</a>
+    <a href="profil.html" class="nav-icon-btn">👤</a>
   </div>
 </nav>
 
 <div class="page fade-up">
 
-  <!-- ARAMA -->
   <div class="search-bar">
     <span>🔍</span>
     <input type="text" id="searchInput" placeholder="Şehir, ilçe veya mahalle..." oninput="aramaYap()">
   </div>
 
-  <!-- FİLTRE — Devren kaldırıldı -->
   <div class="chips" style="margin-bottom:20px" id="filterChips">
     <div class="chip active" onclick="filtrele('tumu', this)">🏠 Tümü</div>
     <div class="chip" onclick="filtrele('satilik', this)">💰 Satılık</div>
     <div class="chip" onclick="filtrele('kiralik', this)">🔑 Kiralık</div>
   </div>
 
-  <!-- ÖNE ÇIKAN İLANLAR -->
   <div class="section-head">
     <div class="section-title">Öne Çıkan İlanlar</div>
     <span id="sayfaBilgi" style="font-size:12px;color:var(--text3);font-weight:700"></span>
   </div>
   <div id="ilanlarList"><div class="spinner"></div></div>
-
-  <!-- SAYFALAMA -->
   <div id="pagination" style="display:flex;gap:8px;justify-content:center;margin:16px 0;flex-wrap:wrap"></div>
 
-  <!-- EV HİZMETLERİ -->
   <div class="section-head" style="margin-top:8px">
     <div class="section-title">Ev Hizmetleri</div>
   </div>
@@ -151,14 +105,13 @@
     <div class="service-item" onclick="location.href='hizmetler.html?kategori=sigorta'"><span class="service-em">🛡️</span><div class="service-lbl">Sigorta</div></div>
     <div class="service-item" onclick="location.href='hizmetler.html?kategori=teknik'"><span class="service-em">📱</span><div class="service-lbl">Teknik Servis</div></div>
     <div class="service-item" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><span class="service-em">🛋️</span><div class="service-lbl">Dekorasyon</div></div>
-    <div class="service-item" onclick="location.href='hizmetler.html?kategori=aracyikama'"><span class="service-em">🚗</span><div class="service-lbl">Yerinde Araç Yıkama</div></div>
+    <div class="service-item" onclick="location.href='hizmetler.html?kategori=aracyikama'"><span class="service-em">🚗</span><div class="service-lbl">Araç Yıkama</div></div>
     <div class="service-item" onclick="location.href='hizmetler.html?kategori=koltukyikama'"><span class="service-em">🛋️</span><div class="service-lbl">Koltuk Yıkama</div></div>
     <div class="service-item" onclick="location.href='hizmetler.html?kategori=haliyikama'"><span class="service-em">🪨</span><div class="service-lbl">Halı Yıkama</div></div>
     <div class="service-item" onclick="location.href='hizmetler.html?kategori=ilacalama'"><span class="service-em">🐛</span><div class="service-lbl">İlaçlama</div></div>
     <div class="service-item" onclick="location.href='hizmetler.html?kategori=petek'"><span class="service-em">🔥</span><div class="service-lbl">Petek & Kombi</div></div>
   </div>
 
-  <!-- SİTE YÖNETİMİ PROMO -->
   <div class="promo">
     <div>
       <h3>🏢 Site Yönetimi</h3>
@@ -171,7 +124,11 @@
 
 <nav class="bottom-nav">
   <a href="index.html" class="bnav-item active"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
-  <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">✨</div><div class="bnav-badge" id="eslesmeBadge" style="display:none">0</div>Eşleşmeler</a>
+  <a href="eslesmeler.html" class="bnav-item" id="eslesmeNavBtn">
+    <div class="bnav-icon">✨</div>
+    <div class="bnav-badge" id="eslesmeBadge" style="display:none">!</div>
+    Eşleşmeler
+  </a>
   <a href="ilan-ver.html" class="bnav-center">+</a>
   <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">💬</div><div class="bnav-badge" id="mesajBadge" style="display:none">0</div>Mesajlar</a>
   <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
@@ -187,9 +144,9 @@ const SAYFA_BOYUTU = 10;
 let aktifFiltre = 'tumu';
 let aktifSayfa = 1;
 let toplamSayfa = 1;
-const emojiler = { satilik: '🏙️', kiralik: '🏘️', devren: '🏪' };
+const emojiler = { satilik: '🏙️', kiralik: '🏘️' };
 
-// Şifre sıfırlama linki mi? Varsa auth.html'e yönlendir
+// Şifre sıfırlama yönlendirmesi
 if (new URLSearchParams(window.location.search).get('code')) {
   window.location.replace('auth.html' + window.location.search);
 } else {
@@ -197,7 +154,21 @@ if (new URLSearchParams(window.location.search).get('code')) {
     if (!data.session) { window.location.href = 'auth.html'; return; }
     ilanlarYukle();
     mesajSay();
+    tercihKontrol(data.session.user.id);
   });
+}
+
+async function tercihKontrol(userId) {
+  // Tercih varsa eşleşmeler butonuna badge koy
+  const tercihStr = localStorage.getItem('gotapu_tercihler');
+  if (tercihStr) {
+    try {
+      const t = JSON.parse(tercihStr);
+      if (t.sehir || t.minFiyat || t.oda?.length) {
+        document.getElementById('eslesmeBadge').style.display = 'flex';
+      }
+    } catch(e) {}
+  }
 }
 
 async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
@@ -206,10 +177,12 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
   listEl.innerHTML = '<div class="spinner"></div>';
   document.getElementById('pagination').innerHTML = '';
 
+  // Sadece onaylanmış ve devren olmayan ilanları göster
   let countQuery = sb.from('ilanlar')
     .select('*', { count: 'exact', head: true })
     .eq('one_cikan', true)
-    .in('tip', ['satilik', 'kiralik']);
+    .eq('onay_durumu', 'onaylandi')
+    .neq('tip', 'devren');
   if (filtre === 'satilik') countQuery = countQuery.eq('tip', 'satilik');
   if (filtre === 'kiralik') countQuery = countQuery.eq('tip', 'kiralik');
   if (arama) countQuery = countQuery.ilike('baslik', `%${arama}%`);
@@ -224,7 +197,8 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
   let query = sb.from('ilanlar')
     .select('*')
     .eq('one_cikan', true)
-    .in('tip', ['satilik', 'kiralik'])
+    .eq('onay_durumu', 'onaylandi')
+    .neq('tip', 'devren')
     .order('created_at', { ascending: false })
     .range(from, to);
   if (filtre === 'satilik') query = query.eq('tip', 'satilik');
@@ -250,7 +224,7 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
         <div class="ilan-title">${ilan.baslik}</div>
         <div class="ilan-loc">📍 ${ilan.konum || ''}</div>
         <div class="ilan-tags">
-          <span class="tag ${ilan.tip === 'kiralik' ? 'tag-green' : 'tag-rust'}">${ilan.tip.toUpperCase()}</span>
+          <span class="tag ${ilan.tip === 'kiralik' ? 'tag-green' : 'tag-rust'}">${ilan.tip === 'kiralik' ? 'KİRALIK' : 'SATILIK'}</span>
           ${ilan.oda_sayisi ? `<span class="tag tag-gold">🛏 ${ilan.oda_sayisi}</span>` : ''}
           ${ilan.metrekare ? `<span class="tag tag-gold">📐 ${ilan.metrekare}m²</span>` : ''}
         </div>
@@ -265,7 +239,7 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
     }
     for (let i = 1; i <= toplamSayfa; i++) {
       const aktif = i === sayfa;
-      pag.innerHTML += `<button onclick="ilanlarYukle('${filtre}','${arama}',${i})" style="${style}background:${aktif ? 'var(--gold)' : 'var(--card)'};color:${aktif ? 'var(--bg)' : 'var(--text)'};border-color:${aktif ? 'var(--gold)' : 'var(--border)'}">${i}</button>`;
+      pag.innerHTML += `<button onclick="ilanlarYukle('${filtre}','${arama}',${i})" style="${style}background:${aktif?'var(--gold)':'var(--card)'};color:${aktif?'var(--bg)':'var(--text)'};border-color:${aktif?'var(--gold)':'var(--border)'}">${i}</button>`;
     }
     if (sayfa < toplamSayfa) {
       pag.innerHTML += `<button onclick="ilanlarYukle('${filtre}','${arama}',${sayfa+1})" style="${style}background:var(--gold);color:var(--bg);border-color:var(--gold)">Sonraki →</button>`;
