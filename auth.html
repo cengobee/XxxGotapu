@@ -96,9 +96,9 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Şifre sıfırlama linki mi? Bunu en başta sakla
+// Şifre sıfırlama linki mi kontrol et
 const urlParams = new URLSearchParams(window.location.search);
-const isPasswordReset = urlParams.get('code') !== null;
+const isPasswordReset = urlParams.get('code') !== null || window.location.hash.includes('type=recovery');
 
 // Auth state değişikliğini dinle
 sb.auth.onAuthStateChange((event, session) => {
@@ -106,12 +106,12 @@ sb.auth.onAuthStateChange((event, session) => {
     switchTab('yenisifre');
     hideMessages();
   } else if (event === 'SIGNED_IN' && session) {
-    if (isPasswordReset) {
-      // Şifre sıfırlama linkinden gelindi — yeni şifre ekranını aç
+    const hash = window.location.hash;
+    const search = window.location.search;
+    if (search.includes('code=') || hash.includes('type=recovery')) {
       switchTab('yenisifre');
       hideMessages();
     } else {
-      // Normal giriş — ana sayfaya git
       window.location.href = 'index.html';
     }
   }
@@ -119,10 +119,8 @@ sb.auth.onAuthStateChange((event, session) => {
 
 // Sayfa yüklenince kontrol et
 (async () => {
-  // ?code= varsa PKCE flow — onAuthStateChange halleder, bekle
   if (isPasswordReset) return;
 
-  // Eski implicit flow: #access_token + type=recovery
   const hash = window.location.hash;
   if (hash.includes('access_token') && hash.includes('type=recovery')) {
     const params = new URLSearchParams(hash.substring(1));
@@ -139,7 +137,6 @@ sb.auth.onAuthStateChange((event, session) => {
     return;
   }
 
-  // Normal session kontrolü — giriş yapmışsa ana sayfaya
   const { data } = await sb.auth.getSession();
   if (data.session) window.location.href = 'index.html';
 })();
