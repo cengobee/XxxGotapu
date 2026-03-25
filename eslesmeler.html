@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  /* SWIPE KART */
   .swipe-area {
     position: relative; height: 460px;
     display: flex; align-items: center; justify-content: center;
@@ -54,91 +53,33 @@
   .card-spec { font-size: 12px; color: var(--text2); }
   .match-reasons { display: flex; gap: 5px; flex-wrap: wrap; }
   .reason-chip { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 50px; background: rgba(46,204,113,0.12); color: var(--green); }
-
-  /* BUTONLAR */
-  .action-btns {
-    display: flex; align-items: center; justify-content: center; gap: 14px;
-    margin-bottom: 24px;
-  }
-  .action-btn {
-    border: none; cursor: pointer; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px; transition: transform .15s;
-  }
+  .action-btns { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 24px; }
+  .action-btn { border: none; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; transition: transform .15s; }
   .action-btn:active { transform: scale(0.88); }
   .btn-nope { width: 60px; height: 60px; background: rgba(232,96,58,0.15); }
   .btn-like { width: 70px; height: 70px; background: rgba(46,204,113,0.15); }
   .btn-super { width: 52px; height: 52px; background: rgba(74,144,217,0.15); }
   .btn-rewind { width: 44px; height: 44px; background: rgba(255,255,255,0.05); font-size: 20px; }
-
-  /* EŞLEŞTİ POPUP */
-  .match-popup {
-    position: fixed; inset: 0; z-index: 999;
-    background: rgba(0,0,0,0.9);
-    display: none; flex-direction: column;
-    align-items: center; justify-content: center; padding: 24px;
-  }
+  .match-popup { position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
   .match-popup.show { display: flex; }
-
-  /* TERCİH MODAL */
-  .tercih-modal {
-    position: fixed; inset: 0; z-index: 400;
-    background: rgba(0,0,0,0.75);
-    display: none; align-items: flex-end;
-  }
+  .tercih-modal { position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.75); display: none; align-items: flex-end; }
   .tercih-modal.open { display: flex; }
-  .tercih-sheet {
-    background: var(--bg2); border-radius: 24px 24px 0 0;
-    width: 100%; max-height: 90vh; overflow-y: auto;
-    padding: 8px 16px 48px;
-  }
+  .tercih-sheet { background: var(--bg2); border-radius: 24px 24px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; padding: 8px 16px 48px; }
   .t-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 12px auto 20px; }
   .t-section { margin-bottom: 20px; }
-  .t-label {
-    font-size: 11px; font-weight: 900; color: var(--text3);
-    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
+  .t-label { font-size: 11px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
   .t-chips { display: flex; gap: 7px; flex-wrap: wrap; }
-  .tchip {
-    padding: 7px 13px; border-radius: 50px;
-    background: var(--card); border: 1.5px solid var(--border);
-    font-size: 12px; font-weight: 700; color: var(--text2);
-    cursor: pointer; font-family: 'Nunito', sans-serif;
-    transition: all .2s;
-  }
+  .tchip { padding: 7px 13px; border-radius: 50px; background: var(--card); border: 1.5px solid var(--border); font-size: 12px; font-weight: 700; color: var(--text2); cursor: pointer; font-family: 'Nunito', sans-serif; transition: all .2s; }
   .tchip.on { background: rgba(245,200,66,0.12); border-color: var(--gold); color: var(--gold); }
-  .tchip.farketmez {
-    border-style: dashed; font-size: 11px; color: var(--text3);
-    background: transparent;
-  }
-  .tchip.farketmez.on {
-    background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2);
-    color: var(--text2); border-style: dashed;
-  }
+  .tchip.farketmez { border-style: dashed; font-size: 11px; color: var(--text3); background: transparent; }
+  .tchip.farketmez.on { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2); color: var(--text2); border-style: dashed; }
   .t-range { display: flex; gap: 8px; align-items: center; }
-  .t-range input {
-    flex: 1; background: var(--card); border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 10px 12px; color: var(--text);
-    font-family: 'Nunito', sans-serif; font-size: 13px; outline: none;
-  }
+  .t-range input { flex: 1; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 12px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 13px; outline: none; }
   .t-range input:focus { border-color: var(--gold); }
   .t-range span { color: var(--text3); font-size: 14px; }
-
-  /* EŞLEŞMELERİM LİSTESİ */
-  .eslesen-item {
-    display: flex; gap: 12px; align-items: center;
-    background: var(--card); border-radius: var(--radius);
-    border: 1px solid var(--border); padding: 12px;
-    margin-bottom: 10px; cursor: pointer; text-decoration: none; color: var(--text);
-    transition: border-color .2s;
-  }
+  .eslesen-item { display: flex; gap: 12px; align-items: center; background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; cursor: pointer; text-decoration: none; color: var(--text); transition: border-color .2s; }
   .eslesen-item:active { border-color: var(--gold); }
-  .eslesen-thumb {
-    width: 62px; height: 62px; border-radius: 12px;
-    background: var(--card2); display: flex; align-items: center;
-    justify-content: center; font-size: 28px; flex-shrink: 0; overflow: hidden;
-  }
+  .eslesen-thumb { width: 62px; height: 62px; border-radius: 12px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; overflow: hidden; }
   .eslesen-thumb img { width:100%; height:100%; object-fit:cover; }
   .pct-pill { display: inline-block; padding: 2px 10px; border-radius: 50px; font-size: 11px; font-weight: 800; margin-bottom: 4px; }
   .pct-high { background: rgba(46,204,113,0.15); color: var(--green); }
@@ -210,7 +151,7 @@
 
     <!-- FİYAT -->
     <div class="t-section">
-      <div class="t-label">💰 Fiyat Aralığı (₺)</div>
+      <div class="t-label">💰 Fiyat Aralığı (₺) <span id="fm-fiyat" class="tchip farketmez" onclick="farketmezToggle('fiyat',this)">Farketmez</span></div>
       <div class="t-range">
         <input type="number" id="pMinFiyat" placeholder="Min (ör: 2000000)">
         <span>—</span>
@@ -224,7 +165,6 @@
       <div class="t-chips" id="pg-tip">
         <button class="tchip" onclick="tekSec('tip',this)">Satılık</button>
         <button class="tchip" onclick="tekSec('tip',this)">Kiralık</button>
-        <button class="tchip" onclick="tekSec('tip',this)">Devren</button>
       </div>
     </div>
 
@@ -240,6 +180,20 @@
       </div>
     </div>
 
+    <!-- EMLAK TİPİ -->
+    <div class="t-section">
+      <div class="t-label">🏠 Emlak Tipi <span id="fm-emlak" class="tchip farketmez" onclick="farketmezToggle('emlak',this)">Farketmez</span></div>
+      <div class="t-chips" id="pg-emlak">
+        <button class="tchip" onclick="cogulSec('emlak',this)">🏢 Daire</button>
+        <button class="tchip" onclick="cogulSec('emlak',this)">🏡 Villa</button>
+        <button class="tchip" onclick="cogulSec('emlak',this)">🏠 Müstakil</button>
+        <button class="tchip" onclick="cogulSec('emlak',this)">🏨 Residence</button>
+        <button class="tchip" onclick="cogulSec('emlak',this)">🏗️ Arsa</button>
+        <button class="tchip" onclick="cogulSec('emlak',this)">🏪 İşyeri</button>
+        <button class="tchip" onclick="cogulSec('emlak',this)">🌿 Tarla/Bağ</button>
+      </div>
+    </div>
+
     <!-- ODA SAYISI -->
     <div class="t-section">
       <div class="t-label">🛏 Oda Sayısı <span id="fm-oda" class="tchip farketmez" onclick="farketmezToggle('oda',this)">Farketmez</span></div>
@@ -250,6 +204,40 @@
         <button class="tchip" onclick="cogulSec('oda',this)">3+1</button>
         <button class="tchip" onclick="cogulSec('oda',this)">4+1</button>
         <button class="tchip" onclick="cogulSec('oda',this)">5+1 ve üzeri</button>
+      </div>
+    </div>
+
+    <!-- BANYO SAYISI -->
+    <div class="t-section">
+      <div class="t-label">🚿 Banyo Sayısı <span id="fm-banyo" class="tchip farketmez" onclick="farketmezToggle('banyo',this)">Farketmez</span></div>
+      <div class="t-chips" id="pg-banyo">
+        <button class="tchip" onclick="cogulSec('banyo',this)">1</button>
+        <button class="tchip" onclick="cogulSec('banyo',this)">2</button>
+        <button class="tchip" onclick="cogulSec('banyo',this)">3</button>
+        <button class="tchip" onclick="cogulSec('banyo',this)">4+</button>
+      </div>
+    </div>
+
+    <!-- KAT SAYISI -->
+    <div class="t-section">
+      <div class="t-label">🏢 Kat Tercihi <span id="fm-kat" class="tchip farketmez" onclick="farketmezToggle('kat',this)">Farketmez</span></div>
+      <div class="t-chips" id="pg-kat">
+        <button class="tchip" onclick="cogulSec('kat',this)">1. Kat</button>
+        <button class="tchip" onclick="cogulSec('kat',this)">2. Kat</button>
+        <button class="tchip" onclick="cogulSec('kat',this)">3. Kat</button>
+        <button class="tchip" onclick="cogulSec('kat',this)">4. Kat</button>
+        <button class="tchip" onclick="cogulSec('kat',this)">5+ Kat</button>
+        <button class="tchip tchip-red" onclick="kotAltıToggle(this)" id="kotAltıBtn">🚫 Kot Altı / Giriş / Çatı Olmasın</button>
+      </div>
+    </div>
+
+    <!-- METREKare -->
+    <div class="t-section">
+      <div class="t-label">📐 Metrekare <span id="fm-m2" class="tchip farketmez" onclick="farketmezToggle('m2',this)">Farketmez</span></div>
+      <div class="t-range">
+        <input type="number" id="pMinM2" placeholder="Min m²">
+        <span>—</span>
+        <input type="number" id="pMaxM2" placeholder="Max m²">
       </div>
     </div>
 
@@ -276,24 +264,64 @@
       </div>
     </div>
 
-    <!-- EŞYA -->
-    <div class="t-section">
-      <div class="t-label">🪑 Eşya Durumu <span id="fm-esya" class="tchip farketmez" onclick="farketmezToggle('esya',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-esya">
-        <button class="tchip" onclick="tekSec('esya',this)">Eşyalı</button>
-        <button class="tchip" onclick="tekSec('esya',this)">Yarı Eşyalı</button>
-        <button class="tchip" onclick="tekSec('esya',this)">Boş</button>
-      </div>
-    </div>
-
     <!-- CEPHE -->
     <div class="t-section">
-      <div class="t-label">🧭 Cephe Tercihi <span id="fm-cephe" class="tchip farketmez" onclick="farketmezToggle('cephe',this)">Farketmez</span></div>
+      <div class="t-label">🧭 Cephe <span id="fm-cephe" class="tchip farketmez" onclick="farketmezToggle('cephe',this)">Farketmez</span></div>
       <div class="t-chips" id="pg-cephe">
         <button class="tchip" onclick="cogulSec('cephe',this)">⬇️ Güney</button>
         <button class="tchip" onclick="cogulSec('cephe',this)">⬆️ Kuzey</button>
         <button class="tchip" onclick="cogulSec('cephe',this)">➡️ Doğu</button>
         <button class="tchip" onclick="cogulSec('cephe',this)">⬅️ Batı</button>
+      </div>
+    </div>
+
+    <!-- KULLANIM DURUMU -->
+    <div class="t-section">
+      <div class="t-label">🔑 Kullanım Durumu <span id="fm-kullanim" class="tchip farketmez" onclick="farketmezToggle('kullanim',this)">Farketmez</span></div>
+      <div class="t-chips" id="pg-kullanim">
+        <button class="tchip" onclick="tekSec('kullanim',this)">🏠 Boş</button>
+        <button class="tchip" onclick="tekSec('kullanim',this)">🔑 Kiracılı</button>
+        <button class="tchip" onclick="tekSec('kullanim',this)">👤 Mülk Sahibi</button>
+      </div>
+    </div>
+
+    <!-- TAPU DURUMU -->
+    <div class="t-section">
+      <div class="t-label">📋 Tapu Durumu <span id="fm-tapu" class="tchip farketmez" onclick="farketmezToggle('tapu',this)">Farketmez</span></div>
+      <div class="t-chips" id="pg-tapu">
+        <button class="tchip" onclick="cogulSec('tapu',this)">✅ Kat Mülkiyeti</button>
+        <button class="tchip" onclick="cogulSec('tapu',this)">📋 Kat İrtifakı</button>
+        <button class="tchip" onclick="cogulSec('tapu',this)">🤝 Hisseli</button>
+        <button class="tchip" onclick="cogulSec('tapu',this)">🌍 Arsa Tapusu</button>
+        <button class="tchip" onclick="cogulSec('tapu',this)">⏳ Tahsis</button>
+      </div>
+    </div>
+
+    <!-- EŞYA DURUMU -->
+    <div class="t-section">
+      <div class="t-label">🪑 Eşya Durumu <span id="fm-esya" class="tchip farketmez" onclick="farketmezToggle('esya',this)">Farketmez</span></div>
+      <div class="t-chips" id="pg-esya">
+        <button class="tchip" onclick="tekSec('esya',this)">🪑 Eşyalı</button>
+        <button class="tchip" onclick="tekSec('esya',this)">📦 Yarı Eşyalı</button>
+        <button class="tchip" onclick="tekSec('esya',this)">🏠 Boş</button>
+      </div>
+    </div>
+
+    <!-- SİTE -->
+    <div class="t-section">
+      <div class="t-label">🏘️ Site İçinde mi? <span id="fm-site" class="tchip farketmez" onclick="farketmezToggle('site',this)">Farketmez</span></div>
+      <div class="t-chips" id="pg-site">
+        <button class="tchip" onclick="tekSec('site',this)">✅ Evet</button>
+        <button class="tchip" onclick="tekSec('site',this)">❌ Hayır</button>
+      </div>
+    </div>
+
+    <!-- AİDAT -->
+    <div class="t-section">
+      <div class="t-label">💳 Aidat <span id="fm-aidat" class="tchip farketmez" onclick="farketmezToggle('aidat',this)">Farketmez</span></div>
+      <div class="t-chips" id="pg-aidat">
+        <button class="tchip" onclick="tekSec('aidat',this)">✅ Var</button>
+        <button class="tchip" onclick="tekSec('aidat',this)">❌ Yok</button>
       </div>
     </div>
 
@@ -325,16 +353,6 @@
       </div>
     </div>
 
-    <!-- METREKARE -->
-    <div class="t-section">
-      <div class="t-label">📐 Metrekare <span id="fm-m2" class="tchip farketmez" onclick="farketmezToggle('m2',this)">Farketmez</span></div>
-      <div class="t-range">
-        <input type="number" id="pMinM2" placeholder="Min m²">
-        <span>—</span>
-        <input type="number" id="pMaxM2" placeholder="Max m²">
-      </div>
-    </div>
-
     <button class="btn btn-gold btn-lg" onclick="tercihleriKaydet()">✅ Tercihleri Kaydet</button>
     <button class="btn btn-outline btn-md" style="width:100%;margin-top:8px" onclick="tercihKapat()">İptal</button>
   </div>
@@ -353,63 +371,73 @@ const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-const EMOJI = { satilik:'🏙️', kiralik:'🏘️', devren:'🏪' };
+const EMOJI = { satilik:'🏙️', kiralik:'🏘️' };
 
 // ─── TERCİHLER ───
-// farketmez: o kriter puanlamada atlanır
 let tercihler = {
-  minFiyat: null, maxFiyat: null,
+  minFiyat: null, maxFiyat: null, fiyat_fm: false,
   tip: null,        tip_fm: true,
   sehir: null,
+  emlak: [],        emlak_fm: true,
   oda: [],          oda_fm: true,
+  banyo: [],        banyo_fm: true,
+  kat: [],          kat_fm: true, kotAltiOlmasin: false,
+  minM2: null,      maxM2: null,  m2_fm: true,
   bina: [],         bina_fm: true,
   isitma: [],       isitma_fm: true,
-  esya: null,       esya_fm: true,
   cephe: [],        cephe_fm: true,
+  kullanim: null,   kullanim_fm: true,
+  tapu: [],         tapu_fm: true,
+  esya: null,       esya_fm: true,
+  site: null,       site_fm: true,
+  aidat: null,      aidat_fm: true,
   ic: [],           ic_fm: true,
   dis: [],          dis_fm: true,
-  minM2: null,      maxM2: null, m2_fm: true,
 };
 
-// localStorage'dan yükle
 function tercihYukle() {
   try {
-    const kayit = localStorage.getItem('gotapu_tercihler');
-    if (kayit) tercihler = { ...tercihler, ...JSON.parse(kayit) };
+    const k = localStorage.getItem('gotapu_tercihler');
+    if (k) tercihler = { ...tercihler, ...JSON.parse(k) };
   } catch(e) {}
 }
 
-function tercihKaydet() {
+function tercihKaydetLS() {
   localStorage.setItem('gotapu_tercihler', JSON.stringify(tercihler));
 }
 
 // ─── PUAN HESAPLAMA ───
-// Her kriter için max puan ve ağırlık
+// Toplam 100 puan
+// KONUM:20, TİP:10, EMLAK:10, ODA:8, BANYO:3, KAT:10, M2:5, BİNA:3, ISITMA:3, CEPHE:2, KULLANIM:2, TAPU:3, EŞYA:4, SİTE:2, AİDAT:1, İÇ:4, DIŞ:2, FİYAT:6 = 98 → fiyat 8 = 100
+
 const KRITERLER = [
-  { key: 'fiyat',   max: 30, fm: false  }, // fiyat her zaman önemli
-  { key: 'tip',     max: 10, fm: 'tip_fm' },
-  { key: 'sehir',   max: 20, fm: false  }, // şehir her zaman önemli
-  { key: 'oda',     max: 15, fm: 'oda_fm' },
-  { key: 'bina',    max: 5,  fm: 'bina_fm' },
-  { key: 'isitma',  max: 3,  fm: 'isitma_fm' },
-  { key: 'esya',    max: 4,  fm: 'esya_fm' },
-  { key: 'cephe',   max: 3,  fm: 'cephe_fm' },
-  { key: 'ic',      max: 7,  fm: 'ic_fm' },
-  { key: 'dis',     max: 7,  fm: 'dis_fm' },
-  { key: 'm2',      max: 5,  fm: 'm2_fm' },
+  { key:'fiyat',    max:8,  fm:'fiyat_fm' },
+  { key:'tip',      max:10, fm:'tip_fm'   },
+  { key:'konum',    max:20, fm:false       },
+  { key:'emlak',    max:10, fm:'emlak_fm' },
+  { key:'oda',      max:8,  fm:'oda_fm'   },
+  { key:'banyo',    max:3,  fm:'banyo_fm' },
+  { key:'kat',      max:10, fm:'kat_fm'   },
+  { key:'m2',       max:5,  fm:'m2_fm'    },
+  { key:'bina',     max:3,  fm:'bina_fm'  },
+  { key:'isitma',   max:3,  fm:'isitma_fm'},
+  { key:'cephe',    max:2,  fm:'cephe_fm' },
+  { key:'kullanim', max:2,  fm:'kullanim_fm'},
+  { key:'tapu',     max:3,  fm:'tapu_fm'  },
+  { key:'esya',     max:4,  fm:'esya_fm'  },
+  { key:'site',     max:2,  fm:'site_fm'  },
+  { key:'aidat',    max:1,  fm:'aidat_fm' },
+  { key:'ic',       max:4,  fm:'ic_fm'    },
+  { key:'dis',      max:2,  fm:'dis_fm'   },
 ];
 
 function eslesPuani(ilan) {
-  let toplamMax = 0;
-  let kazanilan = 0;
+  let toplamMax = 0, kazanilan = 0;
   const sebepler = [];
 
   KRITERLER.forEach(k => {
-    // Farketmez aktifse bu kriteri tamamen atla
-    const farketmez = k.fm ? tercihler[k.fm] : false;
-    if (farketmez) return;
-
+    const fm = k.fm ? tercihler[k.fm] : false;
+    if (fm) return; // farketmez → atla
     toplamMax += k.max;
 
     switch(k.key) {
@@ -418,60 +446,109 @@ function eslesPuani(ilan) {
         const f = Number(ilan.fiyat);
         const mn = tercihler.minFiyat ? Number(tercihler.minFiyat) : null;
         const mx = tercihler.maxFiyat ? Number(tercihler.maxFiyat) : null;
-        if (!mn && !mx) { kazanilan += k.max; break; } // belirtilmemişse tam puan
+        if (!mn && !mx) { kazanilan += k.max; break; }
         if (mn && mx) {
-          if (f >= mn && f <= mx) { kazanilan += k.max; sebepler.push('Fiyat uygun'); }
-          else if (f >= mn*0.9 && f <= mx*1.1) { kazanilan += k.max*0.5; } // %10 tolerans
+          if (f >= mn && f <= mx)            { kazanilan += k.max;       sebepler.push('Fiyat uygun'); }
+          else if (f >= mn*0.9 && f<=mx*1.1) { kazanilan += k.max*0.5; }
         } else if (mn && f >= mn) { kazanilan += k.max; }
-        else if (mx && f <= mx) { kazanilan += k.max; }
+        else if (mx && f <= mx)   { kazanilan += k.max; }
         break;
       }
 
       case 'tip': {
         if (!tercihler.tip) { kazanilan += k.max; break; }
-        if (ilan.tip === tercihler.tip.toLowerCase()) { kazanilan += k.max; sebepler.push('İlan tipi uyuştu'); }
+        const ilanTip = (ilan.tip||'').toLowerCase();
+        const pTip = tercihler.tip.toLowerCase();
+        if (ilanTip === pTip || ilanTip.includes(pTip) || pTip.includes(ilanTip)) {
+          kazanilan += k.max; sebepler.push('İlan tipi uyuştu');
+        }
         break;
       }
 
-      case 'sehir': {
+      case 'konum': {
         if (!tercihler.sehir) { kazanilan += k.max; break; }
-        const konum = (ilan.konum || '').toLowerCase();
-        if (konum.includes(tercihler.sehir.toLowerCase())) { kazanilan += k.max; sebepler.push('Şehir uyuştu'); }
-        else kazanilan += k.max * 0.2; // farklı şehir ama az puan
+        const konum = (ilan.konum||'').toLowerCase();
+        const sehir = tercihler.sehir.toLowerCase();
+        if (konum.includes(sehir)) {
+          // Aynı ilçe/mahalle kontrolü — basit: konum string'i sehir içeriyorsa tam puan
+          kazanilan += k.max; sebepler.push('Konum uyuştu');
+        } else {
+          // Farklı şehir → 0
+          kazanilan += 0;
+        }
+        break;
+      }
+
+      case 'emlak': {
+        if (!tercihler.emlak.length) { kazanilan += k.max; break; }
+        const ilanEmlak = (ilan.emlak_tipi||ilan.tip||'').toLowerCase();
+        const uygun = tercihler.emlak.some(e =>
+          ilanEmlak.includes(e.replace(/[🏢🏡🏠🏨🏗️🏪🌿]/g,'').trim().toLowerCase())
+        );
+        if (uygun) { kazanilan += k.max; sebepler.push('Emlak tipi uyuştu'); }
         break;
       }
 
       case 'oda': {
         if (!tercihler.oda.length) { kazanilan += k.max; break; }
-        const ilanOda = ilan.oda_sayisi || (ilan.kriterler?.oda_sayisi) || '';
-        const uygun = tercihler.oda.some(o => ilanOda.includes(o.replace(' ve üzeri','')));
-        if (uygun) { kazanilan += k.max; sebepler.push(`${ilanOda} oda uyuştu`); }
+        const ilanOda = (ilan.oda_sayisi||ilan.kriterler?.oda_sayisi||'').toLowerCase();
+        const uygun = tercihler.oda.some(o => ilanOda.includes(o.toLowerCase().replace(' ve üzeri','')));
+        if (uygun) { kazanilan += k.max; sebepler.push(`${ilan.oda_sayisi} oda uyuştu`); }
+        break;
+      }
+
+      case 'banyo': {
+        if (!tercihler.banyo.length) { kazanilan += k.max; break; }
+        const ilanBanyo = String(ilan.kriterler?.banyo_sayisi||'');
+        const uygun = tercihler.banyo.some(b => {
+          if (b === '4+') return Number(ilanBanyo) >= 4;
+          return ilanBanyo === b;
+        });
+        if (uygun) { kazanilan += k.max; sebepler.push('Banyo sayısı uyuştu'); }
+        break;
+      }
+
+      case 'kat': {
+        if (!tercihler.kat.length && !tercihler.kotAltiOlmasin) { kazanilan += k.max; break; }
+        const ilanKat = (ilan.kriterler?.bulundugu_kat||'').toLowerCase();
+        // Kot altı/giriş/çatı olmasın kontrolü
+        if (tercihler.kotAltiOlmasin) {
+          const yasak = ['kot','giriş','bodrum','çatı'];
+          if (yasak.some(y => ilanKat.includes(y))) { break; } // 0 puan
+        }
+        if (!tercihler.kat.length) { kazanilan += k.max; break; }
+        const uygun = tercihler.kat.some(k2 => ilanKat.includes(k2.replace('. Kat','').trim()));
+        if (uygun) { kazanilan += k.max; sebepler.push('Kat uyuştu'); }
+        break;
+      }
+
+      case 'm2': {
+        if (!tercihler.minM2 && !tercihler.maxM2) { kazanilan += k.max; break; }
+        const m2 = Number(ilan.metrekare||ilan.kriterler?.m2net||0);
+        if (!m2) { kazanilan += k.max*0.5; break; }
+        const mn2 = tercihler.minM2 ? Number(tercihler.minM2) : null;
+        const mx2 = tercihler.maxM2 ? Number(tercihler.maxM2) : null;
+        if (mn2 && mx2 && m2 >= mn2 && m2 <= mx2) { kazanilan += k.max; sebepler.push(`${m2}m² uygun`); }
+        else if (mn2 && !mx2 && m2 >= mn2) { kazanilan += k.max; }
+        else if (!mn2 && mx2 && m2 <= mx2) { kazanilan += k.max; }
         break;
       }
 
       case 'bina': {
         if (!tercihler.bina.length) { kazanilan += k.max; break; }
-        const ilanBina = ilan.kriterler?.bina_yasi || '';
-        const uygun = tercihler.bina.some(b => ilanBina.includes(b.split(' ')[0]));
+        const ilanBina = (ilan.kriterler?.bina_yasi||'');
+        const uygun = tercihler.bina.some(b => ilanBina.toLowerCase().includes(b.split(' ')[0].toLowerCase()));
         if (uygun || !ilanBina) { kazanilan += k.max; if(uygun) sebepler.push('Bina yaşı uyuştu'); }
         break;
       }
 
       case 'isitma': {
         if (!tercihler.isitma.length) { kazanilan += k.max; break; }
-        const ilanIsitma = ilan.kriterler?.isitma || '';
-        const uygun = tercihler.isitma.some(i => ilanIsitma.toLowerCase().includes(i.replace(/[🔥🏢🌡️❄️]/g,'').trim().toLowerCase()));
+        const ilanIsitma = (ilan.kriterler?.isitma||'').toLowerCase();
+        const uygun = tercihler.isitma.some(i =>
+          ilanIsitma.includes(i.replace(/[🔥🏢🌡️❄️]/g,'').trim().toLowerCase())
+        );
         if (uygun || !ilanIsitma) { kazanilan += k.max; if(uygun) sebepler.push('Isıtma uyuştu'); }
-        break;
-      }
-
-      case 'esya': {
-        if (!tercihler.esya) { kazanilan += k.max; break; }
-        const ilanEsya = ilan.kriterler?.esya_durumu || '';
-        if (ilanEsya.toLowerCase().includes(tercihler.esya.toLowerCase()) || !ilanEsya) {
-          kazanilan += k.max;
-          if(ilanEsya) sebepler.push('Eşya durumu uyuştu');
-        }
         break;
       }
 
@@ -482,7 +559,60 @@ function eslesPuani(ilan) {
           ilanCephe.some(ic => ic.toLowerCase().includes(c.replace(/[⬇️⬆️➡️⬅️]/g,'').trim().toLowerCase()))
         );
         if (uygun) { kazanilan += k.max; sebepler.push('Cephe uyuştu'); }
-        else if (!ilanCephe.length) { kazanilan += k.max * 0.5; }
+        else if (!ilanCephe.length) { kazanilan += k.max*0.5; }
+        break;
+      }
+
+      case 'kullanim': {
+        if (!tercihler.kullanim) { kazanilan += k.max; break; }
+        const ilanKullanim = (ilan.kriterler?.kullanim_durumu||'').toLowerCase();
+        const pKullanim = tercihler.kullanim.replace(/[🏠🔑👤]/g,'').trim().toLowerCase();
+        if (ilanKullanim.includes(pKullanim) || !ilanKullanim) {
+          kazanilan += k.max; if(ilanKullanim) sebepler.push('Kullanım durumu uyuştu');
+        }
+        break;
+      }
+
+      case 'tapu': {
+        if (!tercihler.tapu.length) { kazanilan += k.max; break; }
+        const ilanTapu = (ilan.kriterler?.tapu_durumu||'').toLowerCase();
+        const uygun = tercihler.tapu.some(t =>
+          ilanTapu.includes(t.replace(/[✅📋🤝🌍⏳]/g,'').trim().toLowerCase())
+        );
+        if (uygun || !ilanTapu) { kazanilan += k.max; if(uygun) sebepler.push('Tapu uyuştu'); }
+        break;
+      }
+
+      case 'esya': {
+        if (!tercihler.esya) { kazanilan += k.max; break; }
+        const ilanEsya = (ilan.kriterler?.esya_durumu||'').toLowerCase();
+        const pEsya = tercihler.esya.replace(/[🪑📦🏠]/g,'').trim().toLowerCase();
+        if (ilanEsya.includes(pEsya) || !ilanEsya) {
+          kazanilan += k.max; if(ilanEsya) sebepler.push('Eşya durumu uyuştu');
+        } else if (
+          (pEsya.includes('yarı') && ilanEsya.includes('eşyalı')) ||
+          (pEsya.includes('eşyalı') && ilanEsya.includes('yarı'))
+        ) {
+          kazanilan += k.max * 0.5;
+        }
+        break;
+      }
+
+      case 'site': {
+        if (!tercihler.site) { kazanilan += k.max; break; }
+        const ilanSite = (ilan.kriterler?.site_ici||'').toLowerCase();
+        const pSite = tercihler.site.replace(/[✅❌]/g,'').trim().toLowerCase();
+        if (ilanSite.includes(pSite) || !ilanSite) {
+          kazanilan += k.max; if(ilanSite) sebepler.push('Site tercihi uyuştu');
+        }
+        break;
+      }
+
+      case 'aidat': {
+        if (!tercihler.aidat) { kazanilan += k.max; break; }
+        const ilanAidat = (ilan.kriterler?.aidat||'').toLowerCase();
+        const pAidat = tercihler.aidat.replace(/[✅❌]/g,'').trim().toLowerCase();
+        if (ilanAidat.includes(pAidat) || !ilanAidat) { kazanilan += k.max; }
         break;
       }
 
@@ -492,8 +622,7 @@ function eslesPuani(ilan) {
         const eslesen = tercihler.ic.filter(t =>
           ilanIc.some(i => i.toLowerCase().includes(t.replace(/[🪟🏡🚿👕🍽️🔆🔐]/g,'').trim().toLowerCase()))
         );
-        const oran = eslesen.length / tercihler.ic.length;
-        kazanilan += k.max * oran;
+        kazanilan += k.max * (eslesen.length / tercihler.ic.length);
         if (eslesen.length > 0) sebepler.push(`${eslesen.length} iç özellik uyuştu`);
         break;
       }
@@ -504,29 +633,14 @@ function eslesPuani(ilan) {
         const eslesen = tercihler.dis.filter(t =>
           ilanDis.some(i => i.toLowerCase().includes(t.replace(/[🛗🅿️🏊🏋️👮🌳🧹]/g,'').trim().toLowerCase()))
         );
-        const oran = eslesen.length / tercihler.dis.length;
-        kazanilan += k.max * oran;
+        kazanilan += k.max * (eslesen.length / tercihler.dis.length);
         if (eslesen.length > 0) sebepler.push(`${eslesen.length} dış özellik uyuştu`);
-        break;
-      }
-
-      case 'm2': {
-        if (!tercihler.minM2 && !tercihler.maxM2) { kazanilan += k.max; break; }
-        const m2 = Number(ilan.metrekare || ilan.kriterler?.m2net || 0);
-        if (!m2) { kazanilan += k.max * 0.5; break; }
-        const mn2 = tercihler.minM2 ? Number(tercihler.minM2) : null;
-        const mx2 = tercihler.maxM2 ? Number(tercihler.maxM2) : null;
-        if (mn2 && mx2 && m2 >= mn2 && m2 <= mx2) { kazanilan += k.max; sebepler.push(`${m2}m² uygun`); }
-        else if (mn2 && !mx2 && m2 >= mn2) { kazanilan += k.max; }
-        else if (!mn2 && mx2 && m2 <= mx2) { kazanilan += k.max; }
         break;
       }
     }
   });
 
-  // toplamMax 0 ise (hepsi farketmez) → min %50 ver
   if (toplamMax === 0) return { puan: 50, sebepler: ['Tüm kriterler farketmez'] };
-
   const puan = Math.round((kazanilan / toplamMax) * 100);
   return { puan: Math.min(100, Math.max(1, puan)), sebepler };
 }
@@ -543,9 +657,10 @@ sb.auth.getSession().then(({ data }) => {
 });
 
 async function ilanlarYukle() {
-  const { data } = await sb.from('ilanlar').select('*').order('created_at', { ascending: false }).limit(30);
+  const { data } = await sb.from('ilanlar').select('*')
+    .not('tip', 'eq', 'devren')
+    .order('created_at', { ascending: false }).limit(50);
   ilanlar = (data || []).map(i => ({ ...i, _esleme: eslesPuani(i) }));
-  // Puana göre sırala (en yüksek önce)
   ilanlar.sort((a, b) => b._esleme.puan - a._esleme.puan);
   kartIndex = 0;
   document.getElementById('kalanYazi').textContent = `${ilanlar.length} ilan`;
@@ -560,7 +675,6 @@ async function ilanlarYukle() {
 function kartlariOlustur() {
   const area = document.getElementById('swipeArea');
   area.querySelectorAll('.swipe-card').forEach(c => c.remove());
-
   const gorunecekler = ilanlar.slice(kartIndex, kartIndex + 3);
   if (!gorunecekler.length) {
     document.getElementById('bosEkran').style.display = 'block';
@@ -568,33 +682,28 @@ function kartlariOlustur() {
     document.getElementById('kalanYazi').textContent = 'Tamamlandı';
     return;
   }
-
   document.getElementById('kalanYazi').textContent = `${ilanlar.length - kartIndex} kalan`;
-
   gorunecekler.forEach((ilan, i) => {
     const div = document.createElement('div');
     div.className = 'swipe-card';
     div.dataset.id = ilan.id;
-
-    if      (i === 0) { div.style.zIndex = '10'; div.style.transform = 'scale(1) translateY(0)'; }
-    else if (i === 1) { div.style.zIndex = '9';  div.style.transform = 'scale(0.95) translateY(14px)'; }
-    else              { div.style.zIndex = '8';  div.style.transform = 'scale(0.90) translateY(28px)'; }
-
+    if      (i===0) { div.style.zIndex='10'; div.style.transform='scale(1) translateY(0)'; }
+    else if (i===1) { div.style.zIndex='9';  div.style.transform='scale(0.95) translateY(14px)'; }
+    else            { div.style.zIndex='8';  div.style.transform='scale(0.90) translateY(28px)'; }
     const { puan, sebepler } = ilan._esleme;
-    const pctClass = puan >= 80 ? 'color:var(--green)' : puan >= 55 ? 'color:var(--gold)' : 'color:var(--rust)';
-    const tip = { satilik:'SATILIK', kiralik:'KİRALIK', devren:'DEVREN' }[ilan.tip] || '';
-
+    const pctStyle = puan >= 80 ? 'color:var(--green)' : puan >= 55 ? 'color:var(--gold)' : 'color:var(--rust)';
+    const tip = { satilik:'SATILIK', kiralik:'KİRALIK' }[ilan.tip] || '';
     div.innerHTML = `
       <div class="card-img" style="background:linear-gradient(135deg,#1a2340,#2a3560)">
         ${ilan.foto_url ? `<img src="${ilan.foto_url}">` : `<span>${EMOJI[ilan.tip]||'🏠'}</span>`}
-        <div class="match-pct" style="${pctClass}">%${puan} Eşleşme</div>
+        <div class="match-pct" style="${pctStyle}">%${puan} Eşleşme</div>
         <div class="like-stamp" id="like_${ilan.id}">BEĞEN</div>
         <div class="nope-stamp" id="nope_${ilan.id}">HAYIR</div>
       </div>
       <div class="card-body">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div class="card-price">${Number(ilan.fiyat).toLocaleString('tr-TR')} ₺${ilan.tip==='kiralik'?'/ay':''}</div>
-          <span class="tag ${ilan.tip==='kiralik'?'tag-green':ilan.tip==='satilik'?'tag-rust':'tag-blue'}" style="font-size:10px">${tip}</span>
+          <span class="tag ${ilan.tip==='kiralik'?'tag-green':'tag-rust'}" style="font-size:10px">${tip}</span>
         </div>
         <div class="card-title">${ilan.baslik}</div>
         <div class="card-loc">📍 ${ilan.konum||''}</div>
@@ -602,11 +711,10 @@ function kartlariOlustur() {
           ${ilan.oda_sayisi?`<span class="card-spec">🛏 ${ilan.oda_sayisi}</span>`:''}
           ${ilan.metrekare?`<span class="card-spec">📐 ${ilan.metrekare}m²</span>`:''}
         </div>
-        ${sebepler.length ? `<div class="match-reasons">${sebepler.slice(0,3).map(r=>`<span class="reason-chip">✓ ${r}</span>`).join('')}</div>` : ''}
+        ${sebepler.length?`<div class="match-reasons">${sebepler.slice(0,3).map(r=>`<span class="reason-chip">✓ ${r}</span>`).join('')}</div>`:''}
       </div>`;
     area.appendChild(div);
   });
-
   dinleyiciEkle();
 }
 
@@ -625,7 +733,6 @@ function swipe(dir) {
   geriStack.push(kartIndex);
   card.style.transition = 'transform .45s ease, opacity .35s';
   const id = card.dataset.id;
-
   if (dir === 'right') {
     card.style.transform = 'translateX(160%) rotate(20deg)';
     const el = document.getElementById('like_'+id);
@@ -653,7 +760,6 @@ function geriAl() {
 }
 
 let popupIlan = null;
-
 function showMatchPopup(ilan) {
   popupIlan = ilan || null;
   const adEl = document.getElementById('popupIlanAdi');
@@ -673,11 +779,8 @@ function popupMesajGonder() {
 async function saveFavorite(ilanId) {
   const { data: { user } } = await sb.auth.getUser();
   if (!user) return;
-  // Zaten ekli mi kontrol et
   const { data } = await sb.from('favoriler').select('id').eq('user_id', user.id).eq('ilan_id', ilanId).single();
-  if (!data) {
-    await sb.from('favoriler').insert({ user_id: user.id, ilan_id: ilanId });
-  }
+  if (!data) await sb.from('favoriler').insert({ user_id: user.id, ilan_id: ilanId });
   favorileriYukle();
 }
 
@@ -685,14 +788,11 @@ function dinleyiciEkle() {
   const card = getTopCard();
   if (!card) return;
   let startX, isDragging = false;
-
   card.addEventListener('pointerdown', e => {
-    isDragging = true;
-    startX = e.clientX;
+    isDragging = true; startX = e.clientX;
     card.setPointerCapture(e.pointerId);
     card.style.transition = 'none';
   });
-
   card.addEventListener('pointermove', e => {
     if (!isDragging) return;
     const dx = e.clientX - startX;
@@ -703,7 +803,6 @@ function dinleyiciEkle() {
     if (le) le.style.opacity = dx > 40 ? Math.min((dx-40)/60,1) : 0;
     if (ne) ne.style.opacity = dx < -40 ? Math.min((-dx-40)/60,1) : 0;
   });
-
   card.addEventListener('pointerup', e => {
     if (!isDragging) return;
     isDragging = false;
@@ -722,26 +821,23 @@ function dinleyiciEkle() {
   });
 }
 
-// ─── FAVORİLER (EŞLEŞMELERİM) ───
+// ─── FAVORİLER ───
 async function favorileriYukle() {
   const { data: { user } } = await sb.auth.getUser();
   const { data } = await sb.from('favoriler')
     .select('*, ilan:ilan_id(*)')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
-
   const el = document.getElementById('eslesenList');
   if (!data || !data.length) {
     el.innerHTML = `<div class="empty" style="padding:30px"><div class="empty-icon">✨</div><div class="empty-title">Henüz eşleşme yok</div><div class="empty-desc">İlanları beğenerek eşleşme başlat</div></div>`;
     return;
   }
-
   document.getElementById('eslesmeCount').style.display = 'inline-flex';
   document.getElementById('eslesmeCount').textContent = `${data.length} Eşleşme`;
-
   el.innerHTML = data.map(f => {
     const ilan = f.ilan;
-    if (!ilan) return '';
+    if (!ilan || ilan.tip === 'devren') return '';
     const { puan, sebepler } = eslesPuani(ilan);
     const cls = puan >= 80 ? 'pct-high' : puan >= 55 ? 'pct-mid' : 'pct-low';
     return `
@@ -753,7 +849,7 @@ async function favorileriYukle() {
           <span class="pct-pill ${cls}">%${puan} Eşleşme</span>
           <div style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ilan.baslik}</div>
           <div style="font-size:12px;color:var(--text3)">📍 ${ilan.konum||''}</div>
-          ${sebepler.length ? `<div class="eslesen-why">✓ ${sebepler.slice(0,2).join(' · ')}</div>` : ''}
+          ${sebepler.length?`<div class="eslesen-why">✓ ${sebepler.slice(0,2).join(' · ')}</div>`:''}
         </div>
         <div style="font-size:22px;color:var(--gold)">›</div>
       </a>`;
@@ -761,40 +857,37 @@ async function favorileriYukle() {
 }
 
 // ─── TERCİH FORMU ───
-function tercihAc() {
-  document.getElementById('tercihModal').classList.add('open');
-}
-function tercihKapat() {
-  document.getElementById('tercihModal').classList.remove('open');
-}
+function tercihAc()   { document.getElementById('tercihModal').classList.add('open'); }
+function tercihKapat(){ document.getElementById('tercihModal').classList.remove('open'); }
 
-// Tek seçim (tip, esya)
 function tekSec(grup, el) {
   document.querySelectorAll(`#pg-${grup} .tchip`).forEach(b => b.classList.remove('on'));
   el.classList.add('on');
   tercihler[grup] = el.textContent.trim();
-  // Farketmez'i kapat
   const fm = document.getElementById(`fm-${grup}`);
   if (fm) { fm.classList.remove('on'); tercihler[grup+'_fm'] = false; }
 }
 
-// Çoklu seçim (oda, bina, isitma, ic, dis, cephe)
 function cogulSec(grup, el) {
   el.classList.toggle('on');
   const aktifler = [...document.querySelectorAll(`#pg-${grup} .tchip.on`)].map(b => b.textContent.trim());
   tercihler[grup] = aktifler;
-  // Farketmez'i kapat
   const fm = document.getElementById(`fm-${grup}`);
   if (fm) { fm.classList.remove('on'); tercihler[grup+'_fm'] = false; }
 }
 
-// Farketmez toggle
+function kotAltıToggle(el) {
+  tercihler.kotAltiOlmasin = !tercihler.kotAltiOlmasin;
+  el.classList.toggle('on', tercihler.kotAltiOlmasin);
+  const fm = document.getElementById('fm-kat');
+  if (fm) { fm.classList.remove('on'); tercihler.kat_fm = false; }
+}
+
 function farketmezToggle(grup, el) {
   const aktif = !el.classList.contains('on');
   el.classList.toggle('on', aktif);
   tercihler[grup+'_fm'] = aktif;
   if (aktif) {
-    // Seçimleri temizle
     document.querySelectorAll(`#pg-${grup} .tchip`).forEach(b => b.classList.remove('on'));
     if (Array.isArray(tercihler[grup])) tercihler[grup] = [];
     else tercihler[grup] = null;
@@ -802,14 +895,12 @@ function farketmezToggle(grup, el) {
 }
 
 function tercihFormunuDoldur() {
-  // Fiyat
   if (tercihler.minFiyat) document.getElementById('pMinFiyat').value = tercihler.minFiyat;
   if (tercihler.maxFiyat) document.getElementById('pMaxFiyat').value = tercihler.maxFiyat;
-  if (tercihler.minM2) document.getElementById('pMinM2').value = tercihler.minM2;
-  if (tercihler.maxM2) document.getElementById('pMaxM2').value = tercihler.maxM2;
+  if (tercihler.minM2)    document.getElementById('pMinM2').value = tercihler.minM2;
+  if (tercihler.maxM2)    document.getElementById('pMaxM2').value = tercihler.maxM2;
 
-  // Tek seçimler
-  ['tip','sehir','esya'].forEach(g => {
+  ['tip','sehir','esya','kullanim','site','aidat'].forEach(g => {
     if (tercihler[g]) {
       document.querySelectorAll(`#pg-${g} .tchip`).forEach(b => {
         if (b.textContent.trim() === tercihler[g]) b.classList.add('on');
@@ -819,8 +910,7 @@ function tercihFormunuDoldur() {
     if (fm && tercihler[g+'_fm']) fm.classList.add('on');
   });
 
-  // Çoklu seçimler
-  ['oda','bina','isitma','cephe','ic','dis'].forEach(g => {
+  ['emlak','oda','banyo','kat','bina','isitma','cephe','tapu','ic','dis'].forEach(g => {
     const vals = tercihler[g] || [];
     document.querySelectorAll(`#pg-${g} .tchip`).forEach(b => {
       if (vals.includes(b.textContent.trim())) b.classList.add('on');
@@ -828,6 +918,10 @@ function tercihFormunuDoldur() {
     const fm = document.getElementById(`fm-${g}`);
     if (fm && tercihler[g+'_fm']) fm.classList.add('on');
   });
+
+  // Kot altı butonu
+  const kotBtn = document.getElementById('kotAltıBtn');
+  if (kotBtn) kotBtn.classList.toggle('on', tercihler.kotAltiOlmasin);
 }
 
 function tercihleriKaydet() {
@@ -835,17 +929,12 @@ function tercihleriKaydet() {
   tercihler.maxFiyat = document.getElementById('pMaxFiyat').value || null;
   tercihler.minM2    = document.getElementById('pMinM2').value || null;
   tercihler.maxM2    = document.getElementById('pMaxM2').value || null;
-
-  // Şehir seçimi
   const sehirBtn = document.querySelector('#pg-sehir .tchip.on');
   tercihler.sehir = sehirBtn ? sehirBtn.textContent.trim() : null;
-
-  tercihKaydet();
+  tercihKaydetLS();
   tercihKapat();
-
-  // İlanları yeniden yükle ve puanla
   ilanlarYukle();
-  alert('✅ Tercihler kaydedildi! İlanlar yeniden sıralandı.');
+  alert('✅ Tercihler kaydedildi!');
 }
 </script>
 <script>
@@ -854,5 +943,5 @@ function tercihleriKaydet() {
       .catch(e => console.log("SW error:", e));
   }
 </script>
-</body>
+</body>            
 </html>
