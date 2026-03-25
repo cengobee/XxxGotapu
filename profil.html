@@ -59,6 +59,15 @@
     background: rgba(74,144,217,0.06); border: 1px solid rgba(74,144,217,0.2);
     border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
   }
+  .hizmet-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .hizmet-item {
+    background: var(--card); border-radius: var(--radius-sm);
+    padding: 16px 8px; text-align: center; cursor: pointer;
+    transition: border-color .2s; border: 1px solid var(--border);
+  }
+  .hizmet-item:active { border-color: var(--gold); }
+  .hizmet-em { font-size: 26px; display: block; margin-bottom: 6px; }
+  .hizmet-lbl { font-size: 11px; font-weight: 700; color: var(--text2); }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -107,27 +116,59 @@
 
   <!-- ALICI ARANIM -->
   <div class="menu-section">
-    <div class="menu-label">Alıcı Aramaklarım</div>
+    <div class="menu-label">Alıcı Aramalarım</div>
     <div id="aliciIlanCard"><div class="spinner"></div></div>
   </div>
 
   <!-- HİZMETLER -->
   <div class="menu-section">
     <div class="menu-label">🏠 Ev Hizmetleri</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=tadilat'"><div style="font-size:26px;margin-bottom:6px">🔧</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Tadilat</div></div>
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=temizlik'"><div style="font-size:26px;margin-bottom:6px">🧹</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Temizlik</div></div>
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=boya'"><div style="font-size:26px;margin-bottom:6px">🖌️</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Boya</div></div>
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=nakliye'"><div style="font-size:26px;margin-bottom:6px">🚚</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Nakliye</div></div>
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><div style="font-size:26px;margin-bottom:6px">🛋️</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Dekorasyon</div></div>
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=sigorta'"><div style="font-size:26px;margin-bottom:6px">🛡️</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Sigorta</div></div>
+    <div class="hizmet-grid">
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=tadilat'">
+        <span class="hizmet-em">🔧</span><div class="hizmet-lbl">Tadilat</div>
+      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=temizlik'">
+        <span class="hizmet-em">🧹</span><div class="hizmet-lbl">Temizlik</div>
+      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=boya'">
+        <span class="hizmet-em">🖌️</span><div class="hizmet-lbl">Boya</div>
+      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=nakliye'">
+        <span class="hizmet-em">🚚</span><div class="hizmet-lbl">Nakliye</div>
+      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=dekorasyon'">
+        <span class="hizmet-em">🛋️</span><div class="hizmet-lbl">Dekorasyon</div>
+      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=sigorta'">
+        <span class="hizmet-em">🛡️</span><div class="hizmet-lbl">Sigorta</div>
+      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=cilingir'">
+        <span class="hizmet-em">🔑</span><div class="hizmet-lbl">Çilingir</div>
+      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=teknik'">
+        <span class="hizmet-em">📱</span><div class="hizmet-lbl">Teknik Servis</div>
+      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=aracyikama'">
+        <span class="hizmet-em">🚗</span><div class="hizmet-lbl">Araç Yıkama</div>
+      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=koltukyikama'">
+        <span class="hizmet-em">🛋️</span><div class="hizmet-lbl">Koltuk Yıkama</div>
+      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=haliyikama'">
+        <span class="hizmet-em">🪞</span><div class="hizmet-lbl">Halı Yıkama</div>
+      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=ilacalama'">
+        <span class="hizmet-em">🦟</span><div class="hizmet-lbl">İlaçlama</div>
+      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=petek'">
+        <span class="hizmet-em">♨️</span><div class="hizmet-lbl">Petek & Kombi</div>
+      </div>
     </div>
   </div>
 
   <div class="menu-section">
     <div class="menu-label">Hesap</div>
     <a href="favoriler.html" class="menu-item"><div class="menu-icon">❤️</div><div class="menu-text">Favorilerim</div><div class="menu-arrow">›</div></a>
-    <a href="site-yonetimi.html" class="menu-item"><div class="menu-icon">🏢</div><div class="menu-text">Site Yönetimi</div><div class="menu-arrow">›</div></a>
     <a href="eslesmeler.html" class="menu-item"><div class="menu-icon">✨</div><div class="menu-text">Eşleşmelerim</div><div class="menu-arrow">›</div></a>
     <a href="bildirimler.html" class="menu-item"><div class="menu-icon">🔔</div><div class="menu-text">Bildirimler</div><div class="menu-arrow">›</div></a>
     <div class="menu-item" onclick="profilDuzenle()"><div class="menu-icon">⚙️</div><div class="menu-text">Profili Düzenle</div><div class="menu-arrow">›</div></div>
@@ -176,7 +217,6 @@ async function profilYukle() {
     document.getElementById('profilAd').textContent = currentUser.email;
   }
 
-  // Satıcı ilanları — sadece onaylananlar + bekleyenler göster
   const { data: ilanlar } = await sb.from('ilanlar').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   document.getElementById('ilanSayisi').textContent = ilanlar?.filter(i => i.onay_durumu === 'onaylandi').length || 0;
 
@@ -226,7 +266,6 @@ async function profilYukle() {
     </div>`;
   } else {
     aliciEl.innerHTML = aliciIlan.map(a => {
-      const k = a.kriterler || {};
       const ozellikler = [
         a.konum ? `📍 ${a.konum}` : null,
         a.fiyat_min || a.fiyat_max ? `💰 ${a.fiyat_min ? Number(a.fiyat_min).toLocaleString('tr-TR') + ' ₺' : ''} ${a.fiyat_max ? '— ' + Number(a.fiyat_max).toLocaleString('tr-TR') + ' ₺' : ''}` : null,
@@ -245,7 +284,7 @@ async function profilYukle() {
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
             ${ozellikler.map(o => `<span style="background:var(--card);border:1px solid var(--border);border-radius:50px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--text2)">${o}</span>`).join('')}
           </div>
-          <a href="ilan-ver.html?duzenle=${a.id}" style="display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;font-weight:800;color:var(--text);text-align:center;text-decoration:none">✏️ Tercihleri Düzenle</a>
+          <a href="ilan-ver.html" style="display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;font-weight:800;color:var(--text);text-align:center;text-decoration:none">✏️ Tercihleri Düzenle</a>
         </div>`;
     }).join('');
   }
