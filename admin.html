@@ -54,6 +54,10 @@
   .rapor-kart { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
   .rapor-kart-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
   .onay-banner { background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.3); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+  .kurumsal-kart { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
+  .kurumsal-kart.bekliyor { border-color: rgba(245,200,66,0.4); background: rgba(245,200,66,0.03); }
+  .kurumsal-kart.onaylandi { border-color: rgba(46,204,113,0.3); }
+  .filtre-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -76,6 +80,7 @@
   <button class="tab-btn" onclick="sekmeAc('ilanlar',this)">🏠 İlanlar</button>
   <button class="tab-btn" onclick="sekmeAc('teklifler',this)">📋 Teklifler</button>
   <button class="tab-btn" onclick="sekmeAc('kullanicilar',this)">👥 Kullanıcılar</button>
+  <button class="tab-btn" onclick="sekmeAc('kurumsal',this)">🏢 Kurumsal <span id="kurumsalBadge" style="background:var(--rust);color:white;font-size:10px;font-weight:800;padding:1px 6px;border-radius:50px;margin-left:4px;display:none">0</span></button>
   <button class="tab-btn" onclick="sekmeAc('raporlar',this)">📈 Raporlar</button>
   <button class="tab-btn" onclick="sekmeAc('mesajlar',this)">💬 Mesajlar</button>
   <button class="tab-btn" onclick="sekmeAc('sikayetler',this)">🚨 Şikayetler</button>
@@ -131,6 +136,41 @@
     <div id="kullaniciListesi"><div class="spinner"></div></div>
   </div>
 
+  <!-- KURUMSAL ÜYELER -->
+  <div id="sekme-kurumsal" style="display:none">
+    <input class="arama-input" placeholder="🔍 Ara (isim, firma, şehir...)" oninput="kurumsalAra(this.value)">
+
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="kurumsalTipFiltre">
+      <button class="act-btn act-gold" onclick="kurumsalFiltrele('tip','tumu',this)">Tümü</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('tip','kurumsal',this)">🏢 Kurumsal</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('tip','freelancer',this)">🔧 Freelancer</button>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="kurumsalKatFiltre">
+      <button class="act-btn act-gold" onclick="kurumsalFiltrele('kat','tumu',this)">Tüm Kategoriler</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('kat','emlakci',this)">🏠 Emlakçı</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('kat','temizlik',this)">🧹 Temizlik</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('kat','tadilat',this)">🔧 Tadilat</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('kat','boya',this)">🖌️ Boya</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('kat','nakliye',this)">🚚 Nakliye</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('kat','cilingir',this)">🔑 Çilingir</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('kat','tesisat',this)">🔩 Tesisat</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('kat','elektrik',this)">⚡ Elektrik</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('kat','ilacalama',this)">🦟 İlaçlama</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('kat','haliyikama',this)">🪞 Halı Yıkama</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('kat','vasıfsız',this)">👷 Vasıfsız</button>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="kurumsalOnayFiltre">
+      <button class="act-btn act-gold" onclick="kurumsalFiltrele('onay','tumu',this)">Tüm Durumlar</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('onay','bekliyor',this)">⏳ Bekliyor</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('onay','onaylandi',this)">✅ Onaylı</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('onay','reddedildi',this)">❌ Reddedildi</button>
+    </div>
+
+    <div id="kurumsalListesi"><div class="spinner"></div></div>
+  </div>
+
   <!-- RAPORLAR -->
   <div id="sekme-raporlar" style="display:none">
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="raporFiltreler">
@@ -166,11 +206,12 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const ADMIN_EMAILS = ['cengizhangazelci@gmail.com'];
-const kategoriAdlari = { temizlik:'Temizlik', boya:'Boya', nakliye:'Nakliye', cilingir:'Çilingir', tadilat:'Tadilat', sigorta:'Sigorta', teknik:'Teknik Servis', dekorasyon:'Dekorasyon' };
-const kategoriEm = { temizlik:'🧹', boya:'🖌️', nakliye:'🚚', cilingir:'🔑', tadilat:'🔧', sigorta:'🛡️', teknik:'📱', dekorasyon:'🛋️' };
+const kategoriAdlari = { temizlik:'Temizlik', boya:'Boya', nakliye:'Nakliye', cilingir:'Çilingir', tadilat:'Tadilat', sigorta:'Sigorta', teknik:'Teknik Servis', dekorasyon:'Dekorasyon', tesisat:'Tesisat', elektrik:'Elektrik', ilacalama:'İlaçlama', haliyikama:'Halı Yıkama', emlakci:'Emlakçı', vasıfsız:'Vasıfsız' };
+const kategoriEm = { temizlik:'🧹', boya:'🖌️', nakliye:'🚚', cilingir:'🔑', tadilat:'🔧', sigorta:'🛡️', teknik:'📱', dekorasyon:'🛋️', tesisat:'🔩', elektrik:'⚡', ilacalama:'🦟', haliyikama:'🪞', emlakci:'🏠', vasıfsız:'👷' };
 
-let tumTeklifler = [], tumIlanlar = [], tumKullanicilar = [], tumMesajlar = [], tumSikayetler = [], tumRaporlar = [];
+let tumTeklifler = [], tumIlanlar = [], tumKullanicilar = [], tumMesajlar = [], tumSikayetler = [], tumRaporlar = [], tumKurumsal = [];
 let adminUserId = null;
+let kurumsalTipAktif = 'tumu', kurumsalKatAktif = 'tumu', kurumsalOnayAktif = 'tumu', kurumsalAramaQ = '';
 
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) { window.location.href = 'auth.html'; return; }
@@ -185,7 +226,7 @@ sb.auth.getSession().then(({ data }) => {
 });
 
 function sekmeAc(sekme, btn) {
-  ['ozet','onay','ilanlar','teklifler','kullanicilar','raporlar','mesajlar','sikayetler'].forEach(s => {
+  ['ozet','onay','ilanlar','teklifler','kullanicilar','kurumsal','raporlar','mesajlar','sikayetler'].forEach(s => {
     document.getElementById('sekme-'+s).style.display = s === sekme ? 'block' : 'none';
   });
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -195,7 +236,7 @@ function sekmeAc(sekme, btn) {
 
 function baslangicSekmesi() {
   const hash = location.hash.replace('#','');
-  const gecerli = ['ozet','onay','ilanlar','teklifler','kullanicilar','raporlar','mesajlar','sikayetler'];
+  const gecerli = ['ozet','onay','ilanlar','teklifler','kullanicilar','kurumsal','raporlar','mesajlar','sikayetler'];
   const sekme = gecerli.includes(hash) ? hash : 'ozet';
   const idx = gecerli.indexOf(sekme);
   const btn = document.querySelectorAll('.tab-btn')[idx];
@@ -209,6 +250,7 @@ async function tumunuYukle() {
     ilanlariYukle(),
     teklifleriYukle(),
     kullanicilariYukle(),
+    kurumsalUyeleriYukle(),
     raporlariYukle(),
     mesajlariYukle(),
     sikayetleriYukle()
@@ -217,7 +259,7 @@ async function tumunuYukle() {
 
 // ─── ÖZET ───
 async function ozetYukle() {
-  const [t, i, k, m, r, b, onay] = await Promise.all([
+  const [t, i, k, m, r, b, onay, kurumsal] = await Promise.all([
     sb.from('teklifler').select('*', { count: 'exact', head: true }),
     sb.from('ilanlar').select('*', { count: 'exact', head: true }),
     sb.from('profiles').select('*', { count: 'exact', head: true }),
@@ -225,23 +267,28 @@ async function ozetYukle() {
     sb.from('degerleme_raporlari').select('*', { count: 'exact', head: true }),
     sb.from('bildirimler').select('*', { count: 'exact', head: true }).eq('okundu', false),
     sb.from('ilanlar').select('*', { count: 'exact', head: true }).eq('onay_durumu', 'bekliyor'),
+    sb.from('profiles').select('*', { count: 'exact', head: true }).eq('kurumsal_onay', 'bekliyor'),
   ]);
   const { data: raporlar } = await sb.from('degerleme_raporlari').select('odeme_durumu').eq('odeme_durumu', 'odendi');
   const raporGelir = (raporlar?.length || 0) * 800;
 
-  // Onay badge
   if (onay.count > 0) {
     const badge = document.getElementById('onayBadge');
     badge.textContent = onay.count;
     badge.style.display = 'inline';
   }
+  if (kurumsal.count > 0) {
+    const badge = document.getElementById('kurumsalBadge');
+    badge.textContent = kurumsal.count;
+    badge.style.display = 'inline';
+  }
 
   document.getElementById('istatistikler').innerHTML = `
     <div class="stat-card"><div class="stat-card-icon">⏳</div><div class="stat-card-num" style="color:var(--rust)">${onay.count||0}</div><div class="stat-card-lbl">Onay Bekleyen İlan</div></div>
+    <div class="stat-card"><div class="stat-card-icon">🏢</div><div class="stat-card-num" style="color:var(--gold)">${kurumsal.count||0}</div><div class="stat-card-lbl">Kurumsal Başvuru</div></div>
     <div class="stat-card"><div class="stat-card-icon">🏠</div><div class="stat-card-num">${i.count||0}</div><div class="stat-card-lbl">Toplam İlan</div></div>
-    <div class="stat-card"><div class="stat-card-icon">📋</div><div class="stat-card-num">${t.count||0}</div><div class="stat-card-lbl">Toplam Teklif</div></div>
     <div class="stat-card"><div class="stat-card-icon">👥</div><div class="stat-card-num">${k.count||0}</div><div class="stat-card-lbl">Toplam Kullanıcı</div></div>
-    <div class="stat-card"><div class="stat-card-icon">💬</div><div class="stat-card-num">${m.count||0}</div><div class="stat-card-lbl">Toplam Mesaj</div></div>
+    <div class="stat-card"><div class="stat-card-icon">📋</div><div class="stat-card-num">${t.count||0}</div><div class="stat-card-lbl">Toplam Teklif</div></div>
     <div class="stat-card"><div class="stat-card-icon">💰</div><div class="stat-card-num">${raporGelir.toLocaleString('tr-TR')} ₺</div><div class="stat-card-lbl">Rapor Geliri</div></div>`;
 
   const { data: sonT } = await sb.from('teklifler').select('*').order('created_at', { ascending: false }).limit(3);
@@ -252,30 +299,16 @@ async function ozetYukle() {
 
 // ─── ONAY BEKLEYENLEr ───
 async function onayBekleyenleriYukle() {
-  const { data } = await sb.from('ilanlar')
-    .select('*')
-    .eq('onay_durumu', 'bekliyor')
-    .order('created_at', { ascending: true }); // en eski önce
-
+  const { data } = await sb.from('ilanlar').select('*').eq('onay_durumu', 'bekliyor').order('created_at', { ascending: true });
   const el = document.getElementById('onayListesi');
-
   if (!data || data.length === 0) {
-    el.innerHTML = `
-      <div class="empty" style="padding:40px 20px;text-align:center">
-        <div class="empty-icon">✅</div>
-        <div class="empty-title">Onay bekleyen ilan yok</div>
-        <div class="empty-desc">Tüm ilanlar incelendi</div>
-      </div>`;
-    // Onay badge'ini gizle
+    el.innerHTML = '<div class="empty" style="padding:40px 20px;text-align:center"><div class="empty-icon">✅</div><div class="empty-title">Onay bekleyen ilan yok</div><div class="empty-desc">Tüm ilanlar incelendi</div></div>';
     document.getElementById('onayBadge').style.display = 'none';
     return;
   }
-
-  // Badge güncelle
   const badge = document.getElementById('onayBadge');
   badge.textContent = data.length;
   badge.style.display = 'inline';
-
   el.innerHTML = `
     <div class="onay-banner">
       <div>
@@ -312,14 +345,8 @@ function onayKartHTML(i) {
         </div>
         ${i.foto_url ? `<img src="${i.foto_url}" style="width:70px;height:70px;border-radius:10px;object-fit:cover;flex-shrink:0;margin-left:10px">` : ''}
       </div>
-
       ${i.aciklama ? `<div style="font-size:13px;color:var(--text2);margin:8px 0;padding:8px;background:var(--bg2);border-radius:8px;line-height:1.5">${i.aciklama}</div>` : ''}
-
-      ${i.foto_urls && i.foto_urls.length > 1 ? `
-        <div class="foto-grid">
-          ${i.foto_urls.map(u => `<img src="${u}" onclick="window.open('${u}')">`).join('')}
-        </div>` : ''}
-
+      ${i.foto_urls && i.foto_urls.length > 1 ? `<div class="foto-grid">${i.foto_urls.map(u => `<img src="${u}" onclick="window.open('${u}')">`).join('')}</div>` : ''}
       <div style="margin-top:10px;padding:10px;background:var(--bg2);border-radius:8px;font-size:12px">
         <div style="font-weight:800;color:var(--text3);margin-bottom:6px">DETAYLAR</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;color:var(--text2)">
@@ -333,7 +360,6 @@ function onayKartHTML(i) {
           ${k.aidat ? `<span>💳 Aidat: ${k.aidat}</span>` : ''}
         </div>
       </div>
-
       <div class="admin-card-actions">
         <button class="act-btn act-green" style="flex:1;padding:10px;justify-content:center;font-size:14px" onclick="ilanOnayla('${i.id}')">✅ Onayla</button>
         <button class="act-btn act-rust" style="flex:1;padding:10px;justify-content:center;font-size:14px" onclick="ilanReddet('${i.id}')">❌ Reddet</button>
@@ -344,84 +370,55 @@ function onayKartHTML(i) {
 
 async function ilanOnayla(id) {
   await sb.from('ilanlar').update({ onay_durumu: 'onaylandi' }).eq('id', id);
-
-  // İlan sahibine bildirim gönder
   const { data: ilan } = await sb.from('ilanlar').select('user_id, baslik').eq('id', id).single();
   if (ilan) {
     await sb.from('bildirimler').insert({
-      user_id: ilan.user_id,
-      tip: 'ilan_onay',
+      user_id: ilan.user_id, tip: 'ilan_onay',
       baslik: '✅ İlanınız Onaylandı!',
       mesaj: `"${ilan.baslik}" ilanınız incelendi ve yayına alındı.`,
-      ilan_id: id,
-      okundu: false
+      ilan_id: id, okundu: false
     });
   }
-
-  // Kartı kaldır
   const kart = document.getElementById(`onay-kart-${id}`);
-  if (kart) {
-    kart.style.transition = 'opacity .3s';
-    kart.style.opacity = '0';
-    setTimeout(() => { kart.remove(); }, 300);
-  }
+  if (kart) { kart.style.transition = 'opacity .3s'; kart.style.opacity = '0'; setTimeout(() => { kart.remove(); }, 300); }
   await ozetYukle();
   await ilanlariYukle();
-
-  // Kalan onay sayısını güncelle
-  const kalan = document.querySelectorAll('[id^="onay-kart-"]').length;
-  if (kalan === 0) onayBekleyenleriYukle();
+  if (!document.querySelectorAll('[id^="onay-kart-"]').length) onayBekleyenleriYukle();
 }
 
 async function ilanReddet(id) {
   const sebep = prompt('Red sebebi (kullanıcıya bildirim gönderilecek):');
-  if (sebep === null) return; // iptal
-
+  if (sebep === null) return;
   await sb.from('ilanlar').update({ onay_durumu: 'reddedildi' }).eq('id', id);
-
-  // İlan sahibine bildirim gönder
   const { data: ilan } = await sb.from('ilanlar').select('user_id, baslik').eq('id', id).single();
   if (ilan) {
     await sb.from('bildirimler').insert({
-      user_id: ilan.user_id,
-      tip: 'ilan_red',
+      user_id: ilan.user_id, tip: 'ilan_red',
       baslik: '❌ İlanınız Reddedildi',
       mesaj: `"${ilan.baslik}" ilanınız reddedildi.${sebep ? ' Sebep: ' + sebep : ''}`,
-      ilan_id: id,
-      okundu: false
+      ilan_id: id, okundu: false
     });
   }
-
   const kart = document.getElementById(`onay-kart-${id}`);
-  if (kart) {
-    kart.style.transition = 'opacity .3s';
-    kart.style.opacity = '0';
-    setTimeout(() => { kart.remove(); }, 300);
-  }
+  if (kart) { kart.style.transition = 'opacity .3s'; kart.style.opacity = '0'; setTimeout(() => { kart.remove(); }, 300); }
   await ozetYukle();
   await ilanlariYukle();
-
-  const kalan = document.querySelectorAll('[id^="onay-kart-"]').length;
-  if (kalan === 0) onayBekleyenleriYukle();
+  if (!document.querySelectorAll('[id^="onay-kart-"]').length) onayBekleyenleriYukle();
 }
 
 async function hepsiniOnayla() {
   if (!confirm('Tüm bekleyen ilanları onaylamak istiyor musunuz?')) return;
   const { data } = await sb.from('ilanlar').select('id, user_id, baslik').eq('onay_durumu', 'bekliyor');
   if (!data) return;
-
   for (const ilan of data) {
     await sb.from('ilanlar').update({ onay_durumu: 'onaylandi' }).eq('id', ilan.id);
     await sb.from('bildirimler').insert({
-      user_id: ilan.user_id,
-      tip: 'ilan_onay',
+      user_id: ilan.user_id, tip: 'ilan_onay',
       baslik: '✅ İlanınız Onaylandı!',
       mesaj: `"${ilan.baslik}" ilanınız yayına alındı.`,
-      ilan_id: ilan.id,
-      okundu: false
+      ilan_id: ilan.id, okundu: false
     });
   }
-
   await tumunuYukle();
   alert(`✅ ${data.length} ilan onaylandı!`);
 }
@@ -561,7 +558,7 @@ async function teklifDetay(id) {
   const fotoHTML = d.foto_urls?.length > 0 ? `<div class="foto-grid">${d.foto_urls.map(u => `<img src="${u}" onclick="window.open('${u}')">`).join('')}</div>` : '';
   const detaylar = Object.entries(d).filter(([k]) => k !== 'foto_urls' && k !== 'aciklama').map(([k,v]) => `<div class="detay-row"><div class="detay-key">${k}</div><div class="detay-val">${v}</div></div>`).join('');
   document.getElementById('detayIcerik').innerHTML = `
-    <div style="font-size:20px;font-weight:900;margin-bottom:16px">${kategoriEm[t.kategori]} ${kategoriAdlari[t.kategori]} Talebi</div>
+    <div style="font-size:20px;font-weight:900;margin-bottom:16px">${kategoriEm[t.kategori]||'📋'} ${kategoriAdlari[t.kategori]||t.kategori} Talebi</div>
     <div class="detay-row"><div class="detay-key">Ad Soyad</div><div class="detay-val">${t.ad_soyad||'-'}</div></div>
     <div class="detay-row"><div class="detay-key">Telefon</div><div class="detay-val"><a href="tel:${t.telefon}" style="color:var(--gold)">${t.telefon||'-'} 📞</a></div></div>
     <div class="detay-row"><div class="detay-key">Tarih</div><div class="detay-val">${new Date(t.created_at).toLocaleString('tr-TR')}</div></div>
@@ -631,6 +628,7 @@ function kullanicilariGoster(liste) {
         <div style="font-size:14px;font-weight:800">${k.full_name||'İsimsiz'}</div>
         <div style="font-size:12px;color:var(--text3)">${k.email||''}</div>
         ${k.phone ? `<div style="font-size:12px;color:var(--text3)">📞 ${k.phone}</div>` : ''}
+        ${k.kurumsal_tip ? `<div style="font-size:11px;color:var(--gold);margin-top:2px">${k.kurumsal_tip==='kurumsal'?'🏢 Kurumsal':'🔧 Freelancer'} • ${kategoriAdlari[k.kategori]||k.kategori||''} • ${k.kurumsal_sehir||''}</div>` : ''}
       </div>
       ${k.verified ? '<span class="tag tag-green">✓ Doğrulandı</span>' : '<span class="tag">Doğrulanmadı</span>'}
     </div>`).join('');
@@ -645,7 +643,6 @@ async function kullaniciDetay(id) {
     sb.from('mesajlar').select('*', { count: 'exact', head: true }).or(`gonderen_id.eq.${id},alici_id.eq.${id}`),
     sb.from('degerleme_raporlari').select('*').eq('user_id', id)
   ]);
-
   document.getElementById('detayIcerik').innerHTML = `
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
       <div style="width:64px;height:64px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;flex-shrink:0">
@@ -688,9 +685,7 @@ async function kullaniciMesajGonder(aliciId) {
 
 async function sifreSifirlamaMailiGonder(email) {
   if (!email) { alert('Kullanıcının e-posta adresi yok!'); return; }
-  const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: 'https://cengobee.github.io/XxxGotapu/auth.html'
-  });
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://cengobee.github.io/XxxGotapu/auth.html' });
   if (error) { alert('Hata: ' + error.message); return; }
   alert(`✅ ${email} adresine şifre sıfırlama maili gönderildi!`);
 }
@@ -711,6 +706,151 @@ function kullaniciAra(q) {
     (k.email||'').toLowerCase().includes(q.toLowerCase()) ||
     (k.phone||'').includes(q)
   ));
+}
+
+// ─── KURUMSAL ÜYELER ───
+async function kurumsalUyeleriYukle() {
+  const { data } = await sb.from('profiles')
+    .select('*')
+    .in('kullanici_tipi', ['kurumsal', 'freelancer'])
+    .order('created_at', { ascending: false });
+  tumKurumsal = data || [];
+
+  const bekleyenSayi = tumKurumsal.filter(k => k.kurumsal_onay === 'bekliyor').length;
+  const badge = document.getElementById('kurumsalBadge');
+  if (bekleyenSayi > 0) { badge.textContent = bekleyenSayi; badge.style.display = 'inline'; }
+  else badge.style.display = 'none';
+
+  kurumsalListeGoster();
+}
+
+function kurumsalListeGoster() {
+  let liste = [...tumKurumsal];
+
+  if (kurumsalTipAktif !== 'tumu') liste = liste.filter(k => k.kullanici_tipi === kurumsalTipAktif);
+  if (kurumsalKatAktif !== 'tumu') liste = liste.filter(k => k.kategori === kurumsalKatAktif);
+  if (kurumsalOnayAktif !== 'tumu') liste = liste.filter(k => (k.kurumsal_onay||'bekliyor') === kurumsalOnayAktif);
+  if (kurumsalAramaQ) {
+    const q = kurumsalAramaQ.toLowerCase();
+    liste = liste.filter(k =>
+      (k.full_name||'').toLowerCase().includes(q) ||
+      (k.firma_adi||'').toLowerCase().includes(q) ||
+      (k.kurumsal_sehir||'').toLowerCase().includes(q) ||
+      (k.email||'').toLowerCase().includes(q) ||
+      (k.phone||'').includes(q)
+    );
+  }
+
+  const el = document.getElementById('kurumsalListesi');
+  if (!liste.length) {
+    el.innerHTML = '<div class="empty" style="padding:30px"><div class="empty-icon">🏢</div><div class="empty-title">Kurumsal üye bulunamadı</div></div>';
+    return;
+  }
+
+  const bekleyenler = liste.filter(k => (k.kurumsal_onay||'bekliyor') === 'bekliyor');
+
+  el.innerHTML = `
+    <div style="font-size:12px;color:var(--text3);font-weight:700;margin-bottom:10px">${liste.length} üye listeleniyor</div>
+    ${bekleyenler.length > 0 ? `
+    <div class="onay-banner" style="margin-bottom:16px">
+      <div><div style="font-size:14px;font-weight:900;color:var(--gold)">⏳ ${bekleyenler.length} Kurumsal Başvuru Bekliyor</div></div>
+    </div>` : ''}
+    ${liste.map(k => kurumsalKartHTML(k)).join('')}`;
+}
+
+function kurumsalKartHTML(k) {
+  const onay = k.kurumsal_onay || 'bekliyor';
+  const onayRenk = onay === 'onaylandi' ? 'durum-onaylandi' : onay === 'reddedildi' ? 'durum-reddedildi' : 'durum-bekliyor';
+  const onayText = onay === 'onaylandi' ? '✅ Onaylı' : onay === 'reddedildi' ? '❌ Reddedildi' : '⏳ Onay Bekliyor';
+  const tip = k.kullanici_tipi === 'kurumsal' ? '🏢 Kurumsal' : '🔧 Freelancer';
+  const kat = kategoriAdlari[k.kategori] || k.kategori || '-';
+  const em = kategoriEm[k.kategori] || '📋';
+  const isim = k.kullanici_tipi === 'kurumsal' ? (k.firma_adi || k.full_name || 'İsimsiz') : (k.full_name || 'İsimsiz');
+
+  return `
+    <div class="kurumsal-kart ${onay}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span style="font-size:18px">${em}</span>
+            <div>
+              <div style="font-size:14px;font-weight:900">${isim}</div>
+              <div style="font-size:12px;color:var(--text3)">${tip} • ${kat}</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-top:4px">
+            👤 ${k.full_name||'-'} &nbsp;•&nbsp;
+            📞 <a href="tel:${k.phone}" style="color:var(--gold)">${k.phone||'-'}</a> &nbsp;•&nbsp;
+            📍 ${k.kurumsal_sehir||'-'}
+          </div>
+          ${k.calisan_sayisi ? `<div style="font-size:12px;color:var(--text3);margin-top:2px">👷 Çalışan Sayısı: ${k.calisan_sayisi}</div>` : ''}
+          <div style="font-size:12px;color:var(--text3);margin-top:2px">
+            📧 ${k.email||'-'} &nbsp;•&nbsp; 📅 ${new Date(k.created_at).toLocaleDateString('tr-TR')}
+          </div>
+        </div>
+        <span class="durum-badge ${onayRenk}">${onayText}</span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+        ${k.phone ? `<a href="tel:${k.phone}" class="act-btn act-green">📞 Ara</a>` : ''}
+        ${onay !== 'onaylandi' ? `<button class="act-btn act-green" onclick="kurumsalOnayla('${k.id}')">✅ Onayla</button>` : ''}
+        ${onay !== 'reddedildi' ? `<button class="act-btn act-rust" onclick="kurumsalReddet('${k.id}')">❌ Reddet</button>` : ''}
+        <button class="act-btn act-rust" onclick="kurumsalSil('${k.id}')">🗑️ Sil</button>
+      </div>
+    </div>`;
+}
+
+function kurumsalFiltrele(tip, deger, el) {
+  if (tip === 'tip') {
+    kurumsalTipAktif = deger;
+    document.querySelectorAll('#kurumsalTipFiltre .act-btn').forEach(b => b.classList.remove('act-gold'));
+  } else if (tip === 'kat') {
+    kurumsalKatAktif = deger;
+    document.querySelectorAll('#kurumsalKatFiltre .act-btn').forEach(b => b.classList.remove('act-gold'));
+  } else {
+    kurumsalOnayAktif = deger;
+    document.querySelectorAll('#kurumsalOnayFiltre .act-btn').forEach(b => b.classList.remove('act-gold'));
+  }
+  el.classList.add('act-gold');
+  kurumsalListeGoster();
+}
+
+function kurumsalAra(q) {
+  kurumsalAramaQ = q;
+  kurumsalListeGoster();
+}
+
+async function kurumsalOnayla(id) {
+  await sb.from('profiles').update({ kurumsal_onay: 'onaylandi' }).eq('id', id);
+  await sb.from('bildirimler').insert({
+    user_id: id, tip: 'kurumsal_onay',
+    baslik: '✅ Başvurunuz Onaylandı!',
+    mesaj: 'Kurumsal üyelik başvurunuz onaylandı. Artık GoTapu\'da aktifsiniz.',
+    okundu: false
+  });
+  await kurumsalUyeleriYukle(); await ozetYukle();
+}
+
+async function kurumsalReddet(id) {
+  const sebep = prompt('Red sebebi (kullanıcıya bildirim gönderilecek):');
+  if (sebep === null) return;
+  await sb.from('profiles').update({ kurumsal_onay: 'reddedildi' }).eq('id', id);
+  await sb.from('bildirimler').insert({
+    user_id: id, tip: 'kurumsal_red',
+    baslik: '❌ Başvurunuz Reddedildi',
+    mesaj: `Kurumsal üyelik başvurunuz reddedildi.${sebep ? ' Sebep: ' + sebep : ''}`,
+    okundu: false
+  });
+  await kurumsalUyeleriYukle(); await ozetYukle();
+}
+
+async function kurumsalSil(id) {
+  if (!confirm('Bu üyeyi silmek istediğinizden emin misiniz?')) return;
+  await sb.from('profiles').update({
+    kullanici_tipi: 'normal', kurumsal_tip: null,
+    firma_adi: null, kategori: null,
+    kurumsal_sehir: null, kurumsal_onay: null
+  }).eq('id', id);
+  await kurumsalUyeleriYukle();
 }
 
 // ─── RAPORLAR ───
@@ -745,7 +885,7 @@ function raporlariGoster(liste) {
           <span class="durum-badge ${r.durum==='tamamlandi'?'durum-tamamlandi':'durum-bekliyor'}">${r.durum}</span>
         </div>
         <div class="admin-card-actions">
-          <a href="rapor.html?ilan_id=${r.ilan_id}" class="act-btn act-blue">👁️ Raporı Gör</a>
+          <a href="rapor.html?ilan_id=${r.ilan_id}" class="act-btn act-blue">👁️ Raporu Gör</a>
           <a href="ilan-detay.html?id=${r.ilan_id}" class="act-btn act-gold">🏠 İlanı Gör</a>
           <button class="act-btn act-rust" onclick="raporSilAdmin('${r.id}')">🗑️ Sil</button>
         </div>
