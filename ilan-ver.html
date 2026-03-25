@@ -18,10 +18,8 @@
   .role-icon { font-size: 36px; margin-bottom: 8px; }
   .role-name { font-size: 14px; font-weight: 800; }
   .role-desc { font-size: 11px; color: var(--text3); margin-top: 4px; line-height: 1.4; }
-
   .form-group { margin-bottom: 16px; }
   .form-label { font-size: 13px; font-weight: 800; color: var(--text2); margin-bottom: 8px; display: block; }
-
   .type-row { display: flex; gap: 8px; flex-wrap: wrap; }
   .type-btn {
     padding: 10px 14px; border-radius: var(--radius-sm);
@@ -30,17 +28,21 @@
     font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s;
   }
   .type-btn.active { background: rgba(245,200,66,0.1); border-color: var(--gold); color: var(--gold); }
-
   .sec-row { display: flex; gap: 8px; flex-wrap: wrap; }
   .sec-btn {
     padding: 8px 14px; border-radius: 50px;
     background: var(--card); border: 1.5px solid var(--border);
     color: var(--text2); font-family: 'Nunito',sans-serif;
-    font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s;
-    flex-shrink: 0;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s; flex-shrink: 0;
   }
   .sec-btn.active { background: rgba(245,200,66,0.1); border-color: var(--gold); color: var(--gold); }
-
+  .sec-btn.farketmez {
+    border-style: dashed; font-size: 11px; color: var(--text3); background: transparent;
+  }
+  .sec-btn.farketmez.active {
+    background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2);
+    color: var(--text2); border-style: dashed;
+  }
   .photo-add {
     width: 100%; height: 110px;
     background: var(--card); border: 2px dashed var(--border);
@@ -56,28 +58,22 @@
     position: absolute; top: -6px; right: -6px;
     width: 20px; height: 20px; border-radius: 50%;
     background: var(--rust); color: white; border: none;
-    font-size: 12px; cursor: pointer; display: flex;
-    align-items: center; justify-content: center;
+    font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
   }
   .foto-sayac { font-size: 12px; color: var(--text3); margin-top: 6px; }
-
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
   .success-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.85);
     display: none; align-items: center; justify-content: center;
     flex-direction: column; z-index: 999; padding: 24px;
   }
   .success-overlay.show { display: flex; }
-
   .bolum-baslik {
     font-size: 13px; font-weight: 900; color: var(--text3);
     letter-spacing: 1px; text-transform: uppercase;
     margin: 20px 0 12px; padding-bottom: 8px;
     border-bottom: 1px solid var(--border);
   }
-
-  /* ÖNE ÇIKAR TOGGLE */
   .one-cikan-bar {
     background: var(--card); border: 1px solid var(--border);
     border-radius: var(--radius-sm); padding: 16px;
@@ -96,6 +92,32 @@
     background: white; transition: left .2s;
   }
   .toggle.on::after { left: 25px; }
+
+  /* ALICI FORMU */
+  .alici-form {
+    background: rgba(245,200,66,0.04);
+    border: 1px solid rgba(245,200,66,0.15);
+    border-radius: var(--radius); padding: 16px; margin-top: 8px;
+  }
+  .alici-info {
+    background: rgba(74,144,217,0.08); border: 1px solid rgba(74,144,217,0.2);
+    border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px;
+    font-size: 13px; color: var(--text2); line-height: 1.6;
+  }
+  .t-label {
+    font-size: 11px; font-weight: 900; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .t-section { margin-bottom: 20px; }
+  .t-range { display: flex; gap: 8px; align-items: center; }
+  .t-range input {
+    flex: 1; background: var(--card); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 10px 12px; color: var(--text);
+    font-family: 'Nunito', sans-serif; font-size: 13px; outline: none;
+  }
+  .t-range input:focus { border-color: var(--gold); }
+  .t-range span { color: var(--text3); font-size: 14px; }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -109,9 +131,7 @@
 
 <nav class="top-nav">
   <a href="index.html" class="nav-logo"><div class="logo-icon">🏠</div>GoTapu</a>
-  <div class="nav-actions">
-    <a href="profil.html" class="nav-icon-btn">👤</a>
-  </div>
+  <div class="nav-actions"><a href="profil.html" class="nav-icon-btn">👤</a></div>
 </nav>
 
 <input type="file" id="fotoInput" accept="image/*" multiple style="display:none" onchange="fotosecildi(this)">
@@ -123,24 +143,23 @@
   </div>
   <p style="font-size:13px;color:var(--text3);margin-bottom:20px">Ücretsiz yayınla, komisyon ödemeden</p>
 
-  <!-- Kullanıcı Tipi -->
+  <!-- ROL SEÇİMİ -->
   <div style="font-size:12px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">BEN BİR...</div>
   <div class="role-grid">
-    <div class="role-card selected" onclick="secRole(this)">
+    <div class="role-card selected" id="roleKart0" onclick="secRole(0)">
       <div class="role-icon">🏠</div>
-      <div class="role-name">Satıcı</div>
-      <div class="role-desc">Satmak veya kiraya vermek istiyorum</div>
+      <div class="role-name">Satıcı / Kiraya Veren</div>
+      <div class="role-desc">Emlakımı satmak veya kiraya vermek istiyorum</div>
     </div>
-    <div class="role-card" onclick="secRole(this)">
+    <div class="role-card" id="roleKart1" onclick="secRole(1)">
       <div class="role-icon">🔍</div>
-      <div class="role-name">Alıcı/Kiracı Olmak İstiyorum</div>
-      <div class="role-desc">Ev arıyorum</div>
+      <div class="role-name">Alıcı / Kiracı</div>
+      <div class="role-desc">Ev veya işyeri arıyorum</div>
     </div>
   </div>
 
-  <div id="ilanForm">
-
-    <!-- TEMEL BİLGİLER -->
+  <!-- SATICI FORMU -->
+  <div id="saticiForm">
     <div class="bolum-baslik">📋 Temel Bilgiler</div>
 
     <div class="form-group">
@@ -148,7 +167,6 @@
       <div class="type-row">
         <button class="type-btn active" onclick="secTip(this,'satilik')">Satılık</button>
         <button class="type-btn" onclick="secTip(this,'kiralik')">Kiralık</button>
-        <button class="type-btn" onclick="secTip(this,'devren')">Devren</button>
       </div>
     </div>
 
@@ -181,7 +199,6 @@
       <input class="input" type="text" id="konum" placeholder="ör. Çankaya, Ankara">
     </div>
 
-    <!-- EMLAK ÖZELLİKLERİ -->
     <div class="bolum-baslik">🏠 Emlak Özellikleri</div>
 
     <div class="form-group">
@@ -272,14 +289,13 @@
     <div class="form-group">
       <label class="form-label">Cephe</label>
       <div class="sec-row" id="cephe">
-        <button class="sec-btn" onclick="secBtnCoklu(this,'cephe')">⬆️ Kuzey</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'cephe')">⬇️ Güney</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'cephe')">➡️ Doğu</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'cephe')">⬅️ Batı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">⬆️ Kuzey</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">⬇️ Güney</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">➡️ Doğu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">⬅️ Batı</button>
       </div>
     </div>
 
-    <!-- KULLANIM DURUMU -->
     <div class="bolum-baslik">📄 Kullanım & Tapu</div>
 
     <div class="form-group">
@@ -311,50 +327,48 @@
       </div>
     </div>
 
-    <!-- İÇ ÖZELLİKLER -->
     <div class="bolum-baslik">🪟 İç Özellikler</div>
 
     <div class="form-group">
       <label class="form-label">Özellikler (birden fazla seçebilirsiniz)</label>
       <div class="sec-row" id="icOzellikler">
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🪟 Balkon</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🏡 Bahçe</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🚿 Ebeveyn Banyosu</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">👕 Giyinme Odası</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🍽️ Amerikan Mutfak</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🛁 Küvet</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🪟 Çift Camlı</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🔆 Aydınlık Daire</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">📺 Uydu/Kablo TV</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🌐 İnternet</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🔔 Alarm Sistemi</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🔐 Çelik Kapı</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🎨 Yerden Isıtma</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🪵 Parke/Laminat</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'icOzellikler')">🪨 Seramik/Granit</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🪟 Balkon</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏡 Bahçe</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🚿 Ebeveyn Banyosu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">👕 Giyinme Odası</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🍽️ Amerikan Mutfak</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🛁 Küvet</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🪟 Çift Camlı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🔆 Aydınlık Daire</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">📺 Uydu/Kablo TV</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🌐 İnternet</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🔔 Alarm Sistemi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🔐 Çelik Kapı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🎨 Yerden Isıtma</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🪵 Parke/Laminat</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🪨 Seramik/Granit</button>
       </div>
     </div>
 
-    <!-- DIŞ ÖZELLİKLER -->
     <div class="bolum-baslik">🏢 Dış Özellikler & Site</div>
 
     <div class="form-group">
       <label class="form-label">Dış Özellikler (birden fazla seçebilirsiniz)</label>
       <div class="sec-row" id="disOzellikler">
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🛗 Asansör</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🅿️ Otopark (Kapalı)</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🚗 Otopark (Açık)</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🏊 Yüzme Havuzu</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🏋️ Spor Salonu</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">👮 Güvenlik/Kapıcı</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">📷 Kamera Sistemi</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🌳 Yeşil Alan</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🏸 Tenis Kortu</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">⚽ Spor Alanı</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🧒 Çocuk Parkı</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🧹 Temizlik Hizmeti</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🛁 Sauna/Hamam</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this,'disOzellikler')">🏪 Site İçi Market</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🛗 Asansör</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🅿️ Otopark (Kapalı)</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🚗 Otopark (Açık)</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏊 Yüzme Havuzu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏋️ Spor Salonu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">👮 Güvenlik/Kapıcı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">📷 Kamera Sistemi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🌳 Yeşil Alan</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏸 Tenis Kortu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">⚽ Spor Alanı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🧒 Çocuk Parkı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🧹 Temizlik Hizmeti</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🛁 Sauna/Hamam</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏪 Site İçi Market</button>
       </div>
     </div>
 
@@ -375,44 +389,248 @@
       <input class="input" type="number" id="aidatTutar" placeholder="Aidat tutarı (₺/ay)" style="display:none">
     </div>
 
-    <!-- ÖZEL SEÇENEKLER -->
     <div class="bolum-baslik">⭐ Özel Seçenekler</div>
 
     <div class="one-cikan-bar" id="oneCikanBar">
       <div>
-        <div style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px">
-          ⭐ <span>Öne Çıkar</span>
-        </div>
+        <div style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px">⭐ <span>Öne Çıkar</span></div>
         <div style="font-size:12px;color:var(--text3);margin-top:3px">İlanın ana sayfada önce gösterilsin</div>
         <div style="font-size:11px;color:var(--gold);margin-top:4px;display:none" id="oneCikanAktifYazi">✓ Aktif — İlanın öne çıkacak</div>
       </div>
       <button class="toggle" id="oneCikanToggle" onclick="toggleOneCikan()"></button>
     </div>
 
-    <!-- FOTOĞRAF -->
     <div class="bolum-baslik">📷 Fotoğraflar</div>
 
     <div class="form-group">
       <div class="photo-add" onclick="document.getElementById('fotoInput').click()">
-        <span>📷</span>
-        Fotoğraf Seç (max 10)
+        <span>📷</span>Fotoğraf Seç (max 10)
       </div>
       <div class="foto-sayac" id="fotoSayac"></div>
       <div class="photo-preview" id="fotoPreview"></div>
     </div>
 
-    <!-- AÇIKLAMA -->
     <div class="bolum-baslik">📝 Açıklama</div>
 
     <div class="form-group">
-      <textarea class="input" id="aciklama" rows="5" placeholder="Evinizi tanıtın, özelliklerini belirtin..." style="resize:none;line-height:1.6"></textarea>
+      <textarea class="input" id="aciklama" rows="5" placeholder="Evinizi tanıtın..." style="resize:none;line-height:1.6"></textarea>
     </div>
 
     <div id="ilanError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
+    <button class="btn btn-gold btn-lg" onclick="ilanYayinla()" id="yayinlaBtn">🚀 İlanı Yayınla</button>
+  </div>
 
-    <button class="btn btn-gold btn-lg" onclick="ilanYayinla()" id="yayinlaBtn">
-      🚀 İlanı Yayınla
-    </button>
+  <!-- ALICI FORMU -->
+  <div id="aliciForm" style="display:none">
+    <div class="alici-info">
+      💡 Tercihlerini kaydet, sana uygun ilanlar önce gösterilsin. Satıcılar da senin aradığını görür!
+    </div>
+
+    <!-- İLAN TİPİ -->
+    <div class="t-section">
+      <div class="t-label">🏷️ Ne Arıyorsun? <span class="sec-btn farketmez" id="afm-tip" onclick="aliciFarketmez('tip',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-tip">
+        <button class="sec-btn" onclick="aliciTekSec('tip',this)">Satılık</button>
+        <button class="sec-btn" onclick="aliciTekSec('tip',this)">Kiralık</button>
+      </div>
+    </div>
+
+    <!-- ŞEHİR -->
+    <div class="t-section">
+      <div class="t-label">📍 Şehir</div>
+      <div class="sec-row" id="apg-sehir">
+        <button class="sec-btn" onclick="aliciTekSec('sehir',this)">Ankara</button>
+        <button class="sec-btn" onclick="aliciTekSec('sehir',this)">İstanbul</button>
+        <button class="sec-btn" onclick="aliciTekSec('sehir',this)">İzmir</button>
+        <button class="sec-btn" onclick="aliciTekSec('sehir',this)">Bursa</button>
+        <button class="sec-btn" onclick="aliciTekSec('sehir',this)">Diğer</button>
+      </div>
+      <input class="input" type="text" id="aliciKonum" placeholder="İlçe veya mahalle (ör. Çankaya)" style="margin-top:8px">
+    </div>
+
+    <!-- FİYAT -->
+    <div class="t-section">
+      <div class="t-label">💰 Bütçe (₺) <span class="sec-btn farketmez" id="afm-fiyat" onclick="aliciFarketmez('fiyat',this)">Farketmez</span></div>
+      <div class="t-range">
+        <input type="number" id="aMinFiyat" placeholder="Min">
+        <span>—</span>
+        <input type="number" id="aMaxFiyat" placeholder="Max">
+      </div>
+    </div>
+
+    <!-- EMLAK TİPİ -->
+    <div class="t-section">
+      <div class="t-label">🏠 Emlak Tipi <span class="sec-btn farketmez" id="afm-emlak" onclick="aliciFarketmez('emlak',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-emlak">
+        <button class="sec-btn" onclick="aliciCokluSec('emlak',this)">🏢 Daire</button>
+        <button class="sec-btn" onclick="aliciCokluSec('emlak',this)">🏡 Villa</button>
+        <button class="sec-btn" onclick="aliciCokluSec('emlak',this)">🏠 Müstakil</button>
+        <button class="sec-btn" onclick="aliciCokluSec('emlak',this)">🏘️ Residence</button>
+        <button class="sec-btn" onclick="aliciCokluSec('emlak',this)">🏗️ Arsa</button>
+        <button class="sec-btn" onclick="aliciCokluSec('emlak',this)">🏪 İşyeri</button>
+      </div>
+    </div>
+
+    <!-- ODA SAYISI -->
+    <div class="t-section">
+      <div class="t-label">🛏 Oda Sayısı <span class="sec-btn farketmez" id="afm-oda" onclick="aliciFarketmez('oda',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-oda">
+        <button class="sec-btn" onclick="aliciCokluSec('oda',this)">Stüdyo</button>
+        <button class="sec-btn" onclick="aliciCokluSec('oda',this)">1+1</button>
+        <button class="sec-btn" onclick="aliciCokluSec('oda',this)">2+1</button>
+        <button class="sec-btn" onclick="aliciCokluSec('oda',this)">3+1</button>
+        <button class="sec-btn" onclick="aliciCokluSec('oda',this)">4+1</button>
+        <button class="sec-btn" onclick="aliciCokluSec('oda',this)">5+1 ve üzeri</button>
+      </div>
+    </div>
+
+    <!-- BANYO -->
+    <div class="t-section">
+      <div class="t-label">🚿 Banyo Sayısı <span class="sec-btn farketmez" id="afm-banyo" onclick="aliciFarketmez('banyo',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-banyo">
+        <button class="sec-btn" onclick="aliciCokluSec('banyo',this)">1</button>
+        <button class="sec-btn" onclick="aliciCokluSec('banyo',this)">2</button>
+        <button class="sec-btn" onclick="aliciCokluSec('banyo',this)">3</button>
+        <button class="sec-btn" onclick="aliciCokluSec('banyo',this)">4+</button>
+      </div>
+    </div>
+
+    <!-- KAT TERCİHİ -->
+    <div class="t-section">
+      <div class="t-label">🏢 Kat Tercihi <span class="sec-btn farketmez" id="afm-kat" onclick="aliciFarketmez('kat',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-kat">
+        <button class="sec-btn" onclick="aliciCokluSec('kat',this)">1. Kat</button>
+        <button class="sec-btn" onclick="aliciCokluSec('kat',this)">2. Kat</button>
+        <button class="sec-btn" onclick="aliciCokluSec('kat',this)">3. Kat</button>
+        <button class="sec-btn" onclick="aliciCokluSec('kat',this)">4. Kat</button>
+        <button class="sec-btn" onclick="aliciCokluSec('kat',this)">5+ Kat</button>
+        <button class="sec-btn" id="kotAltiBtn" onclick="kotAltiToggle(this)">🚫 Kot Altı/Giriş/Çatı Olmasın</button>
+      </div>
+    </div>
+
+    <!-- METREKARE -->
+    <div class="t-section">
+      <div class="t-label">📐 Metrekare <span class="sec-btn farketmez" id="afm-m2" onclick="aliciFarketmez('m2',this)">Farketmez</span></div>
+      <div class="t-range">
+        <input type="number" id="aMinM2" placeholder="Min m²">
+        <span>—</span>
+        <input type="number" id="aMaxM2" placeholder="Max m²">
+      </div>
+    </div>
+
+    <!-- BİNA YAŞI -->
+    <div class="t-section">
+      <div class="t-label">🏗 Bina Yaşı <span class="sec-btn farketmez" id="afm-bina" onclick="aliciFarketmez('bina',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-bina">
+        <button class="sec-btn" onclick="aliciCokluSec('bina',this)">0 (Sıfır)</button>
+        <button class="sec-btn" onclick="aliciCokluSec('bina',this)">1-5 Yıl</button>
+        <button class="sec-btn" onclick="aliciCokluSec('bina',this)">6-10 Yıl</button>
+        <button class="sec-btn" onclick="aliciCokluSec('bina',this)">11-20 Yıl</button>
+        <button class="sec-btn" onclick="aliciCokluSec('bina',this)">20+ Yıl</button>
+      </div>
+    </div>
+
+    <!-- ISITMA -->
+    <div class="t-section">
+      <div class="t-label">🔥 Isıtma <span class="sec-btn farketmez" id="afm-isitma" onclick="aliciFarketmez('isitma',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-isitma">
+        <button class="sec-btn" onclick="aliciCokluSec('isitma',this)">🔥 Kombi</button>
+        <button class="sec-btn" onclick="aliciCokluSec('isitma',this)">🏢 Merkezi</button>
+        <button class="sec-btn" onclick="aliciCokluSec('isitma',this)">🌡️ Yerden Isıtma</button>
+        <button class="sec-btn" onclick="aliciCokluSec('isitma',this)">❄️ Klima</button>
+      </div>
+    </div>
+
+    <!-- CEPHE -->
+    <div class="t-section">
+      <div class="t-label">🧭 Cephe <span class="sec-btn farketmez" id="afm-cephe" onclick="aliciFarketmez('cephe',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-cephe">
+        <button class="sec-btn" onclick="aliciCokluSec('cephe',this)">⬇️ Güney</button>
+        <button class="sec-btn" onclick="aliciCokluSec('cephe',this)">⬆️ Kuzey</button>
+        <button class="sec-btn" onclick="aliciCokluSec('cephe',this)">➡️ Doğu</button>
+        <button class="sec-btn" onclick="aliciCokluSec('cephe',this)">⬅️ Batı</button>
+      </div>
+    </div>
+
+    <!-- KULLANIM DURUMU -->
+    <div class="t-section">
+      <div class="t-label">🔑 Kullanım Durumu <span class="sec-btn farketmez" id="afm-kullanim" onclick="aliciFarketmez('kullanim',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-kullanim">
+        <button class="sec-btn" onclick="aliciTekSec('kullanim',this)">🏠 Boş</button>
+        <button class="sec-btn" onclick="aliciTekSec('kullanim',this)">🔑 Kiracılı</button>
+        <button class="sec-btn" onclick="aliciTekSec('kullanim',this)">👤 Mülk Sahibi</button>
+      </div>
+    </div>
+
+    <!-- TAPU -->
+    <div class="t-section">
+      <div class="t-label">📋 Tapu Durumu <span class="sec-btn farketmez" id="afm-tapu" onclick="aliciFarketmez('tapu',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-tapu">
+        <button class="sec-btn" onclick="aliciCokluSec('tapu',this)">✅ Kat Mülkiyeti</button>
+        <button class="sec-btn" onclick="aliciCokluSec('tapu',this)">📋 Kat İrtifakı</button>
+        <button class="sec-btn" onclick="aliciCokluSec('tapu',this)">🤝 Hisseli</button>
+        <button class="sec-btn" onclick="aliciCokluSec('tapu',this)">🌍 Arsa Tapusu</button>
+      </div>
+    </div>
+
+    <!-- EŞYA DURUMU -->
+    <div class="t-section">
+      <div class="t-label">🪑 Eşya Durumu <span class="sec-btn farketmez" id="afm-esya" onclick="aliciFarketmez('esya',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-esya">
+        <button class="sec-btn" onclick="aliciTekSec('esya',this)">🪑 Eşyalı</button>
+        <button class="sec-btn" onclick="aliciTekSec('esya',this)">📦 Yarı Eşyalı</button>
+        <button class="sec-btn" onclick="aliciTekSec('esya',this)">🏠 Boş</button>
+      </div>
+    </div>
+
+    <!-- SİTE -->
+    <div class="t-section">
+      <div class="t-label">🏘️ Site İçinde mi? <span class="sec-btn farketmez" id="afm-site" onclick="aliciFarketmez('site',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-site">
+        <button class="sec-btn" onclick="aliciTekSec('site',this)">✅ Evet</button>
+        <button class="sec-btn" onclick="aliciTekSec('site',this)">❌ Hayır</button>
+      </div>
+    </div>
+
+    <!-- AİDAT -->
+    <div class="t-section">
+      <div class="t-label">💳 Aidat <span class="sec-btn farketmez" id="afm-aidat" onclick="aliciFarketmez('aidat',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-aidat">
+        <button class="sec-btn" onclick="aliciTekSec('aidat',this)">✅ Var</button>
+        <button class="sec-btn" onclick="aliciTekSec('aidat',this)">❌ Yok</button>
+      </div>
+    </div>
+
+    <!-- İÇ ÖZELLİKLER -->
+    <div class="t-section">
+      <div class="t-label">🪟 İç Özellikler <span class="sec-btn farketmez" id="afm-ic" onclick="aliciFarketmez('ic',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-ic">
+        <button class="sec-btn" onclick="aliciCokluSec('ic',this)">🪟 Balkon</button>
+        <button class="sec-btn" onclick="aliciCokluSec('ic',this)">🏡 Bahçe</button>
+        <button class="sec-btn" onclick="aliciCokluSec('ic',this)">🚿 Ebeveyn Banyosu</button>
+        <button class="sec-btn" onclick="aliciCokluSec('ic',this)">👕 Giyinme Odası</button>
+        <button class="sec-btn" onclick="aliciCokluSec('ic',this)">🍽️ Amerikan Mutfak</button>
+        <button class="sec-btn" onclick="aliciCokluSec('ic',this)">🔆 Aydınlık</button>
+        <button class="sec-btn" onclick="aliciCokluSec('ic',this)">🔐 Çelik Kapı</button>
+      </div>
+    </div>
+
+    <!-- DIŞ ÖZELLİKLER -->
+    <div class="t-section">
+      <div class="t-label">🏢 Dış Özellikler <span class="sec-btn farketmez" id="afm-dis" onclick="aliciFarketmez('dis',this)">Farketmez</span></div>
+      <div class="sec-row" id="apg-dis">
+        <button class="sec-btn" onclick="aliciCokluSec('dis',this)">🛗 Asansör</button>
+        <button class="sec-btn" onclick="aliciCokluSec('dis',this)">🅿️ Kapalı Otopark</button>
+        <button class="sec-btn" onclick="aliciCokluSec('dis',this)">🏊 Havuz</button>
+        <button class="sec-btn" onclick="aliciCokluSec('dis',this)">🏋️ Spor Salonu</button>
+        <button class="sec-btn" onclick="aliciCokluSec('dis',this)">👮 Güvenlik</button>
+        <button class="sec-btn" onclick="aliciCokluSec('dis',this)">🌳 Yeşil Alan</button>
+        <button class="sec-btn" onclick="aliciCokluSec('dis',this)">🧹 Temizlik Hizmeti</button>
+      </div>
+    </div>
+
+    <div id="aliciError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
+    <button class="btn btn-gold btn-lg" onclick="aliciKaydet()" id="aliciKaydetBtn">🔍 Aramayı Kaydet & Başla</button>
   </div>
 </div>
 
@@ -421,6 +639,13 @@
   <div style="font-size:28px;font-weight:900;margin-bottom:8px;text-align:center">İlan Yayınlandı!</div>
   <div style="font-size:15px;color:var(--text2);text-align:center;margin-bottom:32px">İlanınız başarıyla yayınlandı.</div>
   <a href="index.html" class="btn btn-gold btn-lg" style="max-width:280px">Ana Sayfaya Dön</a>
+</div>
+
+<div class="success-overlay" id="aliciSuccessOverlay">
+  <div style="font-size:80px;margin-bottom:20px">🔍</div>
+  <div style="font-size:28px;font-weight:900;margin-bottom:8px;text-align:center">Arama Kaydedildi!</div>
+  <div style="font-size:15px;color:var(--text2);text-align:center;margin-bottom:32px">Sana uygun ilanlar eşleşmeler sayfasında görünecek.</div>
+  <a href="eslesmeler.html" class="btn btn-gold btn-lg" style="max-width:280px">Eşleşmelere Git →</a>
 </div>
 
 <nav class="bottom-nav">
@@ -441,42 +666,62 @@ let seciliTip = 'satilik';
 let currentUser = null;
 let fotoFiles = [];
 let oneCikan = false;
+let aktifRol = 0; // 0=satıcı, 1=alıcı
+let kotAltiOlmasin = false;
+
+// Alıcı form state
+let aliciState = {
+  tip: null, tip_fm: true,
+  sehir: null,
+  emlak: [], emlak_fm: true,
+  oda: [], oda_fm: true,
+  banyo: [], banyo_fm: true,
+  kat: [], kat_fm: true,
+  minM2: null, maxM2: null, m2_fm: true,
+  bina: [], bina_fm: true,
+  isitma: [], isitma_fm: true,
+  cephe: [], cephe_fm: true,
+  kullanim: null, kullanim_fm: true,
+  tapu: [], tapu_fm: true,
+  esya: null, esya_fm: true,
+  site: null, site_fm: true,
+  aidat: null, aidat_fm: true,
+  ic: [], ic_fm: true,
+  dis: [], dis_fm: true,
+  minFiyat: null, maxFiyat: null, fiyat_fm: true,
+};
 
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) window.location.href = 'auth.html';
   else currentUser = data.session.user;
 });
 
-function toggleOneCikan() {
-  oneCikan = !oneCikan;
-  const btn = document.getElementById('oneCikanToggle');
-  const bar = document.getElementById('oneCikanBar');
-  const yazi = document.getElementById('oneCikanAktifYazi');
-  btn.classList.toggle('on', oneCikan);
-  bar.classList.toggle('aktif', oneCikan);
-  yazi.style.display = oneCikan ? 'block' : 'none';
+function secRole(index) {
+  aktifRol = index;
+  document.querySelectorAll('.role-card').forEach((c,i) => c.classList.toggle('selected', i===index));
+  document.getElementById('saticiForm').style.display = index === 0 ? 'block' : 'none';
+  document.getElementById('aliciForm').style.display = index === 1 ? 'block' : 'none';
 }
 
-function secRole(el) {
-  document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
+// ─── SATICI FONKSİYONLARI ───
+function toggleOneCikan() {
+  oneCikan = !oneCikan;
+  document.getElementById('oneCikanToggle').classList.toggle('on', oneCikan);
+  document.getElementById('oneCikanBar').classList.toggle('aktif', oneCikan);
+  document.getElementById('oneCikanAktifYazi').style.display = oneCikan ? 'block' : 'none';
 }
 
 function secTip(el, tip) {
   document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  seciliTip = tip;
+  el.classList.add('active'); seciliTip = tip;
 }
 
 function secBtn(el, grupId) {
-  const grup = document.getElementById(grupId) || el.parentElement;
-  grup.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(grupId).querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
 }
 
-function secBtnCoklu(el, grupId) {
-  el.classList.toggle('active');
-}
+function secBtnCoklu(el) { el.classList.toggle('active'); }
 
 function toggleAidat(goster) {
   document.getElementById('aidatTutar').style.display = goster ? 'block' : 'none';
@@ -496,10 +741,8 @@ function getCokluSecim(grupId) {
 }
 
 function fotosecildi(input) {
-  const yeniler = Array.from(input.files);
-  yeniler.forEach(f => { if (fotoFiles.length < 10) fotoFiles.push(f); });
-  input.value = '';
-  previewGuncelle();
+  Array.from(input.files).forEach(f => { if (fotoFiles.length < 10) fotoFiles.push(f); });
+  input.value = ''; previewGuncelle();
 }
 
 function previewGuncelle() {
@@ -519,10 +762,7 @@ function previewGuncelle() {
   });
 }
 
-function fotosil(index) {
-  fotoFiles.splice(index, 1);
-  previewGuncelle();
-}
+function fotosil(index) { fotoFiles.splice(index,1); previewGuncelle(); }
 
 async function ilanYayinla() {
   const baslik = document.getElementById('baslik').value.trim();
@@ -532,23 +772,19 @@ async function ilanYayinla() {
 
   if (!baslik || !fiyat || !konum) {
     errEl.textContent = '⚠️ Başlık, fiyat ve konum zorunludur!';
-    errEl.style.display = 'block';
-    return;
+    errEl.style.display = 'block'; return;
   }
 
   const btn = document.getElementById('yayinlaBtn');
-  btn.textContent = '⏳ Yayınlanıyor...';
-  btn.disabled = true;
-  errEl.style.display = 'none';
+  btn.textContent = '⏳ Yayınlanıyor...'; btn.disabled = true; errEl.style.display = 'none';
 
-  let foto_url = null;
-  let foto_urls = [];
+  let foto_url = null, foto_urls = [];
   for (let i = 0; i < fotoFiles.length; i++) {
     const file = fotoFiles[i];
     const fileName = `${currentUser.id}/${Date.now()}_${i}_${file.name}`;
     btn.textContent = `⏳ Fotoğraf yükleniyor ${i+1}/${fotoFiles.length}...`;
-    const { data: uploadData } = await sb.storage.from('ilan-fotograflar').upload(fileName, file);
-    if (uploadData) {
+    const { data: ud } = await sb.storage.from('ilan-fotograflar').upload(fileName, file);
+    if (ud) {
       const { data: urlData } = sb.storage.from('ilan-fotograflar').getPublicUrl(fileName);
       foto_urls.push(urlData.publicUrl);
       if (i === 0) foto_url = urlData.publicUrl;
@@ -575,26 +811,112 @@ async function ilanYayinla() {
   };
 
   const { error } = await sb.from('ilanlar').insert({
-    user_id: currentUser.id,
-    baslik, fiyat: Number(fiyat), tip: seciliTip,
-    konum,
+    user_id: currentUser.id, baslik, fiyat: Number(fiyat),
+    tip: seciliTip, konum,
     oda_sayisi: getSecim('odaSayisi') || null,
     metrekare: document.getElementById('m2net').value ? Number(document.getElementById('m2net').value) : null,
     aciklama: document.getElementById('aciklama').value.trim() || null,
     foto_url, foto_urls: foto_urls.length > 0 ? foto_urls : null,
-    one_cikan: oneCikan,
-    kriterler
+    one_cikan: oneCikan, kriterler
   });
 
   if (error) {
     errEl.textContent = 'Hata: ' + error.message;
     errEl.style.display = 'block';
-    btn.textContent = '🚀 İlanı Yayınla';
-    btn.disabled = false;
-    return;
+    btn.textContent = '🚀 İlanı Yayınla'; btn.disabled = false; return;
+  }
+  document.getElementById('successOverlay').classList.add('show');
+}
+
+// ─── ALICI FONKSİYONLARI ───
+function aliciTekSec(grup, el) {
+  document.querySelectorAll(`#apg-${grup} .sec-btn`).forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  aliciState[grup] = el.textContent.trim();
+  const fm = document.getElementById(`afm-${grup}`);
+  if (fm) { fm.classList.remove('active'); aliciState[grup+'_fm'] = false; }
+}
+
+function aliciCokluSec(grup, el) {
+  el.classList.toggle('active');
+  aliciState[grup] = [...document.querySelectorAll(`#apg-${grup} .sec-btn.active`)].map(b => b.textContent.trim());
+  const fm = document.getElementById(`afm-${grup}`);
+  if (fm) { fm.classList.remove('active'); aliciState[grup+'_fm'] = false; }
+}
+
+function aliciFarketmez(grup, el) {
+  const aktif = !el.classList.contains('active');
+  el.classList.toggle('active', aktif);
+  aliciState[grup+'_fm'] = aktif;
+  if (aktif) {
+    document.querySelectorAll(`#apg-${grup} .sec-btn`).forEach(b => b.classList.remove('active'));
+    aliciState[grup] = Array.isArray(aliciState[grup]) ? [] : null;
+  }
+}
+
+function kotAltiToggle(el) {
+  kotAltiOlmasin = !kotAltiOlmasin;
+  el.classList.toggle('active', kotAltiOlmasin);
+  aliciState.kotAltiOlmasin = kotAltiOlmasin;
+  const fm = document.getElementById('afm-kat');
+  if (fm) { fm.classList.remove('active'); aliciState.kat_fm = false; }
+}
+
+async function aliciKaydet() {
+  const konum = document.getElementById('aliciKonum').value.trim();
+  const sehirBtn = document.querySelector('#apg-sehir .sec-btn.active');
+  const sehir = sehirBtn ? sehirBtn.textContent.trim() : null;
+  const errEl = document.getElementById('aliciError');
+
+  if (!sehir && !konum) {
+    errEl.textContent = '⚠️ Lütfen en az bir şehir seçin!';
+    errEl.style.display = 'block'; return;
   }
 
-  document.getElementById('successOverlay').classList.add('show');
+  const btn = document.getElementById('aliciKaydetBtn');
+  btn.textContent = '⏳ Kaydediliyor...'; btn.disabled = true; errEl.style.display = 'none';
+
+  aliciState.minFiyat = document.getElementById('aMinFiyat').value ? Number(document.getElementById('aMinFiyat').value) : null;
+  aliciState.maxFiyat = document.getElementById('aMaxFiyat').value ? Number(document.getElementById('aMaxFiyat').value) : null;
+  aliciState.minM2 = document.getElementById('aMinM2').value ? Number(document.getElementById('aMinM2').value) : null;
+  aliciState.maxM2 = document.getElementById('aMaxM2').value ? Number(document.getElementById('aMaxM2').value) : null;
+  aliciState.sehir = sehir;
+  aliciState.kotAltiOlmasin = kotAltiOlmasin;
+
+  // Önce varsa eski arayış ilanını sil (her kullanıcının 1 aktif arayışı olsun)
+  await sb.from('arayan_ilanlar').delete().eq('user_id', currentUser.id);
+
+  const konumTam = [konum, sehir].filter(Boolean).join(', ');
+  const baslik = `${aliciState.oda?.length ? aliciState.oda.join('/') : 'Her türlü'} ${aliciState.emlak?.length ? aliciState.emlak[0].replace(/[🏢🏡🏠🏘️🏗️🏪]/g,'').trim() : 'Emlak'} Arıyorum`;
+
+  const { error } = await sb.from('arayan_ilanlar').insert({
+    user_id: currentUser.id,
+    baslik,
+    konum: konumTam,
+    fiyat_min: aliciState.minFiyat,
+    fiyat_max: aliciState.maxFiyat,
+    emlak_tipi: aliciState.emlak?.length ? aliciState.emlak.join(',') : null,
+    oda_sayisi: aliciState.oda?.length ? aliciState.oda.join(',') : null,
+    kriterler: aliciState
+  });
+
+  if (error) {
+    errEl.textContent = 'Hata: ' + error.message;
+    errEl.style.display = 'block';
+    btn.textContent = '🔍 Aramayı Kaydet & Başla'; btn.disabled = false; return;
+  }
+
+  // localStorage'a da kaydet (eslesmeler.html kullanacak)
+  localStorage.setItem('gotapu_tercihler', JSON.stringify({
+    ...aliciState,
+    sehir: sehir,
+    minFiyat: aliciState.minFiyat,
+    maxFiyat: aliciState.maxFiyat,
+    minM2: aliciState.minM2,
+    maxM2: aliciState.maxM2,
+  }));
+
+  document.getElementById('aliciSuccessOverlay').classList.add('show');
 }
 </script>
 <script>
