@@ -12,8 +12,7 @@
     width: 88px; height: 88px; border-radius: 50%;
     background: var(--card2); border: 3px solid var(--gold);
     display: flex; align-items: center; justify-content: center;
-    font-size: 44px; margin: 0 auto 12px; overflow: hidden; position: relative;
-    cursor: pointer;
+    font-size: 44px; margin: 0 auto 12px; overflow: hidden; position: relative; cursor: pointer;
   }
   .avatar img { width: 100%; height: 100%; object-fit: cover; }
   .avatar-edit {
@@ -41,7 +40,7 @@
   .menu-arrow { color: var(--text3); }
   .ilanim-item {
     display: flex; gap: 12px; align-items: flex-start;
-    padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer;
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
   }
   .ilanim-item:last-child { border-bottom: none; }
   .ilanim-thumb { width: 60px; height: 60px; border-radius: 10px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; overflow: hidden; }
@@ -49,6 +48,17 @@
   .ilanim-price { font-size: 15px; font-weight: 900; color: var(--gold); }
   .ilanim-title { font-size: 13px; font-weight: 700; }
   .ilanim-loc { font-size: 12px; color: var(--text3); }
+  .onay-badge {
+    display: inline-block; padding: 2px 10px; border-radius: 50px;
+    font-size: 11px; font-weight: 800; margin-bottom: 4px;
+  }
+  .onay-bekliyor { background: rgba(245,200,66,0.15); color: var(--gold); }
+  .onay-onaylandi { background: rgba(46,204,113,0.15); color: var(--green); }
+  .onay-reddedildi { background: rgba(232,96,58,0.15); color: var(--rust); }
+  .alici-ilan-card {
+    background: rgba(74,144,217,0.06); border: 1px solid rgba(74,144,217,0.2);
+    border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
+  }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -62,9 +72,7 @@
 
 <nav class="top-nav">
   <a href="index.html" class="nav-logo"><div class="logo-icon">🏠</div>GoTapu</a>
-  <div class="nav-actions">
-    <a href="ilan-ver.html" class="nav-btn">+ İlan Ver</a>
-  </div>
+  <div class="nav-actions"><a href="ilan-ver.html" class="nav-btn">+ İlan Ver</a></div>
 </nav>
 
 <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="avatarDegistir(this)">
@@ -91,11 +99,19 @@
     <div class="stat-box"><div class="stat-num" id="hizmetSayisi">0</div><div class="stat-lbl">Hizmet</div></div>
   </div>
 
+  <!-- SATICI İLANLARIM -->
   <div class="menu-section">
-    <div class="menu-label">İlanlarım</div>
+    <div class="menu-label">Satıcı İlanlarım</div>
     <div class="card" id="ilanlarimCard"><div class="spinner"></div></div>
   </div>
 
+  <!-- ALICI ARANIM -->
+  <div class="menu-section">
+    <div class="menu-label">Alıcı Aramaklarım</div>
+    <div id="aliciIlanCard"><div class="spinner"></div></div>
+  </div>
+
+  <!-- HİZMETLER -->
   <div class="menu-section">
     <div class="menu-label">🏠 Ev Hizmetleri</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
@@ -105,13 +121,6 @@
       <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=nakliye'"><div style="font-size:26px;margin-bottom:6px">🚚</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Nakliye</div></div>
       <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><div style="font-size:26px;margin-bottom:6px">🛋️</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Dekorasyon</div></div>
       <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=sigorta'"><div style="font-size:26px;margin-bottom:6px">🛡️</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Sigorta</div></div>
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=cilingir'"><div style="font-size:26px;margin-bottom:6px">🔑</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Çilingir</div></div>
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=teknik'"><div style="font-size:26px;margin-bottom:6px">📱</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Teknik Servis</div></div>
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=aracyikama'"><div style="font-size:26px;margin-bottom:6px">🚗</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Araç Yıkama</div></div>
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=koltukyikama'"><div style="font-size:26px;margin-bottom:6px">🛋️</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Koltuk Yıkama</div></div>
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=haliyikama'"><div style="font-size:26px;margin-bottom:6px">🪞</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Halı Yıkama</div></div>
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=ilacalama'"><div style="font-size:26px;margin-bottom:6px">🦟</div><div style="font-size:11px;font-weight:700;color:var(--text2)">İlaçlama</div></div>
-      <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px 8px;text-align:center;cursor:pointer" onclick="location.href='hizmetler.html?kategori=petek'"><div style="font-size:26px;margin-bottom:6px">♨️</div><div style="font-size:11px;font-weight:700;color:var(--text2)">Petek & Kombi</div></div>
     </div>
   </div>
 
@@ -155,8 +164,8 @@ async function profilYukle() {
     document.getElementById('profilEmail').textContent = profil.email || currentUser.email;
     if (profil.phone) document.getElementById('profilTel').textContent = '📞 ' + profil.phone;
     if (profil.sehir) document.getElementById('profilSehir').textContent = '📍 ' + profil.sehir;
-    if (profil.kullanici_tipi) { let t = document.getElementById('profilTip'); if(t) t.textContent = profil.kullanici_tipi.charAt(0).toUpperCase() + profil.kullanici_tipi.slice(1); }
-    if (profil.hakkimda) { let h = document.getElementById('profilHakkimda'); if(h) { h.textContent = profil.hakkimda; h.style.display = 'block'; } }
+    if (profil.kullanici_tipi) document.getElementById('profilTip').textContent = profil.kullanici_tipi.charAt(0).toUpperCase() + profil.kullanici_tipi.slice(1);
+    if (profil.hakkimda) { const h = document.getElementById('profilHakkimda'); h.textContent = profil.hakkimda; h.style.display = 'block'; }
     if (profil.verified) document.getElementById('verifiedBadge').style.display = 'inline-flex';
     if (profil.avatar_url) {
       document.getElementById('avatarEmoji').style.display = 'none';
@@ -167,36 +176,88 @@ async function profilYukle() {
     document.getElementById('profilAd').textContent = currentUser.email;
   }
 
+  // Satıcı ilanları — sadece onaylananlar + bekleyenler göster
   const { data: ilanlar } = await sb.from('ilanlar').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-  document.getElementById('ilanSayisi').textContent = ilanlar?.length || 0;
+  document.getElementById('ilanSayisi').textContent = ilanlar?.filter(i => i.onay_durumu === 'onaylandi').length || 0;
 
   const kart = document.getElementById('ilanlarimCard');
   if (!ilanlar || ilanlar.length === 0) {
-    kart.innerHTML = `<div class="empty" style="padding:30px"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div></div>`;
+    kart.innerHTML = `<div class="empty" style="padding:24px">
+      <div class="empty-icon">🏠</div>
+      <div class="empty-title">Henüz ilan yok</div>
+      <a href="ilan-ver.html" class="btn btn-gold btn-md" style="margin-top:12px;max-width:200px">+ İlan Ver</a>
+    </div>`;
   } else {
-    kart.innerHTML = ilanlar.map(i => `
-      <div class="ilanim-item">
-        <div class="ilanim-thumb">${i.foto_url ? `<img src="${i.foto_url}">` : (i.tip === 'kiralik' ? '🏘️' : i.tip === 'devren' ? '🏪' : '🏙️')}</div>
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px">
-            <div class="ilanim-price">${Number(i.fiyat).toLocaleString('tr-TR')} ₺${i.tip==='kiralik'?'/ay':''}</div>
-            ${i.one_cikan ? '<span class="tag tag-gold" style="font-size:10px;padding:2px 8px">⭐ Öne Çıkan</span>' : ''}
+    kart.innerHTML = ilanlar.map(i => {
+      const onayClass = i.onay_durumu === 'onaylandi' ? 'onay-onaylandi' : i.onay_durumu === 'reddedildi' ? 'onay-reddedildi' : 'onay-bekliyor';
+      const onayText = i.onay_durumu === 'onaylandi' ? '✅ Onaylandı' : i.onay_durumu === 'reddedildi' ? '❌ Reddedildi' : '⏳ Admin Onayı Bekleniyor';
+      return `
+        <div class="ilanim-item">
+          <div class="ilanim-thumb">${i.foto_url ? `<img src="${i.foto_url}">` : (i.tip === 'kiralik' ? '🏘️' : '🏙️')}</div>
+          <div style="flex:1;min-width:0">
+            <div class="onay-badge ${onayClass}">${onayText}</div>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px">
+              <div class="ilanim-price">${Number(i.fiyat).toLocaleString('tr-TR')} ₺${i.tip==='kiralik'?'/ay':''}</div>
+              ${i.one_cikan ? '<span class="tag tag-gold" style="font-size:10px;padding:2px 8px">⭐ Öne Çıkan</span>' : ''}
+            </div>
+            <div class="ilanim-title">${i.baslik}</div>
+            <div class="ilanim-loc">📍 ${i.konum || ''}</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <a href="ilan-duzenle.html?id=${i.id}" style="flex:1;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:6px;font-size:12px;font-weight:800;color:var(--text);text-align:center;text-decoration:none">✏️ Düzenle</a>
+              <button onclick="ilanSil('${i.id}')" style="flex:1;background:rgba(232,96,58,0.1);border:1px solid rgba(232,96,58,0.3);border-radius:8px;padding:6px;font-size:12px;font-weight:800;color:var(--rust);cursor:pointer;font-family:Nunito,sans-serif">🗑️ Sil</button>
+            </div>
+            <a href="degerleme.html?ilan_id=${i.id}" style="display:block;margin-top:8px;background:linear-gradient(135deg,rgba(245,200,66,0.15),rgba(245,200,66,0.05));border:1px solid rgba(245,200,66,0.3);border-radius:8px;padding:8px;font-size:12px;font-weight:800;color:var(--gold);text-align:center;text-decoration:none">
+              📊 Gayrimenkul Ekspertiz Raporu Al — 800 ₺
+            </a>
           </div>
-          <div class="ilanim-title">${i.baslik}</div>
-          <div class="ilanim-loc">📍 ${i.konum || ''}</div>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <a href="ilan-duzenle.html?id=${i.id}" style="flex:1;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:6px;font-size:12px;font-weight:800;color:var(--text);text-align:center;text-decoration:none">✏️ Düzenle</a>
-            <button onclick="ilanSil('${i.id}')" style="flex:1;background:rgba(232,96,58,0.1);border:1px solid rgba(232,96,58,0.3);border-radius:8px;padding:6px;font-size:12px;font-weight:800;color:var(--rust);cursor:pointer;font-family:Nunito,sans-serif">🗑️ Sil</button>
+        </div>`;
+    }).join('');
+  }
+
+  // Alıcı arama ilanı
+  const { data: aliciIlan } = await sb.from('arayan_ilanlar').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  const aliciEl = document.getElementById('aliciIlanCard');
+  if (!aliciIlan || aliciIlan.length === 0) {
+    aliciEl.innerHTML = `<div class="empty" style="padding:24px">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">Arama ilanı yok</div>
+      <div class="empty-desc">Tercihlerini kaydet, sana uygun ilanlar önce gelsin</div>
+      <a href="ilan-ver.html" class="btn btn-gold btn-md" style="margin-top:12px;max-width:220px">🔍 Arama Tercihi Oluştur →</a>
+    </div>`;
+  } else {
+    aliciEl.innerHTML = aliciIlan.map(a => {
+      const k = a.kriterler || {};
+      const ozellikler = [
+        a.konum ? `📍 ${a.konum}` : null,
+        a.fiyat_min || a.fiyat_max ? `💰 ${a.fiyat_min ? Number(a.fiyat_min).toLocaleString('tr-TR') + ' ₺' : ''} ${a.fiyat_max ? '— ' + Number(a.fiyat_max).toLocaleString('tr-TR') + ' ₺' : ''}` : null,
+        a.oda_sayisi ? `🛏 ${a.oda_sayisi}` : null,
+        a.emlak_tipi ? `🏠 ${a.emlak_tipi}` : null,
+      ].filter(Boolean);
+      return `
+        <div class="alici-ilan-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+            <div>
+              <div style="font-size:14px;font-weight:900;color:var(--text)">🔍 ${a.baslik || 'Arama İlanı'}</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px">${new Date(a.created_at).toLocaleDateString('tr-TR')} tarihinde oluşturuldu</div>
+            </div>
+            <button onclick="aliciIlanSil('${a.id}')" style="background:rgba(232,96,58,0.1);border:1px solid rgba(232,96,58,0.3);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:800;color:var(--rust);cursor:pointer;font-family:Nunito,sans-serif">🗑️</button>
           </div>
-          <a href="degerleme.html?ilan_id=${i.id}" style="display:block;margin-top:8px;background:linear-gradient(135deg,rgba(245,200,66,0.15),rgba(245,200,66,0.05));border:1px solid rgba(245,200,66,0.3);border-radius:8px;padding:8px;font-size:12px;font-weight:800;color:var(--gold);text-align:center;text-decoration:none">
-            📊 Gayrimenkul Ekspertiz Raporu Al — 800 ₺
-          </a>
-        </div>
-      </div>`).join('');
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+            ${ozellikler.map(o => `<span style="background:var(--card);border:1px solid var(--border);border-radius:50px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--text2)">${o}</span>`).join('')}
+          </div>
+          <a href="ilan-ver.html?duzenle=${a.id}" style="display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;font-weight:800;color:var(--text);text-align:center;text-decoration:none">✏️ Tercihleri Düzenle</a>
+        </div>`;
+    }).join('');
   }
 
   const { count } = await sb.from('teklifler').select('*', { count: 'exact', head: true }).eq('user_id', currentUser.id);
   document.getElementById('hizmetSayisi').textContent = count || 0;
+}
+
+async function aliciIlanSil(id) {
+  if (!confirm('Bu arama tercihini silmek istiyor musunuz?')) return;
+  await sb.from('arayan_ilanlar').delete().eq('id', id).eq('user_id', currentUser.id);
+  profilYukle();
 }
 
 async function avatarDegistir(input) {
@@ -250,8 +311,7 @@ async function profilKaydet() {
 
 async function ilanSil(ilanId) {
   if (!confirm('Bu ilanı silmek istediğinizden emin misiniz?')) return;
-  const { error } = await sb.from('ilanlar').delete().eq('id', ilanId).eq('user_id', currentUser.id);
-  if (error) { alert('Hata: ' + error.message); return; }
+  await sb.from('ilanlar').delete().eq('id', ilanId).eq('user_id', currentUser.id);
   profilYukle();
 }
 
