@@ -26,6 +26,21 @@
   .loading { display: none; text-align: center; padding: 12px; color: var(--text3); font-size: 14px; font-weight: 700; }
   .forgot-link { text-align: right; font-size: 13px; color: var(--gold); cursor: pointer; font-weight: 700; margin-top: -6px; }
   .forgot-link:active { opacity: 0.7; }
+  .uye-tip-row { display: flex; gap: 8px; }
+  .uye-tip-btn {
+    flex: 1; padding: 10px 8px; border-radius: var(--radius-sm);
+    background: var(--card); border: 1.5px solid var(--border);
+    color: var(--text2); font-family: 'Nunito', sans-serif;
+    font-size: 12px; font-weight: 700; cursor: pointer; text-align: center;
+    transition: all .2s;
+  }
+  .uye-tip-btn.active { background: rgba(245,200,66,0.1); border-color: var(--gold); color: var(--gold); }
+  .ekstra-alan {
+    background: rgba(245,200,66,0.04); border: 1px solid rgba(245,200,66,0.2);
+    border-radius: var(--radius-sm); padding: 14px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .ekstra-alan .alan-label { font-size: 11px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: -6px; }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -52,6 +67,7 @@
   <div class="success-msg" id="successMsg"></div>
   <div class="loading" id="loading">⏳ Lütfen bekleyin...</div>
 
+  <!-- GİRİŞ FORMU -->
   <div class="form active" id="girisForm">
     <input class="input" type="email" id="girisEmail" placeholder="E-posta adresiniz">
     <input class="input" type="password" id="girisPassword" placeholder="Şifreniz">
@@ -61,16 +77,118 @@
     <button class="btn-google" onclick="googleGiris()">🌐 Google ile Devam Et</button>
   </div>
 
+  <!-- KAYIT FORMU -->
   <div class="form" id="kayitForm">
     <input class="input" type="text" id="kayitAd" placeholder="Ad Soyad">
     <input class="input" type="tel" id="kayitTel" placeholder="Telefon (05XX XXX XX XX)">
     <input class="input" type="email" id="kayitEmail" placeholder="E-posta adresiniz">
     <input class="input" type="password" id="kayitPassword" placeholder="Şifre (min 6 karakter)">
+
+    <!-- ÜYE TİPİ -->
+    <div>
+      <div style="font-size:12px;font-weight:800;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Üye Tipi</div>
+      <div class="uye-tip-row">
+        <button class="uye-tip-btn active" onclick="uyeTipSec('normal',this)">👤 Normal</button>
+        <button class="uye-tip-btn" onclick="uyeTipSec('kurumsal',this)">🏢 Kurumsal</button>
+        <button class="uye-tip-btn" onclick="uyeTipSec('freelancer',this)">🔧 Freelancer</button>
+      </div>
+    </div>
+
+    <!-- KURUMSAL ALANLARI -->
+    <div class="ekstra-alan" id="kurumsalAlan" style="display:none">
+      <span class="alan-label">Firma Adı</span>
+      <input class="input" type="text" id="kayitFirmaAdi" placeholder="Firma adı">
+
+      <span class="alan-label">Çalışan Sayısı</span>
+      <select class="input" id="kayitCalisanSayisi" style="padding:10px">
+        <option value="">Seçin</option>
+        <option value="1-5">1-5 kişi</option>
+        <option value="6-20">6-20 kişi</option>
+        <option value="21-50">21-50 kişi</option>
+        <option value="51-100">51-100 kişi</option>
+        <option value="100+">100+ kişi</option>
+      </select>
+
+      <span class="alan-label">Kategori</span>
+      <select class="input" id="kayitKurumsalKat" style="padding:10px">
+        <option value="">Kategori Seçin</option>
+        <option value="emlakci">🏠 Emlakçı</option>
+        <option value="temizlik">🧹 Temizlik</option>
+        <option value="boya">🖌️ Boya & Badana</option>
+        <option value="nakliye">🚚 Nakliye</option>
+        <option value="cilingir">🔑 Çilingir</option>
+        <option value="tadilat">🔧 Tadilat & Tamirat</option>
+        <option value="sigorta">🛡️ Konut Sigortası</option>
+        <option value="teknik">📱 Teknik Servis</option>
+        <option value="dekorasyon">🛋️ Dekorasyon</option>
+        <option value="aracyikama">🚗 Araç Yıkama</option>
+        <option value="koltukyikama">🛋️ Koltuk Yıkama</option>
+        <option value="haliyikama">🪞 Halı Yıkama</option>
+        <option value="ilacalama">🦟 İlaçlama</option>
+        <option value="petek">♨️ Petek & Kombi</option>
+        <option value="tesisat">🔩 Tesisat</option>
+        <option value="elektrik">⚡ Elektrik</option>
+        <option value="vasıfsız">👷 Vasıfsız</option>
+      </select>
+
+      <span class="alan-label">İl</span>
+      <input class="input" type="text" id="kayitKurumsalIl" placeholder="ör. Ankara">
+
+      <span class="alan-label">İlçe</span>
+      <input class="input" type="text" id="kayitKurumsalIlce" placeholder="ör. Çankaya">
+
+      <span class="alan-label">Mahalle (isteğe bağlı)</span>
+      <input class="input" type="text" id="kayitKurumsalMahalle" placeholder="ör. Kızılay">
+
+      <div style="background:rgba(74,144,217,0.08);border:1px solid rgba(74,144,217,0.2);border-radius:8px;padding:10px;font-size:12px;color:var(--text2);line-height:1.5">
+        ℹ️ Başvurunuz admin onayına gönderilecek.
+      </div>
+    </div>
+
+    <!-- FREELANCER ALANLARI -->
+    <div class="ekstra-alan" id="freelancerAlan" style="display:none">
+      <span class="alan-label">Kategori</span>
+      <select class="input" id="kayitFreelancerKat" style="padding:10px">
+        <option value="">Kategori Seçin</option>
+        <option value="emlakci">🏠 Emlakçı</option>
+        <option value="temizlik">🧹 Temizlik</option>
+        <option value="boya">🖌️ Boya & Badana</option>
+        <option value="nakliye">🚚 Nakliye</option>
+        <option value="cilingir">🔑 Çilingir</option>
+        <option value="tadilat">🔧 Tadilat & Tamirat</option>
+        <option value="sigorta">🛡️ Konut Sigortası</option>
+        <option value="teknik">📱 Teknik Servis</option>
+        <option value="dekorasyon">🛋️ Dekorasyon</option>
+        <option value="aracyikama">🚗 Araç Yıkama</option>
+        <option value="koltukyikama">🛋️ Koltuk Yıkama</option>
+        <option value="haliyikama">🪞 Halı Yıkama</option>
+        <option value="ilacalama">🦟 İlaçlama</option>
+        <option value="petek">♨️ Petek & Kombi</option>
+        <option value="tesisat">🔩 Tesisat</option>
+        <option value="elektrik">⚡ Elektrik</option>
+        <option value="vasıfsız">👷 Vasıfsız</option>
+      </select>
+
+      <span class="alan-label">İl</span>
+      <input class="input" type="text" id="kayitFreelancerIl" placeholder="ör. Ankara">
+
+      <span class="alan-label">İlçe</span>
+      <input class="input" type="text" id="kayitFreelancerIlce" placeholder="ör. Çankaya">
+
+      <span class="alan-label">Mahalle (isteğe bağlı)</span>
+      <input class="input" type="text" id="kayitFreelancerMahalle" placeholder="ör. Kızılay">
+
+      <div style="background:rgba(74,144,217,0.08);border:1px solid rgba(74,144,217,0.2);border-radius:8px;padding:10px;font-size:12px;color:var(--text2);line-height:1.5">
+        ℹ️ Başvurunuz admin onayına gönderilecek.
+      </div>
+    </div>
+
     <button class="btn btn-gold btn-lg" onclick="kayitOl()">Kayıt Ol →</button>
     <div class="divider">veya</div>
     <button class="btn-google" onclick="googleGiris()">🌐 Google ile Devam Et</button>
   </div>
 
+  <!-- YENİ ŞİFRE FORMU -->
   <div class="form" id="yenisifreForm">
     <div style="text-align:center;font-size:40px;margin-bottom:4px">🔐</div>
     <div style="text-align:center;font-size:16px;font-weight:900;margin-bottom:4px">Yeni Şifre Belirle</div>
@@ -80,6 +198,7 @@
     <button class="btn btn-gold btn-lg" onclick="yeniSifreKaydet()">✅ Şifremi Güncelle</button>
   </div>
 
+  <!-- ŞİFRE SIFIRLAMA FORMU -->
   <div class="form" id="sifreForm">
     <div style="text-align:center;font-size:40px;margin-bottom:4px">🔑</div>
     <div style="text-align:center;font-size:16px;font-weight:900;margin-bottom:4px">Şifreni Sıfırla</div>
@@ -96,31 +215,27 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Şifre sıfırlama linki mi kontrol et
+let seciliUyeTip = 'normal';
+
 const urlParams = new URLSearchParams(window.location.search);
 const isPasswordReset = urlParams.get('code') !== null || window.location.hash.includes('type=recovery');
 
-// Auth state değişikliğini dinle
 sb.auth.onAuthStateChange((event, session) => {
   if (event === 'PASSWORD_RECOVERY') {
-    switchTab('yenisifre');
-    hideMessages();
+    switchTab('yenisifre'); hideMessages();
   } else if (event === 'SIGNED_IN' && session) {
     const hash = window.location.hash;
     const search = window.location.search;
     if (search.includes('code=') || hash.includes('type=recovery')) {
-      switchTab('yenisifre');
-      hideMessages();
+      switchTab('yenisifre'); hideMessages();
     } else {
       window.location.href = 'index.html';
     }
   }
 });
 
-// Sayfa yüklenince kontrol et
 (async () => {
   if (isPasswordReset) return;
-
   const hash = window.location.hash;
   if (hash.includes('access_token') && hash.includes('type=recovery')) {
     const params = new URLSearchParams(hash.substring(1));
@@ -131,12 +246,11 @@ sb.auth.onAuthStateChange((event, session) => {
       if (error) throw error;
       switchTab('yenisifre');
     } catch(e) {
-      showError('Link geçersiz veya süresi dolmuş. Yeni sıfırlama talebi gönderin.');
+      showError('Link geçersiz veya süresi dolmuş.');
       switchTab('sifre');
     }
     return;
   }
-
   const { data } = await sb.auth.getSession();
   if (data.session) window.location.href = 'index.html';
 })();
@@ -151,6 +265,14 @@ function switchTab(tab) {
   document.getElementById('sifreForm').classList.toggle('active', tab==='sifre');
   document.getElementById('yenisifreForm').classList.toggle('active', tab==='yenisifre');
   hideMessages();
+}
+
+function uyeTipSec(tip, el) {
+  seciliUyeTip = tip;
+  document.querySelectorAll('.uye-tip-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('kurumsalAlan').style.display = tip === 'kurumsal' ? 'flex' : 'none';
+  document.getElementById('freelancerAlan').style.display = tip === 'freelancer' ? 'flex' : 'none';
 }
 
 function showError(msg) {
@@ -187,16 +309,71 @@ async function kayitOl() {
   const tel = document.getElementById('kayitTel').value.trim();
   const email = document.getElementById('kayitEmail').value.trim();
   const password = document.getElementById('kayitPassword').value;
+
   if (!ad || !email || !password) return showError('Lütfen tüm alanları doldurun!');
   if (password.length < 6) return showError('Şifre en az 6 karakter olmalı!');
+
+  // Kurumsal validasyon
+  if (seciliUyeTip === 'kurumsal') {
+    if (!document.getElementById('kayitFirmaAdi').value.trim()) return showError('Firma adı zorunludur!');
+    if (!document.getElementById('kayitCalisanSayisi').value) return showError('Çalışan sayısı seçiniz!');
+    if (!document.getElementById('kayitKurumsalKat').value) return showError('Kategori seçiniz!');
+    if (!document.getElementById('kayitKurumsalIl').value.trim()) return showError('İl zorunludur!');
+    if (!document.getElementById('kayitKurumsalIlce').value.trim()) return showError('İlçe zorunludur!');
+  }
+
+  // Freelancer validasyon
+  if (seciliUyeTip === 'freelancer') {
+    if (!document.getElementById('kayitFreelancerKat').value) return showError('Kategori seçiniz!');
+    if (!document.getElementById('kayitFreelancerIl').value.trim()) return showError('İl zorunludur!');
+    if (!document.getElementById('kayitFreelancerIlce').value.trim()) return showError('İlçe zorunludur!');
+  }
+
   setLoading(true);
   const { data, error } = await sb.auth.signUp({ email, password });
   if (error) { setLoading(false); return showError('Kayıt başarısız: ' + error.message); }
+
   if (data.user) {
-    await sb.from('profiles').insert({ id: data.user.id, full_name: ad, phone: tel, email });
+    const profilData = {
+      id: data.user.id,
+      full_name: ad,
+      phone: tel,
+      email,
+      kullanici_tipi: seciliUyeTip,
+    };
+
+    if (seciliUyeTip === 'kurumsal') {
+      const il = document.getElementById('kayitKurumsalIl').value.trim();
+      const ilce = document.getElementById('kayitKurumsalIlce').value.trim();
+      const mahalle = document.getElementById('kayitKurumsalMahalle').value.trim();
+      profilData.firma_adi = document.getElementById('kayitFirmaAdi').value.trim();
+      profilData.kategori = document.getElementById('kayitKurumsalKat').value;
+      profilData.kurumsal_tip = 'kurumsal';
+      profilData.kurumsal_onay = 'bekliyor';
+      profilData.kurumsal_sehir = [il, ilce, mahalle].filter(Boolean).join(', ');
+      profilData.calisan_sayisi = document.getElementById('kayitCalisanSayisi').value;
+    }
+
+    if (seciliUyeTip === 'freelancer') {
+      const il = document.getElementById('kayitFreelancerIl').value.trim();
+      const ilce = document.getElementById('kayitFreelancerIlce').value.trim();
+      const mahalle = document.getElementById('kayitFreelancerMahalle').value.trim();
+      profilData.kategori = document.getElementById('kayitFreelancerKat').value;
+      profilData.kurumsal_tip = 'freelancer';
+      profilData.kurumsal_onay = 'bekliyor';
+      profilData.kurumsal_sehir = [il, ilce, mahalle].filter(Boolean).join(', ');
+    }
+
+    await sb.from('profiles').insert(profilData);
   }
+
   setLoading(false);
-  showSuccess('✅ Kayıt başarılı! E-postanızı doğrulayın, ardından giriş yapabilirsiniz.');
+
+  if (seciliUyeTip !== 'normal') {
+    showSuccess('✅ Başvurunuz alındı! Admin onayından sonra aktif olacaksınız. E-postanızı doğrulayın.');
+  } else {
+    showSuccess('✅ Kayıt başarılı! E-postanızı doğrulayın, ardından giriş yapabilirsiniz.');
+  }
 }
 
 async function yeniSifreKaydet() {
