@@ -25,7 +25,7 @@
     text-decoration: none; color: var(--text);
   }
   .ilan-item.one-cikan-ilan { border-color: rgba(245,200,66,0.4); background: rgba(245,200,66,0.04); }
-  .ilan-item:active { border-color: var(--gold); }
+  .ilan-item:hover { border-color: var(--gold); }
   .ilan-thumb {
     width: 76px; height: 76px; border-radius: var(--radius-sm);
     background: var(--card2); display: flex; align-items: center;
@@ -43,7 +43,7 @@
     border-radius: var(--radius-sm); padding: 14px 8px;
     text-align: center; cursor: pointer; transition: border-color .2s;
   }
-  .service-item:active { border-color: var(--gold); }
+  .service-item:hover { border-color: var(--gold); }
   .service-em { font-size: 28px; display: block; margin-bottom: 6px; }
   .service-lbl { font-size: 11px; font-weight: 700; color: var(--text2); }
   .promo {
@@ -56,40 +56,116 @@
   .promo h3 { font-size: 15px; font-weight: 900; }
   .promo p { font-size: 12px; color: var(--text2); margin-top: 3px; }
 
-  /* MASAÜSTÜ DÜZENI - Mobilı hiç etkilemez */
-  @media (min-width: 900px) {
-    .page { max-width: 1400px; }
+  /* MOBİL: mobile-only görünür, desktop-sol/sag gizli */
+  .desktop-sol, .desktop-sag { display: none; }
+  .mobile-only { display: block; }
+  .desktop-layout { display: block; }
 
+  /* MASAÜSTÜ */
+  @media (min-width: 900px) {
+    body { padding-bottom: 0 !important; }
+
+    /* Nav masaüstü */
+    .top-nav {
+      padding: 0 40px !important;
+      height: 64px !important;
+    }
+    .nav-logo { font-size: 22px !important; }
+    .nav-btn {
+      padding: 10px 24px !important;
+      font-size: 15px !important;
+    }
+
+    /* Bottom nav masaüstünde gizle */
+    .bottom-nav { display: none !important; }
+
+    /* Page tam genişlik */
+    .page {
+      max-width: 1400px !important;
+      margin: 0 auto !important;
+      padding: 80px 40px 40px !important;
+    }
+
+    /* 3 sütunlu layout */
     .desktop-layout {
-      display: grid;
-      grid-template-columns: 1fr 2fr 1fr;
-      gap: 24px;
+      display: grid !important;
+      grid-template-columns: 280px 1fr 300px;
+      gap: 28px;
       align-items: start;
     }
 
     .desktop-sol {
+      display: block !important;
       position: sticky;
-      top: calc(var(--nav-h) + 16px);
+      top: 80px;
     }
 
-    .desktop-orta { }
+    .desktop-orta { min-width: 0; }
 
     .desktop-sag {
+      display: block !important;
       position: sticky;
-      top: calc(var(--nav-h) + 16px);
+      top: 80px;
     }
 
-    .services-grid { grid-template-columns: repeat(3, 1fr); }
+    /* Hizmetler solu için 3 sütun */
+    .desktop-sol .services-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 8px;
+    }
+    .desktop-sol .service-item {
+      padding: 10px 4px;
+    }
+    .desktop-sol .service-em { font-size: 22px; }
+    .desktop-sol .service-lbl { font-size: 10px; }
 
+    /* İlanlar masaüstünde kart grid */
+    #ilanlarList {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
     .ilan-item {
-      flex-direction: column;
-      align-items: flex-start;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      margin-bottom: 0 !important;
+      height: 100%;
+    }
+    .ilan-thumb {
+      width: 100% !important;
+      height: 180px !important;
+      border-radius: var(--radius) !important;
     }
 
-    .ilan-thumb {
-      width: 100%;
-      height: 160px;
+    /* Arama ve filtreler masaüstü */
+    .search-bar { padding: 12px 20px; font-size: 16px; }
+    .search-bar input { font-size: 16px; }
+
+    /* Mobile only gizle */
+    .mobile-only { display: none !important; }
+
+    /* Sağ panel kartları */
+    .desktop-sag .promo { margin-top: 0; }
+    .sag-kart {
+      background: var(--card);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .sag-kart-baslik {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    #ilanlarList {
+      grid-template-columns: repeat(3, 1fr) !important;
     }
   }
 </style>
@@ -112,7 +188,6 @@
 
 <div class="page fade-up">
 
-  <!-- Arama ve filtreler - her zaman üstte -->
   <div class="search-bar">
     <span>🔍</span>
     <input type="text" id="searchInput" placeholder="Şehir, ilçe veya mahalle..." oninput="aramaYap()">
@@ -124,28 +199,27 @@
     <div class="chip" onclick="filtrele('kiralik', this)">🔑 Kiralık</div>
   </div>
 
-  <!-- 3 sütunlu masaüstü düzeni, mobilde normal akış -->
   <div class="desktop-layout">
 
-    <!-- SOL PANEL -->
+    <!-- SOL PANEL - Hizmetler (sadece masaüstü) -->
     <div class="desktop-sol">
-      <div class="section-head">
-        <div class="section-title">Ev Hizmetleri</div>
-      </div>
-      <div class="services-grid">
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=temizlik'"><span class="service-em">🧹</span><div class="service-lbl">Temizlik</div></div>
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=boya'"><span class="service-em">🖌️</span><div class="service-lbl">Boya</div></div>
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=nakliye'"><span class="service-em">🚚</span><div class="service-lbl">Nakliye</div></div>
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=cilingir'"><span class="service-em">🔑</span><div class="service-lbl">Çilingir</div></div>
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=tadilat'"><span class="service-em">🔧</span><div class="service-lbl">Tadilat</div></div>
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=sigorta'"><span class="service-em">🛡️</span><div class="service-lbl">Sigorta</div></div>
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=teknik'"><span class="service-em">📱</span><div class="service-lbl">Teknik Servis</div></div>
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><span class="service-em">🛋️</span><div class="service-lbl">Dekorasyon</div></div>
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=aracyikama'"><span class="service-em">🚗</span><div class="service-lbl">Araç Yıkama</div></div>
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=koltukyikama'"><span class="service-em">🛋️</span><div class="service-lbl">Koltuk Yıkama</div></div>
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=haliyikama'"><span class="service-em">🪨</span><div class="service-lbl">Halı Yıkama</div></div>
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=ilacalama'"><span class="service-em">🐛</span><div class="service-lbl">İlaçlama</div></div>
-        <div class="service-item" onclick="location.href='hizmetler.html?kategori=petek'"><span class="service-em">🔥</span><div class="service-lbl">Petek & Kombi</div></div>
+      <div class="sag-kart">
+        <div class="sag-kart-baslik">🏠 Ev Hizmetleri</div>
+        <div class="services-grid">
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=temizlik'"><span class="service-em">🧹</span><div class="service-lbl">Temizlik</div></div>
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=boya'"><span class="service-em">🖌️</span><div class="service-lbl">Boya</div></div>
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=nakliye'"><span class="service-em">🚚</span><div class="service-lbl">Nakliye</div></div>
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=cilingir'"><span class="service-em">🔑</span><div class="service-lbl">Çilingir</div></div>
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=tadilat'"><span class="service-em">🔧</span><div class="service-lbl">Tadilat</div></div>
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=sigorta'"><span class="service-em">🛡️</span><div class="service-lbl">Sigorta</div></div>
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=teknik'"><span class="service-em">📱</span><div class="service-lbl">Teknik Servis</div></div>
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><span class="service-em">🛋️</span><div class="service-lbl">Dekorasyon</div></div>
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=aracyikama'"><span class="service-em">🚗</span><div class="service-lbl">Araç Yıkama</div></div>
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=koltukyikama'"><span class="service-em">🛋️</span><div class="service-lbl">Koltuk Yıkama</div></div>
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=haliyikama'"><span class="service-em">🪞</span><div class="service-lbl">Halı Yıkama</div></div>
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=ilacalama'"><span class="service-em">🦟</span><div class="service-lbl">İlaçlama</div></div>
+          <div class="service-item" onclick="location.href='hizmetler.html?kategori=petek'"><span class="service-em">🔥</span><div class="service-lbl">Petek & Kombi</div></div>
+        </div>
       </div>
     </div>
 
@@ -159,20 +233,30 @@
       <div id="pagination" style="display:flex;gap:8px;justify-content:center;margin:16px 0;flex-wrap:wrap"></div>
     </div>
 
-    <!-- SAĞ PANEL -->
+    <!-- SAĞ PANEL - Masaüstü -->
     <div class="desktop-sag">
-      <div class="promo">
-        <div>
-          <h3>🏢 Site Yönetimi</h3>
-          <p>Aidatını online öde, arıza bildir</p>
-        </div>
-        <a href="site-yonetimi.html" class="btn btn-green btn-sm">Gir →</a>
+      <div class="sag-kart">
+        <div class="sag-kart-baslik">🏢 Site Yönetimi</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Aidatını online öde, arıza bildir</p>
+        <a href="site-yonetimi.html" class="btn btn-green btn-md" style="width:100%;text-align:center">Gir →</a>
+      </div>
+
+      <div class="sag-kart">
+        <div class="sag-kart-baslik">✨ Eşleşmeler</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Sana uygun ilanları keşfet</p>
+        <a href="eslesmeler.html" class="btn btn-gold btn-md" style="width:100%;text-align:center">Eşleşmelere Git →</a>
+      </div>
+
+      <div class="sag-kart">
+        <div class="sag-kart-baslik">📊 Ekspertiz Raporu</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Gayrimenkulünün değerini öğren</p>
+        <a href="degerleme.html" class="btn btn-md" style="width:100%;text-align:center;background:rgba(245,200,66,0.1);color:var(--gold);border:1px solid rgba(245,200,66,0.3)">Rapor Al — 800 ₺</a>
       </div>
     </div>
 
   </div>
 
-  <!-- MOBİL - Hizmetler ve promo (masaüstünde gizlenir) -->
+  <!-- MOBİL - Hizmetler ve promo -->
   <div class="mobile-only">
     <div class="section-head" style="margin-top:8px">
       <div class="section-title">Ev Hizmetleri</div>
@@ -188,8 +272,8 @@
       <div class="service-item" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><span class="service-em">🛋️</span><div class="service-lbl">Dekorasyon</div></div>
       <div class="service-item" onclick="location.href='hizmetler.html?kategori=aracyikama'"><span class="service-em">🚗</span><div class="service-lbl">Araç Yıkama</div></div>
       <div class="service-item" onclick="location.href='hizmetler.html?kategori=koltukyikama'"><span class="service-em">🛋️</span><div class="service-lbl">Koltuk Yıkama</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=haliyikama'"><span class="service-em">🪨</span><div class="service-lbl">Halı Yıkama</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=ilacalama'"><span class="service-em">🐛</span><div class="service-lbl">İlaçlama</div></div>
+      <div class="service-item" onclick="location.href='hizmetler.html?kategori=haliyikama'"><span class="service-em">🪞</span><div class="service-lbl">Halı Yıkama</div></div>
+      <div class="service-item" onclick="location.href='hizmetler.html?kategori=ilacalama'"><span class="service-em">🦟</span><div class="service-lbl">İlaçlama</div></div>
       <div class="service-item" onclick="location.href='hizmetler.html?kategori=petek'"><span class="service-em">🔥</span><div class="service-lbl">Petek & Kombi</div></div>
     </div>
     <div class="promo">
@@ -221,13 +305,12 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const SAYFA_BOYUTU = 10;
+const SAYFA_BOYUTU = 12;
 let aktifFiltre = 'tumu';
 let aktifSayfa = 1;
 let toplamSayfa = 1;
 const emojiler = { satilik: '🏙️', kiralik: '🏘️' };
 
-// Şifre sıfırlama yönlendirmesi
 if (new URLSearchParams(window.location.search).get('code')) {
   window.location.replace('auth.html' + window.location.search);
 } else {
@@ -365,11 +448,6 @@ async function mesajSay() {
     bb.textContent = bCount > 9 ? '9+' : bCount;
     bb.style.display = 'flex';
   }
-}
-
-// Masaüstünde mobile-only bölümü gizle
-if (window.innerWidth >= 900) {
-  document.querySelector('.mobile-only').style.display = 'none';
 }
 </script>
 </body>
