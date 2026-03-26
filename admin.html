@@ -158,6 +158,7 @@
       <button class="act-btn" onclick="kurumsalFiltrele('kat','elektrik',this)">⚡ Elektrik</button>
       <button class="act-btn" onclick="kurumsalFiltrele('kat','ilacalama',this)">🦟 İlaçlama</button>
       <button class="act-btn" onclick="kurumsalFiltrele('kat','haliyikama',this)">🪞 Halı Yıkama</button>
+      <button class="act-btn" onclick="kurumsalFiltrele('kat','aracyikama',this)">🚗 Araç Yıkama</button>
       <button class="act-btn" onclick="kurumsalFiltrele('kat','vasıfsız',this)">👷 Vasıfsız</button>
     </div>
 
@@ -206,8 +207,8 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const ADMIN_EMAILS = ['cengizhangazelci@gmail.com'];
-const kategoriAdlari = { temizlik:'Temizlik', boya:'Boya', nakliye:'Nakliye', cilingir:'Çilingir', tadilat:'Tadilat', sigorta:'Sigorta', teknik:'Teknik Servis', dekorasyon:'Dekorasyon', tesisat:'Tesisat', elektrik:'Elektrik', ilacalama:'İlaçlama', haliyikama:'Halı Yıkama', emlakci:'Emlakçı', vasıfsız:'Vasıfsız' };
-const kategoriEm = { temizlik:'🧹', boya:'🖌️', nakliye:'🚚', cilingir:'🔑', tadilat:'🔧', sigorta:'🛡️', teknik:'📱', dekorasyon:'🛋️', tesisat:'🔩', elektrik:'⚡', ilacalama:'🦟', haliyikama:'🪞', emlakci:'🏠', vasıfsız:'👷' };
+const kategoriAdlari = { temizlik:'Temizlik', boya:'Boya', nakliye:'Nakliye', cilingir:'Çilingir', tadilat:'Tadilat', sigorta:'Sigorta', teknik:'Teknik Servis', dekorasyon:'Dekorasyon', tesisat:'Tesisat', elektrik:'Elektrik', ilacalama:'İlaçlama', haliyikama:'Halı Yıkama', aracyikama:'Araç Yıkama', emlakci:'Emlakçı', vasıfsız:'Vasıfsız' };
+const kategoriEm = { temizlik:'🧹', boya:'🖌️', nakliye:'🚚', cilingir:'🔑', tadilat:'🔧', sigorta:'🛡️', teknik:'📱', dekorasyon:'🛋️', tesisat:'🔩', elektrik:'⚡', ilacalama:'🦟', haliyikama:'🪞', aracyikama:'🚗', emlakci:'🏠', vasıfsız:'👷' };
 
 let tumTeklifler = [], tumIlanlar = [], tumKullanicilar = [], tumMesajlar = [], tumSikayetler = [], tumRaporlar = [], tumKurumsal = [];
 let adminUserId = null;
@@ -277,10 +278,13 @@ async function ozetYukle() {
     badge.textContent = onay.count;
     badge.style.display = 'inline';
   }
+  // FIX: Badge sadece bekleyenleri göstersin
   if (kurumsal.count > 0) {
     const badge = document.getElementById('kurumsalBadge');
     badge.textContent = kurumsal.count;
     badge.style.display = 'inline';
+  } else {
+    document.getElementById('kurumsalBadge').style.display = 'none';
   }
 
   document.getElementById('istatistikler').innerHTML = `
@@ -716,6 +720,7 @@ async function kurumsalUyeleriYukle() {
     .order('created_at', { ascending: false });
   tumKurumsal = data || [];
 
+  // FIX: Sadece bekleyenleri say
   const bekleyenSayi = tumKurumsal.filter(k => k.kurumsal_onay === 'bekliyor').length;
   const badge = document.getElementById('kurumsalBadge');
   if (bekleyenSayi > 0) { badge.textContent = bekleyenSayi; badge.style.display = 'inline'; }
@@ -758,6 +763,7 @@ function kurumsalListeGoster() {
     ${liste.map(k => kurumsalKartHTML(k)).join('')}`;
 }
 
+// FIX: onclick içinde tırnak çakışmasını düzelttik - data-id kullanıyoruz
 function kurumsalKartHTML(k) {
   const onay = k.kurumsal_onay || 'bekliyor';
   const onayRenk = onay === 'onaylandi' ? 'durum-onaylandi' : onay === 'reddedildi' ? 'durum-reddedildi' : 'durum-bekliyor';
@@ -792,9 +798,9 @@ function kurumsalKartHTML(k) {
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
         ${k.phone ? `<a href="tel:${k.phone}" class="act-btn act-green">📞 Ara</a>` : ''}
-        ${onay !== 'onaylandi' ? `<button class="act-btn act-green" onclick="kurumsalOnayla('${k.id}')">✅ Onayla</button>` : ''}
-        ${onay !== 'reddedildi' ? `<button class="act-btn act-rust" onclick="kurumsalReddet('${k.id}')">❌ Reddet</button>` : ''}
-        <button class="act-btn act-rust" onclick="kurumsalSil('${k.id}')">🗑️ Sil</button>
+        ${onay !== 'onaylandi' ? `<button class="act-btn act-green" data-id="${k.id}" onclick="kurumsalOnayla(this.dataset.id)">✅ Onayla</button>` : ''}
+        ${onay !== 'reddedildi' ? `<button class="act-btn act-rust" data-id="${k.id}" onclick="kurumsalReddet(this.dataset.id)">❌ Reddet</button>` : ''}
+        <button class="act-btn act-rust" data-id="${k.id}" onclick="kurumsalSil(this.dataset.id)">🗑️ Sil</button>
       </div>
     </div>`;
 }
