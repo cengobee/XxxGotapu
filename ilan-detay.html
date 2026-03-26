@@ -29,11 +29,9 @@
     transition: transform .2s;
   }
   .detay-fav-btn:active { transform: scale(1.2); }
-
   .detay-fiyat { font-size: 28px; font-weight: 900; color: var(--gold); }
   .detay-baslik { font-size: 18px; font-weight: 800; margin: 6px 0; }
   .detay-konum { font-size: 14px; color: var(--text3); margin-bottom: 16px; }
-
   .specs-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
   .spec-box {
     background: var(--card); border: 1px solid var(--border);
@@ -43,11 +41,9 @@
   .spec-icon { font-size: 22px; display: block; margin-bottom: 4px; }
   .spec-val { font-size: 14px; font-weight: 800; }
   .spec-lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
-
   .detay-section { margin-bottom: 20px; }
   .detay-section-title { font-size: 16px; font-weight: 900; margin-bottom: 10px; }
   .detay-aciklama { font-size: 14px; color: var(--text2); line-height: 1.8; }
-
   .sahip-card {
     display: flex; gap: 14px; align-items: center;
     background: var(--card); border: 1px solid var(--border);
@@ -62,7 +58,6 @@
   .sahip-name { font-size: 15px; font-weight: 800; }
   .sahip-since { font-size: 12px; color: var(--text3); margin-top: 2px; }
   .sahip-verified { font-size: 12px; color: var(--green); font-weight: 700; margin-top: 3px; }
-
   .action-bottom {
     position: fixed; bottom: var(--bot-h); left: 0; right: 0;
     background: var(--bg2); border-top: 1px solid var(--border);
@@ -75,7 +70,6 @@
     cursor: pointer; font-family: 'Nunito', sans-serif;
     display: flex; align-items: center; gap: 8px;
   }
-
   .harita-placeholder {
     background: var(--card); border: 1px solid var(--border);
     border-radius: var(--radius); height: 140px;
@@ -83,9 +77,7 @@
     flex-direction: column; gap: 8px; color: var(--text3);
     font-size: 14px; font-weight: 700; cursor: pointer;
   }
-
   .page { padding-bottom: 100px !important; }
-
   .lightbox {
     position: fixed; inset: 0; z-index: 999;
     background: rgba(0,0,0,0.97);
@@ -124,8 +116,6 @@
   }
   .sikayet-sebep-btn.selected { border-color: var(--rust); background: rgba(232,96,58,0.08); color: var(--rust); }
   .btn-rust { background: var(--rust); color: white; }
-
-  /* FAVORİ TOAST */
   .fav-toast {
     position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
     background: var(--card2); border: 1px solid var(--border);
@@ -136,6 +126,82 @@
   }
   .fav-toast.show { display: flex; animation: toastIn .3s ease; }
   @keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(10px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+
+  /* SANAL TUR */
+  .sanal-tur-btn {
+    display: flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, rgba(245,200,66,0.15), rgba(245,200,66,0.05));
+    border: 1px solid rgba(245,200,66,0.3);
+    border-radius: var(--radius); padding: 14px 16px;
+    cursor: pointer; margin-bottom: 20px;
+    transition: border-color .2s;
+  }
+  .sanal-tur-btn:active { border-color: var(--gold); }
+  .sanal-tur-fullscreen {
+    position: fixed; inset: 0; z-index: 998;
+    background: #000; display: none; flex-direction: column;
+  }
+  .sanal-tur-fullscreen.open { display: flex; }
+  .sanal-tur-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; background: rgba(0,0,0,0.8);
+    position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+  }
+  .sanal-tur-ana {
+    flex: 1; position: relative; overflow: hidden;
+  }
+  .sanal-tur-gorsel {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .sanal-tur-oda-adi {
+    position: absolute; bottom: 100px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+    border-radius: 50px; padding: 8px 20px;
+    font-size: 15px; font-weight: 800;
+    white-space: nowrap;
+  }
+  .sanal-tur-ok {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2);
+    transition: background .2s; user-select: none;
+  }
+  .sanal-tur-ok:active { background: rgba(245,200,66,0.4); }
+  .sanal-tur-ok.sol { left: 12px; }
+  .sanal-tur-ok.sag { right: 12px; }
+  .sanal-tur-thumbnails {
+    display: flex; gap: 8px; padding: 12px 16px;
+    overflow-x: auto; background: rgba(0,0,0,0.9);
+    scrollbar-width: none;
+  }
+  .sanal-tur-thumbnails::-webkit-scrollbar { display: none; }
+  .sanal-tur-thumb {
+    flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; opacity: 0.6; transition: opacity .2s;
+  }
+  .sanal-tur-thumb.aktif { opacity: 1; }
+  .sanal-tur-thumb-img {
+    width: 60px; height: 44px; border-radius: 8px; overflow: hidden;
+    border: 2px solid transparent; transition: border-color .2s;
+  }
+  .sanal-tur-thumb.aktif .sanal-tur-thumb-img { border-color: var(--gold); }
+  .sanal-tur-thumb-img img { width: 100%; height: 100%; object-fit: cover; }
+  .sanal-tur-thumb-lbl { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.6); }
+  .sanal-tur-thumb.aktif .sanal-tur-thumb-lbl { color: var(--gold); }
+  .sanal-tur-sayac {
+    position: absolute; top: 60px; right: 12px;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    border-radius: 50px; padding: 4px 12px;
+    font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.7);
+  }
+  @keyframes turFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .sanal-tur-gorsel.animasyon { animation: turFadeIn 0.25s ease; }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -176,6 +242,22 @@
   </div>
 </div>
 
+<!-- SANAL TUR FULLSCREEN -->
+<div class="sanal-tur-fullscreen" id="sanalTurFullscreen">
+  <div class="sanal-tur-header">
+    <div style="font-size:14px;font-weight:900;color:var(--gold)">🎥 Sanal Tur</div>
+    <button onclick="sanalTurKapat()" style="background:rgba(255,255,255,0.1);border:none;color:white;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:Nunito,sans-serif">✕</button>
+  </div>
+  <div class="sanal-tur-ana" id="sanalTurAna">
+    <img class="sanal-tur-gorsel" id="sanalTurGorsel" src="" alt="">
+    <div class="sanal-tur-oda-adi" id="sanalTurOdaAdi"></div>
+    <div class="sanal-tur-sayac" id="sanalTurSayac"></div>
+    <div class="sanal-tur-ok sol" onclick="turOdaDegistir(-1)">‹</div>
+    <div class="sanal-tur-ok sag" onclick="turOdaDegistir(1)">›</div>
+  </div>
+  <div class="sanal-tur-thumbnails" id="sanalTurThumbs"></div>
+</div>
+
 <div class="page fade-up" id="icerik">
   <div class="spinner"></div>
 </div>
@@ -185,7 +267,6 @@
   <button class="btn btn-gold btn-lg" onclick="mesajGonder()" style="flex:1">💬 Mesaj Gönder</button>
 </div>
 
-<!-- FAVORİ TOAST -->
 <div class="fav-toast" id="favToast"></div>
 
 <div class="lightbox" id="lightbox">
@@ -209,9 +290,27 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const emojiler = { satilik: '🏙️', kiralik: '🏘️', devren: '🏪' };
+const odaAdlari = {
+  salon: { em: '🛋️', ad: 'Salon' },
+  mutfak: { em: '🍳', ad: 'Mutfak' },
+  yatak: { em: '🛏️', ad: 'Yatak Odası' },
+  banyo: { em: '🚿', ad: 'Banyo' },
+  balkon: { em: '🌿', ad: 'Balkon/Bahçe' },
+  havuz: { em: '🏊', ad: 'Havuz' },
+  otopark: { em: '🚗', ad: 'Otopark' },
+  tenis: { em: '🎾', ad: 'Tenis Kortu' },
+  spor: { em: '🏋️', ad: 'Spor Salonu' },
+  dis: { em: '🏠', ad: 'Dış Görünüm' },
+  diger: { em: '📷', ad: 'Diğer' }
+};
+
 let ilan = null;
 let currentUser = null;
 let favori = false;
+
+// Sanal tur state
+let turOdalar = []; // [{oda, url, ad, em}]
+let turAktifIndex = 0;
 
 const params = new URLSearchParams(window.location.search);
 const ilanId = params.get('id');
@@ -219,24 +318,14 @@ const ilanId = params.get('id');
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) { window.location.href = 'auth.html'; return; }
   currentUser = data.session.user;
-  if (ilanId) {
-    ilanYukle();
-  } else {
-    document.getElementById('icerik').innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">😕</div>
-        <div class="empty-title">İlan bulunamadı</div>
-        <a href="index.html" class="btn btn-gold btn-md" style="margin-top:20px;max-width:200px">Ana Sayfaya Dön</a>
-      </div>`;
-  }
+  if (ilanId) ilanYukle();
+  else document.getElementById('icerik').innerHTML = `<div class="empty"><div class="empty-icon">😕</div><div class="empty-title">İlan bulunamadı</div><a href="index.html" class="btn btn-gold btn-md" style="margin-top:20px;max-width:200px">Ana Sayfaya Dön</a></div>`;
 });
 
 async function ilanYukle() {
   const { data, error } = await sb.from('ilanlar').select('*').eq('id', ilanId).single();
   if (error || !data) {
-    document.getElementById('icerik').innerHTML = `
-      <div class="empty"><div class="empty-icon">😕</div><div class="empty-title">İlan bulunamadı</div>
-      <a href="index.html" class="btn btn-gold btn-md" style="margin-top:20px;max-width:200px">Ana Sayfaya Dön</a></div>`;
+    document.getElementById('icerik').innerHTML = `<div class="empty"><div class="empty-icon">😕</div><div class="empty-title">İlan bulunamadı</div><a href="index.html" class="btn btn-gold btn-md" style="margin-top:20px;max-width:200px">Ana Sayfaya Dön</a></div>`;
     return;
   }
   ilan = data;
@@ -244,14 +333,25 @@ async function ilanYukle() {
     const { data: profil } = await sb.from('profiles').select('*').eq('id', ilan.user_id).single();
     ilan.profiles = profil || null;
   }
+
+  // Sanal tur verilerini hazırla
+  if (ilan.oda_fotograflari) {
+    turOdalar = [];
+    for (const [oda, urls] of Object.entries(ilan.oda_fotograflari)) {
+      if (urls && urls.length > 0) {
+        const bilgi = odaAdlari[oda] || { em: '📷', ad: 'Diğer' };
+        urls.forEach(url => turOdalar.push({ oda, url, ad: bilgi.ad, em: bilgi.em }));
+      }
+    }
+  }
+
   favoriKontrol();
   sayfayiOlustur();
   document.getElementById('actionBottom').style.display = 'flex';
 }
 
 async function favoriKontrol() {
-  const { data } = await sb.from('favoriler')
-    .select('id').eq('user_id', currentUser.id).eq('ilan_id', ilanId).single();
+  const { data } = await sb.from('favoriler').select('id').eq('user_id', currentUser.id).eq('ilan_id', ilanId).single();
   favori = !!data;
   const btn = document.getElementById('favBtn');
   if (btn) btn.textContent = favori ? '❤️' : '🤍';
@@ -283,8 +383,20 @@ function sayfayiOlustur() {
         <div style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);border-radius:50px;padding:4px 10px;font-size:12px;font-weight:800;color:white">📷 ${urls.length}</div>
       </div>`;
 
+  // Sanal tur butonu
+  const sanalTurHTML = turOdalar.length > 0
+    ? `<div class="sanal-tur-btn" onclick="sanalTurAc()">
+        <span style="font-size:28px">🎥</span>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:900;color:var(--gold)">Sanal Tur</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">${turOdalar.length} fotoğraf • Oda oda gez</div>
+        </div>
+        <span style="color:var(--gold);font-size:18px">›</span>
+      </div>` : '';
+
   document.getElementById('icerik').innerHTML = `
     ${fotoHTML}
+    ${sanalTurHTML}
     <div class="detay-fiyat">${fiyatStr} ₺${fiyatEk}</div>
     <div class="detay-baslik">${ilan.baslik}</div>
     <div class="detay-konum">📍 ${ilan.konum || ''}</div>
@@ -315,91 +427,125 @@ function sayfayiOlustur() {
         <button class="btn btn-outline btn-sm" onclick="mesajGonder()">Mesaj →</button>
       </div>
     </div>
-
-    <!-- EKSPERTİZ RAPORU -->
     <div id="ekspertizBlok"></div>
-
     <div style="height:80px"></div>`;
 
-  // Ekspertiz raporu kontrol et
   ekspertizKontrolDetay();
-
   favoriKontrol();
 }
+
+// SANAL TUR
+function sanalTurAc() {
+  if (turOdalar.length === 0) return;
+  turAktifIndex = 0;
+  turThumbnailOlustur();
+  turGoster(0);
+  document.getElementById('sanalTurFullscreen').classList.add('open');
+}
+
+function sanalTurKapat() {
+  document.getElementById('sanalTurFullscreen').classList.remove('open');
+}
+
+function turThumbnailOlustur() {
+  // Oda gruplarını bul (her oda için bir thumbnail)
+  const odaGruplari = {};
+  turOdalar.forEach((item, i) => {
+    if (!odaGruplari[item.oda]) {
+      odaGruplari[item.oda] = { ...item, index: i };
+    }
+  });
+
+  const thumbsEl = document.getElementById('sanalTurThumbs');
+  thumbsEl.innerHTML = Object.values(odaGruplari).map(item => `
+    <div class="sanal-tur-thumb" id="turThumb-${item.oda}" onclick="turOdaAtla('${item.oda}')">
+      <div class="sanal-tur-thumb-img"><img src="${item.url}"></div>
+      <div class="sanal-tur-thumb-lbl">${item.ad}</div>
+    </div>`).join('');
+}
+
+function turGoster(index) {
+  turAktifIndex = index;
+  const item = turOdalar[index];
+  const img = document.getElementById('sanalTurGorsel');
+  img.classList.remove('animasyon');
+  void img.offsetWidth;
+  img.classList.add('animasyon');
+  img.src = item.url;
+  document.getElementById('sanalTurOdaAdi').textContent = `${item.em} ${item.ad}`;
+  document.getElementById('sanalTurSayac').textContent = `${index + 1} / ${turOdalar.length}`;
+
+  // Aktif thumbnail güncelle
+  document.querySelectorAll('.sanal-tur-thumb').forEach(t => t.classList.remove('aktif'));
+  const activeThumb = document.getElementById('turThumb-' + item.oda);
+  if (activeThumb) {
+    activeThumb.classList.add('aktif');
+    activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+}
+
+function turOdaDegistir(yon) {
+  let yeni = turAktifIndex + yon;
+  if (yeni < 0) yeni = turOdalar.length - 1;
+  if (yeni >= turOdalar.length) yeni = 0;
+  turGoster(yeni);
+}
+
+function turOdaAtla(oda) {
+  const index = turOdalar.findIndex(item => item.oda === oda);
+  if (index >= 0) turGoster(index);
+}
+
+// Swipe desteği
+let turStartX = 0;
+document.addEventListener('DOMContentLoaded', () => {
+  const ana = document.getElementById('sanalTurAna');
+  if (ana) {
+    ana.addEventListener('touchstart', e => turStartX = e.touches[0].clientX);
+    ana.addEventListener('touchend', e => {
+      const diff = turStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) turOdaDegistir(diff > 0 ? 1 : -1);
+    });
+  }
+});
 
 async function ekspertizKontrolDetay() {
   const el = document.getElementById('ekspertizBlok');
   if (!el) return;
-
-  // Rapor var mı kontrol et
-  const { data: rapor } = await sb
-    .from('degerleme_raporlari')
-    .select('id')
-    .eq('ilan_id', ilanId)
-    .eq('durum', 'tamamlandi')
-    .limit(1)
-    .single();
-
+  const { data: rapor } = await sb.from('degerleme_raporlari').select('id').eq('ilan_id', ilanId).eq('durum', 'tamamlandi').limit(1).single();
   if (rapor) {
-    // Rapor var → görüntüle butonu
-    el.innerHTML = `
-      <div style="background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.2);border-radius:var(--radius);padding:16px;margin-bottom:16px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <span style="font-size:24px">📊</span>
-          <div>
-            <div style="font-size:14px;font-weight:900;color:var(--gold)">Ekspertiz Raporu Mevcut</div>
-            <div style="font-size:12px;color:var(--text3)">Bu ilan profesyonel değerleme raporuna sahip</div>
-          </div>
-        </div>
-        <a href="rapor.html?ilan_id=${ilanId}" class="btn btn-gold btn-md" style="width:100%;text-align:center">
-          📊 Ekspertiz Değerini Gör
-        </a>
-      </div>`;
+    el.innerHTML = `<div style="background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.2);border-radius:var(--radius);padding:16px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:24px">📊</span>
+      <div><div style="font-size:14px;font-weight:900;color:var(--gold)">Ekspertiz Raporu Mevcut</div>
+      <div style="font-size:12px;color:var(--text3)">Bu ilan profesyonel değerleme raporuna sahip</div></div></div>
+      <a href="rapor.html?ilan_id=${ilanId}" class="btn btn-gold btn-md" style="width:100%;text-align:center">📊 Ekspertiz Değerini Gör</a></div>`;
   } else if (ilan && ilan.user_id === currentUser?.id) {
-    // Rapor yok, ilan sahibi → rapor al butonu
-    el.innerHTML = `
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <span style="font-size:24px">📊</span>
-          <div>
-            <div style="font-size:14px;font-weight:900">Ekspertiz Raporu Al</div>
-            <div style="font-size:12px;color:var(--text3)">Yapay zeka ile profesyonel değerleme — 800 ₺</div>
-          </div>
-        </div>
-        <a href="degerleme.html?ilan_id=${ilanId}" class="btn btn-gold btn-md" style="width:100%;text-align:center">
-          📊 Rapor Al — 800 ₺
-        </a>
-      </div>`;
+    el.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:24px">📊</span>
+      <div><div style="font-size:14px;font-weight:900">Ekspertiz Raporu Al</div>
+      <div style="font-size:12px;color:var(--text3)">Yapay zeka ile profesyonel değerleme — 800 ₺</div></div></div>
+      <a href="degerleme.html?ilan_id=${ilanId}" class="btn btn-gold btn-md" style="width:100%;text-align:center">📊 Rapor Al — 800 ₺</a></div>`;
   }
 }
 
 async function favoriToggle() {
   const btn = document.getElementById('favBtn');
-
   if (favori) {
-    // Favoriden çıkar
     await sb.from('favoriler').delete().eq('user_id', currentUser.id).eq('ilan_id', ilanId);
-    favori = false;
-    btn.textContent = '🤍';
+    favori = false; btn.textContent = '🤍';
     showToast('❤️ Favorilerden çıkarıldı');
   } else {
-    // Favoriye ekle
     await sb.from('favoriler').insert({ user_id: currentUser.id, ilan_id: ilanId });
-    favori = true;
-    btn.textContent = '❤️';
+    favori = true; btn.textContent = '❤️';
     btn.style.transform = 'scale(1.3)';
     setTimeout(() => btn.style.transform = '', 300);
     showToast('❤️ Favorilere eklendi!', true);
-
-    // İlan sahibine bildirim gönder (kimin eklediği gizli)
     if (ilan.user_id && ilan.user_id !== currentUser.id) {
       await sb.from('bildirimler').insert({
-        user_id: ilan.user_id,          // bildirim kime gidecek (ilan sahibi)
-        tip: 'favori',
+        user_id: ilan.user_id, tip: 'favori',
         baslik: 'İlanınız favorilere eklendi!',
         mesaj: `"${ilan.baslik}" ilanınız birileri tarafından favorilere eklendi.`,
-        ilan_id: ilanId,
-        okundu: false
+        ilan_id: ilanId, okundu: false
       });
     }
   }
@@ -407,9 +553,7 @@ async function favoriToggle() {
 
 function showToast(msg, withLink = false) {
   const toast = document.getElementById('favToast');
-  toast.innerHTML = withLink
-    ? `${msg} <a href="favoriler.html" style="color:var(--gold);font-weight:800;text-decoration:none">Görüntüle →</a>`
-    : msg;
+  toast.innerHTML = withLink ? `${msg} <a href="favoriler.html" style="color:var(--gold);font-weight:800;text-decoration:none">Görüntüle →</a>` : msg;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
@@ -442,9 +586,7 @@ function lightboxAc(index) {
   };
 }
 
-function lightboxKapat() {
-  document.getElementById('lightbox').classList.remove('open');
-}
+function lightboxKapat() { document.getElementById('lightbox').classList.remove('open'); }
 
 let seciliSikayetSebep = null;
 function sikayetAc() {
@@ -467,8 +609,7 @@ async function sikayetGonder() {
     aciklama: document.getElementById('sikayetAciklama').value.trim() || null,
     durum: 'bekliyor'
   });
-  sikayetKapat();
-  alert('✅ Şikayetiniz alındı.');
+  sikayetKapat(); alert('✅ Şikayetiniz alındı.');
 }
 
 function paylas() {
