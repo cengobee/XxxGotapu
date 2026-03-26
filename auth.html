@@ -41,6 +41,120 @@
     display: flex; flex-direction: column; gap: 12px;
   }
   .ekstra-alan .alan-label { font-size: 11px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: -6px; }
+
+  /* MASAÜSTÜ - sadece CSS, hiçbir JS değişikliği yok */
+  @media (min-width: 900px) {
+    body {
+      padding: 0;
+      align-items: stretch;
+    }
+
+    /* Sol panel - tanıtım */
+    body::before {
+      content: '';
+      flex: 1;
+      background: linear-gradient(135deg, #1a1f2e 0%, #0f1117 100%);
+      border-right: 1px solid var(--border);
+    }
+
+    /* İki sütunlu layout */
+    body {
+      display: grid;
+      grid-template-columns: 1fr 480px;
+    }
+
+    .auth-box {
+      max-width: 100%;
+      padding: 40px 48px;
+      overflow-y: auto;
+      background: var(--bg2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* Sol panel içeriği için pseudo element yerine overlay */
+    body::before {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      gap: 32px;
+    }
+  }
+</style>
+
+<!-- Sol panel içeriği sadece masaüstünde görünür -->
+<style>
+  .auth-sol { display: none; }
+
+  @media (min-width: 900px) {
+    body {
+      display: grid !important;
+      grid-template-columns: 1fr 480px !important;
+      padding: 0 !important;
+      align-items: stretch !important;
+      min-height: 100vh;
+    }
+
+    .auth-sol {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      background: linear-gradient(135deg, #1a1f2e 0%, #0d1118 100%);
+      border-right: 1px solid var(--border);
+      gap: 28px;
+    }
+
+    .auth-sol-logo {
+      width: 80px; height: 80px;
+      background: var(--gold);
+      border-radius: 24px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 44px;
+    }
+
+    .auth-sol h2 {
+      font-size: 36px; font-weight: 900;
+      text-align: center; line-height: 1.2;
+    }
+
+    .auth-sol p {
+      font-size: 16px; color: var(--text2);
+      text-align: center; line-height: 1.7;
+      max-width: 380px;
+    }
+
+    .auth-sol-ozellikler {
+      display: flex; flex-direction: column; gap: 16px;
+      width: 100%; max-width: 380px;
+    }
+
+    .auth-sol-ozellik {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 16px;
+    }
+
+    .auth-sol-ozellik-icon { font-size: 24px; }
+    .auth-sol-ozellik-text { font-size: 14px; font-weight: 700; color: var(--text2); }
+
+    .auth-box {
+      max-width: 100% !important;
+      padding: 40px 48px !important;
+      overflow-y: auto;
+      background: var(--bg);
+      display: flex !important;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
+    }
+  }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -51,6 +165,32 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
+
+<!-- MASAÜSTÜ SOL PANEL -->
+<div class="auth-sol">
+  <div class="auth-sol-logo">🏠</div>
+  <h2>Türkiye'nin<br>Emlak Platformu</h2>
+  <p>Ev al, sat, kirala. Ev hizmetleri, ekspertiz raporları ve çok daha fazlası tek platformda.</p>
+  <div class="auth-sol-ozellikler">
+    <div class="auth-sol-ozellik">
+      <div class="auth-sol-ozellik-icon">🏠</div>
+      <div class="auth-sol-ozellik-text">Binlerce onaylı emlak ilanı</div>
+    </div>
+    <div class="auth-sol-ozellik">
+      <div class="auth-sol-ozellik-icon">✨</div>
+      <div class="auth-sol-ozellik-text">Sana özel eşleşme sistemi</div>
+    </div>
+    <div class="auth-sol-ozellik">
+      <div class="auth-sol-ozellik-icon">🔧</div>
+      <div class="auth-sol-ozellik-text">Güvenilir ev hizmetleri</div>
+    </div>
+    <div class="auth-sol-ozellik">
+      <div class="auth-sol-ozellik-icon">📊</div>
+      <div class="auth-sol-ozellik-text">AI destekli ekspertiz raporu</div>
+    </div>
+  </div>
+</div>
+
 <div class="auth-box fade-up">
   <div class="auth-logo">
     <div class="logo-icon" style="background:var(--gold);">🏠</div>
@@ -229,7 +369,6 @@ sb.auth.onAuthStateChange((event, session) => {
     if (search.includes('code=') || hash.includes('type=recovery')) {
       switchTab('yenisifre'); hideMessages();
     }
-    // Kayıt sırasında otomatik giriş olmasın diye burada yönlendirme yapmıyoruz
   }
 });
 
@@ -328,17 +467,14 @@ async function kayitOl() {
 
   setLoading(true);
 
-  // 1. Kayıt ol
   const { error: signUpError } = await sb.auth.signUp({ email, password });
   if (signUpError) { setLoading(false); return showError('Kayıt başarısız: ' + signUpError.message); }
 
-  // 2. Hemen giriş yap
   const { data: girisData, error: girisError } = await sb.auth.signInWithPassword({ email, password });
   if (girisError) { setLoading(false); return showError('Giriş hatası: ' + girisError.message); }
 
   const userId = girisData.user.id;
 
-  // 3. Profili güncelle (trigger zaten oluşturdu, biz update ediyoruz)
   const profilData = {
     full_name: ad,
     phone: tel || null,
@@ -375,8 +511,6 @@ async function kayitOl() {
   }
 
   setLoading(false);
-
-  // 4. Ana sayfaya yönlendir
   window.location.href = 'index.html';
 }
 
