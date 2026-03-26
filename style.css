@@ -26,12 +26,11 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Nunito', sans-serif;
-  min-height: 100vh;
+  min-height: fit-content;
   padding-top: var(--nav-h);
   padding-bottom: calc(var(--bot-h) + 16px);
   overflow-x: hidden;
 }
-
 /* TOP NAV */
 .top-nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 200;
