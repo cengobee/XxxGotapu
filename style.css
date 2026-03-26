@@ -25,8 +25,7 @@
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Nunito', sans-serif;
-  min-height: 100vh;
+  font-family: 'Nunito', sans-serif
   padding-top: var(--nav-h);
   padding-bottom: calc(var(--bot-h) + 16px);
   overflow-x: hidden;
