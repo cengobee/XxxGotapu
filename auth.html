@@ -313,7 +313,6 @@ async function kayitOl() {
   if (!ad || !email || !password) return showError('Lütfen tüm alanları doldurun!');
   if (password.length < 6) return showError('Şifre en az 6 karakter olmalı!');
 
-  // Kurumsal validasyon
   if (seciliUyeTip === 'kurumsal') {
     if (!document.getElementById('kayitFirmaAdi').value.trim()) return showError('Firma adı zorunludur!');
     if (!document.getElementById('kayitCalisanSayisi').value) return showError('Çalışan sayısı seçiniz!');
@@ -322,7 +321,6 @@ async function kayitOl() {
     if (!document.getElementById('kayitKurumsalIlce').value.trim()) return showError('İlçe zorunludur!');
   }
 
-  // Freelancer validasyon
   if (seciliUyeTip === 'freelancer') {
     if (!document.getElementById('kayitFreelancerKat').value) return showError('Kategori seçiniz!');
     if (!document.getElementById('kayitFreelancerIl').value.trim()) return showError('İl zorunludur!');
@@ -333,12 +331,15 @@ async function kayitOl() {
   const { data, error } = await sb.auth.signUp({ email, password });
   if (error) { setLoading(false); return showError('Kayıt başarısız: ' + error.message); }
 
-  if (data.user) {
+  // data.user bazen null gelir, session'dan da kontrol et
+  const kayitUser = data.user || data.session?.user;
+
+  if (kayitUser) {
     const profilData = {
-      id: data.user.id,
+      id: kayitUser.id,
       full_name: ad,
-      phone: tel,
-      email,
+      phone: tel || null,
+      email: email,
       kullanici_tipi: seciliUyeTip,
     };
 
@@ -364,15 +365,19 @@ async function kayitOl() {
       profilData.kurumsal_sehir = [il, ilce, mahalle].filter(Boolean).join(', ');
     }
 
-    await sb.from('profiles').insert(profilData);
+    const { error: profilHata } = await sb.from('profiles').insert(profilData);
+    if (profilHata) {
+      setLoading(false);
+      return showError('Profil kaydı hatası: ' + profilHata.message);
+    }
   }
 
   setLoading(false);
 
   if (seciliUyeTip !== 'normal') {
-    showSuccess('✅ Başvurunuz alındı! Admin onayından sonra aktif olacaksınız. E-postanızı doğrulayın.');
+    showSuccess('✅ Başvurunuz alındı! Admin onayından sonra aktif olacaksınız.');
   } else {
-    showSuccess('✅ Kayıt başarılı! E-postanızı doğrulayın, ardından giriş yapabilirsiniz.');
+    showSuccess('✅ Kayıt başarılı! Giriş yapabilirsiniz.');
   }
 }
 
