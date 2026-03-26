@@ -228,9 +228,8 @@ sb.auth.onAuthStateChange((event, session) => {
     const search = window.location.search;
     if (search.includes('code=') || hash.includes('type=recovery')) {
       switchTab('yenisifre'); hideMessages();
-    } else {
-      window.location.href = 'index.html';
     }
+    // Kayıt sırasında otomatik giriş olmasın diye burada yönlendirme yapmıyoruz
   }
 });
 
@@ -328,57 +327,57 @@ async function kayitOl() {
   }
 
   setLoading(true);
-  const { data, error } = await sb.auth.signUp({ email, password });
-  if (error) { setLoading(false); return showError('Kayıt başarısız: ' + error.message); }
 
-  // data.user bazen null gelir, session'dan da kontrol et
-  const kayitUser = data.user || data.session?.user;
+  // 1. Kayıt ol
+  const { error: signUpError } = await sb.auth.signUp({ email, password });
+  if (signUpError) { setLoading(false); return showError('Kayıt başarısız: ' + signUpError.message); }
 
-  if (kayitUser) {
-    const profilData = {
-      id: kayitUser.id,
-      full_name: ad,
-      phone: tel || null,
-      email: email,
-      kullanici_tipi: seciliUyeTip,
-    };
+  // 2. Hemen giriş yap
+  const { data: girisData, error: girisError } = await sb.auth.signInWithPassword({ email, password });
+  if (girisError) { setLoading(false); return showError('Giriş hatası: ' + girisError.message); }
 
-    if (seciliUyeTip === 'kurumsal') {
-      const il = document.getElementById('kayitKurumsalIl').value.trim();
-      const ilce = document.getElementById('kayitKurumsalIlce').value.trim();
-      const mahalle = document.getElementById('kayitKurumsalMahalle').value.trim();
-      profilData.firma_adi = document.getElementById('kayitFirmaAdi').value.trim();
-      profilData.kategori = document.getElementById('kayitKurumsalKat').value;
-      profilData.kurumsal_tip = 'kurumsal';
-      profilData.kurumsal_onay = 'bekliyor';
-      profilData.kurumsal_sehir = [il, ilce, mahalle].filter(Boolean).join(', ');
-      profilData.calisan_sayisi = document.getElementById('kayitCalisanSayisi').value;
-    }
+  const userId = girisData.user.id;
 
-    if (seciliUyeTip === 'freelancer') {
-      const il = document.getElementById('kayitFreelancerIl').value.trim();
-      const ilce = document.getElementById('kayitFreelancerIlce').value.trim();
-      const mahalle = document.getElementById('kayitFreelancerMahalle').value.trim();
-      profilData.kategori = document.getElementById('kayitFreelancerKat').value;
-      profilData.kurumsal_tip = 'freelancer';
-      profilData.kurumsal_onay = 'bekliyor';
-      profilData.kurumsal_sehir = [il, ilce, mahalle].filter(Boolean).join(', ');
-    }
+  // 3. Profili güncelle (trigger zaten oluşturdu, biz update ediyoruz)
+  const profilData = {
+    full_name: ad,
+    phone: tel || null,
+    email: email,
+    kullanici_tipi: seciliUyeTip,
+  };
 
-    const { error: profilHata } = await sb.from('profiles').insert(profilData);
-    if (profilHata) {
-      setLoading(false);
-      return showError('Profil kaydı hatası: ' + profilHata.message);
-    }
+  if (seciliUyeTip === 'kurumsal') {
+    const il = document.getElementById('kayitKurumsalIl').value.trim();
+    const ilce = document.getElementById('kayitKurumsalIlce').value.trim();
+    const mahalle = document.getElementById('kayitKurumsalMahalle').value.trim();
+    profilData.firma_adi = document.getElementById('kayitFirmaAdi').value.trim();
+    profilData.kategori = document.getElementById('kayitKurumsalKat').value;
+    profilData.kurumsal_tip = 'kurumsal';
+    profilData.kurumsal_onay = 'bekliyor';
+    profilData.kurumsal_sehir = [il, ilce, mahalle].filter(Boolean).join(', ');
+    profilData.calisan_sayisi = document.getElementById('kayitCalisanSayisi').value;
+  }
+
+  if (seciliUyeTip === 'freelancer') {
+    const il = document.getElementById('kayitFreelancerIl').value.trim();
+    const ilce = document.getElementById('kayitFreelancerIlce').value.trim();
+    const mahalle = document.getElementById('kayitFreelancerMahalle').value.trim();
+    profilData.kategori = document.getElementById('kayitFreelancerKat').value;
+    profilData.kurumsal_tip = 'freelancer';
+    profilData.kurumsal_onay = 'bekliyor';
+    profilData.kurumsal_sehir = [il, ilce, mahalle].filter(Boolean).join(', ');
+  }
+
+  const { error: profilHata } = await sb.from('profiles').update(profilData).eq('id', userId);
+  if (profilHata) {
+    setLoading(false);
+    return showError('Profil güncelleme hatası: ' + profilHata.message);
   }
 
   setLoading(false);
 
-  if (seciliUyeTip !== 'normal') {
-    showSuccess('✅ Başvurunuz alındı! Admin onayından sonra aktif olacaksınız.');
-  } else {
-    showSuccess('✅ Kayıt başarılı! Giriş yapabilirsiniz.');
-  }
+  // 4. Ana sayfaya yönlendir
+  window.location.href = 'index.html';
 }
 
 async function yeniSifreKaydet() {
