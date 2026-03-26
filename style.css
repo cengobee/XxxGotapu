@@ -25,7 +25,8 @@
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Nunito', sans-serif
+  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
   padding-top: var(--nav-h);
   padding-bottom: calc(var(--bot-h) + 16px);
   overflow-x: hidden;
@@ -105,7 +106,7 @@ body {
 }
 
 /* PAGE */
-.page { padding: 16px; max-width: 480px; margin: 0 auto; }
+.page { padding: 16px; max-width: 900px; margin: 0 auto; }
 
 /* SECTION */
 .section-head {
@@ -242,8 +243,8 @@ body {
 }
 .fade-up { animation: fadeUp .4s ease both; }
 
-/* SUPABASE CONFIG - tüm sayfalarda kullanılır */
+/* SUPABASE CONFIG */
 .sb-config {
   display: none;
   --url: 'https://ncmzfaszaowiynzjdefb.supabase.co';
-}
+  }
