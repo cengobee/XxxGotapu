@@ -43,24 +43,6 @@
     background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2);
     color: var(--text2); border-style: dashed;
   }
-  .photo-add {
-    width: 100%; height: 110px;
-    background: var(--card); border: 2px dashed var(--border);
-    border-radius: var(--radius); display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 8px;
-    cursor: pointer; color: var(--text3); font-weight: 700; font-size: 14px;
-  }
-  .photo-add span { font-size: 32px; }
-  .photo-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-  .photo-thumb { position: relative; width: 80px; height: 80px; }
-  .photo-thumb img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); }
-  .photo-remove {
-    position: absolute; top: -6px; right: -6px;
-    width: 20px; height: 20px; border-radius: 50%;
-    background: var(--rust); color: white; border: none;
-    font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  }
-  .foto-sayac { font-size: 12px; color: var(--text3); margin-top: 6px; }
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .success-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.85);
@@ -92,6 +74,59 @@
     background: white; transition: left .2s;
   }
   .toggle.on::after { left: 25px; }
+
+  /* ODA FOTOĞRAF SİSTEMİ */
+  .oda-foto-bolum {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .oda-foto-baslik {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; cursor: pointer;
+    transition: background .2s;
+  }
+  .oda-foto-baslik:active { background: var(--card2); }
+  .oda-foto-baslik-sol { display: flex; align-items: center; gap: 10px; }
+  .oda-foto-em { font-size: 22px; }
+  .oda-foto-ad { font-size: 14px; font-weight: 800; }
+  .oda-foto-sayi { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .oda-foto-ok { color: var(--text3); font-size: 18px; transition: transform .2s; }
+  .oda-foto-ok.acik { transform: rotate(90deg); }
+  .oda-foto-icerik { display: none; padding: 0 16px 16px; }
+  .oda-foto-icerik.acik { display: block; }
+  .oda-ekle-btn {
+    width: 100%; padding: 12px;
+    background: var(--card2); border: 1.5px dashed var(--border);
+    border-radius: var(--radius-sm); color: var(--text3);
+    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: border-color .2s;
+  }
+  .oda-ekle-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .oda-foto-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .oda-foto-thumb { position: relative; width: 72px; height: 72px; }
+  .oda-foto-thumb img { width: 72px; height: 72px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); }
+  .oda-foto-sil {
+    position: absolute; top: -6px; right: -6px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--rust); color: white; border: none;
+    font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-family: 'Nunito', sans-serif;
+  }
+  .foto-uyari {
+    background: rgba(232,96,58,0.1); color: var(--rust);
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 13px; font-weight: 700; margin-bottom: 12px;
+    display: none;
+  }
+  .toplam-foto-sayac {
+    font-size: 12px; color: var(--text3); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .toplam-foto-sayac span { color: var(--gold); font-weight: 800; }
 
   /* ALICI FORMU */
   .alici-form {
@@ -134,7 +169,19 @@
   <div class="nav-actions"><a href="profil.html" class="nav-icon-btn">👤</a></div>
 </nav>
 
-<input type="file" id="fotoInput" accept="image/*" multiple style="display:none" onchange="fotosecildi(this)">
+<!-- Her oda için gizli file input -->
+<input type="file" id="fotoInput_salon" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'salon')">
+<input type="file" id="fotoInput_mutfak" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'mutfak')">
+<input type="file" id="fotoInput_yatak" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'yatak')">
+<input type="file" id="fotoInput_banyo" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'banyo')">
+<input type="file" id="fotoInput_balkon" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'balkon')">
+<input type="file" id="fotoInput_havuz" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'havuz')">
+<input type="file" id="fotoInput_otopark" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'otopark')">
+<input type="file" id="fotoInput_tenis" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'tenis')">
+<input type="file" id="fotoInput_spor" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'spor')">
+<input type="file" id="fotoInput_bahce" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'bahce')">
+<input type="file" id="fotoInput_dis" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'dis')">
+<input type="file" id="fotoInput_diger" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'diger')">
 
 <div class="page fade-up">
   <div class="back-header">
@@ -400,14 +447,213 @@
       <button class="toggle" id="oneCikanToggle" onclick="toggleOneCikan()"></button>
     </div>
 
-    <div class="bolum-baslik">📷 Fotoğraflar</div>
+    <!-- ODA BAZLI FOTOĞRAFLAR -->
+    <div class="bolum-baslik">📷 Sanal Tur Fotoğrafları</div>
 
-    <div class="form-group">
-      <div class="photo-add" onclick="document.getElementById('fotoInput').click()">
-        <span>📷</span>Fotoğraf Seç (max 10)
+    <div id="fotoUyari" class="foto-uyari">⚠️ Maksimum 25 fotoğraf yükleyebilirsiniz!</div>
+
+    <div class="toplam-foto-sayac">
+      📷 Toplam: <span id="toplamFotoSayi">0</span> / 25 fotoğraf
+    </div>
+
+    <div id="odaFotoBolumler">
+      <!-- Salon -->
+      <div class="oda-foto-bolum">
+        <div class="oda-foto-baslik" onclick="odaToggle('salon')">
+          <div class="oda-foto-baslik-sol">
+            <span class="oda-foto-em">🛋️</span>
+            <div>
+              <div class="oda-foto-ad">Salon</div>
+              <div class="oda-foto-sayi" id="sayi-salon">Fotoğraf eklenmedi</div>
+            </div>
+          </div>
+          <span class="oda-foto-ok" id="ok-salon">›</span>
+        </div>
+        <div class="oda-foto-icerik" id="icerik-salon">
+          <div class="oda-foto-grid" id="grid-salon"></div>
+          <button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_salon').click()">📷 Fotoğraf Ekle</button>
+        </div>
       </div>
-      <div class="foto-sayac" id="fotoSayac"></div>
-      <div class="photo-preview" id="fotoPreview"></div>
+
+      <!-- Mutfak -->
+      <div class="oda-foto-bolum">
+        <div class="oda-foto-baslik" onclick="odaToggle('mutfak')">
+          <div class="oda-foto-baslik-sol">
+            <span class="oda-foto-em">🍳</span>
+            <div>
+              <div class="oda-foto-ad">Mutfak</div>
+              <div class="oda-foto-sayi" id="sayi-mutfak">Fotoğraf eklenmedi</div>
+            </div>
+          </div>
+          <span class="oda-foto-ok" id="ok-mutfak">›</span>
+        </div>
+        <div class="oda-foto-icerik" id="icerik-mutfak">
+          <div class="oda-foto-grid" id="grid-mutfak"></div>
+          <button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_mutfak').click()">📷 Fotoğraf Ekle</button>
+        </div>
+      </div>
+
+      <!-- Yatak Odası -->
+      <div class="oda-foto-bolum">
+        <div class="oda-foto-baslik" onclick="odaToggle('yatak')">
+          <div class="oda-foto-baslik-sol">
+            <span class="oda-foto-em">🛏️</span>
+            <div>
+              <div class="oda-foto-ad">Yatak Odası</div>
+              <div class="oda-foto-sayi" id="sayi-yatak">Fotoğraf eklenmedi</div>
+            </div>
+          </div>
+          <span class="oda-foto-ok" id="ok-yatak">›</span>
+        </div>
+        <div class="oda-foto-icerik" id="icerik-yatak">
+          <div class="oda-foto-grid" id="grid-yatak"></div>
+          <button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_yatak').click()">📷 Fotoğraf Ekle</button>
+        </div>
+      </div>
+
+      <!-- Banyo -->
+      <div class="oda-foto-bolum">
+        <div class="oda-foto-baslik" onclick="odaToggle('banyo')">
+          <div class="oda-foto-baslik-sol">
+            <span class="oda-foto-em">🚿</span>
+            <div>
+              <div class="oda-foto-ad">Banyo</div>
+              <div class="oda-foto-sayi" id="sayi-banyo">Fotoğraf eklenmedi</div>
+            </div>
+          </div>
+          <span class="oda-foto-ok" id="ok-banyo">›</span>
+        </div>
+        <div class="oda-foto-icerik" id="icerik-banyo">
+          <div class="oda-foto-grid" id="grid-banyo"></div>
+          <button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_banyo').click()">📷 Fotoğraf Ekle</button>
+        </div>
+      </div>
+
+      <!-- Balkon/Bahçe -->
+      <div class="oda-foto-bolum">
+        <div class="oda-foto-baslik" onclick="odaToggle('balkon')">
+          <div class="oda-foto-baslik-sol">
+            <span class="oda-foto-em">🌿</span>
+            <div>
+              <div class="oda-foto-ad">Balkon / Bahçe</div>
+              <div class="oda-foto-sayi" id="sayi-balkon">Fotoğraf eklenmedi</div>
+            </div>
+          </div>
+          <span class="oda-foto-ok" id="ok-balkon">›</span>
+        </div>
+        <div class="oda-foto-icerik" id="icerik-balkon">
+          <div class="oda-foto-grid" id="grid-balkon"></div>
+          <button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_balkon').click()">📷 Fotoğraf Ekle</button>
+        </div>
+      </div>
+
+      <!-- Havuz -->
+      <div class="oda-foto-bolum">
+        <div class="oda-foto-baslik" onclick="odaToggle('havuz')">
+          <div class="oda-foto-baslik-sol">
+            <span class="oda-foto-em">🏊</span>
+            <div>
+              <div class="oda-foto-ad">Yüzme Havuzu</div>
+              <div class="oda-foto-sayi" id="sayi-havuz">Fotoğraf eklenmedi</div>
+            </div>
+          </div>
+          <span class="oda-foto-ok" id="ok-havuz">›</span>
+        </div>
+        <div class="oda-foto-icerik" id="icerik-havuz">
+          <div class="oda-foto-grid" id="grid-havuz"></div>
+          <button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_havuz').click()">📷 Fotoğraf Ekle</button>
+        </div>
+      </div>
+
+      <!-- Otopark -->
+      <div class="oda-foto-bolum">
+        <div class="oda-foto-baslik" onclick="odaToggle('otopark')">
+          <div class="oda-foto-baslik-sol">
+            <span class="oda-foto-em">🚗</span>
+            <div>
+              <div class="oda-foto-ad">Otopark</div>
+              <div class="oda-foto-sayi" id="sayi-otopark">Fotoğraf eklenmedi</div>
+            </div>
+          </div>
+          <span class="oda-foto-ok" id="ok-otopark">›</span>
+        </div>
+        <div class="oda-foto-icerik" id="icerik-otopark">
+          <div class="oda-foto-grid" id="grid-otopark"></div>
+          <button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_otopark').click()">📷 Fotoğraf Ekle</button>
+        </div>
+      </div>
+
+      <!-- Tenis Kortu -->
+      <div class="oda-foto-bolum">
+        <div class="oda-foto-baslik" onclick="odaToggle('tenis')">
+          <div class="oda-foto-baslik-sol">
+            <span class="oda-foto-em">🎾</span>
+            <div>
+              <div class="oda-foto-ad">Tenis Kortu</div>
+              <div class="oda-foto-sayi" id="sayi-tenis">Fotoğraf eklenmedi</div>
+            </div>
+          </div>
+          <span class="oda-foto-ok" id="ok-tenis">›</span>
+        </div>
+        <div class="oda-foto-icerik" id="icerik-tenis">
+          <div class="oda-foto-grid" id="grid-tenis"></div>
+          <button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_tenis').click()">📷 Fotoğraf Ekle</button>
+        </div>
+      </div>
+
+      <!-- Spor Salonu -->
+      <div class="oda-foto-bolum">
+        <div class="oda-foto-baslik" onclick="odaToggle('spor')">
+          <div class="oda-foto-baslik-sol">
+            <span class="oda-foto-em">🏋️</span>
+            <div>
+              <div class="oda-foto-ad">Spor Salonu</div>
+              <div class="oda-foto-sayi" id="sayi-spor">Fotoğraf eklenmedi</div>
+            </div>
+          </div>
+          <span class="oda-foto-ok" id="ok-spor">›</span>
+        </div>
+        <div class="oda-foto-icerik" id="icerik-spor">
+          <div class="oda-foto-grid" id="grid-spor"></div>
+          <button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_spor').click()">📷 Fotoğraf Ekle</button>
+        </div>
+      </div>
+
+      <!-- Bahçe/Dış Alan -->
+      <div class="oda-foto-bolum">
+        <div class="oda-foto-baslik" onclick="odaToggle('dis')">
+          <div class="oda-foto-baslik-sol">
+            <span class="oda-foto-em">🏠</span>
+            <div>
+              <div class="oda-foto-ad">Dış Görünüm</div>
+              <div class="oda-foto-sayi" id="sayi-dis">Fotoğraf eklenmedi</div>
+            </div>
+          </div>
+          <span class="oda-foto-ok" id="ok-dis">›</span>
+        </div>
+        <div class="oda-foto-icerik" id="icerik-dis">
+          <div class="oda-foto-grid" id="grid-dis"></div>
+          <button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_dis').click()">📷 Fotoğraf Ekle</button>
+        </div>
+      </div>
+
+      <!-- Diğer -->
+      <div class="oda-foto-bolum">
+        <div class="oda-foto-baslik" onclick="odaToggle('diger')">
+          <div class="oda-foto-baslik-sol">
+            <span class="oda-foto-em">📷</span>
+            <div>
+              <div class="oda-foto-ad">Diğer</div>
+              <div class="oda-foto-sayi" id="sayi-diger">Fotoğraf eklenmedi</div>
+            </div>
+          </div>
+          <span class="oda-foto-ok" id="ok-diger">›</span>
+        </div>
+        <div class="oda-foto-icerik" id="icerik-diger">
+          <div class="oda-foto-grid" id="grid-diger"></div>
+          <button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_diger').click()">📷 Fotoğraf Ekle</button>
+        </div>
+      </div>
     </div>
 
     <div class="bolum-baslik">📝 Açıklama</div>
@@ -426,7 +672,6 @@
       💡 Tercihlerini kaydet, sana uygun ilanlar önce gösterilsin. Satıcılar da senin aradığını görür!
     </div>
 
-    <!-- İLAN TİPİ -->
     <div class="t-section">
       <div class="t-label">🏷️ Ne Arıyorsun? <span class="sec-btn farketmez" id="afm-tip" onclick="aliciFarketmez('tip',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-tip">
@@ -435,7 +680,6 @@
       </div>
     </div>
 
-    <!-- ŞEHİR -->
     <div class="t-section">
       <div class="t-label">📍 Şehir</div>
       <div class="sec-row" id="apg-sehir">
@@ -448,7 +692,6 @@
       <input class="input" type="text" id="aliciKonum" placeholder="İlçe veya mahalle (ör. Çankaya)" style="margin-top:8px">
     </div>
 
-    <!-- FİYAT -->
     <div class="t-section">
       <div class="t-label">💰 Bütçe (₺) <span class="sec-btn farketmez" id="afm-fiyat" onclick="aliciFarketmez('fiyat',this)">Farketmez</span></div>
       <div class="t-range">
@@ -458,7 +701,6 @@
       </div>
     </div>
 
-    <!-- EMLAK TİPİ -->
     <div class="t-section">
       <div class="t-label">🏠 Emlak Tipi <span class="sec-btn farketmez" id="afm-emlak" onclick="aliciFarketmez('emlak',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-emlak">
@@ -471,7 +713,6 @@
       </div>
     </div>
 
-    <!-- ODA SAYISI -->
     <div class="t-section">
       <div class="t-label">🛏 Oda Sayısı <span class="sec-btn farketmez" id="afm-oda" onclick="aliciFarketmez('oda',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-oda">
@@ -484,7 +725,6 @@
       </div>
     </div>
 
-    <!-- BANYO -->
     <div class="t-section">
       <div class="t-label">🚿 Banyo Sayısı <span class="sec-btn farketmez" id="afm-banyo" onclick="aliciFarketmez('banyo',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-banyo">
@@ -495,7 +735,6 @@
       </div>
     </div>
 
-    <!-- KAT TERCİHİ -->
     <div class="t-section">
       <div class="t-label">🏢 Kat Tercihi <span class="sec-btn farketmez" id="afm-kat" onclick="aliciFarketmez('kat',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-kat">
@@ -508,7 +747,6 @@
       </div>
     </div>
 
-    <!-- METREKARE -->
     <div class="t-section">
       <div class="t-label">📐 Metrekare <span class="sec-btn farketmez" id="afm-m2" onclick="aliciFarketmez('m2',this)">Farketmez</span></div>
       <div class="t-range">
@@ -518,7 +756,6 @@
       </div>
     </div>
 
-    <!-- BİNA YAŞI -->
     <div class="t-section">
       <div class="t-label">🏗 Bina Yaşı <span class="sec-btn farketmez" id="afm-bina" onclick="aliciFarketmez('bina',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-bina">
@@ -530,7 +767,6 @@
       </div>
     </div>
 
-    <!-- ISITMA -->
     <div class="t-section">
       <div class="t-label">🔥 Isıtma <span class="sec-btn farketmez" id="afm-isitma" onclick="aliciFarketmez('isitma',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-isitma">
@@ -541,7 +777,6 @@
       </div>
     </div>
 
-    <!-- CEPHE -->
     <div class="t-section">
       <div class="t-label">🧭 Cephe <span class="sec-btn farketmez" id="afm-cephe" onclick="aliciFarketmez('cephe',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-cephe">
@@ -552,7 +787,6 @@
       </div>
     </div>
 
-    <!-- KULLANIM DURUMU -->
     <div class="t-section">
       <div class="t-label">🔑 Kullanım Durumu <span class="sec-btn farketmez" id="afm-kullanim" onclick="aliciFarketmez('kullanim',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-kullanim">
@@ -562,7 +796,6 @@
       </div>
     </div>
 
-    <!-- TAPU -->
     <div class="t-section">
       <div class="t-label">📋 Tapu Durumu <span class="sec-btn farketmez" id="afm-tapu" onclick="aliciFarketmez('tapu',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-tapu">
@@ -573,7 +806,6 @@
       </div>
     </div>
 
-    <!-- EŞYA DURUMU -->
     <div class="t-section">
       <div class="t-label">🪑 Eşya Durumu <span class="sec-btn farketmez" id="afm-esya" onclick="aliciFarketmez('esya',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-esya">
@@ -583,7 +815,6 @@
       </div>
     </div>
 
-    <!-- SİTE -->
     <div class="t-section">
       <div class="t-label">🏘️ Site İçinde mi? <span class="sec-btn farketmez" id="afm-site" onclick="aliciFarketmez('site',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-site">
@@ -592,7 +823,6 @@
       </div>
     </div>
 
-    <!-- AİDAT -->
     <div class="t-section">
       <div class="t-label">💳 Aidat <span class="sec-btn farketmez" id="afm-aidat" onclick="aliciFarketmez('aidat',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-aidat">
@@ -601,7 +831,6 @@
       </div>
     </div>
 
-    <!-- İÇ ÖZELLİKLER -->
     <div class="t-section">
       <div class="t-label">🪟 İç Özellikler <span class="sec-btn farketmez" id="afm-ic" onclick="aliciFarketmez('ic',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-ic">
@@ -615,7 +844,6 @@
       </div>
     </div>
 
-    <!-- DIŞ ÖZELLİKLER -->
     <div class="t-section">
       <div class="t-label">🏢 Dış Özellikler <span class="sec-btn farketmez" id="afm-dis" onclick="aliciFarketmez('dis',this)">Farketmez</span></div>
       <div class="sec-row" id="apg-dis">
@@ -664,30 +892,41 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let seciliTip = 'satilik';
 let currentUser = null;
-let fotoFiles = [];
 let oneCikan = false;
-let aktifRol = 0; // 0=satıcı, 1=alıcı
+let aktifRol = 0;
 let kotAltiOlmasin = false;
 
-// Alıcı form state
+// Oda fotoğraf sistemi
+const MAKS_FOTO = 25;
+const odaFotolar = {
+  salon: [], mutfak: [], yatak: [], banyo: [], balkon: [],
+  havuz: [], otopark: [], tenis: [], spor: [], bahce: [], dis: [], diger: []
+};
+
+const odaBilgi = {
+  salon: { em: '🛋️', ad: 'Salon' },
+  mutfak: { em: '🍳', ad: 'Mutfak' },
+  yatak: { em: '🛏️', ad: 'Yatak Odası' },
+  banyo: { em: '🚿', ad: 'Banyo' },
+  balkon: { em: '🌿', ad: 'Balkon/Bahçe' },
+  havuz: { em: '🏊', ad: 'Havuz' },
+  otopark: { em: '🚗', ad: 'Otopark' },
+  tenis: { em: '🎾', ad: 'Tenis Kortu' },
+  spor: { em: '🏋️', ad: 'Spor Salonu' },
+  dis: { em: '🏠', ad: 'Dış Görünüm' },
+  diger: { em: '📷', ad: 'Diğer' }
+};
+
 let aliciState = {
-  tip: null, tip_fm: true,
-  sehir: null,
-  emlak: [], emlak_fm: true,
-  oda: [], oda_fm: true,
-  banyo: [], banyo_fm: true,
-  kat: [], kat_fm: true,
+  tip: null, tip_fm: true, sehir: null,
+  emlak: [], emlak_fm: true, oda: [], oda_fm: true,
+  banyo: [], banyo_fm: true, kat: [], kat_fm: true,
   minM2: null, maxM2: null, m2_fm: true,
-  bina: [], bina_fm: true,
-  isitma: [], isitma_fm: true,
-  cephe: [], cephe_fm: true,
-  kullanim: null, kullanim_fm: true,
-  tapu: [], tapu_fm: true,
-  esya: null, esya_fm: true,
-  site: null, site_fm: true,
-  aidat: null, aidat_fm: true,
-  ic: [], ic_fm: true,
-  dis: [], dis_fm: true,
+  bina: [], bina_fm: true, isitma: [], isitma_fm: true,
+  cephe: [], cephe_fm: true, kullanim: null, kullanim_fm: true,
+  tapu: [], tapu_fm: true, esya: null, esya_fm: true,
+  site: null, site_fm: true, aidat: null, aidat_fm: true,
+  ic: [], ic_fm: true, dis: [], dis_fm: true,
   minFiyat: null, maxFiyat: null, fiyat_fm: true,
 };
 
@@ -703,7 +942,6 @@ function secRole(index) {
   document.getElementById('aliciForm').style.display = index === 1 ? 'block' : 'none';
 }
 
-// ─── SATICI FONKSİYONLARI ───
 function toggleOneCikan() {
   oneCikan = !oneCikan;
   document.getElementById('oneCikanToggle').classList.toggle('on', oneCikan);
@@ -740,29 +978,75 @@ function getCokluSecim(grupId) {
   return Array.from(grup.querySelectorAll('.sec-btn.active')).map(b => b.textContent.trim());
 }
 
-function fotosecildi(input) {
-  Array.from(input.files).forEach(f => { if (fotoFiles.length < 10) fotoFiles.push(f); });
-  input.value = ''; previewGuncelle();
+// ODA FOTOĞRAF FONKSİYONLARI
+function odaToggle(oda) {
+  const icerik = document.getElementById('icerik-' + oda);
+  const ok = document.getElementById('ok-' + oda);
+  icerik.classList.toggle('acik');
+  ok.classList.toggle('acik');
 }
 
-function previewGuncelle() {
-  const preview = document.getElementById('fotoPreview');
-  const sayac = document.getElementById('fotoSayac');
-  preview.innerHTML = '';
-  sayac.textContent = fotoFiles.length > 0 ? `${fotoFiles.length} fotoğraf seçildi` : '';
-  fotoFiles.forEach((file, index) => {
+function toplamFotoSayisi() {
+  return Object.values(odaFotolar).reduce((t, arr) => t + arr.length, 0);
+}
+
+function odaFotoSecildi(input, oda) {
+  const mevcutToplam = toplamFotoSayisi();
+  const yeniDosyalar = Array.from(input.files);
+  const eklenebilecek = MAKS_FOTO - mevcutToplam;
+
+  if (eklenebilecek <= 0) {
+    document.getElementById('fotoUyari').style.display = 'block';
+    input.value = '';
+    return;
+  }
+
+  const eklenecekler = yeniDosyalar.slice(0, eklenebilecek);
+  odaFotolar[oda] = [...odaFotolar[oda], ...eklenecekler];
+  input.value = '';
+
+  if (yeniDosyalar.length > eklenebilecek) {
+    document.getElementById('fotoUyari').style.display = 'block';
+  } else {
+    document.getElementById('fotoUyari').style.display = 'none';
+  }
+
+  odaGridGuncelle(oda);
+  toplamSayacGuncelle();
+}
+
+function odaGridGuncelle(oda) {
+  const grid = document.getElementById('grid-' + oda);
+  const sayac = document.getElementById('sayi-' + oda);
+  const dosyalar = odaFotolar[oda];
+
+  sayac.textContent = dosyalar.length > 0 ? `${dosyalar.length} fotoğraf` : 'Fotoğraf eklenmedi';
+  grid.innerHTML = '';
+
+  dosyalar.forEach((file, index) => {
     const reader = new FileReader();
     reader.onload = e => {
       const thumb = document.createElement('div');
-      thumb.className = 'photo-thumb';
-      thumb.innerHTML = `<img src="${e.target.result}"><button class="photo-remove" onclick="fotosil(${index})">✕</button>`;
-      preview.appendChild(thumb);
+      thumb.className = 'oda-foto-thumb';
+      thumb.innerHTML = `
+        <img src="${e.target.result}">
+        <button class="oda-foto-sil" onclick="odaFotoSil('${oda}',${index})">✕</button>`;
+      grid.appendChild(thumb);
     };
     reader.readAsDataURL(file);
   });
 }
 
-function fotosil(index) { fotoFiles.splice(index,1); previewGuncelle(); }
+function odaFotoSil(oda, index) {
+  odaFotolar[oda].splice(index, 1);
+  odaGridGuncelle(oda);
+  toplamSayacGuncelle();
+  document.getElementById('fotoUyari').style.display = 'none';
+}
+
+function toplamSayacGuncelle() {
+  document.getElementById('toplamFotoSayi').textContent = toplamFotoSayisi();
+}
 
 async function ilanYayinla() {
   const baslik = document.getElementById('baslik').value.trim();
@@ -778,16 +1062,27 @@ async function ilanYayinla() {
   const btn = document.getElementById('yayinlaBtn');
   btn.textContent = '⏳ Yayınlanıyor...'; btn.disabled = true; errEl.style.display = 'none';
 
-  let foto_url = null, foto_urls = [];
-  for (let i = 0; i < fotoFiles.length; i++) {
-    const file = fotoFiles[i];
-    const fileName = `${currentUser.id}/${Date.now()}_${i}_${file.name}`;
-    btn.textContent = `⏳ Fotoğraf yükleniyor ${i+1}/${fotoFiles.length}...`;
-    const { data: ud } = await sb.storage.from('ilan-fotograflar').upload(fileName, file);
-    if (ud) {
-      const { data: urlData } = sb.storage.from('ilan-fotograflar').getPublicUrl(fileName);
-      foto_urls.push(urlData.publicUrl);
-      if (i === 0) foto_url = urlData.publicUrl;
+  // Oda fotoğraflarını yükle
+  const odaFotoURLler = {};
+  let tumURLler = [];
+  let ilkFotoURL = null;
+  let fotoIndex = 0;
+  const toplamFoto = toplamFotoSayisi();
+
+  for (const [oda, dosyalar] of Object.entries(odaFotolar)) {
+    if (dosyalar.length === 0) continue;
+    odaFotoURLler[oda] = [];
+    for (const file of dosyalar) {
+      fotoIndex++;
+      btn.textContent = `⏳ Fotoğraf yükleniyor ${fotoIndex}/${toplamFoto}...`;
+      const fileName = `${currentUser.id}/${Date.now()}_${fotoIndex}_${file.name}`;
+      const { data: ud } = await sb.storage.from('ilan-fotograflar').upload(fileName, file);
+      if (ud) {
+        const { data: urlData } = sb.storage.from('ilan-fotograflar').getPublicUrl(fileName);
+        odaFotoURLler[oda].push(urlData.publicUrl);
+        tumURLler.push(urlData.publicUrl);
+        if (!ilkFotoURL) ilkFotoURL = urlData.publicUrl;
+      }
     }
   }
 
@@ -810,13 +1105,17 @@ async function ilanYayinla() {
     dis_ozellikler: getCokluSecim('disOzellikler'),
   };
 
+  btn.textContent = '⏳ İlan kaydediliyor...';
+
   const { error } = await sb.from('ilanlar').insert({
     user_id: currentUser.id, baslik, fiyat: Number(fiyat),
     tip: seciliTip, konum,
     oda_sayisi: getSecim('odaSayisi') || null,
     metrekare: document.getElementById('m2net').value ? Number(document.getElementById('m2net').value) : null,
     aciklama: document.getElementById('aciklama').value.trim() || null,
-    foto_url, foto_urls: foto_urls.length > 0 ? foto_urls : null,
+    foto_url: ilkFotoURL,
+    foto_urls: tumURLler.length > 0 ? tumURLler : null,
+    oda_fotograflari: Object.keys(odaFotoURLler).length > 0 ? odaFotoURLler : null,
     one_cikan: oneCikan, kriterler
   });
 
@@ -828,7 +1127,7 @@ async function ilanYayinla() {
   document.getElementById('successOverlay').classList.add('show');
 }
 
-// ─── ALICI FONKSİYONLARI ───
+// ALICI FONKSİYONLARI
 function aliciTekSec(grup, el) {
   document.querySelectorAll(`#apg-${grup} .sec-btn`).forEach(b => b.classList.remove('active'));
   el.classList.add('active');
@@ -883,18 +1182,14 @@ async function aliciKaydet() {
   aliciState.sehir = sehir;
   aliciState.kotAltiOlmasin = kotAltiOlmasin;
 
-  // Önce varsa eski arayış ilanını sil (her kullanıcının 1 aktif arayışı olsun)
   await sb.from('arayan_ilanlar').delete().eq('user_id', currentUser.id);
 
   const konumTam = [konum, sehir].filter(Boolean).join(', ');
   const baslik = `${aliciState.oda?.length ? aliciState.oda.join('/') : 'Her türlü'} ${aliciState.emlak?.length ? aliciState.emlak[0].replace(/[🏢🏡🏠🏘️🏗️🏪]/g,'').trim() : 'Emlak'} Arıyorum`;
 
   const { error } = await sb.from('arayan_ilanlar').insert({
-    user_id: currentUser.id,
-    baslik,
-    konum: konumTam,
-    fiyat_min: aliciState.minFiyat,
-    fiyat_max: aliciState.maxFiyat,
+    user_id: currentUser.id, baslik, konum: konumTam,
+    fiyat_min: aliciState.minFiyat, fiyat_max: aliciState.maxFiyat,
     emlak_tipi: aliciState.emlak?.length ? aliciState.emlak.join(',') : null,
     oda_sayisi: aliciState.oda?.length ? aliciState.oda.join(',') : null,
     kriterler: aliciState
@@ -906,14 +1201,10 @@ async function aliciKaydet() {
     btn.textContent = '🔍 Aramayı Kaydet & Başla'; btn.disabled = false; return;
   }
 
-  // localStorage'a da kaydet (eslesmeler.html kullanacak)
   localStorage.setItem('gotapu_tercihler', JSON.stringify({
-    ...aliciState,
-    sehir: sehir,
-    minFiyat: aliciState.minFiyat,
-    maxFiyat: aliciState.maxFiyat,
-    minM2: aliciState.minM2,
-    maxM2: aliciState.maxM2,
+    ...aliciState, sehir,
+    minFiyat: aliciState.minFiyat, maxFiyat: aliciState.maxFiyat,
+    minM2: aliciState.minM2, maxM2: aliciState.maxM2,
   }));
 
   document.getElementById('aliciSuccessOverlay').classList.add('show');
