@@ -3,7 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Gotapu — Ana Sayfa</title>
+<title>GoTapu — Türkiye'nin Emlak Platformu | Kiralık & Satılık İlanlar</title>
+
+<!-- SEO Meta Tags -->
+<meta name="description" content="GoTapu ile Ankara, İstanbul ve tüm Türkiye'de kiralık ve satılık daire, villa, arsa ilanlarını ücretsiz yayınla. Komisyonsuz, hızlı, güvenli emlak platformu.">
+<meta name="keywords" content="kiralık daire, satılık daire, emlak, ankara kiralık, istanbul satılık, türkiye emlak, ücretsiz ilan, gotapu">
+<meta name="robots" content="index, follow">
+<meta name="author" content="GoTapu">
+<link rel="canonical" href="https://www.gotapu.com/">
+
+<!-- Open Graph -->
+<meta property="og:title" content="GoTapu — Türkiye'nin Emlak Platformu">
+<meta property="og:description" content="Ankara, İstanbul ve tüm Türkiye'de kiralık & satılık emlak ilanları. Komisyonsuz, ücretsiz ilan ver.">
+<meta property="og:url" content="https://www.gotapu.com/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://www.gotapu.com/icons/icon-512.png">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:site_name" content="GoTapu">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GoTapu — Türkiye'nin Emlak Platformu">
+<meta name="twitter:description" content="Kiralık & satılık emlak ilanları. Komisyonsuz, ücretsiz.">
+<meta name="twitter:image" content="https://www.gotapu.com/icons/icon-512.png">
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  "name": "GoTapu",
+  "description": "Türkiye'nin komisyonsuz emlak platformu. Ankara, İstanbul ve tüm Türkiye'de kiralık ve satılık ilan.",
+  "url": "https://www.gotapu.com",
+  "logo": "https://www.gotapu.com/icons/icon-512.png",
+  "areaServed": [
+    {"@type": "City", "name": "Ankara"},
+    {"@type": "City", "name": "İstanbul"},
+    {"@type": "Country", "name": "Türkiye"}
+  ],
+  "priceRange": "Ücretsiz",
+  "address": {"@type": "PostalAddress", "addressCountry": "TR"}
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "GoTapu",
+  "url": "https://www.gotapu.com",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.gotapu.com/index.html?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -64,109 +120,36 @@
   /* MASAÜSTÜ */
   @media (min-width: 900px) {
     body { padding-bottom: 0 !important; }
-
-    /* Nav masaüstü */
-    .top-nav {
-      padding: 0 40px !important;
-      height: 64px !important;
-    }
+    .top-nav { padding: 0 40px !important; height: 64px !important; }
     .nav-logo { font-size: 22px !important; }
-    .nav-btn {
-      padding: 10px 24px !important;
-      font-size: 15px !important;
-    }
-
-    /* Bottom nav masaüstünde gizle */
+    .nav-btn { padding: 10px 24px !important; font-size: 15px !important; }
     .bottom-nav { display: none !important; }
-
-    /* Page tam genişlik */
-    .page {
-      max-width: 1400px !important;
-      margin: 0 auto !important;
-      padding: 80px 40px 40px !important;
-    }
-
-    /* 3 sütunlu layout */
+    .page { max-width: 1400px !important; margin: 0 auto !important; padding: 80px 40px 40px !important; }
     .desktop-layout {
       display: grid !important;
       grid-template-columns: 280px 1fr 300px;
-      gap: 28px;
-      align-items: start;
+      gap: 28px; align-items: start;
     }
-
-    .desktop-sol {
-      display: block !important;
-      position: sticky;
-      top: 80px;
-    }
-
+    .desktop-sol { display: block !important; position: sticky; top: 80px; }
     .desktop-orta { min-width: 0; }
-
-    .desktop-sag {
-      display: block !important;
-      position: sticky;
-      top: 80px;
-    }
-
-    /* Hizmetler solu için 3 sütun */
-    .desktop-sol .services-grid {
-      grid-template-columns: repeat(3, 1fr) !important;
-      gap: 8px;
-    }
-    .desktop-sol .service-item {
-      padding: 10px 4px;
-    }
+    .desktop-sag { display: block !important; position: sticky; top: 80px; }
+    .desktop-sol .services-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px; }
+    .desktop-sol .service-item { padding: 10px 4px; }
     .desktop-sol .service-em { font-size: 22px; }
     .desktop-sol .service-lbl { font-size: 10px; }
-
-    /* İlanlar masaüstünde kart grid */
-    #ilanlarList {
-      display: grid !important;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-    }
-    .ilan-item {
-      flex-direction: column !important;
-      align-items: flex-start !important;
-      margin-bottom: 0 !important;
-      height: 100%;
-    }
-    .ilan-thumb {
-      width: 100% !important;
-      height: 180px !important;
-      border-radius: var(--radius) !important;
-    }
-
-    /* Arama ve filtreler masaüstü */
+    #ilanlarList { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .ilan-item { flex-direction: column !important; align-items: flex-start !important; margin-bottom: 0 !important; height: 100%; }
+    .ilan-thumb { width: 100% !important; height: 180px !important; border-radius: var(--radius) !important; }
     .search-bar { padding: 12px 20px; font-size: 16px; }
     .search-bar input { font-size: 16px; }
-
-    /* Mobile only gizle */
     .mobile-only { display: none !important; }
-
-    /* Sağ panel kartları */
     .desktop-sag .promo { margin-top: 0; }
-    .sag-kart {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-    .sag-kart-baslik {
-      font-size: 13px;
-      font-weight: 900;
-      color: var(--text3);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 12px;
-    }
+    .sag-kart { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+    .sag-kart-baslik { font-size: 13px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
   }
 
   @media (min-width: 1200px) {
-    #ilanlarList {
-      grid-template-columns: repeat(3, 1fr) !important;
-    }
+    #ilanlarList { grid-template-columns: repeat(3, 1fr) !important; }
   }
 </style>
 </head>
@@ -226,7 +209,7 @@
     <!-- ORTA PANEL - İlanlar -->
     <div class="desktop-orta">
       <div class="section-head">
-        <div class="section-title">Öne Çıkan İlanlar</div>
+        <div class="section-title" id="bolumBaslik">Öne Çıkan İlanlar</div>
         <span id="sayfaBilgi" style="font-size:12px;color:var(--text3);font-weight:700"></span>
       </div>
       <div id="ilanlarList"><div class="spinner"></div></div>
@@ -340,9 +323,9 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
   listEl.innerHTML = '<div class="spinner"></div>';
   document.getElementById('pagination').innerHTML = '';
 
+  // Tüm onaylı ilanları say (öne çıkan + normal)
   let countQuery = sb.from('ilanlar')
     .select('*', { count: 'exact', head: true })
-    .eq('one_cikan', true)
     .eq('onay_durumu', 'onaylandi')
     .neq('tip', 'devren');
   if (filtre === 'satilik') countQuery = countQuery.eq('tip', 'satilik');
@@ -356,11 +339,12 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
   const from = (sayfa - 1) * SAYFA_BOYUTU;
   const to = from + SAYFA_BOYUTU - 1;
 
+  // Öne çıkanlar önce, sonra diğerleri
   let query = sb.from('ilanlar')
     .select('*')
-    .eq('one_cikan', true)
     .eq('onay_durumu', 'onaylandi')
     .neq('tip', 'devren')
+    .order('one_cikan', { ascending: false })
     .order('created_at', { ascending: false })
     .range(from, to);
   if (filtre === 'satilik') query = query.eq('tip', 'satilik');
@@ -369,20 +353,27 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
 
   const { data, error } = await query;
 
+  // Başlık güncelle
+  const bolumBaslik = document.getElementById('bolumBaslik');
+  if (bolumBaslik) {
+    const oneCikanVar = data && data.some(i => i.one_cikan);
+    bolumBaslik.textContent = oneCikanVar ? 'Öne Çıkan İlanlar & Tüm İlanlar' : 'Tüm İlanlar';
+  }
+
   if (error || !data || data.length === 0) {
-    listEl.innerHTML = `<div class="empty"><div class="empty-icon">🏠</div><div class="empty-title">Öne çıkan ilan yok</div><div class="empty-desc">Henüz premium ilan bulunmuyor</div></div>`;
+    listEl.innerHTML = `<div class="empty"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div><div class="empty-desc">İlk ilanı ekleyen siz olun!</div><a href="ilan-ver.html" class="btn btn-gold btn-md" style="margin-top:16px;max-width:200px">+ İlan Ver</a></div>`;
     return;
   }
 
   listEl.innerHTML = data.map(ilan => `
-    <a class="ilan-item one-cikan-ilan" href="ilan-detay.html?id=${ilan.id}">
+    <a class="ilan-item ${ilan.one_cikan ? 'one-cikan-ilan' : ''}" href="ilan-detay.html?id=${ilan.id}">
       <div class="ilan-thumb">
         ${(ilan.foto_url || (ilan.foto_urls && ilan.foto_urls[0]))
           ? `<img src="${ilan.foto_url || ilan.foto_urls[0]}">`
           : (emojiler[ilan.tip] || '🏠')}
       </div>
       <div class="ilan-info">
-        <div class="ilan-price">${formatFiyat(ilan.fiyat, ilan.tip)} <span style="font-size:11px;color:var(--gold)">⭐</span></div>
+        <div class="ilan-price">${formatFiyat(ilan.fiyat, ilan.tip)} ${ilan.one_cikan ? '<span style="font-size:11px;color:var(--gold)">⭐ Öne Çıkan</span>' : ''}</div>
         <div class="ilan-title">${ilan.baslik}</div>
         <div class="ilan-loc">📍 ${ilan.konum || ''}</div>
         <div class="ilan-tags">
