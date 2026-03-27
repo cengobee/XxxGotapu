@@ -21,6 +21,11 @@
   .konum-select { width: 100%; padding: 12px 14px; background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; outline: none; cursor: pointer; transition: border-color .2s; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
   .konum-select:focus { border-color: var(--gold); }
   .konum-select:disabled { opacity: 0.4; cursor: not-allowed; }
+  .konum-text-input { width: 100%; padding: 12px 14px; box-sizing: border-box; background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; outline: none; transition: border-color .2s; }
+  .konum-text-input:focus { border-color: var(--gold); }
+  .konum-text-input::placeholder { color: var(--text3); font-weight: 500; }
+  .kriter-select { width: 100%; padding: 11px 14px; box-sizing: border-box; background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; outline: none; cursor: pointer; transition: border-color .2s; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  .kriter-select:focus { border-color: var(--gold); }
   .one-cikan-bar { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: border-color .2s; }
   .one-cikan-bar:hover { border-color: var(--gold); }
   .oda-foto-bolum { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
@@ -61,7 +66,7 @@
   .odeme-kapat { width: 100%; padding: 14px; border-radius: 50px; background: var(--card); border: 1.5px solid var(--border); color: var(--text); font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 16px; }
   .success-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; flex-direction: column; z-index: 999; padding: 24px; }
   .success-overlay.show { display: flex; }
-  .hidden { display: none !important; }
+  .gizli { display: none !important; }
   .yuklen-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; z-index: 999; }
   .yuklen-overlay.gizli { display: none; }
 </style>
@@ -104,7 +109,6 @@
 <input type="file" id="fotoInput_otopark" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'otopark')">
 <input type="file" id="fotoInput_garaj" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'garaj')">
 <input type="file" id="fotoInput_havuz" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'havuz')">
-<input type="file" id="fotoInput_spor" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'spor')">
 <input type="file" id="fotoInput_parsel" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'parsel')">
 <input type="file" id="fotoInput_isyeri_ic" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'isyeri_ic')">
 <input type="file" id="fotoInput_isyeri_dis" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'isyeri_dis')">
@@ -126,7 +130,7 @@
       <div class="banka-satir"><div><div class="banka-label">Hesap Sahibi</div><div class="banka-deger">Cengiz Han Gazelci</div></div></div>
       <div class="banka-satir">
         <div><div class="banka-label">IBAN</div><div class="banka-deger">TR68 0001 5001 5800 7329 4099 95</div></div>
-        <button class="banka-kopyala" onclick="kopyala('TR68000150015800732940995',this)">Kopyala</button>
+        <button class="banka-kopyala" onclick="kopyala('TR680015001580073294009995',this)">Kopyala</button>
       </div>
     </div>
     <div class="banka-karti">
@@ -177,18 +181,18 @@
   <div class="form-group">
     <label class="form-label">Emlak Tipi</label>
     <div class="sec-row" id="emlakTipi">
-      <button class="sec-btn active" onclick="secEmlakTipi(this,'daire')">🏢 Daire</button>
-      <button class="sec-btn" onclick="secEmlakTipi(this,'villa')">🏡 Villa</button>
-      <button class="sec-btn" onclick="secEmlakTipi(this,'mustakil')">🏠 Müstakil Ev</button>
-      <button class="sec-btn" onclick="secEmlakTipi(this,'residence')">🏘️ Residence</button>
-      <button class="sec-btn" onclick="secEmlakTipi(this,'yazlik')">🌊 Yazlık</button>
-      <button class="sec-btn" onclick="secEmlakTipi(this,'ciftlik')">🌾 Çiftlik Evi</button>
-      <button class="sec-btn" onclick="secEmlakTipi(this,'arsa')">🏗️ Arsa</button>
-      <button class="sec-btn" onclick="secEmlakTipi(this,'tarla')">🌾 Tarla</button>
-      <button class="sec-btn" onclick="secEmlakTipi(this,'bag_bahce')">🍇 Bağ &amp; Bahçe</button>
-      <button class="sec-btn" onclick="secEmlakTipi(this,'isyeri')">🏪 İşyeri / Ofis</button>
-      <button class="sec-btn" onclick="secEmlakTipi(this,'depo')">🏭 Depo / Fabrika</button>
-      <button class="sec-btn" onclick="secEmlakTipi(this,'buro')">💼 Büro</button>
+      <button class="sec-btn active" data-tip="konut" onclick="secEmlakBtn(this)">🏢 Daire</button>
+      <button class="sec-btn" data-tip="konut" onclick="secEmlakBtn(this)">🏡 Villa</button>
+      <button class="sec-btn" data-tip="konut" onclick="secEmlakBtn(this)">🏠 Müstakil Ev</button>
+      <button class="sec-btn" data-tip="konut" onclick="secEmlakBtn(this)">🏘️ Residence</button>
+      <button class="sec-btn" data-tip="konut" onclick="secEmlakBtn(this)">🌊 Yazlık</button>
+      <button class="sec-btn" data-tip="konut" onclick="secEmlakBtn(this)">🌾 Çiftlik Evi</button>
+      <button class="sec-btn" data-tip="arsa"  onclick="secEmlakBtn(this)">🏗️ Arsa</button>
+      <button class="sec-btn" data-tip="arsa"  onclick="secEmlakBtn(this)">🌾 Tarla</button>
+      <button class="sec-btn" data-tip="arsa"  onclick="secEmlakBtn(this)">🍇 Bağ &amp; Bahçe</button>
+      <button class="sec-btn" data-tip="isyeri" onclick="secEmlakBtn(this)">🏪 İşyeri / Ofis</button>
+      <button class="sec-btn" data-tip="isyeri" onclick="secEmlakBtn(this)">🏭 Depo / Fabrika</button>
+      <button class="sec-btn" data-tip="isyeri" onclick="secEmlakBtn(this)">💼 Büro</button>
     </div>
   </div>
 
@@ -201,21 +205,27 @@
     <input class="input" type="number" id="fiyat" placeholder="ör. 5000000">
   </div>
 
-  <!-- Konum -->
+  <!-- KADEMELİ KONUM -->
   <div class="form-group">
     <label class="form-label">Konum *</label>
     <div class="konum-group">
-      <select class="konum-select" id="ilSec" onchange="ilceDoldur()"><option value="">📍 İl seçiniz...</option></select>
-      <select class="konum-select" id="ilceSec" onchange="mahalleDoldur()" disabled><option value="">İlçe seçiniz...</option></select>
-      <select class="konum-select" id="mahalleSec" onchange="konumGuncelle()" disabled><option value="">Mahalle seçiniz... (isteğe bağlı)</option></select>
-      <input class="input" type="text" id="sokakInput" placeholder="Sokak / Cadde adı (isteğe bağlı)" oninput="konumGuncelle()" style="margin-top:0">
+      <select class="konum-select" id="ilSec" onchange="ilceDoldur()">
+        <option value="">📍 İl seçiniz...</option>
+      </select>
+      <select class="konum-select" id="ilceSec" disabled onchange="konumGuncelle()">
+        <option value="">İlçe seçiniz...</option>
+      </select>
+      <input class="konum-text-input" type="text" id="mahalleInput"
+        placeholder="Mahalle / Cadde / Sokak (isteğe bağlı)"
+        oninput="konumGuncelle()">
     </div>
     <input type="hidden" id="konum">
   </div>
 
-  <!-- KONUT KRİTERLERİ -->
-  <div id="kriterKonut">
+  <!-- ===== KONUT KRİTERLERİ ===== -->
+  <div id="bolumKonut">
     <div class="bolum-baslik">🏠 Konut Özellikleri</div>
+
     <div class="form-group">
       <label class="form-label">Oda + Salon Sayısı</label>
       <div class="sec-row" id="odaSayisi">
@@ -233,6 +243,7 @@
         <button class="sec-btn" onclick="secBtn(this,'odaSayisi')">6+1 ve üzeri</button>
       </div>
     </div>
+
     <div class="form-group">
       <label class="form-label">Banyo Sayısı</label>
       <div class="sec-row" id="banyoSayisi">
@@ -242,27 +253,31 @@
         <button class="sec-btn" onclick="secBtn(this,'banyoSayisi')">4+</button>
       </div>
     </div>
+
     <div class="two-col">
       <div class="form-group"><label class="form-label">Net m²</label><input class="input" type="number" id="m2net" placeholder="ör. 100"></div>
       <div class="form-group"><label class="form-label">Brüt m²</label><input class="input" type="number" id="m2brut" placeholder="ör. 120"></div>
     </div>
+
     <div class="two-col">
       <div class="form-group">
         <label class="form-label">Bulunduğu Kat</label>
-        <select class="input" id="katSec" style="padding:10px">
+        <select class="kriter-select" id="katSec">
           <option value="">Seçiniz</option>
           <option>Bodrum Kat</option><option>Zemin Kat</option><option>Bahçe Katı</option>
-          <option>Yüksek Giriş</option><option>1. Kat</option><option>2. Kat</option>
-          <option>3. Kat</option><option>4. Kat</option><option>5. Kat</option>
-          <option>6. Kat</option><option>7. Kat</option><option>8. Kat</option>
-          <option>9. Kat</option><option>10. Kat</option><option>11-15. Kat</option>
-          <option>16-20. Kat</option><option>20+ Kat</option><option>Çatı Katı / Penthouse</option>
-          <option>Dubleks</option><option>Tripleks</option>
+          <option>Giriş Katı</option><option>Kot 1</option><option>Kot 2</option>
+          <option>Yüksek Giriş</option><option>Asma Kat</option>
+          <option>1. Kat</option><option>2. Kat</option><option>3. Kat</option>
+          <option>4. Kat</option><option>5. Kat</option><option>6. Kat</option>
+          <option>7. Kat</option><option>8. Kat</option><option>9. Kat</option>
+          <option>10. Kat</option><option>11-15. Kat</option><option>16-20. Kat</option>
+          <option>20+ Kat</option><option>Çatı Katı</option><option>Teras Katı</option>
+          <option>Villa Katı</option><option>Dubleks</option><option>Tripleks</option>
         </select>
       </div>
       <div class="form-group">
         <label class="form-label">Bina Kat Sayısı</label>
-        <select class="input" id="katSayisi" style="padding:10px">
+        <select class="kriter-select" id="katSayisi">
           <option value="">Seçiniz</option>
           <option>1</option><option>2</option><option>3</option><option>4</option>
           <option>5</option><option>6</option><option>7</option><option>8</option>
@@ -270,6 +285,7 @@
         </select>
       </div>
     </div>
+
     <div class="form-group">
       <label class="form-label">Bina Yaşı</label>
       <div class="sec-row" id="binaYasi">
@@ -282,21 +298,27 @@
         <button class="sec-btn" onclick="secBtn(this,'binaYasi')">30+ Yıl</button>
       </div>
     </div>
+
     <div class="form-group">
       <label class="form-label">Isıtma Tipi</label>
-      <div class="sec-row" id="isitma">
-        <button class="sec-btn" onclick="secBtn(this,'isitma')">🔥 Doğalgaz Kombi</button>
-        <button class="sec-btn" onclick="secBtn(this,'isitma')">🏢 Merkezi Sistem</button>
-        <button class="sec-btn" onclick="secBtn(this,'isitma')">🏢 Merkezi (Pay Ölçer)</button>
-        <button class="sec-btn" onclick="secBtn(this,'isitma')">❄️ Klima</button>
-        <button class="sec-btn" onclick="secBtn(this,'isitma')">🪵 Soba (Doğalgaz)</button>
-        <button class="sec-btn" onclick="secBtn(this,'isitma')">🪵 Soba (Katı Yakıt)</button>
-        <button class="sec-btn" onclick="secBtn(this,'isitma')">🌡️ Yerden Isıtma</button>
-        <button class="sec-btn" onclick="secBtn(this,'isitma')">☀️ Güneş Enerjisi</button>
-        <button class="sec-btn" onclick="secBtn(this,'isitma')">🔌 Elektrikli</button>
-        <button class="sec-btn" onclick="secBtn(this,'isitma')">Isıtma Yok</button>
-      </div>
+      <select class="kriter-select" id="isitmaSel">
+        <option value="">Seçiniz</option>
+        <option>Kombi (Doğalgaz)</option>
+        <option>Kombi (LPG)</option>
+        <option>Merkezi Isıtma</option>
+        <option>Merkezi (Pay Ölçer)</option>
+        <option>Kat Kaloriferi</option>
+        <option>Klima</option>
+        <option>Yerden Isıtma</option>
+        <option>Güneş Enerjisi</option>
+        <option>Soba (Doğalgaz)</option>
+        <option>Soba (Katı Yakıt)</option>
+        <option>Elektrikli</option>
+        <option>VRF Sistemi</option>
+        <option>Isıtma Yok</option>
+      </select>
     </div>
+
     <div class="form-group">
       <label class="form-label">Cephe</label>
       <div class="sec-row" id="cephe">
@@ -304,40 +326,53 @@
         <button class="sec-btn" onclick="secBtnCoklu(this)">⬇️ Güney</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">➡️ Doğu</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">⬅️ Batı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">↗️ Kuzey-Doğu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">↖️ Kuzey-Batı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">↘️ Güney-Doğu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">↙️ Güney-Batı</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">🏙️ Cadde Cepheli</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">🌊 Deniz Manzaralı</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">🌲 Doğa Manzaralı</button>
       </div>
     </div>
+
     <div class="bolum-baslik">📄 Kullanım &amp; Tapu</div>
+
     <div class="form-group">
       <label class="form-label">Kullanım Durumu</label>
-      <div class="sec-row" id="kullanimDurumu">
-        <button class="sec-btn" onclick="secBtn(this,'kullanimDurumu')">🏠 Boş</button>
-        <button class="sec-btn" onclick="secBtn(this,'kullanimDurumu')">🔑 Kiracılı</button>
-        <button class="sec-btn" onclick="secBtn(this,'kullanimDurumu')">👤 Mülk Sahibi Kullanıyor</button>
-        <button class="sec-btn" onclick="secBtn(this,'kullanimDurumu')">🏗️ Yapım Aşamasında</button>
-      </div>
+      <select class="kriter-select" id="kullanimDurumu">
+        <option value="">Seçiniz</option>
+        <option>Boş</option>
+        <option>Kiracılı</option>
+        <option>Mülk Sahibi Kullanıyor</option>
+        <option>Yapım Aşamasında</option>
+      </select>
     </div>
+
     <div class="form-group">
       <label class="form-label">Tapu Durumu</label>
-      <div class="sec-row" id="tapuDurumu">
-        <button class="sec-btn" onclick="secBtn(this,'tapuDurumu')">✅ Kat Mülkiyeti</button>
-        <button class="sec-btn" onclick="secBtn(this,'tapuDurumu')">📋 Kat İrtifakı</button>
-        <button class="sec-btn" onclick="secBtn(this,'tapuDurumu')">🤝 Hisseli Tapu</button>
-        <button class="sec-btn" onclick="secBtn(this,'tapuDurumu')">🌍 Arsa Tapusu</button>
-        <button class="sec-btn" onclick="secBtn(this,'tapuDurumu')">⏳ Tahsis</button>
-        <button class="sec-btn" onclick="secBtn(this,'tapuDurumu')">📜 Müstakil Tapulu</button>
-      </div>
+      <select class="kriter-select" id="tapuDurumu">
+        <option value="">Seçiniz</option>
+        <option>Kat Mülkiyeti</option>
+        <option>Kat İrtifakı</option>
+        <option>Hisseli Tapu</option>
+        <option>Arsa Tapusu (Üzerinde Yapı Var)</option>
+        <option>Müstakil Tapulu</option>
+        <option>Kooperatif Tapusu</option>
+        <option>Tahsis</option>
+      </select>
     </div>
+
     <div class="form-group">
       <label class="form-label">Eşya Durumu</label>
-      <div class="sec-row" id="esyaDurumu">
-        <button class="sec-btn" onclick="secBtn(this,'esyaDurumu')">🪑 Eşyalı</button>
-        <button class="sec-btn" onclick="secBtn(this,'esyaDurumu')">📦 Yarı Eşyalı</button>
-        <button class="sec-btn" onclick="secBtn(this,'esyaDurumu')">🏚️ Boş</button>
-      </div>
+      <select class="kriter-select" id="esyaDurumu">
+        <option value="">Seçiniz</option>
+        <option>Eşyalı</option>
+        <option>Yarı Eşyalı</option>
+        <option>Eşyasız (Boş)</option>
+      </select>
     </div>
+
     <div class="form-group">
       <label class="form-label">Krediye Uygunluk</label>
       <div class="sec-row" id="krediUygunluk">
@@ -345,33 +380,7 @@
         <button class="sec-btn" onclick="secBtn(this,'krediUygunluk')">❌ Krediye Uygun Değil</button>
       </div>
     </div>
-    <div class="bolum-baslik">🪟 İç Özellikler</div>
-    <div class="form-group">
-      <div class="sec-row" id="icOzellikler">
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🪟 Balkon</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🏡 Bahçe (Özel)</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🚿 Ebeveyn Banyosu</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">👕 Giyinme Odası</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🍽️ Amerikan Mutfak</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🛁 Küvet</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🪟 Çift Camlı</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🔆 Aydınlık Daire</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">📺 Uydu/Kablo TV</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🌐 İnternet (Fiber)</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🔔 Alarm Sistemi</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🔐 Çelik Kapı</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🌡️ Yerden Isıtma</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🪵 Parke/Laminat</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🪨 Seramik/Granit</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🏗️ Depreme Dayanıklı</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">♿ Engelli Uyumlu</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🍳 Ankastre Mutfak</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🌿 Teraslı</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🔥 Şömine</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🎰 Jakuzi</button>
-      </div>
-    </div>
-    <div class="bolum-baslik">🏢 Bina &amp; Site Özellikleri</div>
+
     <div class="form-group">
       <label class="form-label">Site İçinde mi?</label>
       <div class="sec-row" id="siteIcinde">
@@ -379,6 +388,7 @@
         <button class="sec-btn" onclick="secBtn(this,'siteIcinde')">❌ Hayır</button>
       </div>
     </div>
+
     <div class="form-group">
       <label class="form-label">Aidat</label>
       <div class="sec-row" id="aidatDurumu" style="margin-bottom:8px">
@@ -387,154 +397,288 @@
       </div>
       <input class="input" type="number" id="aidatTutar" placeholder="Aidat tutarı (₺/ay)" style="display:none">
     </div>
+
+    <div class="bolum-baslik">🪟 İç Özellikler</div>
+    <div class="form-group">
+      <div class="sec-row" id="icOzellikler">
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🪟 Balkon</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🌿 Teras</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏡 Bahçe (Özel)</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🚿 Ebeveyn Banyosu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">👕 Giyinme Odası</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🍽️ Amerikan Mutfak</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🔧 Ankastre Mutfak</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🛁 Duşakabin</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🛁 Jakuzi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🪟 Çift Camlı Pencere</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🔐 Çelik Kapı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🔔 Alarm Sistemi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">📺 Uydu / Kablo TV</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🌐 İnternet (Fiber)</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🌡️ Yerden Isıtma</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🪵 Parke / Laminat</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🪨 Seramik / Granit</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏗️ Depreme Dayanıklı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">♿ Engelli Uyumlu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🔥 Şömine</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🤖 Akıllı Ev Sistemi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">📦 Kiler / Depo</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🖥️ Görüntülü Diafon</button>
+      </div>
+    </div>
+
+    <div class="bolum-baslik">🏢 Bina &amp; Site Özellikleri</div>
     <div class="form-group">
       <div class="sec-row" id="disOzellikler">
         <button class="sec-btn" onclick="secBtnCoklu(this)">🛗 Asansör</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">🅿️ Kapalı Otopark</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">🚗 Açık Otopark</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🏊 Yüzme Havuzu</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🏋️ Spor Salonu / Fitness</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏊 Yüzme Havuzu (Açık)</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏊 Yüzme Havuzu (Kapalı)</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏋️ Fitness / Spor Salonu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🧖 Sauna / Hamam</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">👮 Güvenlik / Kapıcı</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">📷 Kamera Sistemi</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">🌳 Yeşil Alan</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🎾 Tenis Kortu</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">⚽ Spor Alanı</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🧒 Çocuk Parkı</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🛁 Sauna / Hamam</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏸 Tenis Kortu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">⚽ Basketbol / Spor Alanı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🧒 Çocuk Oyun Parkı</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">🏪 Site İçi Market</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🐕 Evcil Hayvan İzinli</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">⚡ Jeneratör</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">♿ Engelli Erişimi</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">🔌 Elektrikli Araç Şarj</button>
         <button class="sec-btn" onclick="secBtnCoklu(this)">🌞 Güneş Paneli</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🐕 Evcil Hayvan İzinli</button>
       </div>
     </div>
   </div>
+  <!-- /bolumKonut -->
 
-  <!-- ARSA KRİTERLERİ -->
-  <div id="kriterArsa" class="hidden">
-    <div class="bolum-baslik">🏗️ Arazi Özellikleri</div>
+  <!-- ===== ARSA / TARLA / BAĞ BAHÇE KRİTERLERİ ===== -->
+  <div id="bolumArsa" class="gizli">
+    <div class="bolum-baslik">🌍 Arsa / Tarla / Bağ Bahçe Özellikleri</div>
+
     <div class="two-col">
       <div class="form-group"><label class="form-label">Alan (m²)</label><input class="input" type="number" id="arsaM2" placeholder="ör. 500"></div>
       <div class="form-group"><label class="form-label">Alan (Dönüm)</label><input class="input" type="number" id="arsaDonum" placeholder="ör. 2.5" step="0.1"></div>
     </div>
     <div class="form-group">
-      <label class="form-label">Tapu Durumu</label>
-      <div class="sec-row" id="arsaTapu">
-        <button class="sec-btn" onclick="secBtn(this,'arsaTapu')">✅ Müstakil Tapulu</button>
-        <button class="sec-btn" onclick="secBtn(this,'arsaTapu')">🤝 Hisseli Tapu</button>
-        <button class="sec-btn" onclick="secBtn(this,'arsaTapu')">🌍 Arsa Tapusu</button>
-        <button class="sec-btn" onclick="secBtn(this,'arsaTapu')">📜 Tarla Tapusu</button>
-        <button class="sec-btn" onclick="secBtn(this,'arsaTapu')">⏳ Tahsis</button>
-      </div>
+      <label class="form-label">Pafta / Ada / Parsel</label>
+      <input class="input" type="text" id="parselNo" placeholder="isteğe bağlı">
     </div>
+
+    <div class="form-group">
+      <label class="form-label">Tapu Türü</label>
+      <select class="kriter-select" id="arsaTapuTuru">
+        <option value="">Seçiniz</option>
+        <option>Müstakil Tapulu</option>
+        <option>Hisseli Tapu</option>
+        <option>Özel Mülk</option>
+        <option>Hazine</option>
+        <option>Belediye</option>
+        <option>Vakıf Tapusu</option>
+        <option>Tarla Tapusu</option>
+        <option>Tahsis</option>
+      </select>
+    </div>
+
     <div class="form-group">
       <label class="form-label">İmar Durumu</label>
-      <div class="sec-row" id="imarDurumu">
-        <button class="sec-btn" onclick="secBtn(this,'imarDurumu')">✅ İmarlı</button>
-        <button class="sec-btn" onclick="secBtn(this,'imarDurumu')">❌ İmarsız</button>
-        <button class="sec-btn" onclick="secBtn(this,'imarDurumu')">🏗️ Konut İmarlı</button>
-        <button class="sec-btn" onclick="secBtn(this,'imarDurumu')">🏭 Ticari İmarlı</button>
-        <button class="sec-btn" onclick="secBtn(this,'imarDurumu')">🌿 Tarım Arazisi</button>
-        <button class="sec-btn" onclick="secBtn(this,'imarDurumu')">🔄 İmar Değişikliği Sürecinde</button>
-      </div>
+      <select class="kriter-select" id="imarDurumu">
+        <option value="">Seçiniz</option>
+        <option>İmarlı</option>
+        <option>İmarsız</option>
+        <option>Ada İmarlı</option>
+        <option>Köy İmarlı</option>
+        <option>Konut İmarlı</option>
+        <option>Ticaret İmarlı</option>
+        <option>Sanayi İmarlı</option>
+        <option>Turizm İmarlı</option>
+        <option>Tarla / Tarım Arazisi</option>
+        <option>İmar Değişikliği Sürecinde</option>
+      </select>
     </div>
+
     <div class="form-group">
       <label class="form-label">Gabari / Kat İzni</label>
-      <div class="sec-row" id="gabari">
-        <button class="sec-btn" onclick="secBtn(this,'gabari')">2 Kat</button>
-        <button class="sec-btn" onclick="secBtn(this,'gabari')">3 Kat</button>
-        <button class="sec-btn" onclick="secBtn(this,'gabari')">4 Kat</button>
-        <button class="sec-btn" onclick="secBtn(this,'gabari')">5 Kat</button>
-        <button class="sec-btn" onclick="secBtn(this,'gabari')">6+ Kat</button>
-        <button class="sec-btn" onclick="secBtn(this,'gabari')">Belirtilmemiş</button>
-      </div>
+      <select class="kriter-select" id="gabari">
+        <option value="">Seçiniz</option>
+        <option>1 Kat</option><option>2 Kat</option><option>3 Kat</option>
+        <option>4 Kat</option><option>5 Kat</option><option>6+ Kat</option>
+        <option>Serbest</option><option>Belirtilmemiş</option>
+      </select>
     </div>
-    <div class="form-group">
-      <label class="form-label">Özellikler</label>
-      <div class="sec-row" id="arsaOzellikler">
-        <button class="sec-btn" onclick="secBtnCoklu(this)">💧 Suyu Var</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🔌 Elektriği Var</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🛣️ Yola Cepheli</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🏞️ Köşe Parsel</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🌊 Denize Yakın</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🌲 Ormana Yakın</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🌾 Sulak Arazi</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🍇 Bağlık</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🌳 Bahçeli</button>
-      </div>
-    </div>
+
     <div class="form-group">
       <label class="form-label">Krediye Uygunluk</label>
-      <div class="sec-row" id="arsaKredi">
-        <button class="sec-btn" onclick="secBtn(this,'arsaKredi')">✅ Krediye Uygun</button>
-        <button class="sec-btn" onclick="secBtn(this,'arsaKredi')">❌ Krediye Uygun Değil</button>
+      <select class="kriter-select" id="arsaKrediUygun">
+        <option value="">Seçiniz</option>
+        <option>Evet</option>
+        <option>Hayır</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Arazi Özellikleri</label>
+      <div class="sec-row" id="arsaOzellikler">
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🔲 Köşe Parsel</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🛣️ Yola Cepheli</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🌊 Denize Cepheli / Yakın</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏞️ Göle / Nehre Cepheli</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🌲 Ormana Yakın</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏔️ Manzaralı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">⚡ Elektrik Var</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">💧 Su Var</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🔥 Doğalgaz Bağlantısı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🛣️ Yol (Asfalt)</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🧱 Çevre Duvarı Var</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏗️ Ruhsatlı Yapı Mevcut</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">💧 Sulak / Sulama Kanalı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🌳 Ağaçlık</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🫒 Zeytinlik</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🍇 Bağ / Bahçe</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🌾 Tarıma Elverişli</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">⬛ Düz Arazi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">📐 Eğimli Arazi</button>
       </div>
     </div>
   </div>
+  <!-- /bolumArsa -->
 
-  <!-- İŞYERİ KRİTERLERİ -->
-  <div id="kriterIsyeri" class="hidden">
-    <div class="bolum-baslik">🏪 İşyeri Özellikleri</div>
+  <!-- ===== İŞYERİ / DEPO / BÜRO KRİTERLERİ ===== -->
+  <div id="bolumIsyeri" class="gizli">
+    <div class="bolum-baslik">🏪 İşyeri / Depo Özellikleri</div>
+
+    <div class="form-group">
+      <label class="form-label">İşyeri Türü</label>
+      <select class="kriter-select" id="isyeriTuru">
+        <option value="">Seçiniz</option>
+        <option>Dükkan / Mağaza</option>
+        <option>Ofis / Büro</option>
+        <option>Depo / Antrepo</option>
+        <option>Fabrika / Atölye</option>
+        <option>Restoran / Kafe (Hazır)</option>
+        <option>Showroom</option>
+        <option>Fırın (Hazır)</option>
+        <option>Kuaför (Hazır)</option>
+        <option>Eczane Devir</option>
+        <option>Klinik / Muayenehane</option>
+        <option>Eğitim Kurumu</option>
+        <option>Otel / Pansiyon</option>
+        <option>Diğer</option>
+      </select>
+    </div>
+
     <div class="two-col">
-      <div class="form-group"><label class="form-label">Brüt m²</label><input class="input" type="number" id="isyeriM2Brut" placeholder="ör. 200"></div>
-      <div class="form-group"><label class="form-label">Net m²</label><input class="input" type="number" id="isyeriM2Net" placeholder="ör. 180"></div>
+      <div class="form-group"><label class="form-label">Net m²</label><input class="input" type="number" id="isyeriM2net" placeholder="ör. 80"></div>
+      <div class="form-group"><label class="form-label">Brüt m²</label><input class="input" type="number" id="isyeriM2brut" placeholder="ör. 95"></div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Kullanım Şekli</label>
-      <div class="sec-row" id="isyeriKullanim">
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKullanim')">🏪 Dükkan / Mağaza</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKullanim')">💼 Ofis</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKullanim')">🏭 Depo</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKullanim')">🍽️ Restoran / Cafe</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKullanim')">🏥 Klinik / Muayene</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKullanim')">🎓 Eğitim</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKullanim')">🏨 Otel / Pansiyon</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKullanim')">🔧 Atölye / Servis</button>
+
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Bulunduğu Kat</label>
+        <select class="kriter-select" id="isyeriKat">
+          <option value="">Seçiniz</option>
+          <option>Bodrum</option><option>Zemin (Cadde)</option><option>1. Kat</option>
+          <option>2. Kat</option><option>3. Kat</option><option>4. Kat</option>
+          <option>5. Kat ve üzeri</option><option>Çatı Katı</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bina Yaşı</label>
+        <select class="kriter-select" id="isyeriBinaYasi">
+          <option value="">Seçiniz</option>
+          <option>0 (Sıfır)</option><option>1-5 Yıl</option><option>6-10 Yıl</option>
+          <option>11-15 Yıl</option><option>16-20 Yıl</option><option>21+ Yıl</option>
+        </select>
       </div>
     </div>
+
     <div class="form-group">
-      <label class="form-label">Kat</label>
-      <div class="sec-row" id="isyeriKat">
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKat')">Bodrum</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKat')">Zemin</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKat')">1. Kat</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKat')">2. Kat</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKat')">3. Kat</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKat')">4+. Kat</button>
-      </div>
+      <label class="form-label">Isıtma</label>
+      <select class="kriter-select" id="isyeriIsitma">
+        <option value="">Seçiniz</option>
+        <option>Merkezi</option><option>Kombi</option><option>Klima</option>
+        <option>Yerden Isıtma</option><option>Soba</option><option>Yok</option>
+      </select>
     </div>
+
+    <div class="form-group">
+      <label class="form-label">Kullanım Durumu</label>
+      <select class="kriter-select" id="isyeriKullanimDurumu">
+        <option value="">Seçiniz</option>
+        <option>Boş</option>
+        <option>Kiracılı</option>
+        <option>Mal Sahibi Kullanıyor</option>
+        <option>Devir (Halihazır Müşterili)</option>
+      </select>
+    </div>
+
     <div class="form-group">
       <label class="form-label">Tapu Durumu</label>
-      <div class="sec-row" id="isyeriTapu">
-        <button class="sec-btn" onclick="secBtn(this,'isyeriTapu')">✅ Kat Mülkiyeti</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriTapu')">📋 Kat İrtifakı</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriTapu')">🤝 Hisseli</button>
-      </div>
+      <select class="kriter-select" id="isyeriTapuDurumu">
+        <option value="">Seçiniz</option>
+        <option>Kat Mülkiyeti</option>
+        <option>Kat İrtifakı</option>
+        <option>Hisseli Tapu</option>
+        <option>Arsa Tapusu</option>
+      </select>
     </div>
+
     <div class="form-group">
-      <label class="form-label">Özellikler</label>
-      <div class="sec-row" id="isyeriOzellikler">
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🛗 Asansör</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🅿️ Otopark</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🚪 Camlı Vitrin</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🌐 İnternet Altyapısı</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">❄️ Klima</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🔥 Isıtma Sistemi</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🚽 WC / Banyo</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🏗️ Yüksek Tavan</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🚚 Yük Asansörü</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🔌 3 Faz Elektrik</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">🛣️ Cadde Cephesi</button>
-        <button class="sec-btn" onclick="secBtnCoklu(this)">👮 Güvenlik</button>
-      </div>
+      <label class="form-label">Cephe</label>
+      <select class="kriter-select" id="isyeriCephe">
+        <option value="">Seçiniz</option>
+        <option>Caddeye Cepheli</option>
+        <option>Köşe Dükkan</option>
+        <option>Yan Sokak</option>
+        <option>AVM İçi</option>
+        <option>Pasaj İçi</option>
+      </select>
     </div>
+
     <div class="form-group">
       <label class="form-label">Krediye Uygunluk</label>
-      <div class="sec-row" id="isyeriKredi">
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKredi')">✅ Krediye Uygun</button>
-        <button class="sec-btn" onclick="secBtn(this,'isyeriKredi')">❌ Krediye Uygun Değil</button>
+      <div class="sec-row" id="isyeriKrediUygun">
+        <button class="sec-btn" onclick="secBtn(this,'isyeriKrediUygun')">✅ Evet</button>
+        <button class="sec-btn" onclick="secBtn(this,'isyeriKrediUygun')">❌ Hayır</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Aidat (₺/ay)</label>
+      <input class="input" type="number" id="isyeriAidat" placeholder="0 ise boş bırakın">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">İşyeri Özellikleri</label>
+      <div class="sec-row" id="isyeriOzellikler">
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🚻 WC / Tuvalet</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🚿 Banyo</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🍳 Mutfak / Ofis Mutfağı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">📦 Depo Alanı</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏗️ Asma Kat</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🪟 Vitrin Penceresi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🛗 Asansör</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">♿ Engelli Erişimi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">👮 Güvenlik</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">📷 Kamera Sistemi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">⚡ Jeneratör</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🅿️ Kapalı Otopark</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🚗 Açık Otopark</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">❄️ Klima</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🌐 Fiber İnternet</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🔨 Tadilatlı / Lüks</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🚛 TIR / Kamyon Girişi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">📐 Rampa / Yükleme Rampası</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🏗️ Vinç Sistemi</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">❄️ Soğuk Hava Deposu</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">⬆️ Yüksek Tavan (5m+)</button>
+        <button class="sec-btn" onclick="secBtnCoklu(this)">🔌 3 Faz Elektrik</button>
       </div>
     </div>
   </div>
+  <!-- /bolumIsyeri -->
 
   <!-- ÖNER ÇIKAR -->
   <div class="bolum-baslik">⭐ Öne Çıkar</div>
@@ -552,43 +696,49 @@
   <!-- FOTOĞRAFLAR -->
   <div class="bolum-baslik">📷 Fotoğraflar</div>
   <div class="toplam-foto-sayac">📷 Toplam: <span id="toplamFotoSayi">0</span> / 25</div>
-  <div id="odaFotoBolumler">
-    <!-- Dış -->
+
+  <!-- Konut fotoğrafları -->
+  <div id="fotoGrupKonut">
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('dis')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏠</span><div><div class="oda-foto-ad">Dış Görünüm / Bina</div><div class="oda-foto-sayi" id="sayi-dis">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-dis">›</span></div><div class="oda-foto-icerik" id="icerik-dis"><div class="oda-foto-grid" id="grid-dis"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_dis').click()">📷 Fotoğraf Ekle</button></div></div>
-    <!-- Giriş -->
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('giris')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🚪</span><div><div class="oda-foto-ad">Giriş / Koridor</div><div class="oda-foto-sayi" id="sayi-giris">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-giris">›</span></div><div class="oda-foto-icerik" id="icerik-giris"><div class="oda-foto-grid" id="grid-giris"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_giris').click()">📷 Fotoğraf Ekle</button></div></div>
-    <!-- Salon -->
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('salon')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛋️</span><div><div class="oda-foto-ad">Salon</div><div class="oda-foto-sayi" id="sayi-salon">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-salon">›</span></div><div class="oda-foto-icerik" id="icerik-salon"><div class="oda-foto-grid" id="grid-salon"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_salon').click()">📷 Fotoğraf Ekle</button></div></div>
-    <!-- Oturma -->
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('oturma')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🪑</span><div><div class="oda-foto-ad">Oturma Odası</div><div class="oda-foto-sayi" id="sayi-oturma">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-oturma">›</span></div><div class="oda-foto-icerik" id="icerik-oturma"><div class="oda-foto-grid" id="grid-oturma"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_oturma').click()">📷 Fotoğraf Ekle</button></div></div>
-    <!-- Mutfak -->
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('mutfak')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🍳</span><div><div class="oda-foto-ad">Mutfak</div><div class="oda-foto-sayi" id="sayi-mutfak">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-mutfak">›</span></div><div class="oda-foto-icerik" id="icerik-mutfak"><div class="oda-foto-grid" id="grid-mutfak"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_mutfak').click()">📷 Fotoğraf Ekle</button></div></div>
-    <!-- Yatak 1-4 -->
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('yatak1')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛏️</span><div><div class="oda-foto-ad">Yatak Odası 1</div><div class="oda-foto-sayi" id="sayi-yatak1">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-yatak1">›</span></div><div class="oda-foto-icerik" id="icerik-yatak1"><div class="oda-foto-grid" id="grid-yatak1"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_yatak1').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('yatak2')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛏️</span><div><div class="oda-foto-ad">Yatak Odası 2</div><div class="oda-foto-sayi" id="sayi-yatak2">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-yatak2">›</span></div><div class="oda-foto-icerik" id="icerik-yatak2"><div class="oda-foto-grid" id="grid-yatak2"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_yatak2').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('yatak3')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛏️</span><div><div class="oda-foto-ad">Yatak Odası 3</div><div class="oda-foto-sayi" id="sayi-yatak3">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-yatak3">›</span></div><div class="oda-foto-icerik" id="icerik-yatak3"><div class="oda-foto-grid" id="grid-yatak3"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_yatak3').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('yatak4')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛏️</span><div><div class="oda-foto-ad">Yatak Odası 4</div><div class="oda-foto-sayi" id="sayi-yatak4">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-yatak4">›</span></div><div class="oda-foto-icerik" id="icerik-yatak4"><div class="oda-foto-grid" id="grid-yatak4"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_yatak4').click()">📷 Fotoğraf Ekle</button></div></div>
-    <!-- Çocuk, Çalışma, Ebeveyn -->
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('cocuk')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🧸</span><div><div class="oda-foto-ad">Çocuk Odası</div><div class="oda-foto-sayi" id="sayi-cocuk">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-cocuk">›</span></div><div class="oda-foto-icerik" id="icerik-cocuk"><div class="oda-foto-grid" id="grid-cocuk"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_cocuk').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('calisma')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">💻</span><div><div class="oda-foto-ad">Çalışma Odası</div><div class="oda-foto-sayi" id="sayi-calisma">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-calisma">›</span></div><div class="oda-foto-icerik" id="icerik-calisma"><div class="oda-foto-grid" id="grid-calisma"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_calisma').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('ebeveyn')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">👫</span><div><div class="oda-foto-ad">Ebeveyn Suite / Master</div><div class="oda-foto-sayi" id="sayi-ebeveyn">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-ebeveyn">›</span></div><div class="oda-foto-icerik" id="icerik-ebeveyn"><div class="oda-foto-grid" id="grid-ebeveyn"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_ebeveyn').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('kiler')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🗄️</span><div><div class="oda-foto-ad">Kiler / Depo Odası</div><div class="oda-foto-sayi" id="sayi-kiler">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-kiler">›</span></div><div class="oda-foto-icerik" id="icerik-kiler"><div class="oda-foto-grid" id="grid-kiler"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_kiler').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('bodrum')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏚️</span><div><div class="oda-foto-ad">Bodrum / Antre</div><div class="oda-foto-sayi" id="sayi-bodrum">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-bodrum">›</span></div><div class="oda-foto-icerik" id="icerik-bodrum"><div class="oda-foto-grid" id="grid-bodrum"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_bodrum').click()">📷 Fotoğraf Ekle</button></div></div>
-    <!-- Banyo, WC -->
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('banyo1')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🚿</span><div><div class="oda-foto-ad">Banyo 1</div><div class="oda-foto-sayi" id="sayi-banyo1">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-banyo1">›</span></div><div class="oda-foto-icerik" id="icerik-banyo1"><div class="oda-foto-grid" id="grid-banyo1"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_banyo1').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('banyo2')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛁</span><div><div class="oda-foto-ad">Banyo 2 / Ebeveyn</div><div class="oda-foto-sayi" id="sayi-banyo2">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-banyo2">›</span></div><div class="oda-foto-icerik" id="icerik-banyo2"><div class="oda-foto-grid" id="grid-banyo2"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_banyo2').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('wc')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🚽</span><div><div class="oda-foto-ad">WC / Tuvalet</div><div class="oda-foto-sayi" id="sayi-wc">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-wc">›</span></div><div class="oda-foto-icerik" id="icerik-wc"><div class="oda-foto-grid" id="grid-wc"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_wc').click()">📷 Fotoğraf Ekle</button></div></div>
-    <!-- Balkon, Teras, Bahçe, Otopark, Garaj, Havuz, Spor, Parsel, İşyeri -->
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('balkon')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🌿</span><div><div class="oda-foto-ad">Balkon</div><div class="oda-foto-sayi" id="sayi-balkon">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-balkon">›</span></div><div class="oda-foto-icerik" id="icerik-balkon"><div class="oda-foto-grid" id="grid-balkon"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_balkon').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('teras')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🌇</span><div><div class="oda-foto-ad">Teras / Çatı Katı</div><div class="oda-foto-sayi" id="sayi-teras">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-teras">›</span></div><div class="oda-foto-icerik" id="icerik-teras"><div class="oda-foto-grid" id="grid-teras"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_teras').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('bahce')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🌳</span><div><div class="oda-foto-ad">Bahçe / Arazi</div><div class="oda-foto-sayi" id="sayi-bahce">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-bahce">›</span></div><div class="oda-foto-icerik" id="icerik-bahce"><div class="oda-foto-grid" id="grid-bahce"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_bahce').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('otopark')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🚗</span><div><div class="oda-foto-ad">Otopark</div><div class="oda-foto-sayi" id="sayi-otopark">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-otopark">›</span></div><div class="oda-foto-icerik" id="icerik-otopark"><div class="oda-foto-grid" id="grid-otopark"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_otopark').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('garaj')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🚘</span><div><div class="oda-foto-ad">Garaj / Kapalı Otopark</div><div class="oda-foto-sayi" id="sayi-garaj">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-garaj">›</span></div><div class="oda-foto-icerik" id="icerik-garaj"><div class="oda-foto-grid" id="grid-garaj"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_garaj').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('havuz')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏊</span><div><div class="oda-foto-ad">Havuz / Spor Alanı</div><div class="oda-foto-sayi" id="sayi-havuz">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-havuz">›</span></div><div class="oda-foto-icerik" id="icerik-havuz"><div class="oda-foto-grid" id="grid-havuz"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_havuz').click()">📷 Fotoğraf Ekle</button></div></div>
-    <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('parsel')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏞️</span><div><div class="oda-foto-ad">Parsel / Arazi Görünümü</div><div class="oda-foto-sayi" id="sayi-parsel">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-parsel">›</span></div><div class="oda-foto-icerik" id="icerik-parsel"><div class="oda-foto-grid" id="grid-parsel"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_parsel').click()">📷 Fotoğraf Ekle</button></div></div>
-    <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('isyeri_ic')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏪</span><div><div class="oda-foto-ad">İşyeri İç Görünüm</div><div class="oda-foto-sayi" id="sayi-isyeri_ic">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-isyeri_ic">›</span></div><div class="oda-foto-icerik" id="icerik-isyeri_ic"><div class="oda-foto-grid" id="grid-isyeri_ic"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_isyeri_ic').click()">📷 Fotoğraf Ekle</button></div></div>
-    <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('isyeri_dis')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏬</span><div><div class="oda-foto-ad">İşyeri Dış Görünüm</div><div class="oda-foto-sayi" id="sayi-isyeri_dis">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-isyeri_dis">›</span></div><div class="oda-foto-icerik" id="icerik-isyeri_dis"><div class="oda-foto-grid" id="grid-isyeri_dis"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_isyeri_dis').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('diger')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">📷</span><div><div class="oda-foto-ad">Diğer</div><div class="oda-foto-sayi" id="sayi-diger">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-diger">›</span></div><div class="oda-foto-icerik" id="icerik-diger"><div class="oda-foto-grid" id="grid-diger"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_diger').click()">📷 Fotoğraf Ekle</button></div></div>
+  </div>
+  <!-- /fotoGrupKonut -->
+
+  <!-- Arsa fotoğrafları -->
+  <div id="fotoGrupArsa" style="display:none">
+    <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('parsel')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🗺️</span><div><div class="oda-foto-ad">Parsel / Arsa Görünümü</div><div class="oda-foto-sayi" id="sayi-parsel">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-parsel">›</span></div><div class="oda-foto-icerik" id="icerik-parsel"><div class="oda-foto-grid" id="grid-parsel"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_parsel').click()">📷 Fotoğraf Ekle</button></div></div>
+    <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('bahce')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛣️</span><div><div class="oda-foto-ad">Yol / Çevre Görünümü</div><div class="oda-foto-sayi" id="sayi-bahce-arsa">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-bahce-arsa">›</span></div><div class="oda-foto-icerik" id="icerik-bahce-arsa"><div class="oda-foto-grid" id="grid-bahce-arsa"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_bahce').click()">📷 Fotoğraf Ekle</button></div></div>
+    <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('diger')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">📄</span><div><div class="oda-foto-ad">Tapu / Belge Fotoğrafı</div><div class="oda-foto-sayi" id="sayi-diger-arsa">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-diger-arsa">›</span></div><div class="oda-foto-icerik" id="icerik-diger-arsa"><div class="oda-foto-grid" id="grid-diger-arsa"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_diger').click()">📷 Fotoğraf Ekle</button></div></div>
+  </div>
+
+  <!-- İşyeri fotoğrafları -->
+  <div id="fotoGrupIsyeri" style="display:none">
+    <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('isyeri_ic')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏪</span><div><div class="oda-foto-ad">İşyeri İç Görünüm</div><div class="oda-foto-sayi" id="sayi-isyeri_ic">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-isyeri_ic">›</span></div><div class="oda-foto-icerik" id="icerik-isyeri_ic"><div class="oda-foto-grid" id="grid-isyeri_ic"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_isyeri_ic').click()">📷 Fotoğraf Ekle</button></div></div>
+    <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('isyeri_dis')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏬</span><div><div class="oda-foto-ad">İşyeri Dış / Vitrin</div><div class="oda-foto-sayi" id="sayi-isyeri_dis">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-isyeri_dis">›</span></div><div class="oda-foto-icerik" id="icerik-isyeri_dis"><div class="oda-foto-grid" id="grid-isyeri_dis"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_isyeri_dis').click()">📷 Fotoğraf Ekle</button></div></div>
+    <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('otopark')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🅿️</span><div><div class="oda-foto-ad">Otopark / Depo</div><div class="oda-foto-sayi" id="sayi-otopark-is">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-otopark-is">›</span></div><div class="oda-foto-icerik" id="icerik-otopark-is"><div class="oda-foto-grid" id="grid-otopark-is"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_otopark').click()">📷 Fotoğraf Ekle</button></div></div>
+    <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('diger')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">📷</span><div><div class="oda-foto-ad">Diğer</div><div class="oda-foto-sayi" id="sayi-diger-is">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-diger-is">›</span></div><div class="oda-foto-icerik" id="icerik-diger-is"><div class="oda-foto-grid" id="grid-diger-is"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_diger').click()">📷 Fotoğraf Ekle</button></div></div>
   </div>
 
   <div class="bolum-baslik">📝 Açıklama</div>
@@ -625,7 +775,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentUser = null;
 let ilanId = null;
 let seciliTip = 'satilik';
-let seciliEmlakTipi = 'daire';
+let seciliEmlakGrup = 'konut'; // konut | arsa | isyeri
 const MAKS_FOTO = 25;
 const odaFotolar = {
   dis:[], giris:[], salon:[], oturma:[], mutfak:[],
@@ -636,83 +786,106 @@ const odaFotolar = {
   parsel:[], isyeri_ic:[], isyeri_dis:[], diger:[]
 };
 
-// İl/İlçe/Mahalle veritabanı
-const ILLER = ["Adana","Adıyaman","Afyonkarahisar","Ağrı","Amasya","Ankara","Antalya","Artvin","Aydın","Balıkesir","Bilecik","Bingöl","Bitlis","Bolu","Burdur","Bursa","Çanakkale","Çankırı","Çorum","Denizli","Diyarbakır","Edirne","Elazığ","Erzincan","Erzurum","Eskişehir","Gaziantep","Giresun","Gümüşhane","Hakkari","Hatay","Isparta","Mersin","İstanbul","İzmir","Kars","Kastamonu","Kayseri","Kırklareli","Kırşehir","Kocaeli","Konya","Kütahya","Malatya","Manisa","Kahramanmaraş","Mardin","Muğla","Muş","Nevşehir","Niğde","Ordu","Rize","Sakarya","Samsun","Siirt","Sinop","Sivas","Tekirdağ","Tokat","Trabzon","Tunceli","Şanlıurfa","Uşak","Van","Yozgat","Zonguldak","Aksaray","Bayburt","Karaman","Kırıkkale","Batman","Şırnak","Bartın","Ardahan","Iğdır","Yalova","Karabük","Kilis","Osmaniye","Düzce"];
+// ===== 81 İL + İLÇELER =====
+const ILLER = [
+  "Adana","Adıyaman","Afyonkarahisar","Ağrı","Aksaray","Amasya","Ankara","Antalya",
+  "Ardahan","Artvin","Aydın","Balıkesir","Bartın","Batman","Bayburt","Bilecik",
+  "Bingöl","Bitlis","Bolu","Burdur","Bursa","Çanakkale","Çankırı","Çorum",
+  "Denizli","Diyarbakır","Düzce","Edirne","Elazığ","Erzincan","Erzurum",
+  "Eskişehir","Gaziantep","Giresun","Gümüşhane","Hakkari","Hatay","Iğdır",
+  "Isparta","İstanbul","İzmir","Kahramanmaraş","Karabük","Karaman","Kars",
+  "Kastamonu","Kayseri","Kilis","Kırıkkale","Kırklareli","Kırşehir","Kocaeli",
+  "Konya","Kütahya","Malatya","Manisa","Mardin","Mersin","Muğla","Muş",
+  "Nevşehir","Niğde","Ordu","Osmaniye","Rize","Sakarya","Samsun","Siirt",
+  "Sinop","Sivas","Şanlıurfa","Şırnak","Tekirdağ","Tokat","Trabzon","Tunceli",
+  "Uşak","Van","Yalova","Yozgat","Zonguldak"
+];
+
 const ILCELER = {
+  "Adana":["Aladağ","Ceyhan","Çukurova","Feke","İmamoğlu","Karaisalı","Karataş","Kozan","Pozantı","Saimbeyli","Sarıçam","Seyhan","Tufanbeyli","Yumurtalık","Yüreğir"],
   "Ankara":["Altındağ","Akyurt","Ayaş","Bala","Beypazarı","Çamlıdere","Çankaya","Çubuk","Elmadağ","Etimesgut","Evren","Gölbaşı","Güdül","Haymana","Kalecik","Kazan","Keçiören","Kızılcahamam","Mamak","Nallıhan","Polatlı","Pursaklar","Sincan","Şereflikoçhisar","Yenimahalle"],
+  "Antalya":["Akseki","Aksu","Alanya","Demre","Döşemealtı","Elmalı","Finike","Gazipaşa","Gündoğmuş","İbradı","Kaş","Kemer","Kepez","Konyaaltı","Korkuteli","Kumluca","Manavgat","Muratpaşa","Serik"],
+  "Aydın":["Bozdoğan","Buharkent","Çine","Didim","Efeler","Germencik","İncirliova","Karacasu","Karpuzlu","Koçarlı","Köşk","Kuşadası","Kuyucak","Nazilli","Söke","Sultanhisar","Yenipazar"],
+  "Balıkesir":["Altıeylül","Ayvalık","Balya","Bandırma","Bigadiç","Burhaniye","Dursunbey","Edremit","Erdek","Gömeç","Gönen","Havran","İvrindi","Karesi","Kepsut","Manyas","Marmara","Savaştepe","Sındırgı","Susurluk"],
+  "Bursa":["Büyükorhan","Gemlik","Gürsu","Harmancık","İnegöl","İznik","Karacabey","Keles","Kestel","Mudanya","Mustafakemalpaşa","Nilüfer","Orhaneli","Orhangazi","Osmangazi","Yenişehir","Yıldırım"],
+  "Denizli":["Acıpayam","Babadağ","Baklan","Bekilli","Beyağaç","Bozkurt","Buldan","Çal","Çameli","Çardak","Çivril","Güney","Honaz","Kale","Merkezefendi","Pamukkale","Sarayköy","Serinhisar","Tavas"],
+  "Diyarbakır":["Bağlar","Bismil","Çermik","Çınar","Çüngüş","Dicle","Eğil","Ergani","Hani","Hazro","Kayapınar","Kocaköy","Kulp","Lice","Silvan","Sur","Yenişehir"],
+  "Düzce":["Akçakoca","Cumayeri","Çilimli","Düzce Merkez","Gölyaka","Gümüşova","Kaynaşlı","Yığılca"],
+  "Eskişehir":["Alpu","Beylikova","Çifteler","Günyüzü","Han","İnönü","Mahmudiye","Mihalgazi","Mihallıçık","Odunpazarı","Sarıcakaya","Seyitgazi","Sivrihisar","Tepebaşı"],
+  "Gaziantep":["Araban","İslahiye","Karkamış","Nizip","Nurdağı","Oğuzeli","Şahinbey","Şehitkamil","Yavuzeli"],
+  "Hatay":["Altınözü","Antakya","Arsuz","Belen","Defne","Dörtyol","Erzin","Hassa","İskenderun","Kırıkhan","Kumlu","Payas","Reyhanlı","Samandağ","Yayladağı"],
   "İstanbul":["Adalar","Arnavutköy","Ataşehir","Avcılar","Bağcılar","Bahçelievler","Bakırköy","Başakşehir","Bayrampaşa","Beşiktaş","Beykoz","Beylikdüzü","Beyoğlu","Büyükçekmece","Çatalca","Çekmeköy","Esenler","Esenyurt","Eyüpsultan","Fatih","Gaziosmanpaşa","Güngören","Kadıköy","Kağıthane","Kartal","Küçükçekmece","Maltepe","Pendik","Sancaktepe","Sarıyer","Şile","Şişli","Silivri","Sultanbeyli","Sultangazi","Tuzla","Ümraniye","Üsküdar","Zeytinburnu"],
   "İzmir":["Aliağa","Balçova","Bayındır","Bayraklı","Bergama","Beydağ","Bornova","Buca","Çeşme","Çiğli","Dikili","Foça","Gaziemir","Güzelbahçe","Karabağlar","Karaburun","Karşıyaka","Kemalpaşa","Kınık","Kiraz","Konak","Menderes","Menemen","Narlıdere","Ödemiş","Seferihisar","Selçuk","Tire","Torbalı","Urla"],
-  "Bursa":["Büyükorhan","Gemlik","Gürsu","Harmancık","İnegöl","İznik","Karacabey","Keles","Kestel","Mudanya","Mustafakemalpaşa","Nilüfer","Orhaneli","Orhangazi","Osmangazi","Yenişehir","Yıldırım"],
-  "Antalya":["Akseki","Aksu","Alanya","Demre","Döşemealtı","Elmalı","Finike","Gazipaşa","Gündoğmuş","İbradı","Kaş","Kemer","Kepez","Konyaaltı","Korkuteli","Kumluca","Manavgat","Muratpaşa","Serik"],
+  "Kahramanmaraş":["Afşin","Andırın","Çağlayancerit","Dulkadiroğlu","Ekinözü","Elbistan","Göksun","Nurhak","Onikişubat","Pazarcık","Türkoğlu"],
+  "Kayseri":["Akkışla","Bünyan","Develi","Felahiye","Hacılar","İncesu","Kocasinan","Melikgazi","Özvatan","Pınarbaşı","Sarıoğlan","Sarız","Talas","Tomarza","Yahyalı","Yeşilhisar"],
   "Kocaeli":["Başiskele","Çayırova","Darıca","Derince","Dilovası","Gebze","Gölcük","İzmit","Kandıra","Karamürsel","Kartepe","Körfez"],
-  "Muğla":["Bodrum","Dalaman","Datça","Fethiye","Kavaklıdere","Köyceğiz","Marmaris","Menteşe","Milas","Ortaca","Seydikemer","Ula","Yatağan"],
+  "Konya":["Ahırlı","Akören","Akşehir","Altınekin","Beyşehir","Bozkır","Cihanbeyli","Çumra","Ereğli","Karatay","Meram","Sarayönü","Selçuklu","Seydişehir","Yunak"],
+  "Manisa":["Ahmetli","Akhisar","Alaşehir","Demirci","Gölmarmara","Gördes","Kırkağaç","Köprübaşı","Kula","Salihli","Sarıgöl","Saruhanlı","Selendi","Soma","Şehzadeler","Turgutlu","Yunusemre"],
   "Mersin":["Akdeniz","Anamur","Aydıncık","Bozyazı","Çamlıyayla","Erdemli","Gülnar","Mezitli","Mut","Silifke","Tarsus","Toroslar","Yenişehir"],
-  "Konya":["Ahırlı","Akören","Akşehir","Altınekin","Beyşehir","Bozkır","Cihanbeyli","Çumra","Derbent","Ereğli","Karatay","Meram","Sarayönü","Selçuklu","Seydişehir","Yunak"],
-  "Samsun":["19 Mayıs","Alaçam","Atakum","Ayvacık","Bafra","Canik","Çarşamba","Havza","İlkadım","Kavak","Ladik","Tekkeköy","Terme","Vezirköprü"],
-  "Gaziantep":["Araban","İslahiye","Karkamış","Nizip","Nurdağı","Oğuzeli","Şahinbey","Şehitkamil","Yavuzeli"],
-  "Tekirdağ":["Çerkezköy","Çorlu","Ergene","Hayrabolu","Kapaklı","Malkara","Muratlı","Saray","Süleymanpaşa","Şarköy"],
-  "Sakarya":["Adapazarı","Akyazı","Arifiye","Erenler","Ferizli","Geyve","Hendek","Karasu","Kaynarca","Pamukova","Sapanca","Serdivan","Söğütlü"]
-};
-const MAHALLELER = {
-  "Çankaya":["Ayrancı","Bahçelievler","Balgat","Birlik","Emek","Kavaklıdere","Kızılay","Küçükesat","Oran","Tunalı","Yıldız","Çankaya","Dikmen","Gaziosmanpaşa"],
-  "Keçiören":["Bağlarbaşı","Etlik","Kalaba","Kuşcağız","Ovacık","Pınarbaşı","Şentepe"],
-  "Yenimahalle":["Batıkent","Demetevler","Ostim","Şentepe","İvedik"],
-  "Kadıköy":["Acıbadem","Bostancı","Caddebostan","Fenerbahçe","Göztepe","Kozyatağı","Moda","Suadiye","Erenköy"],
-  "Beşiktaş":["Bebek","Etiler","Levent","Ortaköy","Ulus","Arnavutköy","Balmumcu"],
-  "Şişli":["Bomonti","Cumhuriyet","Elmadağ","Halaskargazi","Mecidiyeköy","Nişantaşı"],
-  "Fatih":["Aksaray","Beyazıt","Çarşamba","Kocamustafapaşa","Samatya","Yedikule"],
-  "Bornova":["Altındağ","Doğanlar","Kazımdirik","Naldöken","Yamanlar"],
-  "Konak":["Alsancak","Basmane","Çankaya","Eşrefpaşa","Göztepe","Hatay","Karabağlar"],
-  "Nilüfer":["Beşevler","Bursa Merkez","Çalı","Görükle","İhsaniye"],
-  "Osmangazi":["Demirtaş","Dobruca","Heykel","Santral"],
-  "Muratpaşa":["Bahçelievler","Deniz","Fener","Güzeloba","Kışla","Meltem","Sinan"],
-  "Kepez":["Altınova","Dokuma","Göksu","Yavuz Selim"],
-  "Konyaaltı":["Arapsuyu","Dağkuyu","Hurma","Liman"]
+  "Muğla":["Bodrum","Dalaman","Datça","Fethiye","Kavaklıdere","Köyceğiz","Marmaris","Menteşe","Milas","Ortaca","Seydikemer","Ula","Yatağan"],
+  "Sakarya":["Adapazarı","Akyazı","Arifiye","Erenler","Ferizli","Geyve","Hendek","Karasu","Kaynarca","Pamukova","Sapanca","Serdivan","Söğütlü","Taraklı"],
+  "Samsun":["19 Mayıs","Alaçam","Atakum","Ayvacık","Bafra","Canik","Çarşamba","Havza","İlkadım","Kavak","Ladik","Tekkeköy","Terme","Vezirköprü","Yakakent"],
+  "Şanlıurfa":["Akçakale","Birecik","Bozova","Ceylanpınar","Eyyübiye","Halfeti","Haliliye","Harran","Hilvan","Karaköprü","Siverek","Suruç","Viranşehir"],
+  "Tekirdağ":["Çerkezköy","Çorlu","Ergene","Hayrabolu","Kapaklı","Malkara","Marmaraereğlisi","Muratlı","Saray","Süleymanpaşa","Şarköy"],
+  "Trabzon":["Akçaabat","Araklı","Arsin","Beşikdüzü","Çarşıbaşı","Çaykara","Dernekpazarı","Düzköy","Hayrat","Köprübaşı","Maçka","Of","Ortahisar","Sürmene","Şalpazarı","Tonya","Vakfıkebir","Yomra"],
+  "Van":["Bahçesaray","Başkale","Çaldıran","Çatak","Edremit","Erciş","Gevaş","Gürpınar","İpekyolu","Muradiye","Özalp","Saray","Tuşba"],
+  "Yalova":["Altınova","Armutlu","Çınarcık","Çiftlikköy","Merkez","Termal"]
 };
 
+// ===== İL / İLÇE =====
 function illerDoldur(id) {
   const sel = document.getElementById(id);
   if (!sel) return;
-  ILLER.forEach(il => { const o = document.createElement('option'); o.value = o.textContent = il; sel.appendChild(o); });
+  ILLER.forEach(il => {
+    const o = document.createElement('option');
+    o.value = o.textContent = il;
+    sel.appendChild(o);
+  });
 }
+
 function ilceDoldur() {
   const il = document.getElementById('ilSec').value;
   const ilceSel = document.getElementById('ilceSec');
-  const mahSel = document.getElementById('mahalleSec');
   ilceSel.innerHTML = '<option value="">İlçe seçiniz...</option>';
-  mahSel.innerHTML = '<option value="">Mahalle seçiniz... (isteğe bağlı)</option>'; mahSel.disabled = true;
   if (!il) { ilceSel.disabled = true; konumGuncelle(); return; }
-  (ILCELER[il]||[]).forEach(ilce => { const o = document.createElement('option'); o.value = o.textContent = ilce; ilceSel.appendChild(o); });
-  ilceSel.disabled = false; konumGuncelle();
+  const ilceler = ILCELER[il] || [];
+  ilceler.forEach(ilce => {
+    const o = document.createElement('option');
+    o.value = o.textContent = ilce;
+    ilceSel.appendChild(o);
+  });
+  ilceSel.disabled = ilceler.length === 0;
+  konumGuncelle();
 }
-function mahalleDoldur() {
-  const ilce = document.getElementById('ilceSec').value;
-  const mahSel = document.getElementById('mahalleSec');
-  mahSel.innerHTML = '<option value="">Mahalle seçiniz... (isteğe bağlı)</option>';
-  (MAHALLELER[ilce]||[]).forEach(m => { const o = document.createElement('option'); o.value = o.textContent = m; mahSel.appendChild(o); });
-  mahSel.disabled = false; konumGuncelle();
-}
+
 function konumGuncelle() {
   const il = document.getElementById('ilSec').value;
   const ilce = document.getElementById('ilceSec').value;
-  const mah = document.getElementById('mahalleSec').value;
-  const sokak = document.getElementById('sokakInput').value.trim();
-  document.getElementById('konum').value = [sokak, mah, ilce, il].filter(Boolean).join(', ');
+  const mahalle = document.getElementById('mahalleInput').value.trim();
+  document.getElementById('konum').value = [mahalle, ilce, il].filter(Boolean).join(', ');
+}
+
+// ===== EMlak TİPİ DİNAMİK =====
+function secEmlakBtn(el) {
+  document.querySelectorAll('#emlakTipi .sec-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const grup = el.getAttribute('data-tip');
+  seciliEmlakGrup = grup;
+  _emlakGrupGoster(grup);
+}
+
+function _emlakGrupGoster(grup) {
+  document.getElementById('bolumKonut').classList.toggle('gizli', grup !== 'konut');
+  document.getElementById('bolumArsa').classList.toggle('gizli', grup !== 'arsa');
+  document.getElementById('bolumIsyeri').classList.toggle('gizli', grup !== 'isyeri');
+  document.getElementById('fotoGrupKonut').style.display = grup === 'konut' ? '' : 'none';
+  document.getElementById('fotoGrupArsa').style.display = grup === 'arsa' ? '' : 'none';
+  document.getElementById('fotoGrupIsyeri').style.display = grup === 'isyeri' ? '' : 'none';
 }
 
 function secTip(el, tip) {
   document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active'); seciliTip = tip;
-}
-function secEmlakTipi(el, tip) {
-  document.querySelectorAll('#emlakTipi .sec-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active'); seciliEmlakTipi = tip;
-  const konut = ['daire','villa','mustakil','residence','yazlik','ciftlik'];
-  const arsa = ['arsa','tarla','bag_bahce'];
-  const isyeri = ['isyeri','depo','buro'];
-  document.getElementById('kriterKonut').classList.toggle('hidden', !konut.includes(tip));
-  document.getElementById('kriterArsa').classList.toggle('hidden', !arsa.includes(tip));
-  document.getElementById('kriterIsyeri').classList.toggle('hidden', !isyeri.includes(tip));
 }
 function secBtn(el, grupId) {
   document.getElementById(grupId).querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
@@ -722,6 +895,7 @@ function secBtnCoklu(el) { el.classList.toggle('active'); }
 function toggleAidat(goster) { document.getElementById('aidatTutar').style.display = goster ? 'block' : 'none'; }
 function odemeAc() { document.getElementById('odemeModal').classList.add('open'); document.body.style.overflow = 'hidden'; }
 function odemeKapat() { document.getElementById('odemeModal').classList.remove('open'); document.body.style.overflow = ''; }
+
 function kopyala(metin, btn) {
   navigator.clipboard.writeText(metin).then(() => {
     const eski = btn.textContent; btn.textContent = '✓ Kopyalandı';
@@ -730,23 +904,27 @@ function kopyala(metin, btn) {
   });
 }
 
+// ===== FOTOĞRAF =====
 function odaToggle(oda) {
-  document.getElementById('icerik-' + oda).classList.toggle('acik');
-  document.getElementById('ok-' + oda).classList.toggle('acik');
+  const ic = document.getElementById('icerik-' + oda);
+  const ok = document.getElementById('ok-' + oda);
+  if (ic) ic.classList.toggle('acik');
+  if (ok) ok.classList.toggle('acik');
 }
 function toplamFotoSayisi() { return Object.values(odaFotolar).reduce((t,a) => t+a.length, 0); }
 function toplamSayacGuncelle() { document.getElementById('toplamFotoSayi').textContent = toplamFotoSayisi(); }
 function odaFotoSecildi(input, oda) {
   const eklenebilecek = MAKS_FOTO - toplamFotoSayisi();
   if (eklenebilecek <= 0) { input.value = ''; return; }
-  odaFotolar[oda] = [...odaFotolar[oda], ...Array.from(input.files).slice(0, eklenebilecek)];
+  odaFotolar[oda] = [...(odaFotolar[oda]||[]), ...Array.from(input.files).slice(0, eklenebilecek)];
   input.value = ''; odaGridGuncelle(oda); toplamSayacGuncelle();
 }
 function odaGridGuncelle(oda) {
   const grid = document.getElementById('grid-' + oda);
   const sayac = document.getElementById('sayi-' + oda);
-  const dosyalar = odaFotolar[oda];
-  sayac.textContent = dosyalar.length > 0 ? `${dosyalar.length} fotoğraf` : 'Fotoğraf eklenmedi';
+  if (!grid) return;
+  const dosyalar = odaFotolar[oda] || [];
+  if (sayac) sayac.textContent = dosyalar.length > 0 ? `${dosyalar.length} fotoğraf` : 'Fotoğraf eklenmedi';
   grid.innerHTML = '';
   dosyalar.forEach((file, i) => {
     const reader = new FileReader();
@@ -760,27 +938,45 @@ function odaGridGuncelle(oda) {
 }
 function odaFotoSil(oda, i) { odaFotolar[oda].splice(i,1); odaGridGuncelle(oda); toplamSayacGuncelle(); }
 
+// ===== YARDIMCI FONKSİYONLAR =====
 function getSecim(grupId) {
   const g = document.getElementById(grupId); if (!g) return null;
   const a = g.querySelector('.sec-btn.active'); return a ? a.textContent.trim() : null;
+}
+function getSelectVal(id) {
+  const el = document.getElementById(id);
+  return el ? (el.value || null) : null;
 }
 function getCokluSecim(grupId) {
   const g = document.getElementById(grupId); if (!g) return [];
   return [...g.querySelectorAll('.sec-btn.active')].map(b => b.textContent.trim());
 }
 
-// Mevcut ilan verilerini forma doldur
+// Buton seçim yardımcıları (ilan yüklerken kullanılır)
 function btnSec(grupId, deger) {
   if (!deger) return;
   const g = document.getElementById(grupId); if (!g) return;
-  g.querySelectorAll('.sec-btn').forEach(b => { if (b.textContent.trim() === deger || b.textContent.includes(deger)) b.classList.add('active'); });
+  g.querySelectorAll('.sec-btn').forEach(b => {
+    if (b.textContent.trim() === deger) b.classList.add('active');
+  });
 }
 function cokluBtnSec(grupId, degerler) {
   if (!degerler || !degerler.length) return;
   const g = document.getElementById(grupId); if (!g) return;
-  g.querySelectorAll('.sec-btn').forEach(b => { if (degerler.some(d => b.textContent.includes(d))) b.classList.add('active'); });
+  g.querySelectorAll('.sec-btn').forEach(b => {
+    if (degerler.includes(b.textContent.trim())) b.classList.add('active');
+  });
+}
+function selectSec(id, deger) {
+  if (!deger) return;
+  const el = document.getElementById(id); if (!el) return;
+  // Tam eşleşme dene
+  for (const opt of el.options) {
+    if (opt.value === deger || opt.textContent === deger) { el.value = opt.value; return; }
+  }
 }
 
+// ===== İLAN YÜKLE =====
 async function ilanYukle() {
   const params = new URLSearchParams(window.location.search);
   ilanId = params.get('id');
@@ -793,69 +989,118 @@ async function ilanYukle() {
   const { data: ilan, error } = await sb.from('ilanlar').select('*').eq('id', ilanId).eq('user_id', currentUser.id).single();
   if (error || !ilan) { alert('İlan bulunamadı veya erişim yetkiniz yok.'); history.back(); return; }
 
-  // Forma doldur
+  const kr = ilan.kriterler || {};
+
+  // Temel alanlar
   document.getElementById('baslik').value = ilan.baslik || '';
   document.getElementById('fiyat').value = ilan.fiyat || '';
   if (ilan.aciklama) document.getElementById('aciklama').value = ilan.aciklama;
 
-  // Tip seç
-  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.type-btn').forEach(b => { if (b.getAttribute('onclick')?.includes(`'${ilan.tip}'`)) b.classList.add('active'); });
+  // İlan tipi buton
   seciliTip = ilan.tip || 'satilik';
+  document.querySelectorAll('#ilanTipiRow .type-btn').forEach(b => {
+    const onclick = b.getAttribute('onclick') || '';
+    if (onclick.includes(`'${seciliTip}'`)) b.classList.add('active');
+    else b.classList.remove('active');
+  });
+
+  // Emlak tipi — data-tip ile eşleştir
+  const emlakTipiText = kr.emlak_tipi || '';
+  // Grup belirle
+  const konutTipleri = ['daire','villa','mustakil','residence','yazlik','ciftlik'];
+  const arsaTipleri  = ['arsa','tarla','bag_bahce'];
+  const isyeriTipleri = ['isyeri','depo','buro'];
+  if (konutTipleri.includes(emlakTipiText)) seciliEmlakGrup = 'konut';
+  else if (arsaTipleri.includes(emlakTipiText)) seciliEmlakGrup = 'arsa';
+  else if (isyeriTipleri.includes(emlakTipiText)) seciliEmlakGrup = 'isyeri';
+
+  // Emlak tipi butonunu seç (metin karşılaştırmasıyla)
+  const emlakMetinMap = {
+    daire: '🏢 Daire', villa: '🏡 Villa', mustakil: '🏠 Müstakil Ev',
+    residence: '🏘️ Residence', yazlik: '🌊 Yazlık', ciftlik: '🌾 Çiftlik Evi',
+    arsa: '🏗️ Arsa', tarla: '🌾 Tarla', bag_bahce: '🍇 Bağ & Bahçe',
+    isyeri: '🏪 İşyeri / Ofis', depo: '🏭 Depo / Fabrika', buro: '💼 Büro'
+  };
+  const hedefMetin = emlakMetinMap[emlakTipiText];
+  document.querySelectorAll('#emlakTipi .sec-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === hedefMetin);
+  });
+  _emlakGrupGoster(seciliEmlakGrup);
 
   // Konum
   illerDoldur('ilSec');
-  const kr = ilan.kriterler || {};
   if (kr.il) {
     document.getElementById('ilSec').value = kr.il;
     ilceDoldur();
-    setTimeout(() => {
-      if (kr.ilce) { document.getElementById('ilceSec').value = kr.ilce; mahalleDoldur(); }
-      setTimeout(() => { if (kr.mahalle) document.getElementById('mahalleSec').value = kr.mahalle; }, 100);
-    }, 100);
+    await new Promise(r => setTimeout(r, 50));
+    if (kr.ilce) {
+      document.getElementById('ilceSec').value = kr.ilce;
+    }
   }
-  if (kr.sokak) document.getElementById('sokakInput').value = kr.sokak;
-  document.getElementById('konum').value = ilan.konum || '';
+  // Mahalle/cadde/sokak — artık serbest metin
+  const mahalleVal = kr.mahalle_cadde_sokak || kr.mahalle || kr.sokak || '';
+  document.getElementById('mahalleInput').value = mahalleVal;
+  konumGuncelle();
 
-  // Emlak tipi
-  if (ilan.kriterler?.emlak_tipi) {
-    const btns = document.querySelectorAll('#emlakTipi .sec-btn');
-    btns.forEach(b => b.classList.remove('active'));
-    const tipMap = { daire:'daire', villa:'villa', mustakil:'mustakil', residence:'residence', yazlik:'yazlik', ciftlik:'ciftlik', arsa:'arsa', tarla:'tarla', bag_bahce:'bag_bahce', isyeri:'isyeri', depo:'depo', buro:'buro' };
-    const tip = ilan.kriterler.emlak_tipi;
-    document.querySelectorAll('#emlakTipi .sec-btn').forEach(b => {
-      if (b.getAttribute('onclick')?.includes(`'${tip}'`)) b.classList.add('active');
-    });
-    seciliEmlakTipi = tip;
-    const konut = ['daire','villa','mustakil','residence','yazlik','ciftlik'];
-    const arsaTip = ['arsa','tarla','bag_bahce'];
-    const isyeriTip = ['isyeri','depo','buro'];
-    document.getElementById('kriterKonut').classList.toggle('hidden', !konut.includes(tip));
-    document.getElementById('kriterArsa').classList.toggle('hidden', !arsaTip.includes(tip));
-    document.getElementById('kriterIsyeri').classList.toggle('hidden', !isyeriTip.includes(tip));
+  // ===== KONUT KRİTERLERİ =====
+  if (seciliEmlakGrup === 'konut') {
+    btnSec('odaSayisi', kr.oda_sayisi);
+    btnSec('banyoSayisi', kr.banyo_sayisi);
+    if (ilan.metrekare) document.getElementById('m2net').value = ilan.metrekare;
+    if (kr.m2brut) document.getElementById('m2brut').value = kr.m2brut;
+    selectSec('katSec', kr.kat);
+    selectSec('katSayisi', kr.kat_sayisi);
+    btnSec('binaYasi', kr.bina_yasi);
+    selectSec('isitmaSel', kr.isitma);
+    if (kr.cephe) cokluBtnSec('cephe', Array.isArray(kr.cephe) ? kr.cephe : [kr.cephe]);
+    selectSec('kullanimDurumu', kr.kullanim_durumu);
+    selectSec('tapuDurumu', kr.tapu_durumu);
+    selectSec('esyaDurumu', kr.esya_durumu);
+    btnSec('krediUygunluk', kr.kredi_uygun || kr.kredi_uygunluk);
+    btnSec('siteIcinde', kr.site_icinde);
+    if (kr.aidat) {
+      btnSec('aidatDurumu', kr.aidat);
+      if (kr.aidat.includes('Var') || kr.aidat === '✅ Var') {
+        document.getElementById('aidatTutar').style.display = 'block';
+        if (kr.aidat_tutar) document.getElementById('aidatTutar').value = kr.aidat_tutar;
+      }
+    }
+    if (kr.ic_ozellikler) cokluBtnSec('icOzellikler', Array.isArray(kr.ic_ozellikler) ? kr.ic_ozellikler : [kr.ic_ozellikler]);
+    if (kr.dis_ozellikler) cokluBtnSec('disOzellikler', Array.isArray(kr.dis_ozellikler) ? kr.dis_ozellikler : [kr.dis_ozellikler]);
   }
 
-  // Konut kriterleri
-  if (kr.oda_sayisi) btnSec('odaSayisi', kr.oda_sayisi);
-  if (kr.banyo_sayisi) btnSec('banyoSayisi', kr.banyo_sayisi);
-  if (ilan.metrekare) document.getElementById('m2net').value = ilan.metrekare;
-  if (kr.kat) document.getElementById('katSec').value = kr.kat;
-  if (kr.kat_sayisi) document.getElementById('katSayisi').value = kr.kat_sayisi;
-  if (kr.bina_yasi) btnSec('binaYasi', kr.bina_yasi);
-  if (kr.isitma) btnSec('isitma', kr.isitma);
-  if (kr.cephe) cokluBtnSec('cephe', kr.cephe);
-  if (kr.kullanim_durumu) btnSec('kullanimDurumu', kr.kullanim_durumu);
-  if (kr.tapu_durumu) btnSec('tapuDurumu', kr.tapu_durumu);
-  if (kr.esya_durumu) btnSec('esyaDurumu', kr.esya_durumu);
-  if (kr.kredi_uygunluk) btnSec('krediUygunluk', kr.kredi_uygunluk);
-  if (kr.site_icinde) btnSec('siteIcinde', kr.site_icinde);
-  if (kr.aidat) { btnSec('aidatDurumu', kr.aidat); if (kr.aidat === '✅ Var' || kr.aidat?.includes('Var')) { document.getElementById('aidatTutar').style.display = 'block'; if (kr.aidat_tutar) document.getElementById('aidatTutar').value = kr.aidat_tutar; } }
-  if (kr.ic_ozellikler) cokluBtnSec('icOzellikler', kr.ic_ozellikler);
-  if (kr.dis_ozellikler) cokluBtnSec('disOzellikler', kr.dis_ozellikler);
+  // ===== ARSA KRİTERLERİ =====
+  if (seciliEmlakGrup === 'arsa') {
+    if (kr.arsa_m2 || ilan.metrekare) document.getElementById('arsaM2').value = kr.arsa_m2 || ilan.metrekare;
+    if (kr.arsa_donum) document.getElementById('arsaDonum').value = kr.arsa_donum;
+    if (kr.parsel_no) document.getElementById('parselNo').value = kr.parsel_no;
+    selectSec('arsaTapuTuru', kr.tapu_turu);
+    selectSec('imarDurumu', kr.imar_durumu);
+    selectSec('gabari', kr.gabari);
+    selectSec('arsaKrediUygun', kr.kredi_uygun);
+    if (kr.arsa_ozellikler) cokluBtnSec('arsaOzellikler', Array.isArray(kr.arsa_ozellikler) ? kr.arsa_ozellikler : [kr.arsa_ozellikler]);
+  }
+
+  // ===== İŞYERİ KRİTERLERİ =====
+  if (seciliEmlakGrup === 'isyeri') {
+    selectSec('isyeriTuru', kr.isyeri_turu);
+    if (kr.isyeri_m2_net || ilan.metrekare) document.getElementById('isyeriM2net').value = kr.isyeri_m2_net || ilan.metrekare;
+    if (kr.isyeri_m2_brut) document.getElementById('isyeriM2brut').value = kr.isyeri_m2_brut;
+    selectSec('isyeriKat', kr.isyeri_kat);
+    selectSec('isyeriBinaYasi', kr.bina_yasi);
+    selectSec('isyeriIsitma', kr.isitma);
+    selectSec('isyeriKullanimDurumu', kr.kullanim_durumu);
+    selectSec('isyeriTapuDurumu', kr.tapu_durumu);
+    selectSec('isyeriCephe', kr.cephe);
+    btnSec('isyeriKrediUygun', kr.kredi_uygun ? '✅ Evet' : null);
+    if (kr.aidat_tutar) document.getElementById('isyeriAidat').value = kr.aidat_tutar;
+    if (kr.isyeri_ozellikler) cokluBtnSec('isyeriOzellikler', Array.isArray(kr.isyeri_ozellikler) ? kr.isyeri_ozellikler : [kr.isyeri_ozellikler]);
+  }
 
   document.getElementById('yuklenOverlay').classList.add('gizli');
 }
 
+// ===== İLAN GÜNCELLE =====
 async function ilanGuncelle() {
   const baslik = document.getElementById('baslik').value.trim();
   const fiyat = document.getElementById('fiyat').value;
@@ -870,12 +1115,12 @@ async function ilanGuncelle() {
   const btn = document.getElementById('guncelleBtn');
   btn.textContent = '⏳ Kaydediliyor...'; btn.disabled = true; errEl.style.display = 'none';
 
-  // Yeni fotoğrafları yükle
+  // Fotoğraf yükleme
   let odaFotoURLler = {};
   let fotoIndex = 0;
   const toplamFoto = toplamFotoSayisi();
   for (const [oda, dosyalar] of Object.entries(odaFotolar)) {
-    if (!dosyalar.length) continue;
+    if (!dosyalar || !dosyalar.length) continue;
     odaFotoURLler[oda] = [];
     for (const file of dosyalar) {
       fotoIndex++;
@@ -889,32 +1134,87 @@ async function ilanGuncelle() {
     }
   }
 
-  const kriterler = {
-    emlak_tipi: seciliEmlakTipi,
-    oda_sayisi: getSecim('odaSayisi'), banyo_sayisi: getSecim('banyoSayisi'),
-    kat: document.getElementById('katSec').value || null,
-    kat_sayisi: document.getElementById('katSayisi').value || null,
-    bina_yasi: getSecim('binaYasi'), isitma: getSecim('isitma'),
-    cephe: getCokluSecim('cephe'), kullanim_durumu: getSecim('kullanimDurumu'),
-    tapu_durumu: getSecim('tapuDurumu') || getSecim('arsaTapu') || getSecim('isyeriTapu'),
-    esya_durumu: getSecim('esyaDurumu'), kredi_uygunluk: getSecim('krediUygunluk') || getSecim('arsaKredi') || getSecim('isyeriKredi'),
-    site_icinde: getSecim('siteIcinde'), aidat: getSecim('aidatDurumu'),
-    aidat_tutar: document.getElementById('aidatTutar')?.value || null,
-    ic_ozellikler: getCokluSecim('icOzellikler'), dis_ozellikler: getCokluSecim('disOzellikler'),
-    imar_durumu: getSecim('imarDurumu'), gabari: getSecim('gabari'),
-    arsa_ozellikler: getCokluSecim('arsaOzellikler'),
-    isyeri_kullanim: getSecim('isyeriKullanim'), isyeri_ozellikler: getCokluSecim('isyeriOzellikler'),
+  // Kriterler
+  let kriterler = {
+    emlak_tipi: seciliEmlakGrup === 'konut'
+      ? (document.querySelector('#emlakTipi .sec-btn.active')?.textContent.trim() || '')
+      : seciliEmlakGrup,
     il: document.getElementById('ilSec').value || null,
     ilce: document.getElementById('ilceSec').value || null,
-    mahalle: document.getElementById('mahalleSec').value || null,
-    sokak: document.getElementById('sokakInput').value.trim() || null,
+    mahalle_cadde_sokak: document.getElementById('mahalleInput').value.trim() || null,
   };
+
+  // Emlak tipini data-tip'ten al
+  const aktifEmlakBtn = document.querySelector('#emlakTipi .sec-btn.active');
+  if (aktifEmlakBtn) {
+    // Metinden tip kodunu bul
+    const onclick = aktifEmlakBtn.getAttribute('onclick') || '';
+    // Eğer onclick yoksa data-tip kullan
+    const tipKodMap = {
+      '🏢 Daire':'daire','🏡 Villa':'villa','🏠 Müstakil Ev':'mustakil',
+      '🏘️ Residence':'residence','🌊 Yazlık':'yazlik','🌾 Çiftlik Evi':'ciftlik',
+      '🏗️ Arsa':'arsa','🌾 Tarla':'tarla','🍇 Bağ & Bahçe':'bag_bahce',
+      '🏪 İşyeri / Ofis':'isyeri','🏭 Depo / Fabrika':'depo','💼 Büro':'buro'
+    };
+    kriterler.emlak_tipi = tipKodMap[aktifEmlakBtn.textContent.trim()] || seciliEmlakGrup;
+  }
+
+  if (seciliEmlakGrup === 'konut') {
+    kriterler = { ...kriterler,
+      oda_sayisi: getSecim('odaSayisi'),
+      banyo_sayisi: getSecim('banyoSayisi'),
+      kat: getSelectVal('katSec'),
+      kat_sayisi: getSelectVal('katSayisi'),
+      bina_yasi: getSecim('binaYasi'),
+      isitma: getSelectVal('isitmaSel'),
+      cephe: getCokluSecim('cephe'),
+      kullanim_durumu: getSelectVal('kullanimDurumu'),
+      tapu_durumu: getSelectVal('tapuDurumu'),
+      esya_durumu: getSelectVal('esyaDurumu'),
+      kredi_uygun: getSecim('krediUygunluk'),
+      site_icinde: getSecim('siteIcinde'),
+      aidat: getSecim('aidatDurumu'),
+      aidat_tutar: document.getElementById('aidatTutar').value || null,
+      ic_ozellikler: getCokluSecim('icOzellikler'),
+      dis_ozellikler: getCokluSecim('disOzellikler'),
+    };
+  } else if (seciliEmlakGrup === 'arsa') {
+    kriterler = { ...kriterler,
+      arsa_m2: document.getElementById('arsaM2').value || null,
+      arsa_donum: document.getElementById('arsaDonum').value || null,
+      parsel_no: document.getElementById('parselNo').value || null,
+      tapu_turu: getSelectVal('arsaTapuTuru'),
+      imar_durumu: getSelectVal('imarDurumu'),
+      gabari: getSelectVal('gabari'),
+      kredi_uygun: getSelectVal('arsaKrediUygun'),
+      arsa_ozellikler: getCokluSecim('arsaOzellikler'),
+    };
+  } else if (seciliEmlakGrup === 'isyeri') {
+    kriterler = { ...kriterler,
+      isyeri_turu: getSelectVal('isyeriTuru'),
+      isyeri_m2_net: document.getElementById('isyeriM2net').value || null,
+      isyeri_m2_brut: document.getElementById('isyeriM2brut').value || null,
+      isyeri_kat: getSelectVal('isyeriKat'),
+      bina_yasi: getSelectVal('isyeriBinaYasi'),
+      isitma: getSelectVal('isyeriIsitma'),
+      kullanim_durumu: getSelectVal('isyeriKullanimDurumu'),
+      tapu_durumu: getSelectVal('isyeriTapuDurumu'),
+      cephe: getSelectVal('isyeriCephe'),
+      kredi_uygun: getSecim('isyeriKrediUygun'),
+      aidat_tutar: document.getElementById('isyeriAidat').value || null,
+      isyeri_ozellikler: getCokluSecim('isyeriOzellikler'),
+    };
+  }
+
+  const m2 = seciliEmlakGrup === 'konut' ? document.getElementById('m2net').value
+           : seciliEmlakGrup === 'arsa' ? document.getElementById('arsaM2').value
+           : document.getElementById('isyeriM2net').value;
 
   const updateData = {
     baslik, fiyat: Number(fiyat), tip: seciliTip, konum,
     sehir: document.getElementById('ilSec').value || null,
-    oda_sayisi: getSecim('odaSayisi') || null,
-    metrekare: document.getElementById('m2net').value ? Number(document.getElementById('m2net').value) : null,
+    oda_sayisi: seciliEmlakGrup === 'konut' ? (getSecim('odaSayisi') || null) : null,
+    metrekare: m2 ? Number(m2) : null,
     aciklama: document.getElementById('aciklama').value.trim() || null,
     kriterler
   };
@@ -926,6 +1226,7 @@ async function ilanGuncelle() {
     updateData.oda_fotograflari = odaFotoURLler;
   }
 
+  btn.textContent = '⏳ Güncelleniyor...';
   const { error } = await sb.from('ilanlar').update(updateData).eq('id', ilanId).eq('user_id', currentUser.id);
 
   if (error) {
@@ -936,6 +1237,7 @@ async function ilanGuncelle() {
   document.getElementById('successOverlay').classList.add('show');
 }
 
+// ===== İLAN SİL =====
 async function ilanSil() {
   if (!confirm('İlanı silmek istediğinizden emin misiniz?')) return;
   const { error } = await sb.from('ilanlar').delete().eq('id', ilanId).eq('user_id', currentUser.id);
@@ -943,7 +1245,12 @@ async function ilanSil() {
   else alert('Silme hatası: ' + error.message);
 }
 
-window.addEventListener('DOMContentLoaded', ilanYukle);
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('mahalleInput').addEventListener('input', konumGuncelle);
+  document.getElementById('ilceSec').addEventListener('change', konumGuncelle);
+  ilanYukle();
+});
 </script>
 <script>
   if ("serviceWorker" in navigator) {
