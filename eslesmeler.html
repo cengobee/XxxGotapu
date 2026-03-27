@@ -68,21 +68,6 @@
   .btn-rewind { width: 44px; height: 44px; background: rgba(255,255,255,0.05); font-size: 20px; }
   .match-popup { position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
   .match-popup.show { display: flex; }
-  .tercih-modal { position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.75); display: none; align-items: flex-end; }
-  .tercih-modal.open { display: flex; }
-  .tercih-sheet { background: var(--bg2); border-radius: 24px 24px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; padding: 8px 16px 48px; }
-  .t-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 12px auto 20px; }
-  .t-section { margin-bottom: 20px; }
-  .t-label { font-size: 11px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-  .t-chips { display: flex; gap: 7px; flex-wrap: wrap; }
-  .tchip { padding: 7px 13px; border-radius: 50px; background: var(--card); border: 1.5px solid var(--border); font-size: 12px; font-weight: 700; color: var(--text2); cursor: pointer; font-family: 'Nunito', sans-serif; transition: all .2s; }
-  .tchip.on { background: rgba(245,200,66,0.12); border-color: var(--gold); color: var(--gold); }
-  .tchip.farketmez { border-style: dashed; font-size: 11px; color: var(--text3); background: transparent; }
-  .tchip.farketmez.on { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2); color: var(--text2); border-style: dashed; }
-  .t-range { display: flex; gap: 8px; align-items: center; }
-  .t-range input { flex: 1; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 12px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 13px; outline: none; }
-  .t-range input:focus { border-color: var(--gold); }
-  .t-range span { color: var(--text3); font-size: 14px; }
   .eslesen-item { display: flex; gap: 12px; align-items: center; background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; cursor: pointer; text-decoration: none; color: var(--text); transition: border-color .2s; }
   .eslesen-item:active { border-color: var(--gold); }
   .eslesen-thumb { width: 62px; height: 62px; border-radius: 12px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; overflow: hidden; }
@@ -109,15 +94,12 @@
 
 <nav class="top-nav">
   <a href="index.html" class="nav-logo"><div class="logo-icon">🏠</div>GoTapu</a>
-  <div class="nav-actions">
-    <button class="nav-btn" onclick="tercihAc()" style="background:var(--card2);color:var(--text);border:1px solid var(--border)">⚙️ Tercihler</button>
-    <a href="profil.html" class="nav-icon-btn">👤</a>
-  </div>
+  <div class="nav-actions"><a href="profil.html" class="nav-icon-btn">👤</a></div>
 </nav>
 
 <div class="page fade-up">
   <div class="section-head">
-    <div class="section-title">✨ Sana Uygun Evler</div>
+    <div class="section-title">✨ Sana Uygun İlanlar</div>
     <span style="font-size:13px;color:var(--text3)" id="kalanYazi"></span>
   </div>
 
@@ -152,200 +134,6 @@
   <button onclick="document.getElementById('matchPopup').classList.remove('show')" class="btn btn-outline btn-md" style="max-width:260px">Devam Et</button>
 </div>
 
-<div class="tercih-modal" id="tercihModal" onclick="if(event.target===this)tercihKapat()">
-  <div class="tercih-sheet">
-    <div class="t-handle"></div>
-    <div style="font-size:18px;font-weight:900;margin-bottom:20px">🎯 Arama Tercihlerim</div>
-
-    <div class="t-section">
-      <div class="t-label">💰 Fiyat Aralığı (₺) <span id="fm-fiyat" class="tchip farketmez" onclick="farketmezToggle('fiyat',this)">Farketmez</span></div>
-      <div class="t-range">
-        <input type="number" id="pMinFiyat" placeholder="Min">
-        <span>—</span>
-        <input type="number" id="pMaxFiyat" placeholder="Max">
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🏷️ İlan Tipi <span id="fm-tip" class="tchip farketmez" onclick="farketmezToggle('tip',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-tip">
-        <button class="tchip" onclick="tekSec('tip',this)">Satılık</button>
-        <button class="tchip" onclick="tekSec('tip',this)">Kiralık</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">📍 Şehir</div>
-      <div class="t-chips" id="pg-sehir">
-        <button class="tchip" onclick="tekSec('sehir',this)">Ankara</button>
-        <button class="tchip" onclick="tekSec('sehir',this)">İstanbul</button>
-        <button class="tchip" onclick="tekSec('sehir',this)">İzmir</button>
-        <button class="tchip" onclick="tekSec('sehir',this)">Bursa</button>
-        <button class="tchip" onclick="tekSec('sehir',this)">Diğer</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🏠 Emlak Tipi <span id="fm-emlak" class="tchip farketmez" onclick="farketmezToggle('emlak',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-emlak">
-        <button class="tchip" onclick="cogulSec('emlak',this)">🏢 Daire</button>
-        <button class="tchip" onclick="cogulSec('emlak',this)">🏡 Villa</button>
-        <button class="tchip" onclick="cogulSec('emlak',this)">🏠 Müstakil</button>
-        <button class="tchip" onclick="cogulSec('emlak',this)">🏨 Residence</button>
-        <button class="tchip" onclick="cogulSec('emlak',this)">🏗️ Arsa</button>
-        <button class="tchip" onclick="cogulSec('emlak',this)">🏪 İşyeri</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🛏 Oda Sayısı <span id="fm-oda" class="tchip farketmez" onclick="farketmezToggle('oda',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-oda">
-        <button class="tchip" onclick="cogulSec('oda',this)">Stüdyo</button>
-        <button class="tchip" onclick="cogulSec('oda',this)">1+1</button>
-        <button class="tchip" onclick="cogulSec('oda',this)">2+1</button>
-        <button class="tchip" onclick="cogulSec('oda',this)">3+1</button>
-        <button class="tchip" onclick="cogulSec('oda',this)">4+1</button>
-        <button class="tchip" onclick="cogulSec('oda',this)">5+1 ve üzeri</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🚿 Banyo Sayısı <span id="fm-banyo" class="tchip farketmez" onclick="farketmezToggle('banyo',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-banyo">
-        <button class="tchip" onclick="cogulSec('banyo',this)">1</button>
-        <button class="tchip" onclick="cogulSec('banyo',this)">2</button>
-        <button class="tchip" onclick="cogulSec('banyo',this)">3</button>
-        <button class="tchip" onclick="cogulSec('banyo',this)">4+</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🏢 Kat Tercihi <span id="fm-kat" class="tchip farketmez" onclick="farketmezToggle('kat',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-kat">
-        <button class="tchip" onclick="cogulSec('kat',this)">1. Kat</button>
-        <button class="tchip" onclick="cogulSec('kat',this)">2. Kat</button>
-        <button class="tchip" onclick="cogulSec('kat',this)">3. Kat</button>
-        <button class="tchip" onclick="cogulSec('kat',this)">4. Kat</button>
-        <button class="tchip" onclick="cogulSec('kat',this)">5+ Kat</button>
-        <button class="tchip" id="kotAltiBtn" onclick="kotAltıToggle(this)">🚫 Kot Altı/Giriş/Çatı Olmasın</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">📐 Metrekare <span id="fm-m2" class="tchip farketmez" onclick="farketmezToggle('m2',this)">Farketmez</span></div>
-      <div class="t-range">
-        <input type="number" id="pMinM2" placeholder="Min m²">
-        <span>—</span>
-        <input type="number" id="pMaxM2" placeholder="Max m²">
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🏗 Bina Yaşı <span id="fm-bina" class="tchip farketmez" onclick="farketmezToggle('bina',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-bina">
-        <button class="tchip" onclick="cogulSec('bina',this)">0 (Sıfır)</button>
-        <button class="tchip" onclick="cogulSec('bina',this)">1-5 Yıl</button>
-        <button class="tchip" onclick="cogulSec('bina',this)">6-10 Yıl</button>
-        <button class="tchip" onclick="cogulSec('bina',this)">11-20 Yıl</button>
-        <button class="tchip" onclick="cogulSec('bina',this)">20+ Yıl</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🔥 Isıtma <span id="fm-isitma" class="tchip farketmez" onclick="farketmezToggle('isitma',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-isitma">
-        <button class="tchip" onclick="cogulSec('isitma',this)">🔥 Kombi</button>
-        <button class="tchip" onclick="cogulSec('isitma',this)">🏢 Merkezi</button>
-        <button class="tchip" onclick="cogulSec('isitma',this)">🌡️ Yerden Isıtma</button>
-        <button class="tchip" onclick="cogulSec('isitma',this)">❄️ Klima</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🧭 Cephe <span id="fm-cephe" class="tchip farketmez" onclick="farketmezToggle('cephe',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-cephe">
-        <button class="tchip" onclick="cogulSec('cephe',this)">⬇️ Güney</button>
-        <button class="tchip" onclick="cogulSec('cephe',this)">⬆️ Kuzey</button>
-        <button class="tchip" onclick="cogulSec('cephe',this)">➡️ Doğu</button>
-        <button class="tchip" onclick="cogulSec('cephe',this)">⬅️ Batı</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🔑 Kullanım Durumu <span id="fm-kullanim" class="tchip farketmez" onclick="farketmezToggle('kullanim',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-kullanim">
-        <button class="tchip" onclick="tekSec('kullanim',this)">🏠 Boş</button>
-        <button class="tchip" onclick="tekSec('kullanim',this)">🔑 Kiracılı</button>
-        <button class="tchip" onclick="tekSec('kullanim',this)">👤 Mülk Sahibi</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">📋 Tapu Durumu <span id="fm-tapu" class="tchip farketmez" onclick="farketmezToggle('tapu',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-tapu">
-        <button class="tchip" onclick="cogulSec('tapu',this)">✅ Kat Mülkiyeti</button>
-        <button class="tchip" onclick="cogulSec('tapu',this)">📋 Kat İrtifakı</button>
-        <button class="tchip" onclick="cogulSec('tapu',this)">🤝 Hisseli</button>
-        <button class="tchip" onclick="cogulSec('tapu',this)">🌍 Arsa Tapusu</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🪑 Eşya Durumu <span id="fm-esya" class="tchip farketmez" onclick="farketmezToggle('esya',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-esya">
-        <button class="tchip" onclick="tekSec('esya',this)">🪑 Eşyalı</button>
-        <button class="tchip" onclick="tekSec('esya',this)">📦 Yarı Eşyalı</button>
-        <button class="tchip" onclick="tekSec('esya',this)">🏠 Boş</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🏘️ Site İçinde mi? <span id="fm-site" class="tchip farketmez" onclick="farketmezToggle('site',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-site">
-        <button class="tchip" onclick="tekSec('site',this)">✅ Evet</button>
-        <button class="tchip" onclick="tekSec('site',this)">❌ Hayır</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">💳 Aidat <span id="fm-aidat" class="tchip farketmez" onclick="farketmezToggle('aidat',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-aidat">
-        <button class="tchip" onclick="tekSec('aidat',this)">✅ Var</button>
-        <button class="tchip" onclick="tekSec('aidat',this)">❌ Yok</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🪟 İç Özellikler <span id="fm-ic" class="tchip farketmez" onclick="farketmezToggle('ic',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-ic">
-        <button class="tchip" onclick="cogulSec('ic',this)">🪟 Balkon</button>
-        <button class="tchip" onclick="cogulSec('ic',this)">🏡 Bahçe</button>
-        <button class="tchip" onclick="cogulSec('ic',this)">🚿 Ebeveyn Banyosu</button>
-        <button class="tchip" onclick="cogulSec('ic',this)">👕 Giyinme Odası</button>
-        <button class="tchip" onclick="cogulSec('ic',this)">🍽️ Amerikan Mutfak</button>
-        <button class="tchip" onclick="cogulSec('ic',this)">🔆 Aydınlık</button>
-        <button class="tchip" onclick="cogulSec('ic',this)">🔐 Çelik Kapı</button>
-      </div>
-    </div>
-
-    <div class="t-section">
-      <div class="t-label">🏢 Dış Özellikler <span id="fm-dis" class="tchip farketmez" onclick="farketmezToggle('dis',this)">Farketmez</span></div>
-      <div class="t-chips" id="pg-dis">
-        <button class="tchip" onclick="cogulSec('dis',this)">🛗 Asansör</button>
-        <button class="tchip" onclick="cogulSec('dis',this)">🅿️ Kapalı Otopark</button>
-        <button class="tchip" onclick="cogulSec('dis',this)">🏊 Havuz</button>
-        <button class="tchip" onclick="cogulSec('dis',this)">🏋️ Spor Salonu</button>
-        <button class="tchip" onclick="cogulSec('dis',this)">👮 Güvenlik</button>
-        <button class="tchip" onclick="cogulSec('dis',this)">🌳 Yeşil Alan</button>
-        <button class="tchip" onclick="cogulSec('dis',this)">🧹 Temizlik Hizmeti</button>
-      </div>
-    </div>
-
-    <button class="btn btn-gold btn-lg" onclick="tercihleriKaydet()">✅ Tercihleri Kaydet</button>
-    <button class="btn btn-outline btn-md" style="width:100%;margin-top:8px" onclick="tercihKapat()">İptal</button>
-  </div>
-</div>
-
 <nav class="bottom-nav">
   <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
   <a href="eslesmeler.html" class="bnav-item active"><div class="bnav-icon">✨</div>Eşleşmeler</a>
@@ -363,214 +151,269 @@ const EMOJI = { satilik:'🏙️', kiralik:'🏘️' };
 let gorülenler = new Set();
 let currentUser = null;
 
-let tercihler = {
-  minFiyat: null, maxFiyat: null, fiyat_fm: true,
-  tip: null, tip_fm: true,
-  sehir: null,
-  emlak: [], emlak_fm: true,
-  oda: [], oda_fm: true,
-  banyo: [], banyo_fm: true,
-  kat: [], kat_fm: true, kotAltiOlmasin: false,
-  minM2: null, maxM2: null, m2_fm: true,
-  bina: [], bina_fm: true,
-  isitma: [], isitma_fm: true,
-  cephe: [], cephe_fm: true,
-  kullanim: null, kullanim_fm: true,
-  tapu: [], tapu_fm: true,
-  esya: null, esya_fm: true,
-  site: null, site_fm: true,
-  aidat: null, aidat_fm: true,
-  ic: [], ic_fm: true,
-  dis: [], dis_fm: true,
-};
+// Tercihler arayan_ilanlar tablosundan geliyor
+let tercihler = {};
 
-function tercihYukle() {
-  try {
-    const k = localStorage.getItem('gotapu_tercihler');
-    if (k) tercihler = { ...tercihler, ...JSON.parse(k) };
-  } catch(e) {}
+// ===== PUANLAMA SİSTEMİ =====
+
+function emlakGrubunuBul(ilan) {
+  const tip = (ilan.kriterler?.emlak_tipi || '').toLowerCase();
+  if (tip.includes('arsa') || tip.includes('tarla') || tip.includes('bağ') || tip.includes('bahçe')) return 'arsa';
+  if (tip.includes('işyeri') || tip.includes('ofis') || tip.includes('depo') || tip.includes('fabrika')) return 'isyeri';
+  return 'konut';
 }
 
-function tercihKaydetLS() {
-  localStorage.setItem('gotapu_tercihler', JSON.stringify(tercihler));
+function eslesPuani(ilan, pref) {
+  const grup = emlakGrubunuBul(ilan);
+  if (grup === 'arsa')   return eslesPuaniArsa(ilan, pref);
+  if (grup === 'isyeri') return eslesPuaniIsyeri(ilan, pref);
+  return eslesPuaniKonut(ilan, pref);
 }
 
-const KRITERLER = [
-  { key:'fiyat',    max:8,  fm:'fiyat_fm' },
-  { key:'tip',      max:10, fm:'tip_fm'   },
-  { key:'konum',    max:20, fm:false       },
-  { key:'emlak',    max:10, fm:'emlak_fm' },
-  { key:'oda',      max:8,  fm:'oda_fm'   },
-  { key:'banyo',    max:3,  fm:'banyo_fm' },
-  { key:'kat',      max:10, fm:'kat_fm'   },
-  { key:'m2',       max:5,  fm:'m2_fm'    },
-  { key:'bina',     max:3,  fm:'bina_fm'  },
-  { key:'isitma',   max:3,  fm:'isitma_fm'},
-  { key:'cephe',    max:2,  fm:'cephe_fm' },
-  { key:'kullanim', max:2,  fm:'kullanim_fm'},
-  { key:'tapu',     max:3,  fm:'tapu_fm'  },
-  { key:'esya',     max:4,  fm:'esya_fm'  },
-  { key:'site',     max:2,  fm:'site_fm'  },
-  { key:'aidat',    max:1,  fm:'aidat_fm' },
-  { key:'ic',       max:4,  fm:'ic_fm'    },
-  { key:'dis',      max:2,  fm:'dis_fm'   },
-];
-
-function eslesPuani(ilan) {
-  let toplamMax = 0, kazanilan = 0;
+// ── KONUT PUANLAMA (toplam 100) ──
+function eslesPuaniKonut(ilan, pref) {
+  let puan = 0;
   const sebepler = [];
-  KRITERLER.forEach(k => {
-    const fm = k.fm ? tercihler[k.fm] : false;
-    if (fm) return;
-    toplamMax += k.max;
-    switch(k.key) {
-      case 'fiyat': {
-        const f = Number(ilan.fiyat);
-        const mn = tercihler.minFiyat ? Number(tercihler.minFiyat) : null;
-        const mx = tercihler.maxFiyat ? Number(tercihler.maxFiyat) : null;
-        if (!mn && !mx) { kazanilan += k.max; break; }
-        if (mn && mx) {
-          if (f >= mn && f <= mx) { kazanilan += k.max; sebepler.push('Fiyat uygun'); }
-          else if (f >= mn*0.9 && f <= mx*1.1) { kazanilan += k.max*0.5; }
-        } else if (mn && f >= mn) { kazanilan += k.max; }
-        else if (mx && f <= mx) { kazanilan += k.max; }
-        break;
-      }
-      case 'tip': {
-        if (!tercihler.tip) { kazanilan += k.max; break; }
-        const ilanTip = (ilan.tip||'').toLowerCase();
-        const pTip = tercihler.tip.toLowerCase() === 'satılık' ? 'satilik' : 'kiralik';
-        if (ilanTip === pTip) { kazanilan += k.max; sebepler.push('İlan tipi uyuştu'); }
-        break;
-      }
-      case 'konum': {
-        if (!tercihler.sehir) { kazanilan += k.max; break; }
-        const konum = (ilan.konum||'').toLowerCase();
-        if (konum.includes(tercihler.sehir.toLowerCase())) { kazanilan += k.max; sebepler.push('Konum uyuştu'); }
-        break;
-      }
-      case 'emlak': {
-        if (!tercihler.emlak.length) { kazanilan += k.max; break; }
-        const ilanEmlak = (ilan.kriterler?.emlak_tipi||'').toLowerCase();
-        const uygun = tercihler.emlak.some(e => ilanEmlak.includes(e.replace(/[🏢🏡🏠🏨🏗️🏪]/g,'').trim().toLowerCase()));
-        if (uygun) { kazanilan += k.max; sebepler.push('Emlak tipi uyuştu'); }
-        break;
-      }
-      case 'oda': {
-        if (!tercihler.oda.length) { kazanilan += k.max; break; }
-        const ilanOda = (ilan.oda_sayisi||ilan.kriterler?.oda_sayisi||'').toLowerCase();
-        const uygun = tercihler.oda.some(o => ilanOda.includes(o.toLowerCase().replace(' ve üzeri','')));
-        if (uygun) { kazanilan += k.max; sebepler.push(`${ilan.oda_sayisi} oda uyuştu`); }
-        break;
-      }
-      case 'banyo': {
-        if (!tercihler.banyo.length) { kazanilan += k.max; break; }
-        const ilanBanyo = String(ilan.kriterler?.banyo_sayisi||'');
-        const uygun = tercihler.banyo.some(b => b === '4+' ? Number(ilanBanyo) >= 4 : ilanBanyo === b);
-        if (uygun) { kazanilan += k.max; sebepler.push('Banyo sayısı uyuştu'); }
-        break;
-      }
-      case 'kat': {
-        if (!tercihler.kat.length && !tercihler.kotAltiOlmasin) { kazanilan += k.max; break; }
-        const ilanKat = (ilan.kriterler?.kat||'').toLowerCase();
-        if (tercihler.kotAltiOlmasin) {
-          const yasak = ['bodrum','zemin','bahçe','giriş','çatı','penthouse'];
-          if (yasak.some(y => ilanKat.includes(y))) break;
-        }
-        if (!tercihler.kat.length) { kazanilan += k.max; break; }
-        const uygun = tercihler.kat.some(k2 => ilanKat.includes(k2.replace('. Kat','').trim()));
-        if (uygun) { kazanilan += k.max; sebepler.push('Kat uyuştu'); }
-        break;
-      }
-      case 'm2': {
-        if (!tercihler.minM2 && !tercihler.maxM2) { kazanilan += k.max; break; }
-        const m2 = Number(ilan.metrekare||ilan.kriterler?.m2net||0);
-        if (!m2) { kazanilan += k.max*0.5; break; }
-        const mn2 = tercihler.minM2 ? Number(tercihler.minM2) : null;
-        const mx2 = tercihler.maxM2 ? Number(tercihler.maxM2) : null;
-        if (mn2 && mx2 && m2 >= mn2 && m2 <= mx2) { kazanilan += k.max; sebepler.push(`${m2}m² uygun`); }
-        else if (mn2 && !mx2 && m2 >= mn2) kazanilan += k.max;
-        else if (!mn2 && mx2 && m2 <= mx2) kazanilan += k.max;
-        break;
-      }
-      case 'bina': {
-        if (!tercihler.bina.length) { kazanilan += k.max; break; }
-        const ilanBina = (ilan.kriterler?.bina_yasi||'');
-        const uygun = tercihler.bina.some(b => ilanBina.toLowerCase().includes(b.split(' ')[0].toLowerCase()));
-        if (uygun || !ilanBina) { kazanilan += k.max; if(uygun) sebepler.push('Bina yaşı uyuştu'); }
-        break;
-      }
-      case 'isitma': {
-        if (!tercihler.isitma.length) { kazanilan += k.max; break; }
-        const ilanIsitma = (ilan.kriterler?.isitma||'').toLowerCase();
-        const uygun = tercihler.isitma.some(i => ilanIsitma.includes(i.replace(/[🔥🏢🌡️❄️]/g,'').trim().toLowerCase()));
-        if (uygun || !ilanIsitma) { kazanilan += k.max; if(uygun) sebepler.push('Isıtma uyuştu'); }
-        break;
-      }
-      case 'cephe': {
-        if (!tercihler.cephe.length) { kazanilan += k.max; break; }
-        const ilanCephe = ilan.kriterler?.cephe || [];
-        const uygun = tercihler.cephe.some(c => ilanCephe.some(ic => ic.toLowerCase().includes(c.replace(/[⬇️⬆️➡️⬅️]/g,'').trim().toLowerCase())));
-        if (uygun) { kazanilan += k.max; sebepler.push('Cephe uyuştu'); }
-        else if (!ilanCephe.length) kazanilan += k.max*0.5;
-        break;
-      }
-      case 'kullanim': {
-        if (!tercihler.kullanim) { kazanilan += k.max; break; }
-        const ilanKullanim = (ilan.kriterler?.kullanim_durumu||'').toLowerCase();
-        const pK = tercihler.kullanim.replace(/[🏠🔑👤]/g,'').trim().toLowerCase();
-        if (ilanKullanim.includes(pK) || !ilanKullanim) { kazanilan += k.max; if(ilanKullanim) sebepler.push('Kullanım uyuştu'); }
-        break;
-      }
-      case 'tapu': {
-        if (!tercihler.tapu.length) { kazanilan += k.max; break; }
-        const ilanTapu = (ilan.kriterler?.tapu_durumu||'').toLowerCase();
-        const uygun = tercihler.tapu.some(t => ilanTapu.includes(t.replace(/[✅📋🤝🌍⏳]/g,'').trim().toLowerCase()));
-        if (uygun || !ilanTapu) { kazanilan += k.max; if(uygun) sebepler.push('Tapu uyuştu'); }
-        break;
-      }
-      case 'esya': {
-        if (!tercihler.esya) { kazanilan += k.max; break; }
-        const ilanEsya = (ilan.kriterler?.esya_durumu||'').toLowerCase();
-        const pE = tercihler.esya.replace(/[🪑📦🏠]/g,'').trim().toLowerCase();
-        if (ilanEsya.includes(pE) || !ilanEsya) { kazanilan += k.max; if(ilanEsya) sebepler.push('Eşya durumu uyuştu'); }
-        else if ((pE.includes('yarı') && ilanEsya.includes('eşyalı')) || (pE.includes('eşyalı') && ilanEsya.includes('yarı'))) kazanilan += k.max*0.5;
-        break;
-      }
-      case 'site': {
-        if (!tercihler.site) { kazanilan += k.max; break; }
-        const ilanSite = (ilan.kriterler?.site_icinde||'').toLowerCase();
-        const pS = tercihler.site.replace(/[✅❌]/g,'').trim().toLowerCase();
-        if (ilanSite.includes(pS) || !ilanSite) { kazanilan += k.max; if(ilanSite) sebepler.push('Site tercihi uyuştu'); }
-        break;
-      }
-      case 'aidat': {
-        if (!tercihler.aidat) { kazanilan += k.max; break; }
-        const ilanAidat = (ilan.kriterler?.aidat||'').toLowerCase();
-        const pA = tercihler.aidat.replace(/[✅❌]/g,'').trim().toLowerCase();
-        if (ilanAidat.includes(pA) || !ilanAidat) kazanilan += k.max;
-        break;
-      }
-      case 'ic': {
-        if (!tercihler.ic.length) { kazanilan += k.max; break; }
-        const ilanIc = ilan.kriterler?.ic_ozellikler || [];
-        const eslesen = tercihler.ic.filter(t => ilanIc.some(i => i.toLowerCase().includes(t.replace(/[🪟🏡🚿👕🍽️🔆🔐]/g,'').trim().toLowerCase())));
-        kazanilan += k.max * (eslesen.length / tercihler.ic.length);
-        if (eslesen.length > 0) sebepler.push(`${eslesen.length} iç özellik uyuştu`);
-        break;
-      }
-      case 'dis': {
-        if (!tercihler.dis.length) { kazanilan += k.max; break; }
-        const ilanDis = ilan.kriterler?.dis_ozellikler || [];
-        const eslesen = tercihler.dis.filter(t => ilanDis.some(i => i.toLowerCase().includes(t.replace(/[🛗🅿️🏊🏋️👮🌳🧹]/g,'').trim().toLowerCase())));
-        kazanilan += k.max * (eslesen.length / tercihler.dis.length);
-        if (eslesen.length > 0) sebepler.push(`${eslesen.length} dış özellik uyuştu`);
-        break;
-      }
-    }
-  });
-  if (toplamMax === 0) return { puan: 50, sebepler: ['Tüm kriterler farketmez'] };
-  const puan = Math.round((kazanilan / toplamMax) * 100);
+  const k = ilan.kriterler || {};
+
+  // Fiyat (20)
+  const f = Number(ilan.fiyat);
+  const mn = pref.fiyat_min ? Number(pref.fiyat_min) : null;
+  const mx = pref.fiyat_max ? Number(pref.fiyat_max) : null;
+  if (!mn && !mx) { puan += 20; }
+  else if (mn && mx) {
+    if (f >= mn && f <= mx) { puan += 20; sebepler.push('Fiyat uygun'); }
+    else if (f >= mn*0.9 && f <= mx*1.1) puan += 10;
+  } else if (mn && f >= mn) { puan += 20; }
+  else if (mx && f <= mx) { puan += 20; }
+
+  // Konum il/ilçe (20)
+  const konum = (ilan.konum||'').toLowerCase();
+  const prefIl = (pref.kriterler?.sehir || pref.sehir || '').toLowerCase();
+  const prefIlce = (pref.kriterler?.ilce || '').toLowerCase();
+  if (!prefIl) { puan += 20; }
+  else if (prefIlce && konum.includes(prefIlce)) { puan += 20; sebepler.push('Konum tam uyuştu'); }
+  else if (konum.includes(prefIl)) { puan += 12; sebepler.push('Şehir uyuştu'); }
+
+  // Oda sayısı (15)
+  const ilanOda = (ilan.oda_sayisi || k.oda_sayisi || '').toLowerCase();
+  const prefOda = pref.kriterler?.oda || [];
+  if (!prefOda.length) { puan += 15; }
+  else if (prefOda.some(o => ilanOda.includes(o.toLowerCase()))) { puan += 15; sebepler.push(`${ilan.oda_sayisi} oda uyuştu`); }
+
+  // Emlak tipi (10)
+  const ilanEmlak = (k.emlak_tipi || '').toLowerCase();
+  const prefEmlak = pref.kriterler?.emlak || [];
+  if (!prefEmlak.length) { puan += 10; }
+  else if (prefEmlak.some(e => ilanEmlak.includes(e.replace(/[🏢🏡🏠🏘️]/g,'').trim().toLowerCase()))) {
+    puan += 10; sebepler.push('Emlak tipi uyuştu');
+  }
+
+  // m² (8)
+  const m2 = Number(ilan.metrekare || k.m2net || 0);
+  const mnM2 = pref.kriterler?.minM2 ? Number(pref.kriterler.minM2) : null;
+  const mxM2 = pref.kriterler?.maxM2 ? Number(pref.kriterler.maxM2) : null;
+  if (!mnM2 && !mxM2) { puan += 8; }
+  else if (m2 && mnM2 && mxM2 && m2 >= mnM2 && m2 <= mxM2) { puan += 8; sebepler.push(`${m2}m² uygun`); }
+  else if (m2 && mnM2 && !mxM2 && m2 >= mnM2) puan += 8;
+  else if (m2 && !mnM2 && mxM2 && m2 <= mxM2) puan += 8;
+  else if (!m2) puan += 4;
+
+  // Bina yaşı (6)
+  const ilanBina = (k.bina_yasi || '').toLowerCase();
+  const prefBina = pref.kriterler?.bina || [];
+  if (!prefBina.length) { puan += 6; }
+  else if (prefBina.some(b => ilanBina.includes(b.split(' ')[0].toLowerCase()))) {
+    puan += 6; sebepler.push('Bina yaşı uyuştu');
+  } else if (!ilanBina) puan += 3;
+
+  // Isıtma (5)
+  const ilanIsitma = (k.isitma || '').toLowerCase();
+  const prefIsitma = pref.kriterler?.isitma || [];
+  if (!prefIsitma.length) { puan += 5; }
+  else if (prefIsitma.some(i => ilanIsitma.includes(i.replace(/[🔥🏢🌡️❄️]/g,'').trim().toLowerCase()))) {
+    puan += 5; sebepler.push('Isıtma uyuştu');
+  } else if (!ilanIsitma) puan += 2;
+
+  // Tapu durumu (5)
+  const ilanTapu = (k.tapu_durumu || '').toLowerCase();
+  const prefTapu = pref.kriterler?.tapu || [];
+  if (!prefTapu.length) { puan += 5; }
+  else if (prefTapu.some(t => ilanTapu.includes(t.replace(/[✅📋🤝🌍]/g,'').trim().toLowerCase()))) {
+    puan += 5; sebepler.push('Tapu uyuştu');
+  } else if (!ilanTapu) puan += 2;
+
+  // Eşya durumu (4)
+  const ilanEsya = (k.esya_durumu || '').toLowerCase();
+  const prefEsya = pref.kriterler?.esya || null;
+  if (!prefEsya) { puan += 4; }
+  else if (ilanEsya.includes(prefEsya.replace(/[🪑📦🏠]/g,'').trim().toLowerCase())) {
+    puan += 4; sebepler.push('Eşya durumu uyuştu');
+  } else if (!ilanEsya) puan += 2;
+
+  // İç özellikler (4)
+  const ilanIc = k.ic_ozellikler || [];
+  const prefIc = pref.kriterler?.konutoz || [];
+  if (!prefIc.length) { puan += 4; }
+  else {
+    const eslesen = prefIc.filter(p => ilanIc.some(i => i.toLowerCase().includes(p.replace(/[🪟🛗🅿️👮🏊🚿🍽️🌡️]/g,'').trim().toLowerCase())));
+    puan += Math.round(4 * eslesen.length / prefIc.length);
+    if (eslesen.length > 0) sebepler.push(`${eslesen.length} özellik uyuştu`);
+  }
+
+  // Dış özellikler (3)
+  const ilanDis = k.dis_ozellikler || [];
+  const prefDis = pref.kriterler?.konutoz || [];
+  if (!prefDis.length) { puan += 3; }
+  else {
+    const eslesen = prefDis.filter(p => ilanDis.some(i => i.toLowerCase().includes(p.replace(/[🪟🛗🅿️👮🏊🚿🍽️🌡️]/g,'').trim().toLowerCase())));
+    puan += Math.round(3 * eslesen.length / prefDis.length);
+  }
+
+  return { puan: Math.min(100, Math.max(1, puan)), sebepler };
+}
+
+// ── ARSA PUANLAMA (toplam 100) ──
+function eslesPuaniArsa(ilan, pref) {
+  let puan = 0;
+  const sebepler = [];
+  const k = ilan.kriterler || {};
+
+  // Fiyat (25)
+  const f = Number(ilan.fiyat);
+  const mn = pref.fiyat_min ? Number(pref.fiyat_min) : null;
+  const mx = pref.fiyat_max ? Number(pref.fiyat_max) : null;
+  if (!mn && !mx) { puan += 25; }
+  else if (mn && mx) {
+    if (f >= mn && f <= mx) { puan += 25; sebepler.push('Fiyat uygun'); }
+    else if (f >= mn*0.9 && f <= mx*1.1) puan += 12;
+  } else if (mn && f >= mn) puan += 25;
+  else if (mx && f <= mx) puan += 25;
+
+  // Konum (25)
+  const konum = (ilan.konum||'').toLowerCase();
+  const prefIl = (pref.kriterler?.sehir || pref.sehir || '').toLowerCase();
+  const prefIlce = (pref.kriterler?.ilce || '').toLowerCase();
+  if (!prefIl) { puan += 25; }
+  else if (prefIlce && konum.includes(prefIlce)) { puan += 25; sebepler.push('Konum tam uyuştu'); }
+  else if (konum.includes(prefIl)) { puan += 15; sebepler.push('Şehir uyuştu'); }
+
+  // Alan m² (15)
+  const m2 = Number(ilan.metrekare || k.arsa_m2 || 0);
+  const mnM2 = pref.kriterler?.minArsaM2 ? Number(pref.kriterler.minArsaM2) : null;
+  const mxM2 = pref.kriterler?.maxArsaM2 ? Number(pref.kriterler.maxArsaM2) : null;
+  if (!mnM2 && !mxM2) { puan += 15; }
+  else if (m2 && mnM2 && mxM2 && m2 >= mnM2 && m2 <= mxM2) { puan += 15; sebepler.push(`${m2}m² uygun`); }
+  else if (m2 && mnM2 && !mxM2 && m2 >= mnM2) puan += 15;
+  else if (m2 && !mnM2 && mxM2 && m2 <= mxM2) puan += 15;
+  else if (!m2) puan += 7;
+
+  // İmar durumu (20)
+  const ilanImar = (k.imar_durumu || '').toLowerCase();
+  const prefImar = pref.kriterler?.imar || [];
+  if (!prefImar.length) { puan += 20; }
+  else if (prefImar.some(i => ilanImar.includes(i.replace(/[✅❌🏗️🏭🌿]/g,'').trim().toLowerCase()))) {
+    puan += 20; sebepler.push('İmar durumu uyuştu');
+  } else if (!ilanImar) puan += 10;
+
+  // Tapu türü (10)
+  const ilanTapu = (k.tapu_turu || '').toLowerCase();
+  const prefTapu = pref.kriterler?.tapuarsa || [];
+  if (!prefTapu.length) { puan += 10; }
+  else if (prefTapu.some(t => ilanTapu.includes(t.replace(/[✅🤝🌍📜]/g,'').trim().toLowerCase()))) {
+    puan += 10; sebepler.push('Tapu türü uyuştu');
+  } else if (!ilanTapu) puan += 5;
+
+  // Arazi özellikleri (5)
+  const ilanOz = k.arsa_ozellikler || [];
+  const prefOz = pref.kriterler?.arsaoz || [];
+  if (!prefOz.length) { puan += 5; }
+  else {
+    const eslesen = prefOz.filter(p => ilanOz.some(i => i.toLowerCase().includes(p.replace(/[🛣️⚡💧🔲🏔️🌊]/g,'').trim().toLowerCase())));
+    puan += Math.round(5 * eslesen.length / prefOz.length);
+    if (eslesen.length > 0) sebepler.push(`${eslesen.length} özellik uyuştu`);
+  }
+
+  return { puan: Math.min(100, Math.max(1, puan)), sebepler };
+}
+
+// ── İŞYERİ PUANLAMA (toplam 100) ──
+function eslesPuaniIsyeri(ilan, pref) {
+  let puan = 0;
+  const sebepler = [];
+  const k = ilan.kriterler || {};
+
+  // Fiyat (20)
+  const f = Number(ilan.fiyat);
+  const mn = pref.fiyat_min ? Number(pref.fiyat_min) : null;
+  const mx = pref.fiyat_max ? Number(pref.fiyat_max) : null;
+  if (!mn && !mx) { puan += 20; }
+  else if (mn && mx) {
+    if (f >= mn && f <= mx) { puan += 20; sebepler.push('Fiyat uygun'); }
+    else if (f >= mn*0.9 && f <= mx*1.1) puan += 10;
+  } else if (mn && f >= mn) puan += 20;
+  else if (mx && f <= mx) puan += 20;
+
+  // Konum (20)
+  const konum = (ilan.konum||'').toLowerCase();
+  const prefIl = (pref.kriterler?.sehir || pref.sehir || '').toLowerCase();
+  const prefIlce = (pref.kriterler?.ilce || '').toLowerCase();
+  if (!prefIl) { puan += 20; }
+  else if (prefIlce && konum.includes(prefIlce)) { puan += 20; sebepler.push('Konum tam uyuştu'); }
+  else if (konum.includes(prefIl)) { puan += 12; sebepler.push('Şehir uyuştu'); }
+
+  // İşyeri türü (15)
+  const ilanTur = (k.isyeri_turu || '').toLowerCase();
+  const prefTur = pref.kriterler?.isyerikullanim || [];
+  if (!prefTur.length) { puan += 15; }
+  else if (prefTur.some(t => ilanTur.includes(t.replace(/[🏪💼🏭🍽️🏥🎓]/g,'').trim().toLowerCase()))) {
+    puan += 15; sebepler.push('İşyeri türü uyuştu');
+  } else if (!ilanTur) puan += 7;
+
+  // m² (15)
+  const m2 = Number(ilan.metrekare || k.isyeri_m2_net || 0);
+  const mnM2 = pref.kriterler?.minIsyeriM2 ? Number(pref.kriterler.minIsyeriM2) : null;
+  const mxM2 = pref.kriterler?.maxIsyeriM2 ? Number(pref.kriterler.maxIsyeriM2) : null;
+  if (!mnM2 && !mxM2) { puan += 15; }
+  else if (m2 && mnM2 && mxM2 && m2 >= mnM2 && m2 <= mxM2) { puan += 15; sebepler.push(`${m2}m² uygun`); }
+  else if (m2 && mnM2 && !mxM2 && m2 >= mnM2) puan += 15;
+  else if (m2 && !mnM2 && mxM2 && m2 <= mxM2) puan += 15;
+  else if (!m2) puan += 7;
+
+  // Kat/Cephe (10)
+  const ilanKat = (k.isyeri_kat || '').toLowerCase();
+  const prefKat = pref.kriterler?.isyerikat || [];
+  if (!prefKat.length) { puan += 10; }
+  else if (prefKat.some(k2 => ilanKat.includes(k2.toLowerCase()))) {
+    puan += 10; sebepler.push('Kat tercihi uyuştu');
+  } else if (!ilanKat) puan += 5;
+
+  // Isıtma (5)
+  const ilanIsitma = (k.isitma || '').toLowerCase();
+  const prefIsitma = pref.kriterler?.isitma || [];
+  if (!prefIsitma.length) { puan += 5; }
+  else if (prefIsitma.some(i => ilanIsitma.includes(i.replace(/[🔥🏢🌡️❄️]/g,'').trim().toLowerCase()))) {
+    puan += 5; sebepler.push('Isıtma uyuştu');
+  } else if (!ilanIsitma) puan += 2;
+
+  // Tapu (5)
+  const ilanTapu = (k.tapu_durumu || '').toLowerCase();
+  const prefTapu = pref.kriterler?.tapu || [];
+  if (!prefTapu.length) { puan += 5; }
+  else if (prefTapu.some(t => ilanTapu.includes(t.replace(/[✅📋🤝🌍]/g,'').trim().toLowerCase()))) {
+    puan += 5; sebepler.push('Tapu uyuştu');
+  } else if (!ilanTapu) puan += 2;
+
+  // İşyeri özellikleri (10)
+  const ilanOz = k.isyeri_ozellikler || [];
+  const prefOz = pref.kriterler?.isyerioz || [];
+  if (!prefOz.length) { puan += 10; }
+  else {
+    const eslesen = prefOz.filter(p => ilanOz.some(i => i.toLowerCase().includes(p.replace(/[🛣️🛗🅿️🚻📦🚛]/g,'').trim().toLowerCase())));
+    puan += Math.round(10 * eslesen.length / prefOz.length);
+    if (eslesen.length > 0) sebepler.push(`${eslesen.length} özellik uyuştu`);
+  }
+
   return { puan: Math.min(100, Math.max(1, puan)), sebepler };
 }
 
@@ -578,10 +421,14 @@ function eslesPuani(ilan) {
 sb.auth.getSession().then(async ({ data }) => {
   if (!data.session) { window.location.href = 'auth.html'; return; }
   currentUser = data.session.user;
-  tercihYukle();
 
-  const tercihVar = tercihler.sehir || tercihler.minFiyat || tercihler.maxFiyat ||
-    tercihler.oda?.length || tercihler.emlak?.length;
+  // Tercihleri arayan_ilanlar tablosundan çek
+  const { data: pref } = await sb.from('arayan_ilanlar')
+    .select('*').eq('user_id', currentUser.id).single();
+
+  tercihler = pref || {};
+
+  const tercihVar = tercihler.konum || tercihler.fiyat_min || tercihler.fiyat_max || tercihler.emlak_tipi;
 
   if (!tercihVar) {
     document.getElementById('swipeArea').innerHTML = `
@@ -599,14 +446,12 @@ sb.auth.getSession().then(async ({ data }) => {
   const { data: gorulenData } = await sb.from('gorülen_ilanlar').select('ilan_id').eq('user_id', currentUser.id);
   if (gorulenData) gorulenData.forEach(g => gorülenler.add(g.ilan_id));
 
-  // sessionStorage'dan kart pozisyonu koru
   const savedIndex = sessionStorage.getItem('swipe_kartIndex');
   if (savedIndex !== null) {
     kartIndex = parseInt(savedIndex);
     sessionStorage.removeItem('swipe_kartIndex');
   }
 
-  tercihFormunuDoldur();
   ilanlarYukle();
   favorileriYukle();
 });
@@ -614,19 +459,13 @@ sb.auth.getSession().then(async ({ data }) => {
 async function ilanlarYukle() {
   let query = sb.from('ilanlar').select('*')
     .eq('onay_durumu', 'onaylandi')
-    .neq('tip', 'devren')
     .neq('user_id', currentUser.id)
     .order('created_at', { ascending: false })
     .limit(100);
 
-  if (tercihler.tip && !tercihler.tip_fm) {
-    const dbTip = tercihler.tip.toLowerCase() === 'satılık' ? 'satilik' : 'kiralik';
-    query = query.eq('tip', dbTip);
-  }
-
   const { data } = await query;
   const filtreliIlanlar = (data || []).filter(i => !gorülenler.has(i.id));
-  ilanlar = filtreliIlanlar.map(i => ({ ...i, _esleme: eslesPuani(i) }));
+  ilanlar = filtreliIlanlar.map(i => ({ ...i, _esleme: eslesPuani(i, tercihler) }));
   ilanlar.sort((a, b) => b._esleme.puan - a._esleme.puan);
 
   document.getElementById('kalanYazi').textContent = `${ilanlar.length} ilan`;
@@ -765,15 +604,12 @@ async function saveFavorite(ilanId) {
 function dinleyiciEkle() {
   const card = getTopCard();
   if (!card) return;
-  let startX, startY, isDragging = false, moved = false;
+  let startX, isDragging = false;
 
   card.addEventListener('pointerdown', e => {
-    // Detay butonuna tıklandıysa swipe başlatma
     if (e.target.classList.contains('card-detay-btn')) return;
     isDragging = true;
-    moved = false;
     startX = e.clientX;
-    startY = e.clientY;
     card.setPointerCapture(e.pointerId);
     card.style.transition = 'none';
   });
@@ -781,8 +617,6 @@ function dinleyiciEkle() {
   card.addEventListener('pointermove', e => {
     if (!isDragging) return;
     const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) moved = true;
     card.style.transform = `translateX(${dx}px) rotate(${dx*0.06}deg)`;
     const id = card.dataset.id;
     const le = document.getElementById('like_'+id);
@@ -823,8 +657,8 @@ async function favorileriYukle() {
   document.getElementById('eslesmeCount').textContent = `${data.length} Eşleşme`;
   el.innerHTML = data.map(f => {
     const ilan = f.ilan;
-    if (!ilan || ilan.tip === 'devren') return '';
-    const { puan, sebepler } = eslesPuani(ilan);
+    if (!ilan) return '';
+    const { puan, sebepler } = eslesPuani(ilan, tercihler);
     const cls = puan >= 80 ? 'pct-high' : puan >= 55 ? 'pct-mid' : 'pct-low';
     return `
       <a class="eslesen-item" href="ilan-detay.html?id=${f.ilan_id}">
@@ -838,85 +672,6 @@ async function favorileriYukle() {
         <div style="font-size:22px;color:var(--gold)">›</div>
       </a>`;
   }).join('');
-}
-
-// ─── TERCİH FORMU ───
-function tercihAc()    { document.getElementById('tercihModal').classList.add('open'); }
-function tercihKapat() { document.getElementById('tercihModal').classList.remove('open'); }
-
-function tekSec(grup, el) {
-  document.querySelectorAll(`#pg-${grup} .tchip`).forEach(b => b.classList.remove('on'));
-  el.classList.add('on');
-  tercihler[grup] = el.textContent.trim();
-  const fm = document.getElementById(`fm-${grup}`);
-  if (fm) { fm.classList.remove('on'); tercihler[grup+'_fm'] = false; }
-}
-
-function cogulSec(grup, el) {
-  el.classList.toggle('on');
-  tercihler[grup] = [...document.querySelectorAll(`#pg-${grup} .tchip.on`)].map(b => b.textContent.trim());
-  const fm = document.getElementById(`fm-${grup}`);
-  if (fm) { fm.classList.remove('on'); tercihler[grup+'_fm'] = false; }
-}
-
-function kotAltıToggle(el) {
-  tercihler.kotAltiOlmasin = !tercihler.kotAltiOlmasin;
-  el.classList.toggle('on', tercihler.kotAltiOlmasin);
-  const fm = document.getElementById('fm-kat');
-  if (fm) { fm.classList.remove('on'); tercihler.kat_fm = false; }
-}
-
-function farketmezToggle(grup, el) {
-  const aktif = !el.classList.contains('on');
-  el.classList.toggle('on', aktif);
-  tercihler[grup+'_fm'] = aktif;
-  if (aktif) {
-    document.querySelectorAll(`#pg-${grup} .tchip`).forEach(b => b.classList.remove('on'));
-    if (Array.isArray(tercihler[grup])) tercihler[grup] = [];
-    else tercihler[grup] = null;
-  }
-}
-
-function tercihFormunuDoldur() {
-  if (tercihler.minFiyat) document.getElementById('pMinFiyat').value = tercihler.minFiyat;
-  if (tercihler.maxFiyat) document.getElementById('pMaxFiyat').value = tercihler.maxFiyat;
-  if (tercihler.minM2)    document.getElementById('pMinM2').value = tercihler.minM2;
-  if (tercihler.maxM2)    document.getElementById('pMaxM2').value = tercihler.maxM2;
-
-  ['tip','sehir','esya','kullanim','site','aidat'].forEach(g => {
-    if (tercihler[g]) {
-      document.querySelectorAll(`#pg-${g} .tchip`).forEach(b => {
-        if (b.textContent.trim() === tercihler[g]) b.classList.add('on');
-      });
-    }
-    const fm = document.getElementById(`fm-${g}`);
-    if (fm && tercihler[g+'_fm']) fm.classList.add('on');
-  });
-
-  ['emlak','oda','banyo','kat','bina','isitma','cephe','tapu','ic','dis'].forEach(g => {
-    const vals = tercihler[g] || [];
-    document.querySelectorAll(`#pg-${g} .tchip`).forEach(b => {
-      if (vals.includes(b.textContent.trim())) b.classList.add('on');
-    });
-    const fm = document.getElementById(`fm-${g}`);
-    if (fm && tercihler[g+'_fm']) fm.classList.add('on');
-  });
-
-  const kotBtn = document.getElementById('kotAltiBtn');
-  if (kotBtn) kotBtn.classList.toggle('on', tercihler.kotAltiOlmasin);
-}
-
-function tercihleriKaydet() {
-  tercihler.minFiyat = document.getElementById('pMinFiyat').value || null;
-  tercihler.maxFiyat = document.getElementById('pMaxFiyat').value || null;
-  tercihler.minM2    = document.getElementById('pMinM2').value || null;
-  tercihler.maxM2    = document.getElementById('pMaxM2').value || null;
-  const sehirBtn = document.querySelector('#pg-sehir .tchip.on');
-  tercihler.sehir = sehirBtn ? sehirBtn.textContent.trim() : null;
-  tercihKaydetLS();
-  tercihKapat();
-  ilanlarYukle();
-  alert('✅ Tercihler kaydedildi!');
 }
 </script>
 <script>
