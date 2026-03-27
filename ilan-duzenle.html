@@ -52,23 +52,78 @@
     display: flex; align-items: center; justify-content: space-between;
     background: var(--card); border: 1px solid var(--border);
     border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 16px;
+    cursor: pointer; transition: border-color .2s;
   }
-  .one-cikan-bar.aktif { border-color: rgba(245,200,66,0.4); background: rgba(245,200,66,0.05); }
-  .toggle {
-    width: 48px; height: 26px; border-radius: 13px;
-    background: var(--border); position: relative;
-    cursor: pointer; transition: background .2s; border: none; flex-shrink: 0;
-  }
-  .toggle.on { background: var(--gold); }
-  .toggle::after {
-    content: ''; position: absolute; top: 3px; left: 3px;
-    width: 20px; height: 20px; border-radius: 50%;
-    background: white; transition: left .2s;
-  }
-  .toggle.on::after { left: 25px; }
+  .one-cikan-bar:hover { border-color: var(--gold); }
   .danger-zone {
     background: rgba(232,96,58,0.05); border: 1px solid rgba(232,96,58,0.2);
     border-radius: var(--radius); padding: 16px; margin-top: 20px;
+  }
+
+  /* KADEMELİ KONUM */
+  .konum-group { display: flex; flex-direction: column; gap: 8px; }
+  .konum-select {
+    width: 100%; padding: 12px 14px;
+    background: var(--card); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text);
+    font-family: 'Nunito', sans-serif; font-size: 14px;
+    font-weight: 600; outline: none; cursor: pointer;
+    transition: border-color .2s; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+  }
+  .konum-select:focus { border-color: var(--gold); }
+  .konum-select:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ÖDEME MODAL */
+  .odeme-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    z-index: 1000; display: none; align-items: flex-end; justify-content: center;
+  }
+  .odeme-modal-overlay.open { display: flex; }
+  .odeme-modal {
+    background: var(--bg2); border-radius: 24px 24px 0 0;
+    border: 1px solid var(--border); border-bottom: none;
+    padding: 24px 20px 40px; width: 100%; max-width: 600px;
+    max-height: 90vh; overflow-y: auto;
+    animation: slideUp .3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .odeme-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+  .odeme-baslik { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
+  .odeme-aciklama { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 20px; }
+  .odeme-fiyat-kart {
+    background: linear-gradient(135deg, rgba(245,200,66,0.15), rgba(245,200,66,0.05));
+    border: 1px solid rgba(245,200,66,0.3); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 20px; text-align: center;
+  }
+  .odeme-fiyat { font-size: 36px; font-weight: 900; color: var(--gold); }
+  .odeme-fiyat-acik { font-size: 13px; color: var(--text3); margin-top: 4px; }
+  .banka-karti {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
+  }
+  .banka-adi { font-size: 15px; font-weight: 900; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .banka-satir { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .banka-label { font-size: 12px; color: var(--text3); font-weight: 700; }
+  .banka-deger { font-size: 13px; font-weight: 800; font-family: monospace; }
+  .banka-kopyala {
+    background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.3);
+    border-radius: 8px; padding: 4px 10px; color: var(--gold);
+    font-size: 11px; font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif;
+    transition: background .2s;
+  }
+  .banka-kopyala:active { background: rgba(245,200,66,0.25); }
+  .odeme-not {
+    background: rgba(74,144,217,0.08); border: 1px solid rgba(74,144,217,0.2);
+    border-radius: var(--radius-sm); padding: 12px; font-size: 13px;
+    color: var(--text2); line-height: 1.6; margin-top: 16px;
+  }
+  .odeme-kapat {
+    width: 100%; padding: 14px; border-radius: 50px;
+    background: var(--card); border: 1.5px solid var(--border);
+    color: var(--text); font-family: 'Nunito', sans-serif;
+    font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 16px;
   }
 </style>
   <link rel="manifest" href="manifest.json">
@@ -89,6 +144,72 @@
 </nav>
 
 <input type="file" id="yeniFotoInput" accept="image/*" multiple style="display:none" onchange="yeniFotoEkle(this)">
+
+<!-- ÖDEME MODALI - Öne Çıkar -->
+<div class="odeme-modal-overlay" id="odemeModal" onclick="if(event.target===this)odemeKapat()">
+  <div class="odeme-modal">
+    <div class="odeme-handle"></div>
+    <div class="odeme-baslik">⭐ İlanı Öne Çıkart</div>
+    <div class="odeme-aciklama">
+      Öne çıkan ilanınız ana sayfada tüm kullanıcılara <strong>en üstte</strong> gösterilir. Daha fazla görüntüleme ve alıcıya daha hızlı ulaşırsınız.
+    </div>
+    <div class="odeme-fiyat-kart">
+      <div class="odeme-fiyat">499 ₺</div>
+      <div class="odeme-fiyat-acik">30 gün öne çıkarma</div>
+    </div>
+
+    <div style="font-size:13px;font-weight:900;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">🏦 Banka Havalesi / EFT</div>
+
+    <div class="banka-karti">
+      <div class="banka-adi">🏦 Ziraat Bankası</div>
+      <div class="banka-satir">
+        <div><div class="banka-label">Hesap Sahibi</div><div class="banka-deger">GoTapu Teknoloji A.Ş.</div></div>
+      </div>
+      <div class="banka-satir">
+        <div><div class="banka-label">IBAN</div><div class="banka-deger">TR12 0001 0012 3456 7890 1234 56</div></div>
+        <button class="banka-kopyala" onclick="kopyala('TR12 0001 0012 3456 7890 1234 56', this)">Kopyala</button>
+      </div>
+      <div class="banka-satir">
+        <div><div class="banka-label">Şube</div><div class="banka-deger">Ankara Merkez Şubesi</div></div>
+      </div>
+    </div>
+
+    <div class="banka-karti">
+      <div class="banka-adi">🏦 İş Bankası</div>
+      <div class="banka-satir">
+        <div><div class="banka-label">Hesap Sahibi</div><div class="banka-deger">GoTapu Teknoloji A.Ş.</div></div>
+      </div>
+      <div class="banka-satir">
+        <div><div class="banka-label">IBAN</div><div class="banka-deger">TR34 0006 4000 0011 2233 4455 66</div></div>
+        <button class="banka-kopyala" onclick="kopyala('TR34 0006 4000 0011 2233 4455 66', this)">Kopyala</button>
+      </div>
+      <div class="banka-satir">
+        <div><div class="banka-label">Şube</div><div class="banka-deger">İstanbul Levent Şubesi</div></div>
+      </div>
+    </div>
+
+    <div class="banka-karti">
+      <div class="banka-adi">🏦 Garanti BBVA</div>
+      <div class="banka-satir">
+        <div><div class="banka-label">Hesap Sahibi</div><div class="banka-deger">GoTapu Teknoloji A.Ş.</div></div>
+      </div>
+      <div class="banka-satir">
+        <div><div class="banka-label">IBAN</div><div class="banka-deger">TR67 0006 2000 3210 0011 2233 44</div></div>
+        <button class="banka-kopyala" onclick="kopyala('TR67 0006 2000 3210 0011 2233 44', this)">Kopyala</button>
+      </div>
+      <div class="banka-satir">
+        <div><div class="banka-label">Şube</div><div class="banka-deger">İzmir Alsancak Şubesi</div></div>
+      </div>
+    </div>
+
+    <div class="odeme-not">
+      📌 <strong>Açıklama kısmına</strong> lütfen ilan başlığınızı veya kullanıcı e-postanızı yazın.<br>
+      Ödeme onaylandıktan sonra ilanınız <strong>en geç 24 saat içinde</strong> öne çıkarılacaktır.<br>
+      Bilgi için: <strong>destek@gotapu.com</strong>
+    </div>
+    <button class="odeme-kapat" onclick="odemeKapat()">Kapat</button>
+  </div>
+</div>
 
 <div class="page fade-up" id="icerik">
   <div class="spinner"></div>
@@ -114,6 +235,100 @@ let currentUser = null, ilan = null;
 let seciliTip = 'satilik';
 let mevcutFotolar = [], yeniFotolar = [], oneCikan = false;
 
+// ===== TÜRK İL/İLÇE VERİSİ =====
+const ILLER = ["Adana","Adıyaman","Afyonkarahisar","Ağrı","Amasya","Ankara","Antalya","Artvin","Aydın","Balıkesir","Bilecik","Bingöl","Bitlis","Bolu","Burdur","Bursa","Çanakkale","Çankırı","Çorum","Denizli","Diyarbakır","Edirne","Elazığ","Erzincan","Erzurum","Eskişehir","Gaziantep","Giresun","Gümüşhane","Hakkari","Hatay","Isparta","Mersin","İstanbul","İzmir","Kars","Kastamonu","Kayseri","Kırklareli","Kırşehir","Kocaeli","Konya","Kütahya","Malatya","Manisa","Kahramanmaraş","Mardin","Muğla","Muş","Nevşehir","Niğde","Ordu","Rize","Sakarya","Samsun","Siirt","Sinop","Sivas","Tekirdağ","Tokat","Trabzon","Tunceli","Şanlıurfa","Uşak","Van","Yozgat","Zonguldak","Aksaray","Bayburt","Karaman","Kırıkkale","Batman","Şırnak","Bartın","Ardahan","Iğdır","Yalova","Karabük","Kilis","Osmaniye","Düzce"];
+
+const ILCELER = {
+  "Ankara": ["Altındağ","Akyurt","Ayaş","Bala","Beypazarı","Çamlıdere","Çankaya","Çubuk","Elmadağ","Etimesgut","Evren","Gölbaşı","Güdül","Haymana","Kalecik","Kazan","Keçiören","Kızılcahamam","Mamak","Nallıhan","Polatlı","Pursaklar","Sincan","Şereflikoçhisar","Yenimahalle"],
+  "İstanbul": ["Adalar","Arnavutköy","Ataşehir","Avcılar","Bağcılar","Bahçelievler","Bakırköy","Başakşehir","Bayrampaşa","Beşiktaş","Beykoz","Beylikdüzü","Beyoğlu","Büyükçekmece","Çatalca","Çekmeköy","Esenler","Esenyurt","Eyüpsultan","Fatih","Gaziosmanpaşa","Güngören","Kadıköy","Kağıthane","Kartal","Küçükçekmece","Maltepe","Pendik","Sancaktepe","Sarıyer","Şile","Şişli","Silivri","Sultanbeyli","Sultangazi","Tuzla","Ümraniye","Üsküdar","Zeytinburnu"],
+  "İzmir": ["Aliağa","Balçova","Bayındır","Bayraklı","Bergama","Beydağ","Bornova","Buca","Çeşme","Çiğli","Dikili","Foça","Gaziemir","Güzelbahçe","Karabağlar","Karaburun","Karşıyaka","Kemalpaşa","Kınık","Kiraz","Konak","Menderes","Menemen","Narlıdere","Ödemiş","Seferihisar","Selçuk","Tire","Torbalı","Urla"],
+  "Bursa": ["Büyükorhan","Gemlik","Gürsu","Harmancık","İnegöl","İznik","Karacabey","Keles","Kestel","Mudanya","Mustafakemalpaşa","Nilüfer","Orhaneli","Orhangazi","Osmangazi","Yenişehir","Yıldırım"],
+  "Antalya": ["Akseki","Aksu","Alanya","Demre","Döşemealtı","Elmalı","Finike","Gazipaşa","Gündoğmuş","İbradı","Kaş","Kemer","Kepez","Konyaaltı","Korkuteli","Kumluca","Manavgat","Muratpaşa","Serik"],
+  "Adana": ["Aladağ","Ceyhan","Çukurova","Feke","İmamoğlu","Karaisalı","Karataş","Kozan","Pozantı","Saimbeyli","Sarıçam","Seyhan","Tufanbeyli","Yumurtalık","Yüreğir"],
+  "Konya": ["Ahırlı","Akören","Akşehir","Altınekin","Beyşehir","Bozkır","Cihanbeyli","Çeltik","Çumra","Derbent","Derebucak","Doğanhisar","Emirgazi","Ereğli","Güneysınır","Hadim","Halkapınar","Hüyük","Ilgın","Kadınhanı","Karapınar","Karatay","Kulu","Meram","Sarayönü","Selçuklu","Seydişehir","Taşkent","Tuzlukçu","Yalıhüyük","Yunak"],
+  "Kayseri": ["Akkışla","Bünyan","Develi","Felahiye","Hacılar","İncesu","Kocasinan","Melikgazi","Özvatan","Pınarbaşı","Sarıoğlan","Sarız","Talas","Tomarza","Yahyalı","Yeşilhisar"],
+  "Gaziantep": ["Araban","İslahiye","Karkamış","Nizip","Nurdağı","Oğuzeli","Şahinbey","Şehitkamil","Yavuzeli"],
+  "Mersin": ["Akdeniz","Anamur","Aydıncık","Bozyazı","Çamlıyayla","Erdemli","Gülnar","Mezitli","Mut","Silifke","Tarsus","Toroslar","Yenişehir"],
+  "Hatay": ["Altınözü","Antakya","Arsuz","Belen","Defne","Dörtyol","Erzin","Hassa","İskenderun","Kırıkhan","Kumlu","Payas","Reyhanlı","Samandağ","Serinyol","Yayladağı"],
+  "Muğla": ["Bodrum","Dalaman","Datça","Fethiye","Kavaklıdere","Köyceğiz","Marmaris","Menteşe","Milas","Ortaca","Seydikemer","Ula","Yatağan"],
+  "Kocaeli": ["Başiskele","Çayırova","Darıca","Derince","Dilovası","Gebze","Gölcük","İzmit","Kandıra","Karamürsel","Kartepe","Körfez"],
+  "Tekirdağ": ["Çerkezköy","Çorlu","Ergene","Hayrabolu","Kapaklı","Malkara","Marmaraereğlisi","Muratlı","Saray","Süleymanpaşa","Şarköy"],
+  "Eskişehir": ["Alpu","Beylikova","Çifteler","Günyüzü","Han","İnönü","Mahmudiye","Mihalgazi","Mihallıçık","Odunpazarı","Sarıcakaya","Seyitgazi","Sivrihisar","Tepebaşı"],
+  "Sakarya": ["Adapazarı","Akyazı","Arifiye","Erenler","Ferizli","Geyve","Hendek","Karapürçek","Karasu","Kaynarca","Kocaali","Pamukova","Sapanca","Serdivan","Söğütlü","Taraklı"],
+  "Trabzon": ["Akçaabat","Araklı","Arsin","Beşikdüzü","Çarşıbaşı","Çaykara","Dernekpazarı","Düzköy","Hayrat","Köprübaşı","Maçka","Of","Ortahisar","Sürmene","Şalpazarı","Tonya","Vakfıkebir","Yomra"],
+  "Samsun": ["19 Mayıs","Alaçam","Asarcık","Atakum","Ayvacık","Bafra","Canik","Çarşamba","Havza","İlkadım","Kavak","Ladik","Ondokuzmayıs","Salıpazarı","Tekkeköy","Terme","Vezirköprü","Yakakent"],
+  "Manisa": ["Ahmetli","Akhisar","Alaşehir","Demirci","Gölmarmara","Gördes","Kırkağaç","Köprübaşı","Kula","Salihli","Sarıgöl","Saruhanlı","Selendi","Soma","Şehzadeler","Turgutlu","Yunusemre"],
+  "Diyarbakır": ["Bağlar","Bismil","Çermik","Çınar","Çüngüş","Dicle","Eğil","Ergani","Hani","Hazro","Kayapınar","Kocaköy","Kulp","Lice","Silvan","Sur","Yenişehir"]
+};
+
+function illerDoldur(selectId, seciliDeger) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  sel.innerHTML = '<option value="">📍 İl seçiniz...</option>';
+  ILLER.forEach(il => {
+    const opt = document.createElement('option');
+    opt.value = il; opt.textContent = il;
+    if (il === seciliDeger) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function ilceDoldurDuzenle(ilAdi, seciliIlce) {
+  const ilceSel = document.getElementById('ilceSec');
+  if (!ilceSel) return;
+  ilceSel.innerHTML = '<option value="">İlçe seçiniz...</option>';
+  const ilceler = ILCELER[ilAdi] || [];
+  ilceler.forEach(ilce => {
+    const opt = document.createElement('option');
+    opt.value = ilce; opt.textContent = ilce;
+    if (ilce === seciliIlce) opt.selected = true;
+    ilceSel.appendChild(opt);
+  });
+  ilceSel.disabled = ilceler.length === 0;
+}
+
+function ilDegisti() {
+  const il = document.getElementById('ilSec').value;
+  ilceDoldurDuzenle(il, '');
+  konumGuncelle();
+}
+
+function konumGuncelle() {
+  const il = document.getElementById('ilSec') ? document.getElementById('ilSec').value : '';
+  const ilce = document.getElementById('ilceSec') ? document.getElementById('ilceSec').value : '';
+  const parcalar = [ilce, il].filter(Boolean);
+  const konumInput = document.getElementById('konumText');
+  if (konumInput) konumInput.value = parcalar.join(', ');
+  const hidden = document.getElementById('konumHidden');
+  if (hidden) hidden.value = parcalar.join(', ');
+}
+
+// ÖDEME MODAL
+function odemeAc() {
+  document.getElementById('odemeModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function odemeKapat() {
+  document.getElementById('odemeModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function kopyala(metin, btn) {
+  navigator.clipboard.writeText(metin).then(() => {
+    const eskiMetin = btn.textContent;
+    btn.textContent = '✓ Kopyalandı';
+    btn.style.background = 'rgba(46,204,113,0.2)';
+    btn.style.borderColor = 'rgba(46,204,113,0.4)';
+    btn.style.color = '#2ecc71';
+    setTimeout(() => {
+      btn.textContent = eskiMetin;
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+    }, 2000);
+  });
+}
+
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) { window.location.href = 'auth.html'; return; }
   currentUser = data.session.user;
@@ -135,6 +350,12 @@ async function ilanYukle() {
 
 function formOlustur() {
   const k = ilan.kriterler || {};
+  // Mevcut konumu parse et
+  const mevcutKonum = ilan.konum || '';
+  const konumParcalari = mevcutKonum.split(',').map(s => s.trim());
+  const mevcutIl = ilan.sehir || k.il || (konumParcalari.length > 1 ? konumParcalari[konumParcalari.length - 1] : konumParcalari[0]) || '';
+  const mevcutIlce = k.ilce || (konumParcalari.length > 1 ? konumParcalari[konumParcalari.length - 2] : '') || '';
+
   document.getElementById('icerik').innerHTML = `
 
     <div class="bolum-baslik">📋 Temel Bilgiler</div>
@@ -165,9 +386,19 @@ function formOlustur() {
       <input class="input" type="number" id="fiyat" value="${ilan.fiyat || ''}">
     </div>
 
+    <!-- KADEMELİ KONUM SEÇİMİ -->
     <div class="form-group">
       <label class="form-label">Konum *</label>
-      <input class="input" type="text" id="konum" value="${ilan.konum || ''}">
+      <div class="konum-group">
+        <select class="konum-select" id="ilSec" onchange="ilDegisti()">
+          <option value="">📍 İl seçiniz...</option>
+        </select>
+        <select class="konum-select" id="ilceSec" onchange="konumGuncelle()" disabled>
+          <option value="">İlçe seçiniz...</option>
+        </select>
+      </div>
+      <input class="input" type="text" id="konumText" placeholder="Mevcut konum..." value="${mevcutKonum}" style="margin-top:8px;font-size:12px;color:var(--text3)" readonly>
+      <input type="hidden" id="konumHidden" value="${mevcutKonum}">
     </div>
 
     <div class="bolum-baslik">🏠 Emlak Özellikleri</div>
@@ -285,7 +516,6 @@ function formOlustur() {
     </div>
 
     <div class="bolum-baslik">🪟 İç Özellikler</div>
-
     <div class="form-group">
       <div class="sec-row" id="icOzellikler">
         ${['🪟 Balkon','🏡 Bahçe','🚿 Ebeveyn Banyosu','👕 Giyinme Odası','🍽️ Amerikan Mutfak','🛁 Küvet','🪟 Çift Camlı','🔆 Aydınlık Daire','📺 Uydu/Kablo TV','🌐 İnternet','🔔 Alarm Sistemi','🔐 Çelik Kapı','🎨 Yerden Isıtma','🪵 Parke/Laminat','🪨 Seramik/Granit'].map(s=>`
@@ -294,7 +524,6 @@ function formOlustur() {
     </div>
 
     <div class="bolum-baslik">🏢 Dış Özellikler & Site</div>
-
     <div class="form-group">
       <div class="sec-row" id="disOzellikler">
         ${['🛗 Asansör','🅿️ Otopark (Kapalı)','🚗 Otopark (Açık)','🏊 Yüzme Havuzu','🏋️ Spor Salonu','👮 Güvenlik/Kapıcı','📷 Kamera Sistemi','🌳 Yeşil Alan','🏸 Tenis Kortu','⚽ Spor Alanı','🧒 Çocuk Parkı','🧹 Temizlik Hizmeti','🛁 Sauna/Hamam','🏪 Site İçi Market'].map(s=>`
@@ -304,13 +533,17 @@ function formOlustur() {
 
     <div class="bolum-baslik">⭐ Özel Seçenekler</div>
 
-    <div class="one-cikan-bar ${oneCikan?'aktif':''}" id="oneCikanBar">
+    <!-- ÖNE ÇIKAR - Ödeme modalını açar -->
+    <div class="one-cikan-bar" onclick="odemeAc()">
       <div>
-        <div style="font-size:14px;font-weight:800">⭐ Öne Çıkar</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:2px">Ana sayfada önce göster</div>
-        <div style="font-size:11px;color:var(--gold);margin-top:4px;${oneCikan?'':'display:none'}" id="oneCikanAktifYazi">✓ Aktif</div>
+        <div style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px">
+          ⭐ İlanı Öne Çıkart
+          <span style="font-size:11px;color:var(--gold);background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3);padding:2px 8px;border-radius:50px">499 ₺</span>
+          ${oneCikan ? '<span style="font-size:11px;color:#2ecc71;background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);padding:2px 8px;border-radius:50px">✓ Aktif</span>' : ''}
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:3px">Ana sayfada en üstte göster — Ödeme bilgilerini gör</div>
       </div>
-      <button class="toggle ${oneCikan?'on':''}" id="oneCikanToggle" onclick="toggleOneCikan()"></button>
+      <div style="color:var(--gold);font-size:20px">›</div>
     </div>
 
     <div class="bolum-baslik">📷 Fotoğraflar</div>
@@ -331,16 +564,24 @@ function formOlustur() {
       <button class="btn btn-lg" onclick="ilanSil()" style="background:var(--rust);color:white;width:100%">🗑️ İlanı Kalıcı Olarak Sil</button>
     </div>
   `;
+
+  // İlleri doldur ve mevcut değeri seç
+  illerDoldur('ilSec', mevcutIl);
+  if (mevcutIl) {
+    ilceDoldurDuzenle(mevcutIl, mevcutIlce);
+  }
   fotoGuncelle();
 }
 
-function toggleOneCikan() {
-  oneCikan = !oneCikan;
-  document.getElementById('oneCikanToggle').classList.toggle('on', oneCikan);
-  document.getElementById('oneCikanBar').classList.toggle('aktif', oneCikan);
-  const yazi = document.getElementById('oneCikanAktifYazi');
-  if (yazi) yazi.style.display = oneCikan ? 'block' : 'none';
+function secTip(el, tip) {
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active'); seciliTip = tip;
 }
+function secBtn(el, grupId) {
+  document.getElementById(grupId).querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+function secBtnCoklu(el) { el.classList.toggle('active'); }
 
 function fotoGuncelle() {
   const container = document.getElementById('fotoContainer');
@@ -368,16 +609,6 @@ function yeniFotoEkle(input) {
   input.value = ''; fotoGuncelle();
 }
 
-function secTip(el, tip) {
-  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active'); seciliTip = tip;
-}
-function secBtn(el, grupId) {
-  document.getElementById(grupId).querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-}
-function secBtnCoklu(el) { el.classList.toggle('active'); }
-
 function getSecim(grupId) {
   const el = document.getElementById(grupId);
   if (!el) return null;
@@ -393,8 +624,13 @@ function getCokluSecim(grupId) {
 async function kaydet() {
   const baslik = document.getElementById('baslik').value.trim();
   const fiyat  = document.getElementById('fiyat').value;
-  const konum  = document.getElementById('konum').value.trim();
-  const errEl  = document.getElementById('ilanError');
+  const konumHidden = document.getElementById('konumHidden');
+  const konumText = document.getElementById('konumText');
+  // Önce yeni seçilen il/ilçeyi dene, yoksa mevcut konum textini kullan
+  const il = document.getElementById('ilSec') ? document.getElementById('ilSec').value : '';
+  const ilce = document.getElementById('ilceSec') ? document.getElementById('ilceSec').value : '';
+  const konum = [ilce, il].filter(Boolean).join(', ') || (konumHidden ? konumHidden.value : '') || (konumText ? konumText.value : '');
+  const errEl = document.getElementById('ilanError');
 
   if (!baslik || !fiyat || !konum) {
     errEl.textContent = '⚠️ Başlık, fiyat ve konum zorunludur!';
@@ -431,17 +667,20 @@ async function kaydet() {
     aidat:           getSecim('aidatDurumu'),
     ic_ozellikler:   getCokluSecim('icOzellikler'),
     dis_ozellikler:  getCokluSecim('disOzellikler'),
+    il: il || null,
+    ilce: ilce || null,
   };
 
   const { error } = await sb.from('ilanlar').update({
     baslik, fiyat: Number(fiyat), tip: seciliTip, konum,
+    sehir: il || ilan.sehir || null,
     oda_sayisi:  getSecim('odaSayisi') || null,
     metrekare:   document.getElementById('m2net').value ? Number(document.getElementById('m2net').value) : null,
     aciklama:    document.getElementById('aciklama').value.trim() || null,
     foto_url:    mevcutFotolar[0] || null,
     foto_urls:   mevcutFotolar.length > 0 ? mevcutFotolar : null,
-    one_cikan:   oneCikan,
-    onay_durumu: 'bekliyor', // düzenlenince tekrar admin onayına gönder
+    one_cikan:   ilan.one_cikan, // öne çıkma durumunu değiştirme, admin yapar
+    onay_durumu: 'bekliyor',
     kriterler
   }).eq('id', ilanId).eq('user_id', currentUser.id);
 
