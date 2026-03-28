@@ -543,7 +543,7 @@ async function sifreSifirla() {
 async function googleGiris() {
   const { error } = await sb.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: 'https://cengobee.github.io/XxxGotapu/index.html' }
+    options: { redirectTo: 'https://gotapu.com/index.html' }
   });
   if (error) showError('Google girişi başarısız: ' + error.message);
 }
