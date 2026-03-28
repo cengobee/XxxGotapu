@@ -68,6 +68,14 @@
   .hizmet-item:active { border-color: var(--gold); }
   .hizmet-em { font-size: 26px; display: block; margin-bottom: 6px; }
   .hizmet-lbl { font-size: 11px; font-weight: 700; color: var(--text2); }
+  .talep-card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 14px 16px; margin-bottom: 10px;
+    border: 1px solid var(--border);
+  }
+  .talep-durum-bekliyor { background: rgba(245,200,66,0.15); color: var(--gold); }
+  .talep-durum-tamamlandi { background: rgba(46,204,113,0.15); color: var(--green); }
+  .talep-durum-iptal { background: rgba(232,96,58,0.15); color: var(--rust); }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -118,6 +126,12 @@
   <div class="menu-section">
     <div class="menu-label">Alıcı Aramalarım</div>
     <div id="aliciIlanCard"><div class="spinner"></div></div>
+  </div>
+
+  <!-- HİZMET TALEPLERİM -->
+  <div class="menu-section">
+    <div class="menu-label">Hizmet Taleplerim</div>
+    <div id="hizmetTalepCard"><div class="spinner"></div></div>
   </div>
 
   <!-- HİZMETLER -->
@@ -289,8 +303,49 @@ async function profilYukle() {
     }).join('');
   }
 
-  const { count } = await sb.from('teklifler').select('*', { count: 'exact', head: true }).eq('user_id', currentUser.id);
-  document.getElementById('hizmetSayisi').textContent = count || 0;
+  // Hizmet Talepleri
+  const { data: taleplar } = await sb.from('teklifler').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  const talepEl = document.getElementById('hizmetTalepCard');
+  document.getElementById('hizmetSayisi').textContent = taleplar?.length || 0;
+
+  if (!taleplar || taleplar.length === 0) {
+    talepEl.innerHTML = `<div class="empty" style="padding:24px">
+      <div class="empty-icon">🔧</div>
+      <div class="empty-title">Henüz hizmet talebi yok</div>
+      <div class="empty-desc">Temizlik, tadilat, nakliye gibi hizmetler için talep oluşturun</div>
+      <a href="hizmetler.html" class="btn btn-gold btn-md" style="margin-top:12px;max-width:220px">🔧 Hizmet Al →</a>
+    </div>`;
+  } else {
+    const kategoriEmoji = {
+      tadilat: '🔧', temizlik: '🧹', boya: '🖌️', nakliye: '🚚',
+      cilingir: '🔑', teknik: '📱', dekorasyon: '🛋️', sigorta: '🛡️',
+      aracyikama: '🚗', koltukyikama: '🛋️', haliyikama: '🪞',
+      ilacalama: '🦟', petek: '♨️', tesisat: '🔩', elektrik: '⚡'
+    };
+    talepEl.innerHTML = taleplar.map(t => {
+      const durumClass = t.durum === 'tamamlandi' ? 'talep-durum-tamamlandi' : t.durum === 'iptal' ? 'talep-durum-iptal' : 'talep-durum-bekliyor';
+      const durumText = t.durum === 'tamamlandi' ? '✅ Tamamlandı' : t.durum === 'iptal' ? '❌ İptal' : '⏳ Bekliyor';
+      const emoji = kategoriEmoji[t.kategori] || '🔧';
+      return `
+        <div class="talep-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:24px">${emoji}</span>
+              <div>
+                <div style="font-size:14px;font-weight:900;color:var(--text)">${t.kategori ? t.kategori.charAt(0).toUpperCase() + t.kategori.slice(1) : 'Hizmet'}</div>
+                <div style="font-size:11px;color:var(--text3)">${new Date(t.created_at).toLocaleDateString('tr-TR')}</div>
+              </div>
+            </div>
+            <span class="onay-badge ${durumClass}">${durumText}</span>
+          </div>
+          ${t.detaylar ? `<div style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:8px;background:var(--card2);border-radius:8px;padding:8px">${t.detaylar}</div>` : ''}
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${t.ad_soyad ? `<span style="font-size:12px;color:var(--text3)">👤 ${t.ad_soyad}</span>` : ''}
+            ${t.telefon ? `<span style="font-size:12px;color:var(--text3)">📞 ${t.telefon}</span>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  }
 }
 
 async function aliciIlanSil(id) {
