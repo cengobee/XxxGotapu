@@ -338,7 +338,7 @@ async function profilYukle() {
             </div>
             <span class="onay-badge ${durumClass}">${durumText}</span>
           </div>
-          ${t.detaylar ? `<div style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:8px;background:var(--card2);border-radius:8px;padding:8px">${typeof t.detaylar === 'object' ? Object.entries(t.detaylar).map(([k,v]) => `<span style="margin-right:8px">• ${v}</span>`).join('') : t.detaylar}</div>` : ''}
+          ${t.detaylar ? `<div style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:8px;background:var(--card2);border-radius:8px;padding:8px">${typeof t.detaylar === 'object' ? Object.entries(t.detaylar).map(([k,v]) => { if (typeof v === 'string' && v.startsWith('http')) return ''; return `<span style="margin-right:8px">• ${v}</span>`; }).join('') : t.detaylar}</div>` : ''}
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             ${t.ad_soyad ? `<span style="font-size:12px;color:var(--text3)">👤 ${t.ad_soyad}</span>` : ''}
             ${t.telefon ? `<span style="font-size:12px;color:var(--text3)">📞 ${t.telefon}</span>` : ''}
