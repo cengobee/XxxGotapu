@@ -112,12 +112,10 @@
   .promo h3 { font-size: 15px; font-weight: 900; }
   .promo p { font-size: 12px; color: var(--text2); margin-top: 3px; }
 
-  /* MOBİL: mobile-only görünür, desktop-sol/sag gizli */
   .desktop-sol, .desktop-sag { display: none; }
   .mobile-only { display: block; }
   .desktop-layout { display: block; }
 
-  /* MASAÜSTÜ */
   @media (min-width: 900px) {
     body { padding-bottom: 0 !important; }
     .top-nav { padding: 0 40px !important; height: 64px !important; }
@@ -294,9 +292,37 @@ let aktifSayfa = 1;
 let toplamSayfa = 1;
 const emojiler = { satilik: '🏙️', kiralik: '🏘️' };
 
-if (new URLSearchParams(window.location.search).get('code')) {
+// ── GOOGLE OAUTH HASH HANDLER ──────────────────────────────────────────────
+// Google OAuth sonrası Supabase #access_token=... hash ile geri döner.
+// Bunu yakala, session kur, hash'i temizle.
+if (window.location.hash && window.location.hash.includes('access_token')) {
+  const hashParams = new URLSearchParams(window.location.hash.substring(1));
+  const access_token = hashParams.get('access_token');
+  const refresh_token = hashParams.get('refresh_token');
+
+  if (access_token) {
+    sb.auth.setSession({ access_token, refresh_token }).then(({ data, error }) => {
+      if (error) {
+        console.error('Session kurulamadı:', error);
+        window.location.replace('auth.html');
+      } else {
+        // Hash'i URL'den temizle, sayfayı yenile
+        window.history.replaceState(null, '', window.location.pathname);
+        init();
+      }
+    });
+  } else {
+    init();
+  }
+} else if (new URLSearchParams(window.location.search).get('code')) {
+  // PKCE flow — auth.html'e yönlendir
   window.location.replace('auth.html' + window.location.search);
 } else {
+  init();
+}
+// ──────────────────────────────────────────────────────────────────────────
+
+function init() {
   sb.auth.getSession().then(({ data }) => {
     if (!data.session) { window.location.href = 'auth.html'; return; }
     ilanlarYukle();
@@ -323,7 +349,6 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
   listEl.innerHTML = '<div class="spinner"></div>';
   document.getElementById('pagination').innerHTML = '';
 
-  // Tüm onaylı ilanları say (öne çıkan + normal)
   let countQuery = sb.from('ilanlar')
     .select('*', { count: 'exact', head: true })
     .eq('onay_durumu', 'onaylandi')
@@ -339,7 +364,6 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
   const from = (sayfa - 1) * SAYFA_BOYUTU;
   const to = from + SAYFA_BOYUTU - 1;
 
-  // Öne çıkanlar önce, sonra diğerleri
   let query = sb.from('ilanlar')
     .select('*')
     .eq('onay_durumu', 'onaylandi')
@@ -353,7 +377,6 @@ async function ilanlarYukle(filtre = aktifFiltre, arama = '', sayfa = 1) {
 
   const { data, error } = await query;
 
-  // Başlık güncelle
   const bolumBaslik = document.getElementById('bolumBaslik');
   if (bolumBaslik) {
     const oneCikanVar = data && data.some(i => i.one_cikan);
