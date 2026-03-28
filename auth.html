@@ -533,7 +533,7 @@ async function sifreSifirla() {
   if (!email) return showError('Lütfen e-posta adresinizi girin!');
   setLoading(true);
   const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: 'https://cengobee.github.io/XxxGotapu/auth.html'
+    redirectTo: 'https://gotapu.com/index.html'
   });
   setLoading(false);
   if (error) return showError('Hata: ' + error.message);
