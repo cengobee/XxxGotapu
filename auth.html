@@ -431,7 +431,9 @@ async function girisYap() {
   const { error } = await sb.auth.signInWithPassword({ email, password });
   setLoading(false);
   if (error) return showError('Giriş başarısız: ' + error.message);
-  window.location.href = 'index.html';
+  const rd = localStorage.getItem('gotapu_redirect');
+  if (rd) { localStorage.removeItem('gotapu_redirect'); window.location.href = rd; }
+  else window.location.href = 'index.html';
 }
 
 async function kayitOl() {
@@ -504,7 +506,9 @@ async function kayitOl() {
   }
 
   setLoading(false);
-  window.location.href = 'index.html';
+  const rd2 = localStorage.getItem('gotapu_redirect');
+  if (rd2) { localStorage.removeItem('gotapu_redirect'); window.location.href = rd2; }
+  else window.location.href = 'index.html';
 }
 
 async function yeniSifreKaydet() {
