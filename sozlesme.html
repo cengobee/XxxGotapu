@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yasal Bilgiler – GoTapu</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; font-size: 14px; color: #333; background: #f5f5f5; }
+    .site-header { background: #fff; border-bottom: 1px solid #ddd; padding: 0 16px; }
+    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; height: 56px; gap: 24px; }
+    .logo { font-size: 22px; font-weight: 700; color: #e85d26; text-decoration: none; letter-spacing: -0.5px; }
+    .header-tagline { font-size: 12px; color: #999; border-left: 1px solid #ddd; padding-left: 16px; }
+    .breadcrumb { background: #fff; border-bottom: 1px solid #e8e8e8; padding: 0 16px; }
+    .breadcrumb-inner { max-width: 1100px; margin: 0 auto; padding: 10px 0; font-size: 12px; color: #999; }
+    .breadcrumb-inner a { color: #e85d26; text-decoration: none; }
+    .breadcrumb-inner span { margin: 0 6px; }
+    .container { max-width: 1100px; margin: 20px auto; padding: 0 16px; display: flex; gap: 20px; align-items: flex-start; }
+    .sidebar { width: 220px; flex-shrink: 0; background: #fff; border: 1px solid #ddd; border-radius: 3px; }
+    .sidebar-title { background: #f0f0f0; border-bottom: 1px solid #ddd; padding: 10px 14px; font-size: 13px; font-weight: bold; color: #444; }
+    .sidebar ul { list-style: none; }
+    .sidebar ul li a { display: block; padding: 10px 14px; font-size: 13px; color: #444; text-decoration: none; border-bottom: 1px solid #f0f0f0; }
+    .sidebar ul li a:hover { background: #fafafa; color: #e85d26; }
+    .sidebar ul li a.active { color: #e85d26; font-weight: bold; background: #fff8f5; border-left: 3px solid #e85d26; padding-left: 11px; }
+    .main { flex: 1; background: #fff; border: 1px solid #ddd; border-radius: 3px; padding: 24px 28px; min-height: 600px; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .section h1 { font-size: 18px; font-weight: bold; color: #333; padding-bottom: 12px; border-bottom: 2px solid #e85d26; margin-bottom: 20px; }
+    .section h2 { font-size: 14px; font-weight: bold; color: #444; margin: 22px 0 8px; }
+    .section p { line-height: 1.7; color: #555; margin-bottom: 10px; }
+    .section ul { padding-left: 18px; margin-bottom: 12px; }
+    .section ul li { line-height: 1.8; color: #555; }
+    .info-box { background: #fff8f5; border: 1px solid #f5cbb8; border-radius: 3px; padding: 12px 16px; font-size: 13px; color: #666; margin: 16px 0; }
+    .update-info { font-size: 12px; color: #999; margin-bottom: 20px; }
+    .site-footer { background: #444; color: #ccc; text-align: center; padding: 20px; font-size: 12px; margin-top: 32px; }
+    .site-footer a { color: #e85d26; text-decoration: none; }
+    @media (max-width: 680px) { .container { flex-direction: column; } .sidebar { width: 100%; } .header-tagline { display: none; } }
+  </style>
+</head>
+<body>
+<div class="site-header">
+  <div class="header-inner">
+    <a href="https://gotapu.com" class="logo">GoTapu</a>
+    <span class="header-tagline">Türkiye'nin akıllı emlak platformu</span>
+  </div>
+</div>
+<div class="breadcrumb">
+  <div class="breadcrumb-inner">
+    <a href="https://gotapu.com">Ana Sayfa</a><span>›</span>Yasal Bilgiler
+  </div>
+</div>
+<div class="container">
+  <div class="sidebar">
+    <div class="sidebar-title">Yasal Bilgiler</div>
+    <ul>
+      <li><a href="#" class="active" onclick="show('sozlesme',this);return false;">Kullanıcı Sözleşmesi</a></li>
+      <li><a href="#" onclick="show('gizlilik',this);return false;">Gizlilik Politikası</a></li>
+      <li><a href="#" onclick="show('cerez',this);return false;">Çerez Politikası</a></li>
+    </ul>
+  </div>
+  <div class="main">
+
+    <div class="section active" id="sozlesme">
+      <h1>Kullanıcı Sözleşmesi</h1>
+      <p class="update-info">Son güncelleme: Mart 2025</p>
+      <h2>1. Taraflar</h2>
+      <p>Bu sözleşme, <strong>GoTapu</strong> ("Platform") ile platformu kullanan bireyler ("Kullanıcı") arasında akdedilmiştir. Platforma kayıt olarak veya hizmetleri kullanarak bu sözleşmeyi kabul etmiş sayılırsınız.</p>
+      <h2>2. Hizmetin Kapsamı</h2>
+      <p>GoTapu; emlak ilanlarının yayımlanmasına, görüntülenmesine, eşleştirme özelliklerine ve ev hizmetleri pazaryerine erişime olanak tanıyan bir platformdur. Platform, alıcı ve satıcı arasında aracılık yapar; taraf değildir.</p>
+      <h2>3. Kullanıcı Yükümlülükleri</h2>
+      <ul>
+        <li>Yalnızca gerçek ve güncel ilanlar yayımlayabilirsiniz.</li>
+        <li>Sahte, yanıltıcı veya müstehcen içerik paylaşılamaz.</li>
+        <li>Başka kullanıcıların kişisel bilgilerini izinsiz kullanamazsınız.</li>
+        <li>Platform altyapısına zarar verecek işlemler yasaktır.</li>
+        <li>Türkiye Cumhuriyeti yasalarına aykırı hiçbir eylem gerçekleştirilemez.</li>
+      </ul>
+      <h2>4. İlan Yayımlama Kuralları</h2>
+      <p>GoTapu, kurallara aykırı ilanları önceden bildirim yapmaksızın kaldırma ve ilgili kullanıcı hesabını askıya alma hakkını saklı tutar. Onay bekleyen ilanlar yayına girmeyebilir.</p>
+      <h2>5. Ücretlendirme</h2>
+      <p>Temel ilan yayımlama hizmeti şu an için ücretsizdir. Ücretli özellikler ve abonelik planları ilerleyen dönemlerde kullanıcılara önceden bildirilecektir.</p>
+      <h2>6. Sorumluluk Sınırı</h2>
+      <p>GoTapu, kullanıcılar arasında gerçekleşen alım-satım işlemlerinde taraf değildir. Emlak değerlemesi yalnızca bilgilendirme amaçlıdır; hukuki veya mali tavsiye niteliği taşımaz.</p>
+      <h2>7. Sözleşme Değişiklikleri</h2>
+      <p>GoTapu bu sözleşmeyi önceden duyurarak değiştirebilir. Değişikliklerin ardından platformu kullanmaya devam etmeniz, güncel sözleşmeyi kabul ettiğiniz anlamına gelir.</p>
+      <h2>8. İletişim</h2>
+      <p>Sorularınız için: <strong>gotapuapp@gmail.com</strong></p>
+    </div>
+
+    <div class="section" id="gizlilik">
+      <h1>Gizlilik Politikası</h1>
+      <p class="update-info">Son güncelleme: Mart 2025</p>
+      <div class="info-box">GoTapu olarak kişisel verilerinizi korumayı öncelikli sorumluluğumuz olarak görüyoruz. Bu politika, hangi verileri topladığımızı ve nasıl kullandığımızı açıklar.</div>
+      <h2>1. Toplanan Veriler</h2>
+      <ul>
+        <li>Ad, soyad, e-posta adresi</li>
+        <li>Google hesabı ile girişte: profil adı ve e-posta</li>
+        <li>Yayımladığınız ilan bilgileri (fotoğraf, fiyat, konum vb.)</li>
+        <li>Platform kullanım verileri (erişim zamanı, cihaz türü)</li>
+      </ul>
+      <h2>2. Verilerin Kullanımı</h2>
+      <ul>
+        <li>Hesap oluşturma ve kimlik doğrulama</li>
+        <li>İlan yayımlama ve yönetme hizmetleri</li>
+        <li>Eşleştirme algoritması</li>
+        <li>Platformun güvenliği ve iyileştirilmesi</li>
+        <li>Kullanıcıyla iletişim (bildirim, destek)</li>
+      </ul>
+      <h2>3. Üçüncü Taraflarla Paylaşım</h2>
+      <p>Kişisel verileriniz üçüncü taraflara satılmaz veya kiralanmaz. Yalnızca altyapı sağlayıcıları (Supabase, Google) ve yasal zorunluluk halinde resmi makamlarla paylaşılabilir.</p>
+      <h2>4. Veri Güvenliği</h2>
+      <p>Verileriniz Supabase altyapısında şifrelenmiş olarak saklanır. SSL/HTTPS ile aktarılır.</p>
+      <h2>5. KVKK Kapsamındaki Haklarınız</h2>
+      <ul>
+        <li>Verilerinize erişim ve düzeltme talep etme</li>
+        <li>Verilerinizin silinmesini isteme</li>
+        <li>İşleme faaliyetine itiraz etme</li>
+      </ul>
+      <p>Talepleriniz için: <strong>gotapuapp@gmail.com</strong></p>
+      <h2>6. Veri Saklama Süresi</h2>
+      <p>Hesabınızı sildiğinizde kişisel verileriniz 30 gün içinde sistemden kaldırılır.</p>
+    </div>
+
+    <div class="section" id="cerez">
+      <h1>Çerez Politikası</h1>
+      <p class="update-info">Son güncelleme: Mart 2025</p>
+      <h2>Çerez Nedir?</h2>
+      <p>Çerezler, web siteleri tarafından tarayıcınıza yerleştirilen küçük metin dosyalarıdır. Oturum bilgilerinizi hatırlamak ve deneyiminizi kişiselleştirmek için kullanılırlar.</p>
+      <h2>Zorunlu Çerezler</h2>
+      <ul>
+        <li><strong>sb-access-token</strong> — Supabase oturum doğrulama</li>
+        <li><strong>sb-refresh-token</strong> — Oturum yenileme</li>
+      </ul>
+      <h2>İşlevsel Çerezler</h2>
+      <p>Tercihlerinizi (dil, görünüm) hatırlamak için kullanılır.</p>
+      <h2>Analitik Çerezler</h2>
+      <p>Platform performansını iyileştirmek amacıyla anonim kullanım verisi toplanabilir. Bu veriler sizi kişisel olarak tanımlamaz.</p>
+      <h2>Google Çerezleri</h2>
+      <p>Google ile giriş özelliği kullanıldığında Google'ın kimlik doğrulama çerezleri devreye girer. Bu çerezler Google'ın gizlilik politikasına tabidir.</p>
+      <h2>Çerezleri Kontrol Etme</h2>
+      <p>Tarayıcı ayarlarınızdan çerezleri silebilir veya engelleyebilirsiniz. Zorunlu çerezlerin engellenmesi platformun bazı özelliklerini etkileyebilir.</p>
+      <h2>İletişim</h2>
+      <p>Sorularınız için: <strong>gotapuapp@gmail.com</strong></p>
+    </div>
+
+  </div>
+</div>
+<div class="site-footer">
+  © 2025 GoTapu — <a href="https://gotapu.com">gotapu.com</a> — Tüm hakları saklıdır.
+</div>
+<script>
+  function show(id, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
