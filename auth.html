@@ -42,27 +42,21 @@
   }
   .ekstra-alan .alan-label { font-size: 11px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: -6px; }
 
-  /* MASAÜSTÜ - sadece CSS, hiçbir JS değişikliği yok */
   @media (min-width: 900px) {
     body {
       padding: 0;
       align-items: stretch;
     }
-
-    /* Sol panel - tanıtım */
     body::before {
       content: '';
       flex: 1;
       background: linear-gradient(135deg, #1a1f2e 0%, #0f1117 100%);
       border-right: 1px solid var(--border);
     }
-
-    /* İki sütunlu layout */
     body {
       display: grid;
       grid-template-columns: 1fr 480px;
     }
-
     .auth-box {
       max-width: 100%;
       padding: 40px 48px;
@@ -73,8 +67,6 @@
       justify-content: center;
       min-height: 100vh;
     }
-
-    /* Sol panel içeriği için pseudo element yerine overlay */
     body::before {
       display: flex;
       flex-direction: column;
@@ -86,7 +78,6 @@
   }
 </style>
 
-<!-- Sol panel içeriği sadece masaüstünde görünür -->
 <style>
   .auth-sol { display: none; }
 
@@ -98,7 +89,6 @@
       align-items: stretch !important;
       min-height: 100vh;
     }
-
     .auth-sol {
       display: flex;
       flex-direction: column;
@@ -109,7 +99,6 @@
       border-right: 1px solid var(--border);
       gap: 28px;
     }
-
     .auth-sol-logo {
       width: 80px; height: 80px;
       background: var(--gold);
@@ -117,33 +106,27 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 44px;
     }
-
     .auth-sol h2 {
       font-size: 36px; font-weight: 900;
       text-align: center; line-height: 1.2;
     }
-
     .auth-sol p {
       font-size: 16px; color: var(--text2);
       text-align: center; line-height: 1.7;
       max-width: 380px;
     }
-
     .auth-sol-ozellikler {
       display: flex; flex-direction: column; gap: 16px;
       width: 100%; max-width: 380px;
     }
-
     .auth-sol-ozellik {
       display: flex; align-items: center; gap: 14px;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--border);
       border-radius: 14px; padding: 14px 16px;
     }
-
     .auth-sol-ozellik-icon { font-size: 24px; }
     .auth-sol-ozellik-text { font-size: 14px; font-weight: 700; color: var(--text2); }
-
     .auth-box {
       max-width: 100% !important;
       padding: 40px 48px !important;
@@ -323,6 +306,15 @@
       </div>
     </div>
 
+    <!-- SÖZLEŞME ONAY CHECKBOX -->
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:4px 0">
+      <input type="checkbox" id="sozlesmeOnay" style="width:18px;height:18px;margin-top:2px;accent-color:var(--gold);flex-shrink:0;cursor:pointer">
+      <label for="sozlesmeOnay" style="font-size:13px;color:var(--text2);line-height:1.5;cursor:pointer">
+        <a href="sozlesme.html" target="_blank" style="color:var(--gold);font-weight:700">Kullanıcı Sözleşmesi</a> ve
+        <a href="sozlesme.html" target="_blank" style="color:var(--gold);font-weight:700">Gizlilik Politikası</a>'nı okudum ve onaylıyorum.
+      </label>
+    </div>
+
     <button class="btn btn-gold btn-lg" onclick="kayitOl()">Kayıt Ol →</button>
     <div class="divider">veya</div>
     <button class="btn-google" onclick="googleGiris()">🌐 Google ile Devam Et</button>
@@ -448,6 +440,7 @@ async function kayitOl() {
   const email = document.getElementById('kayitEmail').value.trim();
   const password = document.getElementById('kayitPassword').value;
 
+  if (!document.getElementById('sozlesmeOnay').checked) return showError('Devam etmek için sözleşmeyi onaylamanız gerekiyor!');
   if (!ad || !email || !password) return showError('Lütfen tüm alanları doldurun!');
   if (password.length < 6) return showError('Şifre en az 6 karakter olmalı!');
 
