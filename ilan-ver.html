@@ -1234,15 +1234,34 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 let seciliTip = 'satilik';
 let currentUser = null;
 let aktifRol = 0;
-let seciliEmlakGrup = 'konut'; // konut | arsa | isyeri
+let seciliEmlakGrup = 'konut';
 
-// Oda fotoğraf sistemi
 const MAKS_FOTO = 25;
 const odaFotolar = {
   salon:[], mutfak:[], yatak:[], yatak4:[], ebeveyn:[], calisma:[],
   banyo:[], kiler:[], bodrum:[], balkon:[], teras:[], garaj:[], havuz:[],
   dis:[], parsel:[], isyeri_ic:[], isyeri_dis:[], otopark:[], spor:[], diger:[]
 };
+
+// ===== KISA KOD ÜRETİCİ =====
+function kisaKodUret() {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let kod = '';
+  for (let i = 0; i < 7; i++) {
+    kod += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return kod;
+}
+
+async function benzersizKisaKodUret() {
+  let kod, mevcut;
+  do {
+    kod = kisaKodUret();
+    const { data } = await sb.from('ilanlar').select('id').eq('kisa_kod', kod).single();
+    mevcut = !!data;
+  } while (mevcut);
+  return kod;
+}
 
 // ===== 81 İL + İLÇELER =====
 const ILLER = [
@@ -1343,7 +1362,6 @@ const ILCELER = {
   "Zonguldak":["Alaplı","Çaycuma","Devrek","Ereğli","Gökçebey","Kilimli","Kozlu","Merkez"]
 };
 
-// ===== İL / İLÇE DOLDURMA =====
 function illerDoldur(selectId) {
   const sel = document.getElementById(selectId);
   if (!sel) return;
@@ -1391,52 +1409,34 @@ function aliciIlceDoldur() {
   ilceSel.disabled = ilceler.length === 0;
 }
 
-// ===== EMlak TİPİ DİNAMİK KRİTERLER — DÜZELTİLDİ =====
 function secEmlakBtn(el) {
-  // Tek seçim
   document.querySelectorAll('#emlakTipi .sec-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
-
-  const grup = el.getAttribute('data-tip'); // konut | arsa | isyeri
+  const grup = el.getAttribute('data-tip');
   seciliEmlakGrup = grup;
-
-  // Kriter bölümleri — style.display ile güvenli gizle/göster
   document.getElementById('bolumKonut').style.display  = grup === 'konut'  ? '' : 'none';
   document.getElementById('bolumArsa').style.display   = grup === 'arsa'   ? '' : 'none';
   document.getElementById('bolumIsyeri').style.display = grup === 'isyeri' ? '' : 'none';
-
-  // Fotoğraf bölümleri
   document.getElementById('fotoGrupKonut').style.display  = grup === 'konut'  ? '' : 'none';
   document.getElementById('fotoGrupArsa').style.display   = grup === 'arsa'   ? '' : 'none';
   document.getElementById('fotoGrupIsyeri').style.display = grup === 'isyeri' ? '' : 'none';
 }
 
-// ===== ALICI: Emlak tipi dinamik kriterler — DÜZELTİLDİ =====
 function aliciEmlakDegisti() {
   const secili = [...document.querySelectorAll('#apg-emlak .sec-btn.active')];
   const gruplar = secili.map(b => b.getAttribute('data-grup'));
-
   const hasKonut  = gruplar.includes('konut');
   const hasArsa   = gruplar.includes('arsa');
   const hasIsyeri = gruplar.includes('isyeri');
-
   const kK = document.getElementById('aliciKriterKonut');
   const kA = document.getElementById('aliciKriterArsa');
   const kI = document.getElementById('aliciKriterIsyeri');
-
-  if (secili.length === 0) {
-    kK.style.display = '';
-    kA.style.display = 'none';
-    kI.style.display = 'none';
-    return;
-  }
-
+  if (secili.length === 0) { kK.style.display = ''; kA.style.display = 'none'; kI.style.display = 'none'; return; }
   kK.style.display = hasKonut  ? '' : 'none';
   kA.style.display = hasArsa   ? '' : 'none';
   kI.style.display = hasIsyeri ? '' : 'none';
 }
 
-// ===== GENEL BUTON SEÇİM =====
 function secRole(index) {
   aktifRol = index;
   document.querySelectorAll('.role-card').forEach((c,i) => c.classList.toggle('selected', i===index));
@@ -1478,7 +1478,6 @@ function getCokluSecim(grupId) {
   return Array.from(grup.querySelectorAll('.sec-btn.active')).map(b => b.textContent.trim());
 }
 
-// ===== ÖDEME MODAL =====
 function odemeAc() {
   document.getElementById('odemeModal').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1504,7 +1503,6 @@ function kopyala(metin, btn) {
   });
 }
 
-// ===== ODA FOTOĞRAF SİSTEMİ =====
 function odaToggle(oda) {
   const icerik = document.getElementById('icerik-' + oda);
   const ok = document.getElementById('ok-' + oda);
@@ -1563,7 +1561,7 @@ function toplamSayacGuncelle() {
   document.getElementById('toplamFotoSayi').textContent = toplamFotoSayisi();
 }
 
-// ===== İLAN YAYINLA =====
+// ===== İLAN YAYINLA (kisa_kod eklendi) =====
 async function ilanYayinla() {
   const baslik = document.getElementById('baslik').value.trim();
   const fiyat = document.getElementById('fiyat').value;
@@ -1577,6 +1575,10 @@ async function ilanYayinla() {
 
   const btn = document.getElementById('yayinlaBtn');
   btn.textContent = '⏳ Yayınlanıyor...'; btn.disabled = true; errEl.style.display = 'none';
+
+  // Benzersiz kısa kod üret
+  btn.textContent = '⏳ Kod oluşturuluyor...';
+  const kisaKod = await benzersizKisaKodUret();
 
   // Fotoğraf yükleme
   const odaFotoURLler = {};
@@ -1602,7 +1604,6 @@ async function ilanYayinla() {
     }
   }
 
-  // Kriterler - emlak tipine göre
   let kriterler = {
     emlak_tipi: getSecim('emlakTipi'),
     il: document.getElementById('ilSec').value || null,
@@ -1661,6 +1662,7 @@ async function ilanYayinla() {
   const { error } = await sb.from('ilanlar').insert({
     user_id: currentUser.id, baslik, fiyat: Number(fiyat),
     tip: seciliTip, konum,
+    kisa_kod: kisaKod,  // ← YENİ
     sehir: document.getElementById('ilSec').value || null,
     oda_sayisi: seciliEmlakGrup === 'konut' ? (getSecim('odaSayisi') || null) : null,
     metrekare: seciliEmlakGrup === 'konut' ? (document.getElementById('m2net').value ? Number(document.getElementById('m2net').value) : null)
