@@ -307,28 +307,66 @@ const odaAdlari = {
 let ilan = null;
 let currentUser = null;
 let favori = false;
+let ilanId = null;  // UUID — Supabase sorgusu için
+let kisaKod = null; // Kısa kod — paylaşım için
 
 // Sanal tur state
-let turOdalar = []; // [{oda, url, ad, em}]
+let turOdalar = [];
 let turAktifIndex = 0;
 
-const params = new URLSearchParams(window.location.search);
-const ilanId = params.get('id');
+// ===== İLAN ID ÇÖZÜMLEME =====
+// Hem ?id=UUID hem #kisaKod desteklenir
+function ilanIdCoz() {
+  // Önce hash'e bak (#kisaKod)
+  const hash = window.location.hash.replace('#', '').trim();
+  if (hash && hash.length > 0) {
+    return { tip: 'kisa_kod', deger: hash };
+  }
+  // Sonra query param'a bak (?id=UUID)
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (id) {
+    return { tip: 'uuid', deger: id };
+  }
+  return null;
+}
 
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) { window.location.href = 'auth.html'; return; }
   currentUser = data.session.user;
-  if (ilanId) ilanYukle();
-  else document.getElementById('icerik').innerHTML = `<div class="empty"><div class="empty-icon">😕</div><div class="empty-title">İlan bulunamadı</div><a href="index.html" class="btn btn-gold btn-md" style="margin-top:20px;max-width:200px">Ana Sayfaya Dön</a></div>`;
+
+  const sorgu = ilanIdCoz();
+  if (sorgu) {
+    ilanYukle(sorgu);
+  } else {
+    document.getElementById('icerik').innerHTML = `<div class="empty"><div class="empty-icon">😕</div><div class="empty-title">İlan bulunamadı</div><a href="index.html" class="btn btn-gold btn-md" style="margin-top:20px;max-width:200px">Ana Sayfaya Dön</a></div>`;
+  }
 });
 
-async function ilanYukle() {
-  const { data, error } = await sb.from('ilanlar').select('*').eq('id', ilanId).single();
+async function ilanYukle(sorgu) {
+  let query;
+  if (sorgu.tip === 'kisa_kod') {
+    query = sb.from('ilanlar').select('*').eq('kisa_kod', sorgu.deger).single();
+  } else {
+    query = sb.from('ilanlar').select('*').eq('id', sorgu.deger).single();
+  }
+
+  const { data, error } = await query;
   if (error || !data) {
     document.getElementById('icerik').innerHTML = `<div class="empty"><div class="empty-icon">😕</div><div class="empty-title">İlan bulunamadı</div><a href="index.html" class="btn btn-gold btn-md" style="margin-top:20px;max-width:200px">Ana Sayfaya Dön</a></div>`;
     return;
   }
+
   ilan = data;
+  ilanId = ilan.id;
+  kisaKod = ilan.kisa_kod || null;
+
+  // Eğer hash ile geldiyse URL'i temiz tut (değiştirme)
+  // Eğer UUID ile geldiyse ve kısa kod varsa URL'i güncelle (SEO için)
+  if (sorgu.tip === 'uuid' && kisaKod) {
+    window.history.replaceState(null, '', `ilan-detay.html#${kisaKod}`);
+  }
+
   if (ilan.user_id) {
     const { data: profil } = await sb.from('profiles').select('*').eq('id', ilan.user_id).single();
     ilan.profiles = profil || null;
@@ -383,7 +421,6 @@ function sayfayiOlustur() {
         <div style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);border-radius:50px;padding:4px 10px;font-size:12px;font-weight:800;color:white">📷 ${urls.length}</div>
       </div>`;
 
-  // Sanal tur butonu
   const sanalTurHTML = turOdalar.length > 0
     ? `<div class="sanal-tur-btn" onclick="sanalTurAc()">
         <span style="font-size:28px">🎥</span>
@@ -448,14 +485,12 @@ function sanalTurKapat() {
 }
 
 function turThumbnailOlustur() {
-  // Oda gruplarını bul (her oda için bir thumbnail)
   const odaGruplari = {};
   turOdalar.forEach((item, i) => {
     if (!odaGruplari[item.oda]) {
       odaGruplari[item.oda] = { ...item, index: i };
     }
   });
-
   const thumbsEl = document.getElementById('sanalTurThumbs');
   thumbsEl.innerHTML = Object.values(odaGruplari).map(item => `
     <div class="sanal-tur-thumb" id="turThumb-${item.oda}" onclick="turOdaAtla('${item.oda}')">
@@ -474,8 +509,6 @@ function turGoster(index) {
   img.src = item.url;
   document.getElementById('sanalTurOdaAdi').textContent = `${item.em} ${item.ad}`;
   document.getElementById('sanalTurSayac').textContent = `${index + 1} / ${turOdalar.length}`;
-
-  // Aktif thumbnail güncelle
   document.querySelectorAll('.sanal-tur-thumb').forEach(t => t.classList.remove('aktif'));
   const activeThumb = document.getElementById('turThumb-' + item.oda);
   if (activeThumb) {
@@ -496,7 +529,6 @@ function turOdaAtla(oda) {
   if (index >= 0) turGoster(index);
 }
 
-// Swipe desteği
 let turStartX = 0;
 document.addEventListener('DOMContentLoaded', () => {
   const ana = document.getElementById('sanalTurAna');
@@ -612,12 +644,21 @@ async function sikayetGonder() {
   sikayetKapat(); alert('✅ Şikayetiniz alındı.');
 }
 
+// ===== PAYLAŞ — kısa kod varsa onu kullan =====
 function paylas() {
+  const kisaUrl = kisaKod
+    ? `${window.location.origin}${window.location.pathname.replace(/[^/]*$/, '')}ilan-detay.html#${kisaKod}`
+    : window.location.href;
+
   if (navigator.share) {
-    navigator.share({ title: ilan?.baslik, text: `${ilan?.baslik} - ${Number(ilan?.fiyat).toLocaleString('tr-TR')} ₺`, url: window.location.href });
+    navigator.share({
+      title: ilan?.baslik,
+      text: `${ilan?.baslik} - ${Number(ilan?.fiyat).toLocaleString('tr-TR')} ₺`,
+      url: kisaUrl
+    });
   } else {
-    navigator.clipboard.writeText(window.location.href);
-    alert('Link kopyalandı! 📋');
+    navigator.clipboard.writeText(kisaUrl);
+    alert('Link kopyalandı! 📋\n' + kisaUrl);
   }
 }
 </script>
