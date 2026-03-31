@@ -20,7 +20,9 @@
   --bot-h: 70px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+
+input, textarea, [contenteditable] { -webkit-user-select: text; user-select: text; }
 
 body {
   background: var(--bg);
@@ -250,4 +252,4 @@ body {
 .sb-config {
   display: none;
   --url: 'https://ncmzfaszaowiynzjdefb.supabase.co';
-  }
+}
