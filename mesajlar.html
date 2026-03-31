@@ -79,13 +79,7 @@
   .msg-me { background: var(--gold); color: var(--bg); border-bottom-right-radius: 4px; font-weight: 700; }
   .msg-time { font-size: 10px; opacity: 0.6; margin-top: 4px; }
 
-  .msg-del-btn {
-    background: rgba(232,96,58,0.12); border: none; border-radius: 20px;
-    color: var(--rust); font-size: 11px; font-weight: 700;
-    padding: 3px 10px; cursor: pointer; margin-top: 4px; display: none;
-  }
-  .msg-row.me:hover .msg-del-btn,
-  .msg-row.me.show-del .msg-del-btn { display: inline-block; }
+
 
   .msg-mini-avatar {
     width: 28px; height: 28px; border-radius: 50%;
@@ -203,7 +197,6 @@ let currentUser = null;
 let aktifIlanId = null;
 let aktifKarsiId = null;
 let mesajKanal = null;
-let silModu = false;
 let karsiAvatarUrl = null;
 
 const params = new URLSearchParams(window.location.search);
@@ -314,9 +307,7 @@ async function acKonusma(karsId, ilanId, isim, ilanBaslik, avatarUrl) {
   aktifKarsiId = karsId;
   aktifIlanId = ilanId || null;
   karsiAvatarUrl = avatarUrl || null;
-  silModu = false;
-
-  document.getElementById('chatName').textContent = isim;
+.textContent = isim;
   document.getElementById('chatIlan').textContent = ilanId ? '🏠 ' + ilanBaslik : '📢 ' + ilanBaslik;
 
   const avatarEl = document.getElementById('chatHeaderAvatar');
@@ -397,41 +388,29 @@ function mesajEkle(m, scroll = true) {
   div.innerHTML = `${m.icerik}<div class="msg-time">${new Date(m.created_at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</div>`;
   wrap.appendChild(div);
 
-  if (benMi && m.id) {
-    const delBtn = document.createElement('button');
-    delBtn.className = 'msg-del-btn';
-    delBtn.textContent = '🗑 Sil';
-    delBtn.onclick = () => mesajSil(m.id, row);
-    wrap.appendChild(delBtn);
-
-    // Mobil: uzun basma ile de sil butonunu aç
-    row.addEventListener('touchstart', () => {
-      row._t = setTimeout(() => row.classList.toggle('show-del'), 500);
-    });
-    row.addEventListener('touchend', () => clearTimeout(row._t));
-    row.addEventListener('touchmove', () => clearTimeout(row._t));
-  }
-
-  row.appendChild(wrap);
+row.appendChild(wrap);
   el.appendChild(row);
   if (scroll) el.scrollTop = el.scrollHeight;
 }
 
-// 🗑️ header butonu — tüm kendi mesajlarında sil butonlarını göster/gizle
-function silModuToggle() {
-  silModu = !silModu;
-  document.querySelectorAll('.msg-row.me').forEach(r => {
-    silModu ? r.classList.add('show-del') : r.classList.remove('show-del');
-  });
-}
+// 🗑️ header butonu — tüm konuşmayı sil
+async function silModuToggle() {
+  if (!confirm('Bu konuşmayı tamamen silmek istediğinizden emin misiniz?')) return;
 
-async function mesajSil(mesajId, rowEl) {
-  if (!confirm('Bu mesajı silmek istediğinizden emin misiniz?')) return;
-  const { error } = await sb.from('mesajlar').delete().eq('id', mesajId).eq('gonderen_id', currentUser.id);
+  let query = sb.from('mesajlar').delete()
+    .or(`and(gonderen_id.eq.${currentUser.id},alici_id.eq.${aktifKarsiId}),and(gonderen_id.eq.${aktifKarsiId},alici_id.eq.${currentUser.id})`);
+
+  if (aktifIlanId) {
+    query = sb.from('mesajlar').delete()
+      .eq('ilan_id', aktifIlanId)
+      .or(`and(gonderen_id.eq.${currentUser.id},alici_id.eq.${aktifKarsiId}),and(gonderen_id.eq.${aktifKarsiId},alici_id.eq.${currentUser.id})`);
+  }
+
+  const { error } = await query;
   if (!error) {
-    rowEl.remove();
+    kapat();
   } else {
-    alert('Mesaj silinemedi!');
+    alert('Konuşma silinemedi!');
   }
 }
 
@@ -493,7 +472,6 @@ async function mesajSikayetGonder() {
 function kapatSessiz() {
   document.getElementById('chatScreen').classList.remove('open');
   if (mesajKanal) sb.removeChannel(mesajKanal);
-  silModu = false;
   konusmalariYukle();
 }
 
