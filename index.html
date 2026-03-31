@@ -42,6 +42,11 @@
   }
   .ekstra-alan .alan-label { font-size: 11px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: -6px; }
 
+  /* Şifre göster/gizle */
+  .pw-wrap { position: relative; }
+  .pw-wrap .input { padding-right: 48px; }
+  .pw-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text3); padding: 4px; line-height: 1; }
+
   @media (min-width: 900px) {
     body {
       padding: 0;
@@ -193,7 +198,10 @@
   <!-- GİRİŞ FORMU -->
   <div class="form active" id="girisForm">
     <input class="input" type="email" id="girisEmail" placeholder="E-posta adresiniz">
-    <input class="input" type="password" id="girisPassword" placeholder="Şifreniz">
+    <div class="pw-wrap">
+      <input class="input" type="password" id="girisPassword" placeholder="Şifreniz">
+      <button type="button" class="pw-toggle" onclick="togglePw('girisPassword',this)">👁️</button>
+    </div>
     <div class="forgot-link" onclick="switchTab('sifre')">Şifremi Unuttum →</div>
     <button class="btn btn-gold btn-lg" onclick="girisYap()">Giriş Yap →</button>
     <div class="divider">veya</div>
@@ -205,7 +213,10 @@
     <input class="input" type="text" id="kayitAd" placeholder="Ad Soyad">
     <input class="input" type="tel" id="kayitTel" placeholder="Telefon (05XX XXX XX XX)">
     <input class="input" type="email" id="kayitEmail" placeholder="E-posta adresiniz">
-    <input class="input" type="password" id="kayitPassword" placeholder="Şifre (min 6 karakter)">
+    <div class="pw-wrap">
+      <input class="input" type="password" id="kayitPassword" placeholder="Şifre (min 6 karakter)">
+      <button type="button" class="pw-toggle" onclick="togglePw('kayitPassword',this)">👁️</button>
+    </div>
 
     <div>
       <div style="font-size:12px;font-weight:800;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Üye Tipi</div>
@@ -311,8 +322,14 @@
     <div style="text-align:center;font-size:40px;margin-bottom:4px">🔐</div>
     <div style="text-align:center;font-size:16px;font-weight:900;margin-bottom:4px">Yeni Şifre Belirle</div>
     <div style="text-align:center;font-size:13px;color:var(--text3);margin-bottom:8px">Güvenli bir şifre seçin</div>
-    <input class="input" type="password" id="yeniSifre" placeholder="Yeni şifre (min 6 karakter)">
-    <input class="input" type="password" id="yeniSifreTekrar" placeholder="Yeni şifre tekrar">
+    <div class="pw-wrap">
+      <input class="input" type="password" id="yeniSifre" placeholder="Yeni şifre (min 6 karakter)">
+      <button type="button" class="pw-toggle" onclick="togglePw('yeniSifre',this)">👁️</button>
+    </div>
+    <div class="pw-wrap">
+      <input class="input" type="password" id="yeniSifreTekrar" placeholder="Yeni şifre tekrar">
+      <button type="button" class="pw-toggle" onclick="togglePw('yeniSifreTekrar',this)">👁️</button>
+    </div>
     <button class="btn btn-gold btn-lg" onclick="yeniSifreKaydet()">✅ Şifremi Güncelle</button>
   </div>
 
@@ -370,6 +387,17 @@ sb.auth.onAuthStateChange((event, session) => {
   const { data } = await sb.auth.getSession();
   if (data.session) window.location.href = 'home.html';
 })();
+
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    btn.textContent = '👁️';
+  }
+}
 
 function switchTab(tab) {
   document.getElementById('tabBar').style.display = (tab === 'sifre' || tab === 'yenisifre') ? 'none' : 'flex';
