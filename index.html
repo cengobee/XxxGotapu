@@ -157,7 +157,7 @@
   .site-footer a { color: #e85d26; text-decoration: none; margin: 0 8px; }
 </style>
 </head>
-<body>
+<body style="visibility:hidden">
 
 <nav class="top-nav">
   <a href="index.html" class="nav-logo">
@@ -333,7 +333,8 @@ if (window.location.hash && window.location.hash.includes('access_token')) {
 
 function init() {
   sb.auth.getSession().then(({ data }) => {
-    if (!data.session) { window.location.href = 'auth.html'; return; }
+    if (!data.session) { window.location.replace('auth.html'); return; }
+    document.body.style.visibility = 'visible';
     ilanlarYukle();
     mesajSay();
     tercihKontrol(data.session.user.id);
