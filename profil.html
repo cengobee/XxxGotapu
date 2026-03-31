@@ -86,7 +86,8 @@
 
 <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="avatarDegistir(this)">
 
-<div class="page fade-up">
+<!-- KENDİ PROFİLİM -->
+<div class="page fade-up" id="benimProfilSayfasi">
 
   <div class="profile-header">
     <div class="avatar" onclick="document.getElementById('avatarInput').click()">
@@ -108,61 +109,32 @@
     <div class="stat-box"><div class="stat-num" id="hizmetSayisi">0</div><div class="stat-lbl">Hizmet</div></div>
   </div>
 
-  <!-- SATICI İLANLARIM -->
   <div class="menu-section">
     <div class="menu-label">Satıcı İlanlarım</div>
     <div class="card" id="ilanlarimCard"><div class="spinner"></div></div>
   </div>
 
-  <!-- ALICI ARANIM -->
   <div class="menu-section">
     <div class="menu-label">Alıcı Aramalarım</div>
     <div id="aliciIlanCard"><div class="spinner"></div></div>
   </div>
 
-  <!-- HİZMETLER -->
   <div class="menu-section">
     <div class="menu-label">🏠 Ev Hizmetleri</div>
     <div class="hizmet-grid">
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=tadilat'">
-        <span class="hizmet-em">🔧</span><div class="hizmet-lbl">Tadilat</div>
-      </div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=temizlik'">
-        <span class="hizmet-em">🧹</span><div class="hizmet-lbl">Temizlik</div>
-      </div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=boya'">
-        <span class="hizmet-em">🖌️</span><div class="hizmet-lbl">Boya</div>
-      </div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=nakliye'">
-        <span class="hizmet-em">🚚</span><div class="hizmet-lbl">Nakliye</div>
-      </div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=dekorasyon'">
-        <span class="hizmet-em">🛋️</span><div class="hizmet-lbl">Dekorasyon</div>
-      </div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=sigorta'">
-        <span class="hizmet-em">🛡️</span><div class="hizmet-lbl">Sigorta</div>
-      </div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=cilingir'">
-        <span class="hizmet-em">🔑</span><div class="hizmet-lbl">Çilingir</div>
-      </div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=teknik'">
-        <span class="hizmet-em">📱</span><div class="hizmet-lbl">Teknik Servis</div>
-      </div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=aracyikama'">
-        <span class="hizmet-em">🚗</span><div class="hizmet-lbl">Araç Yıkama</div>
-      </div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=koltukyikama'">
-        <span class="hizmet-em">🛋️</span><div class="hizmet-lbl">Koltuk Yıkama</div>
-      </div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=haliyikama'">
-        <span class="hizmet-em">🪞</span><div class="hizmet-lbl">Halı Yıkama</div>
-      </div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=ilacalama'">
-        <span class="hizmet-em">🦟</span><div class="hizmet-lbl">İlaçlama</div>
-      </div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=petek'">
-        <span class="hizmet-em">♨️</span><div class="hizmet-lbl">Petek & Kombi</div>
-      </div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=tadilat'"><span class="hizmet-em">🔧</span><div class="hizmet-lbl">Tadilat</div></div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=temizlik'"><span class="hizmet-em">🧹</span><div class="hizmet-lbl">Temizlik</div></div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=boya'"><span class="hizmet-em">🖌️</span><div class="hizmet-lbl">Boya</div></div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=nakliye'"><span class="hizmet-em">🚚</span><div class="hizmet-lbl">Nakliye</div></div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><span class="hizmet-em">🛋️</span><div class="hizmet-lbl">Dekorasyon</div></div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=sigorta'"><span class="hizmet-em">🛡️</span><div class="hizmet-lbl">Sigorta</div></div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=cilingir'"><span class="hizmet-em">🔑</span><div class="hizmet-lbl">Çilingir</div></div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=teknik'"><span class="hizmet-em">📱</span><div class="hizmet-lbl">Teknik Servis</div></div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=aracyikama'"><span class="hizmet-em">🚗</span><div class="hizmet-lbl">Araç Yıkama</div></div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=koltukyikama'"><span class="hizmet-em">🛋️</span><div class="hizmet-lbl">Koltuk Yıkama</div></div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=haliyikama'"><span class="hizmet-em">🪞</span><div class="hizmet-lbl">Halı Yıkama</div></div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=ilacalama'"><span class="hizmet-em">🦟</span><div class="hizmet-lbl">İlaçlama</div></div>
+      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=petek'"><span class="hizmet-em">♨️</span><div class="hizmet-lbl">Petek & Kombi</div></div>
     </div>
   </div>
 
@@ -173,6 +145,43 @@
     <a href="bildirimler.html" class="menu-item"><div class="menu-icon">🔔</div><div class="menu-text">Bildirimler</div><div class="menu-arrow">›</div></a>
     <div class="menu-item" onclick="profilDuzenle()"><div class="menu-icon">⚙️</div><div class="menu-text">Profili Düzenle</div><div class="menu-arrow">›</div></div>
     <div class="menu-item" onclick="cikisYap()" style="color:var(--rust)"><div class="menu-icon">🚪</div><div class="menu-text" style="color:var(--rust)">Çıkış Yap</div><div class="menu-arrow">›</div></div>
+  </div>
+
+</div>
+
+<!-- BAŞKASININ PROFİLİ -->
+<div class="page fade-up" id="baskaProfil" style="display:none">
+
+  <div style="margin-bottom:12px">
+    <button onclick="history.back()" style="background:var(--card);border:1.5px solid var(--border);border-radius:50px;padding:8px 18px;font-size:14px;font-weight:800;color:var(--text);cursor:pointer;font-family:Nunito,sans-serif">← Geri</button>
+  </div>
+
+  <div class="profile-header">
+    <div class="avatar" style="cursor:default">
+      <span id="bAvEmoji">👤</span>
+      <img id="bAvImg" style="display:none">
+    </div>
+    <div class="profile-name" id="bAvAd">Yükleniyor...</div>
+    <div class="profile-email" id="bAvSehir"></div>
+    <div style="display:inline-block;background:rgba(245,200,66,0.1);color:var(--gold);border-radius:50px;padding:3px 12px;font-size:12px;font-weight:700;margin-top:4px" id="bAvTip"></div>
+    <div style="font-size:13px;color:var(--text2);margin-top:8px;line-height:1.6;display:none;padding:0 8px" id="bAvHakkimda"></div>
+    <div class="verified" id="bAvVerified" style="display:none">✓ Doğrulanmış Üye</div>
+  </div>
+
+  <div class="stat-row" style="margin-bottom:24px">
+    <div class="stat-box"><div class="stat-num" id="bAvIlanSay">0</div><div class="stat-lbl">İlan</div></div>
+  </div>
+
+  <!-- Mesaj Gönder butonu -->
+  <div style="margin-bottom:20px">
+    <button id="mesajGonderBtn" onclick="mesajGonder()" style="width:100%;padding:16px;border-radius:50px;background:var(--gold);color:var(--bg);border:none;font-family:Nunito,sans-serif;font-size:15px;font-weight:900;cursor:pointer">
+      💬 Mesaj Gönder
+    </button>
+  </div>
+
+  <div class="menu-section">
+    <div class="menu-label">İlanları</div>
+    <div class="card" id="baskaIlanlar"><div class="spinner"></div></div>
   </div>
 
 </div>
@@ -192,11 +201,79 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentUser = null;
 
+const urlParams = new URLSearchParams(window.location.search);
+const hedefId = urlParams.get('id'); // başkasının profili mi?
+
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) { window.location.href = 'auth.html'; return; }
   currentUser = data.session.user;
-  profilYukle();
+
+  if (hedefId && hedefId !== currentUser.id) {
+    // Başkasının profilini göster
+    document.getElementById('benimProfilSayfasi').style.display = 'none';
+    document.getElementById('baskaProfil').style.display = 'block';
+    baskaProfilYukle(hedefId);
+  } else {
+    // Kendi profilini göster
+    profilYukle();
+  }
 });
+
+// ===================== BAŞKASININ PROFİLİ =====================
+
+let baskaKullaniciId = null;
+
+async function baskaProfilYukle(uid) {
+  baskaKullaniciId = uid;
+
+  const { data: profil } = await sb.from('profiles').select('*').eq('id', uid).single();
+  if (!profil) {
+    document.getElementById('bAvAd').textContent = 'Kullanıcı bulunamadı';
+    return;
+  }
+
+  document.getElementById('bAvAd').textContent = profil.full_name || 'İsimsiz';
+  if (profil.sehir) document.getElementById('bAvSehir').textContent = '📍 ' + profil.sehir;
+  if (profil.kullanici_tipi) document.getElementById('bAvTip').textContent = profil.kullanici_tipi.charAt(0).toUpperCase() + profil.kullanici_tipi.slice(1);
+  if (profil.hakkimda) { const h = document.getElementById('bAvHakkimda'); h.textContent = profil.hakkimda; h.style.display = 'block'; }
+  if (profil.verified) document.getElementById('bAvVerified').style.display = 'inline-flex';
+
+  if (profil.avatar_url) {
+    document.getElementById('bAvEmoji').style.display = 'none';
+    const img = document.getElementById('bAvImg');
+    img.src = profil.avatar_url; img.style.display = 'block';
+  }
+
+  // İlanları yükle
+  const { data: ilanlar } = await sb.from('ilanlar').select('*')
+    .eq('user_id', uid).eq('onay_durumu', 'onaylandi')
+    .order('created_at', { ascending: false });
+
+  document.getElementById('bAvIlanSay').textContent = ilanlar?.length || 0;
+
+  const kart = document.getElementById('baskaIlanlar');
+  if (!ilanlar || ilanlar.length === 0) {
+    kart.innerHTML = `<div class="empty" style="padding:24px"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div></div>`;
+  } else {
+    kart.innerHTML = ilanlar.map(i => `
+      <div class="ilanim-item" onclick="location.href='ilan-detay.html?id=${i.id}'" style="cursor:pointer">
+        <div class="ilanim-thumb">${i.foto_url ? `<img src="${i.foto_url}">` : '🏠'}</div>
+        <div style="flex:1;min-width:0">
+          <div class="ilanim-price">${Number(i.fiyat).toLocaleString('tr-TR')} ₺${i.tip==='kiralik'?'/ay':''}</div>
+          <div class="ilanim-title">${i.baslik}</div>
+          <div class="ilanim-loc">📍 ${i.konum || ''}</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function mesajGonder() {
+  if (baskaKullaniciId) {
+    window.location.href = `mesajlar.html?karsi_id=${baskaKullaniciId}`;
+  }
+}
+
+// ===================== KENDİ PROFİLİM =====================
 
 async function profilYukle() {
   const { data: profil } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
@@ -254,7 +331,6 @@ async function profilYukle() {
     }).join('');
   }
 
-  // Alıcı arama ilanı
   const { data: aliciIlan } = await sb.from('arayan_ilanlar').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   const aliciEl = document.getElementById('aliciIlanCard');
   if (!aliciIlan || aliciIlan.length === 0) {
