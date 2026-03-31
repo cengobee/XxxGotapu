@@ -17,7 +17,9 @@
     width: 50px; height: 50px; border-radius: 50%;
     background: var(--card2); display: flex; align-items: center;
     justify-content: center; font-size: 24px; flex-shrink: 0;
+    overflow: hidden;
   }
+  .chat-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
   .chat-info { flex: 1; min-width: 0; }
   .chat-name { font-size: 15px; font-weight: 800; }
   .chat-ilan { font-size: 11px; color: var(--gold); font-weight: 700; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -48,7 +50,14 @@
     padding: 12px 16px; border-bottom: 1px solid var(--border);
     background: var(--bg2); flex-shrink: 0;
   }
-  .chat-header-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .chat-header-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--card2); display: flex; align-items: center;
+    justify-content: center; font-size: 22px;
+    overflow: hidden; cursor: pointer; flex-shrink: 0;
+  }
+  .chat-header-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .chat-header-info { flex: 1; cursor: pointer; }
   .chat-header-name { font-size: 16px; font-weight: 800; }
   .chat-header-ilan { font-size: 12px; color: var(--gold); }
 
@@ -59,10 +68,25 @@
     padding-bottom: 8px;
   }
 
-  .msg { max-width: 75%; padding: 10px 14px; border-radius: 18px; font-size: 15px; line-height: 1.5; word-break: break-word; }
-  .msg-them { background: var(--card); border-bottom-left-radius: 4px; align-self: flex-start; }
-  .msg-me { background: var(--gold); color: var(--bg); border-bottom-right-radius: 4px; align-self: flex-end; font-weight: 700; }
+  .msg-wrap { display: flex; flex-direction: column; }
+  .msg-wrap.me { align-items: flex-end; }
+  .msg-wrap.them { align-items: flex-start; }
+
+  .msg { max-width: 75%; padding: 10px 14px; border-radius: 18px; font-size: 15px; line-height: 1.5; word-break: break-word; position: relative; }
+  .msg-them { background: var(--card); border-bottom-left-radius: 4px; }
+  .msg-me { background: var(--gold); color: var(--bg); border-bottom-right-radius: 4px; font-weight: 700; }
   .msg-time { font-size: 10px; opacity: 0.6; margin-top: 4px; }
+
+  .msg-actions {
+    display: none; gap: 6px; margin-top: 4px;
+  }
+  .msg-wrap:hover .msg-actions,
+  .msg-wrap.show-actions .msg-actions { display: flex; }
+  .msg-del-btn {
+    background: rgba(232,96,58,0.15); border: none; border-radius: 20px;
+    color: var(--rust); font-size: 11px; font-weight: 700;
+    padding: 3px 10px; cursor: pointer;
+  }
 
   .chat-input-row {
     display: flex; gap: 10px;
@@ -120,8 +144,8 @@
 <div class="chat-screen" id="chatScreen">
   <div class="chat-header">
     <button onclick="kapat()" class="back-btn">←</button>
-    <div class="chat-header-avatar">👤</div>
-    <div style="flex:1">
+    <div class="chat-header-avatar" id="chatHeaderAvatar" onclick="profileGit()">👤</div>
+    <div class="chat-header-info" onclick="profileGit()">
       <div class="chat-header-name" id="chatName">Kullanıcı</div>
       <div class="chat-header-ilan" id="chatIlan"></div>
     </div>
@@ -183,21 +207,20 @@ sb.auth.getSession().then(({ data }) => {
     if (urlIlanId) {
       ilanBilgisiAl(urlIlanId, urlKarsiId);
     } else {
-      // Admin mesajı - ilan yok
       adminMesajAc(urlKarsiId);
     }
   }
 });
 
 async function adminMesajAc(karsiId) {
-  const { data: profil } = await sb.from('profiles').select('full_name').eq('id', karsiId).single();
-  acKonusma(karsiId, null, profil?.full_name || 'Kullanıcı', 'GoTapu Mesajı');
+  const { data: profil } = await sb.from('profiles').select('full_name, avatar_url').eq('id', karsiId).single();
+  acKonusma(karsiId, null, profil?.full_name || 'Kullanıcı', 'GoTapu Mesajı', profil?.avatar_url || null);
 }
 
 async function ilanBilgisiAl(ilanId, karsiId) {
   const { data: ilan } = await sb.from('ilanlar').select('baslik').eq('id', ilanId).single();
-  const { data: profil } = await sb.from('profiles').select('full_name').eq('id', karsiId).single();
-  acKonusma(karsiId, ilanId, profil?.full_name || 'Kullanıcı', ilan?.baslik || 'İlan');
+  const { data: profil } = await sb.from('profiles').select('full_name, avatar_url').eq('id', karsiId).single();
+  acKonusma(karsiId, ilanId, profil?.full_name || 'Kullanıcı', ilan?.baslik || 'İlan', profil?.avatar_url || null);
 }
 
 async function konusmalariYukle() {
@@ -234,7 +257,7 @@ async function konusmalariYukle() {
 
   const [ilanlar, profiller] = await Promise.all([
     ilanIds.length ? sb.from('ilanlar').select('id,baslik').in('id', ilanIds) : { data: [] },
-    karsiIds.length ? sb.from('profiles').select('id,full_name').in('id', karsiIds) : { data: [] }
+    karsiIds.length ? sb.from('profiles').select('id,full_name,avatar_url').in('id', karsiIds) : { data: [] }
   ]);
 
   const ilanMap = {};
@@ -244,10 +267,17 @@ async function konusmalariYukle() {
 
   el.innerHTML = liste.map(k => {
     const isim = profilMap[k.karsId]?.full_name || 'Kullanıcı';
+    const avatarUrl = profilMap[k.karsId]?.avatar_url;
+    const avatarHtml = avatarUrl
+      ? `<img src="${avatarUrl}" alt="${isim}" onerror="this.parentElement.innerHTML='👤'">`
+      : (isim === 'GoTapu' ? '🏠' : '👤');
     const ilanBaslik = k.ilan_id ? (ilanMap[k.ilan_id]?.baslik || 'İlan') : 'GoTapu Mesajı';
     const zaman = new Date(k.created_at).toLocaleDateString('tr-TR');
-    return `<div class="chat-item" onclick="acKonusma('${k.karsId}','${k.ilan_id||''}','${isim.replace(/'/g,"\\'")}','${ilanBaslik.replace(/'/g,"\\'")}')">
-      <div class="chat-avatar">${isim === 'GoTapu' ? '🏠' : '👤'}</div>
+    const isimEsc = isim.replace(/'/g,"\\'");
+    const ilanEsc = ilanBaslik.replace(/'/g,"\\'");
+    const avatarEsc = (avatarUrl || '').replace(/'/g,"\\'");
+    return `<div class="chat-item" onclick="acKonusma('${k.karsId}','${k.ilan_id||''}','${isimEsc}','${ilanEsc}','${avatarEsc}')">
+      <div class="chat-avatar">${avatarHtml}</div>
       <div class="chat-info">
         <div class="chat-name">${isim}</div>
         <div class="chat-ilan">${k.ilan_id ? '🏠' : '📢'} ${ilanBaslik}</div>
@@ -261,11 +291,20 @@ async function konusmalariYukle() {
   }).join('');
 }
 
-async function acKonusma(karsId, ilanId, isim, ilanBaslik) {
+async function acKonusma(karsId, ilanId, isim, ilanBaslik, avatarUrl) {
   aktifKarsiId = karsId;
   aktifIlanId = ilanId || null;
   document.getElementById('chatName').textContent = isim;
   document.getElementById('chatIlan').textContent = ilanId ? '🏠 ' + ilanBaslik : '📢 ' + ilanBaslik;
+
+  // Profil fotoğrafını header'da göster
+  const avatarEl = document.getElementById('chatHeaderAvatar');
+  if (avatarUrl) {
+    avatarEl.innerHTML = `<img src="${avatarUrl}" alt="${isim}" onerror="this.parentElement.innerHTML='👤'">`;
+  } else {
+    avatarEl.innerHTML = isim === 'GoTapu' ? '🏠' : '👤';
+  }
+
   document.getElementById('chatScreen').classList.add('open');
   mesajlariYukle();
 
@@ -280,6 +319,12 @@ async function acKonusma(karsId, ilanId, isim, ilanBaslik) {
       }
     }
   ).subscribe();
+}
+
+function profileGit() {
+  if (aktifKarsiId) {
+    window.location.href = `profil.html?id=${aktifKarsiId}`;
+  }
 }
 
 async function mesajlariYukle() {
@@ -309,11 +354,43 @@ async function mesajlariYukle() {
 function mesajEkle(m, scroll = true) {
   const el = document.getElementById('chatMessages');
   const benMi = m.gonderen_id === currentUser.id;
+  const wrap = document.createElement('div');
+  wrap.className = `msg-wrap ${benMi ? 'me' : 'them'}`;
+  wrap.dataset.id = m.id;
+
+  // Uzun basınca sil butonunu göster (mobil için)
+  wrap.addEventListener('touchstart', () => {
+    clearTimeout(wrap._pressTimer);
+    wrap._pressTimer = setTimeout(() => wrap.classList.toggle('show-actions'), 500);
+  });
+  wrap.addEventListener('touchend', () => clearTimeout(wrap._pressTimer));
+
   const div = document.createElement('div');
   div.className = `msg ${benMi ? 'msg-me' : 'msg-them'}`;
   div.innerHTML = `${m.icerik}<div class="msg-time">${new Date(m.created_at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</div>`;
-  el.appendChild(div);
+  wrap.appendChild(div);
+
+  // Sadece kendi mesajlarında sil butonu göster
+  if (benMi && m.id) {
+    const actions = document.createElement('div');
+    actions.className = 'msg-actions';
+    actions.innerHTML = `<button class="msg-del-btn" onclick="mesajSil('${m.id}', this)">🗑 Sil</button>`;
+    wrap.appendChild(actions);
+  }
+
+  el.appendChild(wrap);
   if (scroll) el.scrollTop = el.scrollHeight;
+}
+
+async function mesajSil(mesajId, btn) {
+  if (!confirm('Bu mesajı silmek istediğinizden emin misiniz?')) return;
+  const { error } = await sb.from('mesajlar').delete().eq('id', mesajId).eq('gonderen_id', currentUser.id);
+  if (!error) {
+    const wrap = btn.closest('.msg-wrap');
+    if (wrap) wrap.remove();
+  } else {
+    alert('Mesaj silinemedi!');
+  }
 }
 
 async function gonder() {
@@ -331,8 +408,8 @@ async function gonder() {
     created_at: new Date().toISOString()
   };
 
-  mesajEkle(yeniMesaj);
-  await sb.from('mesajlar').insert(yeniMesaj);
+  const { data } = await sb.from('mesajlar').insert(yeniMesaj).select().single();
+  mesajEkle(data || yeniMesaj);
 }
 
 let seciliMSikayet = null;
