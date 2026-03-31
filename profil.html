@@ -205,7 +205,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const hedefId = urlParams.get('id'); // başkasının profili mi?
 
 sb.auth.getSession().then(({ data }) => {
-  if (!data.session) { window.location.href = 'auth.html'; return; }
+  if (!data.session) { window.location.href = 'index.html'; return; }
   currentUser = data.session.user;
 
   if (hedefId && hedefId !== currentUser.id) {
@@ -432,7 +432,7 @@ async function ilanSil(ilanId) {
 
 async function cikisYap() {
   await sb.auth.signOut();
-  window.location.href = 'auth.html';
+  window.location.href = 'index.html';
 }
 </script>
 <script>
