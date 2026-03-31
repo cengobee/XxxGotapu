@@ -149,6 +149,12 @@
   @media (min-width: 1200px) {
     #ilanlarList { grid-template-columns: repeat(3, 1fr) !important; }
   }
+
+  .site-footer {
+    background: #222; color: #aaa; text-align: center;
+    padding: 16px; font-size: 12px; margin-top: 24px;
+  }
+  .site-footer a { color: #e85d26; text-decoration: none; margin: 0 8px; }
 </style>
 </head>
 <body>
@@ -280,6 +286,13 @@
   <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
 </nav>
 
+<footer class="site-footer">
+  © 2025 GoTapu —
+  <a href="sozlesme.html">Kullanıcı Sözleşmesi</a>
+  <a href="sozlesme.html#gizlilik">Gizlilik Politikası</a>
+  <a href="sozlesme.html#cerez">Çerez Politikası</a>
+</footer>
+
 <script>
 const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
@@ -293,8 +306,6 @@ let toplamSayfa = 1;
 const emojiler = { satilik: '🏙️', kiralik: '🏘️' };
 
 // ── GOOGLE OAUTH HASH HANDLER ──────────────────────────────────────────────
-// Google OAuth sonrası Supabase #access_token=... hash ile geri döner.
-// Bunu yakala, session kur, hash'i temizle.
 if (window.location.hash && window.location.hash.includes('access_token')) {
   const hashParams = new URLSearchParams(window.location.hash.substring(1));
   const access_token = hashParams.get('access_token');
@@ -306,7 +317,6 @@ if (window.location.hash && window.location.hash.includes('access_token')) {
         console.error('Session kurulamadı:', error);
         window.location.replace('auth.html');
       } else {
-        // Hash'i URL'den temizle, sayfayı yenile
         window.history.replaceState(null, '', window.location.pathname);
         init();
       }
@@ -315,7 +325,6 @@ if (window.location.hash && window.location.hash.includes('access_token')) {
     init();
   }
 } else if (new URLSearchParams(window.location.search).get('code')) {
-  // PKCE flow — auth.html'e yönlendir
   window.location.replace('auth.html' + window.location.search);
 } else {
   init();
