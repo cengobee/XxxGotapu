@@ -204,7 +204,7 @@ const urlIlanId = params.get('ilan_id');
 const urlKarsiId = params.get('karsi_id');
 
 sb.auth.getSession().then(({ data }) => {
-  if (!data.session) { window.location.href = 'auth.html'; return; }
+  if (!data.session) { window.location.href = 'index.html'; return; }
   currentUser = data.session.user;
   konusmalariYukle();
   if (urlKarsiId) {
