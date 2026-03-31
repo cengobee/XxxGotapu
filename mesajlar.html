@@ -307,7 +307,7 @@ async function acKonusma(karsId, ilanId, isim, ilanBaslik, avatarUrl) {
   aktifKarsiId = karsId;
   aktifIlanId = ilanId || null;
   karsiAvatarUrl = avatarUrl || null;
-.textContent = isim;
+  document.getElementById('chatName').textContent = isim;
   document.getElementById('chatIlan').textContent = ilanId ? '🏠 ' + ilanBaslik : '📢 ' + ilanBaslik;
 
   const avatarEl = document.getElementById('chatHeaderAvatar');
@@ -478,6 +478,13 @@ function kapatSessiz() {
 function kapat() {
   history.back(); // popstate tetikler → kapatSessiz çalışır
 }
+
+// Tarayıcı geri tuşu → sohbet açıksa mesajlar listesine dön
+window.addEventListener('popstate', () => {
+  if (document.getElementById('chatScreen').classList.contains('open')) {
+    kapatSessiz();
+  }
+});
 </script>
 <script>
   if ("serviceWorker" in navigator) {
