@@ -2,50 +2,50 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://www.gotapu.com/index.html</loc>
+    <loc>https://gotapu.com/anasayfa.html</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://www.gotapu.com/ilan-ver.html</loc>
+    <loc>https://gotapu.com/ilan-detay.html</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://gotapu.com/ilan-ver.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://www.gotapu.com/eslesmeler.html</loc>
+    <loc>https://gotapu.com/eslesmeler.html</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://www.gotapu.com/hizmetler.html</loc>
+    <loc>https://gotapu.com/hizmetler.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://www.gotapu.com/degerleme.html</loc>
+    <loc>https://gotapu.com/degerleme.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://www.gotapu.com/profil.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <loc>https://gotapu.com/favoriler.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://www.gotapu.com/mesajlar.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-
-  <url>
-    <loc>https://www.gotapu.com/auth.html</loc>
-    <changefreq>monthly</changefreq>
+    <loc>https://gotapu.com/sozlesme.html</loc>
+    <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
