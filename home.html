@@ -5,14 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>GoTapu — Türkiye'nin Emlak Platformu | Kiralık & Satılık İlanlar</title>
 
-<!-- SEO Meta Tags -->
 <meta name="description" content="GoTapu ile Ankara, İstanbul ve tüm Türkiye'de kiralık ve satılık daire, villa, arsa ilanlarını ücretsiz yayınla. Komisyonsuz, hızlı, güvenli emlak platformu.">
 <meta name="keywords" content="kiralık daire, satılık daire, emlak, ankara kiralık, istanbul satılık, türkiye emlak, ücretsiz ilan, gotapu">
 <meta name="robots" content="index, follow">
 <meta name="author" content="GoTapu">
 <link rel="canonical" href="https://www.gotapu.com/">
 
-<!-- Open Graph -->
 <meta property="og:title" content="GoTapu — Türkiye'nin Emlak Platformu">
 <meta property="og:description" content="Ankara, İstanbul ve tüm Türkiye'de kiralık & satılık emlak ilanları. Komisyonsuz, ücretsiz ilan ver.">
 <meta property="og:url" content="https://www.gotapu.com/">
@@ -21,19 +19,17 @@
 <meta property="og:locale" content="tr_TR">
 <meta property="og:site_name" content="GoTapu">
 
-<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="GoTapu — Türkiye'nin Emlak Platformu">
 <meta name="twitter:description" content="Kiralık & satılık emlak ilanları. Komisyonsuz, ücretsiz.">
 <meta name="twitter:image" content="https://www.gotapu.com/icons/icon-512.png">
 
-<!-- Structured Data -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "RealEstateAgent",
   "name": "GoTapu",
-  "description": "Türkiye'nin komisyonsuz emlak platformu. Ankara, İstanbul ve tüm Türkiye'de kiralık ve satılık ilan.",
+  "description": "Türkiye'nin komisyonsuz emlak platformu.",
   "url": "https://www.gotapu.com",
   "logo": "https://www.gotapu.com/icons/icon-512.png",
   "areaServed": [
@@ -62,229 +58,411 @@
 
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-  /* ── FİLTRE BLOĞU ─────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   ÜST ARAMA + FİLTRE ÇUBUĞU
+═══════════════════════════════════════════════════════ */
+.arama-filtre-cubugu {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  align-items: stretch;
+}
+.arama-input-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.arama-input-wrap .arama-ikon {
+  position: absolute;
+  left: 12px;
+  font-size: 16px;
+  pointer-events: none;
+  color: var(--text3);
+}
+.arama-input {
+  width: 100%;
+  padding: 11px 12px 11px 36px;
+  box-sizing: border-box;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  outline: none;
+  transition: border-color .2s;
+}
+.arama-input:focus { border-color: var(--gold); }
+.arama-input::placeholder { color: var(--text3); font-weight: 600; }
+.filtre-ac-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 16px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  white-space: nowrap;
+  transition: border-color .2s, background .2s;
+  position: relative;
+  flex-shrink: 0;
+}
+.filtre-ac-btn:hover { border-color: var(--gold); }
+.filtre-ac-btn.aktif { border-color: var(--gold); background: rgba(245,200,66,0.08); color: var(--gold); }
+.filtre-ac-btn .filtre-ok {
+  font-size: 18px;
+  transition: transform .25s;
+  color: var(--text3);
+}
+.filtre-ac-btn.aktif .filtre-ok { transform: rotate(90deg); color: var(--gold); }
+.filtre-sayac-badge {
+  background: var(--gold);
+  color: var(--bg);
+  font-size: 10px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 50px;
+  display: none;
+  line-height: 1.4;
+}
+.filtre-sayac-badge.goster { display: inline-block; }
 
-  /* Filtre aç/kapat butonu */
-  .filtre-toggle-btn {
-    display: flex; align-items: center; justify-content: space-between;
-    width: 100%; padding: 12px 16px; box-sizing: border-box;
-    background: var(--card); border: 1.5px solid var(--border);
-    border-radius: var(--radius); cursor: pointer;
-    font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800;
-    color: var(--text); margin-bottom: 8px; transition: border-color .2s;
-  }
-  .filtre-toggle-btn:hover { border-color: var(--gold); }
-  .filtre-toggle-btn .filtre-btn-sol { display: flex; align-items: center; gap: 8px; }
-  .filtre-toggle-btn .filtre-ok {
-    color: var(--text3); font-size: 18px;
-    transition: transform .25s; display: inline-block;
-  }
-  .filtre-toggle-btn.acik .filtre-ok { transform: rotate(90deg); }
-  .filtre-aktif-sayac {
-    background: var(--gold); color: var(--bg);
-    font-size: 10px; font-weight: 900;
-    padding: 2px 7px; border-radius: 50px;
-    display: none;
-  }
-  .filtre-aktif-sayac.goster { display: inline-block; }
+/* ═══════════════════════════════════════════════════════
+   FİLTRE PANELİ
+═══════════════════════════════════════════════════════ */
+.filtre-panel {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  display: none;
+}
+.filtre-panel.acik { display: block; }
 
-  /* Panel */
-  .filtre-panel {
-    background: var(--card); border: 1.5px solid var(--border);
-    border-radius: var(--radius); padding: 14px;
-    margin-bottom: 12px; display: none;
-  }
-  .filtre-panel.acik { display: block; }
+/* Satılık / Kiralık / Tümü toggle */
+.filtre-tip-row {
+  display: flex;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 3px;
+  margin-bottom: 14px;
+}
+.filtre-tip-row button {
+  flex: 1;
+  padding: 9px;
+  border: none;
+  border-radius: 50px;
+  background: transparent;
+  color: var(--text3);
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all .2s;
+}
+.filtre-tip-row button.aktif { background: var(--gold); color: var(--bg); }
 
-  /* Satılık / Kiralık toggle */
-  .filtre-tip-row {
-    display: flex; background: var(--bg);
-    border: 1px solid var(--border); border-radius: 50px;
-    padding: 3px; margin-bottom: 12px;
-  }
-  .filtre-tip-row button {
-    flex: 1; padding: 8px; border: none; border-radius: 50px;
-    background: transparent; color: var(--text3);
-    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800;
-    cursor: pointer; transition: all .2s;
-  }
-  .filtre-tip-row button.aktif { background: var(--gold); color: var(--bg); }
+/* Emlak tipi butonları */
+.filtre-bolum-baslik {
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 14px 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.filtre-bolum-baslik:first-of-type { margin-top: 0; }
 
-  /* Emlak tipi butonları */
-  .filtre-emlak-row {
-    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;
-  }
-  .filtre-emlak-btn {
-    padding: 7px 12px; border-radius: var(--radius-sm);
-    background: var(--bg); border: 1.5px solid var(--border);
-    color: var(--text2); font-family: 'Nunito', sans-serif;
-    font-size: 12px; font-weight: 700; cursor: pointer; transition: all .2s;
-  }
-  .filtre-emlak-btn.aktif {
-    background: rgba(245,200,66,0.1); border-color: var(--gold); color: var(--gold);
-  }
+.filtre-emlak-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.filtre-emlak-btn {
+  padding: 8px 13px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  color: var(--text2);
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+}
+.filtre-emlak-btn.aktif {
+  background: rgba(245,200,66,0.1);
+  border-color: var(--gold);
+  color: var(--gold);
+}
 
-  /* Bölücü başlık */
-  .filtre-bolum {
-    font-size: 10px; font-weight: 900; color: var(--text3);
-    text-transform: uppercase; letter-spacing: 0.5px;
-    margin: 12px 0 8px; padding-bottom: 6px;
-    border-bottom: 1px solid var(--border);
-  }
+/* Grid */
+.filtre-satir {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.filtre-satir.tek { grid-template-columns: 1fr; }
+.filtre-grup { display: flex; flex-direction: column; gap: 4px; }
+.filtre-etiket {
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.filtre-select, .filtre-input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 10px;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.filtre-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-color: var(--bg);
+  padding-right: 30px;
+}
+.filtre-select:focus, .filtre-input:focus { border-color: var(--gold); }
+.filtre-input::placeholder { color: var(--text3); font-weight: 600; }
 
-  /* Grid satırları */
-  .filtre-satir {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 8px; margin-bottom: 8px;
-  }
-  .filtre-satir.tek { grid-template-columns: 1fr; }
-  .filtre-grup { display: flex; flex-direction: column; gap: 4px; }
-  .filtre-etiket {
-    font-size: 10px; font-weight: 900; color: var(--text3);
-    text-transform: uppercase; letter-spacing: 0.4px;
-  }
-  .filtre-select, .filtre-input {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); color: var(--text);
-    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700;
-    padding: 8px 10px; width: 100%; box-sizing: border-box;
-    outline: none; appearance: none; -webkit-appearance: none;
-    cursor: pointer; transition: border-color .2s;
-  }
-  .filtre-select:focus, .filtre-input:focus { border-color: var(--gold); }
-  .filtre-input::placeholder { color: var(--text3); font-weight: 600; }
+/* Chip'ler */
+.filtre-chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+.filtre-chip {
+  padding: 6px 11px;
+  border-radius: 50px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: 'Nunito', sans-serif;
+}
+.filtre-chip.aktif { background: var(--gold); border-color: var(--gold); color: var(--bg); }
 
-  /* Chip'ler (oda sayısı, bina yaşı vb.) */
-  .filtre-chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .filtre-chip {
-    padding: 6px 10px; border-radius: 50px;
-    border: 1px solid var(--border); background: var(--bg);
-    color: var(--text3); font-size: 11px; font-weight: 800;
-    cursor: pointer; transition: all .15s;
-    font-family: 'Nunito', sans-serif;
-  }
-  .filtre-chip.aktif { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+/* Kriter seçim butonları (ilan-ver'deki sec-btn stili) */
+.filtre-sec-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+.filtre-sec-btn {
+  padding: 7px 12px;
+  border-radius: 50px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  color: var(--text2);
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+}
+.filtre-sec-btn.aktif {
+  background: rgba(245,200,66,0.1);
+  border-color: var(--gold);
+  color: var(--gold);
+}
 
-  /* Alt butonlar */
-  .filtre-btn-row {
-    display: flex; gap: 8px; margin-top: 14px; align-items: center;
-  }
-  .filtre-uygula {
-    flex: 1; padding: 11px; background: var(--gold); color: var(--bg);
-    border: none; border-radius: 50px; font-family: 'Nunito', sans-serif;
-    font-size: 14px; font-weight: 900; cursor: pointer; transition: opacity .2s;
-  }
-  .filtre-uygula:hover { opacity: .85; }
-  .filtre-temizle {
-    padding: 11px 16px; background: transparent; color: var(--text3);
-    border: 1px solid var(--border); border-radius: 50px;
-    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800;
-    cursor: pointer; transition: all .2s; white-space: nowrap;
-  }
-  .filtre-temizle:hover { border-color: var(--text2); color: var(--text); }
+/* Alt butonlar */
+.filtre-btn-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  align-items: center;
+}
+.filtre-uygula {
+  flex: 1;
+  padding: 12px;
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+.filtre-uygula:hover { opacity: .85; }
+.filtre-temizle {
+  padding: 12px 16px;
+  background: transparent;
+  color: var(--text3);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.filtre-temizle:hover { border-color: var(--text2); color: var(--text); }
 
-  /* Aktif filtre özeti */
-  .filtre-ozet {
-    display: none; align-items: center; gap: 6px;
-    font-size: 12px; font-weight: 700; color: var(--text3);
-    margin-bottom: 10px; flex-wrap: wrap;
-  }
-  .filtre-ozet.goster { display: flex; }
-  .filtre-ozet-tag {
-    background: rgba(245,200,66,0.12); border: 1px solid rgba(245,200,66,0.3);
-    color: var(--gold); padding: 3px 8px; border-radius: 50px;
-    font-size: 11px; font-weight: 800;
-  }
+/* Aktif filtre özeti */
+.filtre-ozet {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text3);
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.filtre-ozet.goster { display: flex; }
+.filtre-ozet-tag {
+  background: rgba(245,200,66,0.12);
+  border: 1px solid rgba(245,200,66,0.3);
+  color: var(--gold);
+  padding: 3px 9px;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 800;
+}
 
-  /* ── İLAN KARTI ────────────────────────────────────────────────── */
-  .ilan-item {
-    display: flex; gap: 12px; align-items: center;
-    background: var(--card); border-radius: var(--radius);
-    border: 1px solid var(--border); padding: 12px;
-    margin-bottom: 10px; cursor: pointer; transition: border-color .2s;
-    text-decoration: none; color: var(--text);
-  }
-  .ilan-item.one-cikan-ilan { border-color: rgba(245,200,66,0.4); background: rgba(245,200,66,0.04); }
-  .ilan-item:hover { border-color: var(--gold); }
-  .ilan-thumb {
-    width: 76px; height: 76px; border-radius: var(--radius-sm);
-    background: var(--card2); display: flex; align-items: center;
-    justify-content: center; font-size: 34px; flex-shrink: 0; overflow: hidden;
-  }
-  .ilan-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .ilan-info { flex: 1; min-width: 0; }
-  .ilan-price { font-size: 16px; font-weight: 900; color: var(--gold); }
-  .ilan-title { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 2px 0; }
-  .ilan-loc { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
-  .ilan-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+/* ═══════════════════════════════════════════════════════
+   İLAN KARTI
+═══════════════════════════════════════════════════════ */
+.ilan-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color .2s;
+  text-decoration: none;
+  color: var(--text);
+}
+.ilan-item.one-cikan-ilan { border-color: rgba(245,200,66,0.4); background: rgba(245,200,66,0.04); }
+.ilan-item:hover { border-color: var(--gold); }
+.ilan-thumb {
+  width: 76px;
+  height: 76px;
+  border-radius: var(--radius-sm);
+  background: var(--card2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.ilan-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.ilan-info { flex: 1; min-width: 0; }
+.ilan-price { font-size: 16px; font-weight: 900; color: var(--gold); }
+.ilan-title { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 2px 0; }
+.ilan-loc { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+.ilan-tags { display: flex; gap: 6px; flex-wrap: wrap; }
 
-  /* ── HIZMETLER & PROMO ─────────────────────────────────────────── */
-  .services-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
-  .service-item {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 14px 8px;
-    text-align: center; cursor: pointer; transition: border-color .2s;
-  }
-  .service-item:hover { border-color: var(--gold); }
-  .service-em { font-size: 28px; display: block; margin-bottom: 6px; }
-  .service-lbl { font-size: 11px; font-weight: 700; color: var(--text2); }
-  .promo {
-    background: linear-gradient(135deg, #1a3a2a, #0f2018);
-    border-radius: var(--radius); padding: 18px;
-    border: 1px solid rgba(46,204,113,0.2);
-    display: flex; align-items: center; justify-content: space-between;
-    margin-top: 20px;
-  }
-  .promo h3 { font-size: 15px; font-weight: 900; }
-  .promo p { font-size: 12px; color: var(--text2); margin-top: 3px; }
+/* ═══════════════════════════════════════════════════════
+   HİZMETLER & PROMO
+═══════════════════════════════════════════════════════ */
+.services-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+.service-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.service-item:hover { border-color: var(--gold); }
+.service-em { font-size: 28px; display: block; margin-bottom: 6px; }
+.service-lbl { font-size: 11px; font-weight: 700; color: var(--text2); }
+.promo {
+  background: linear-gradient(135deg, #1a3a2a, #0f2018);
+  border-radius: var(--radius);
+  padding: 18px;
+  border: 1px solid rgba(46,204,113,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.promo h3 { font-size: 15px; font-weight: 900; }
+.promo p { font-size: 12px; color: var(--text2); margin-top: 3px; }
 
-  /* ── DESKTOP LAYOUT ────────────────────────────────────────────── */
-  .desktop-sol, .desktop-sag { display: none; }
-  .mobile-only { display: block; }
-  .desktop-layout { display: block; }
+/* ═══════════════════════════════════════════════════════
+   DESKTOP
+═══════════════════════════════════════════════════════ */
+.desktop-sol, .desktop-sag { display: none; }
+.mobile-only { display: block; }
+.desktop-layout { display: block; }
 
-  @media (min-width: 900px) {
-    body { padding-bottom: 0 !important; }
-    .top-nav { padding: 0 40px !important; height: 64px !important; }
-    .nav-logo { font-size: 22px !important; }
-    .nav-btn { padding: 10px 24px !important; font-size: 15px !important; }
-    .bottom-nav { display: none !important; }
-    .page { max-width: 1400px !important; margin: 0 auto !important; padding: 80px 40px 40px !important; }
-    .desktop-layout {
-      display: grid !important;
-      grid-template-columns: 280px 1fr 300px;
-      gap: 28px; align-items: start;
-    }
-    .desktop-sol { display: block !important; position: sticky; top: 80px; }
-    .desktop-orta { min-width: 0; }
-    .desktop-sag { display: block !important; position: sticky; top: 80px; }
-    .desktop-sol .services-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px; }
-    .desktop-sol .service-item { padding: 10px 4px; }
-    .desktop-sol .service-em { font-size: 22px; }
-    .desktop-sol .service-lbl { font-size: 10px; }
-    #ilanlarList { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-    .ilan-item { flex-direction: column !important; align-items: flex-start !important; margin-bottom: 0 !important; height: 100%; }
-    .ilan-thumb { width: 100% !important; height: 180px !important; border-radius: var(--radius) !important; }
-    .mobile-only { display: none !important; }
-    .desktop-sag .promo { margin-top: 0; }
-    .sag-kart { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
-    .sag-kart-baslik { font-size: 13px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-
-    /* Desktop filtre: tek satırda daha geniş */
-    .filtre-satir { grid-template-columns: 1fr 1fr 1fr; }
-    .filtre-satir.iki-uc { grid-template-columns: 1fr 1fr 1fr; }
+@media (min-width: 900px) {
+  body { padding-bottom: 0 !important; }
+  .top-nav { padding: 0 40px !important; height: 64px !important; }
+  .nav-logo { font-size: 22px !important; }
+  .nav-btn { padding: 10px 24px !important; font-size: 15px !important; }
+  .bottom-nav { display: none !important; }
+  .page { max-width: 1400px !important; margin: 0 auto !important; padding: 80px 40px 40px !important; }
+  .desktop-layout {
+    display: grid !important;
+    grid-template-columns: 280px 1fr 300px;
+    gap: 28px;
+    align-items: start;
   }
+  .desktop-sol { display: block !important; position: sticky; top: 80px; }
+  .desktop-orta { min-width: 0; }
+  .desktop-sag { display: block !important; position: sticky; top: 80px; }
+  .desktop-sol .services-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px; }
+  .desktop-sol .service-item { padding: 10px 4px; }
+  .desktop-sol .service-em { font-size: 22px; }
+  .desktop-sol .service-lbl { font-size: 10px; }
+  #ilanlarList { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .ilan-item { flex-direction: column !important; align-items: flex-start !important; margin-bottom: 0 !important; height: 100%; }
+  .ilan-thumb { width: 100% !important; height: 180px !important; border-radius: var(--radius) !important; }
+  .mobile-only { display: none !important; }
+  .desktop-sag .promo { margin-top: 0; }
+  .sag-kart { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+  .sag-kart-baslik { font-size: 13px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+  .filtre-satir { grid-template-columns: 1fr 1fr 1fr; }
+}
+@media (min-width: 1200px) {
+  #ilanlarList { grid-template-columns: repeat(3, 1fr) !important; }
+}
 
-  @media (min-width: 1200px) {
-    #ilanlarList { grid-template-columns: repeat(3, 1fr) !important; }
-  }
-
-  .site-footer {
-    background: #222; color: #aaa; text-align: center;
-    padding: 16px; font-size: 12px; margin-top: 24px;
-  }
-  .site-footer a { color: #e85d26; text-decoration: none; margin: 0 8px; }
+.site-footer {
+  background: #222;
+  color: #aaa;
+  text-align: center;
+  padding: 16px;
+  font-size: 12px;
+  margin-top: 24px;
+}
+.site-footer a { color: #e85d26; text-decoration: none; margin: 0 8px; }
 </style>
 </head>
 <body style="visibility:hidden">
@@ -305,43 +483,50 @@
 
 <div class="page fade-up">
 
-  <!-- ── FİLTRE BUTONU + PANELİ ───────────────────────────────── -->
-
-  <!-- Aç/kapat butonu -->
-  <button class="filtre-toggle-btn acik" id="filtreTglBtn" onclick="filtreToggle()">
-    <div class="filtre-btn-sol">
-      <span>🔍</span>
-      <span>Filtrele</span>
-      <span class="filtre-aktif-sayac" id="filtreAktifSayac">0</span>
+  <!-- ════════════════════════════════════════════════════
+       ARAMA ÇUBUĞU + FİLTRE BUTONU
+  ════════════════════════════════════════════════════ -->
+  <div class="arama-filtre-cubugu">
+    <div class="arama-input-wrap">
+      <span class="arama-ikon">🔍</span>
+      <input class="arama-input" type="text" id="aramaInput"
+        placeholder="Başlık, konum, özellik ara..."
+        oninput="aramaGecikme()">
     </div>
-    <span class="filtre-ok">›</span>
-  </button>
+    <button class="filtre-ac-btn aktif" id="filtreAcBtn" onclick="filtreToggle()">
+      <span>⚙️ Filtrele</span>
+      <span class="filtre-sayac-badge" id="filtreSayacBadge">0</span>
+      <span class="filtre-ok">›</span>
+    </button>
+  </div>
 
-  <!-- Panel — başlangıçta açık -->
+  <!-- ════════════════════════════════════════════════════
+       FİLTRE PANELİ — başlangıçta açık
+  ════════════════════════════════════════════════════ -->
   <div class="filtre-panel acik" id="filtrePanel">
 
     <!-- Satılık / Kiralık / Tümü -->
     <div class="filtre-tip-row">
-      <button id="ftTumu"   class="aktif"  onclick="toggleTip('tumu')">🏠 Tümü</button>
-      <button id="ftSatilik"              onclick="toggleTip('satilik')">💰 Satılık</button>
-      <button id="ftKiralik"              onclick="toggleTip('kiralik')">🔑 Kiralık</button>
+      <button id="ftTumu"    class="aktif" onclick="toggleTip('tumu')">🏠 Tümü</button>
+      <button id="ftSatilik"             onclick="toggleTip('satilik')">💰 Satılık</button>
+      <button id="ftKiralik"             onclick="toggleTip('kiralik')">🔑 Kiralık</button>
     </div>
 
-    <!-- Emlak Tipi butonları -->
-    <div class="filtre-bolum">🏢 Emlak Tipi</div>
-    <div class="filtre-emlak-row" id="filtreEmlakRow">
-      <button class="filtre-emlak-btn" data-grup="konut"  onclick="emlakTipSec(this)">🏢 Daire</button>
-      <button class="filtre-emlak-btn" data-grup="konut"  onclick="emlakTipSec(this)">🏡 Villa</button>
-      <button class="filtre-emlak-btn" data-grup="konut"  onclick="emlakTipSec(this)">🏠 Müstakil</button>
-      <button class="filtre-emlak-btn" data-grup="konut"  onclick="emlakTipSec(this)">🏘️ Residence</button>
-      <button class="filtre-emlak-btn" data-grup="arsa"   onclick="emlakTipSec(this)">🏗️ Arsa</button>
-      <button class="filtre-emlak-btn" data-grup="arsa"   onclick="emlakTipSec(this)">🌳 Tarla/Bağ Bahçe</button>
-      <button class="filtre-emlak-btn" data-grup="isyeri" onclick="emlakTipSec(this)">🏪 İşyeri/Ofis</button>
-      <button class="filtre-emlak-btn" data-grup="isyeri" onclick="emlakTipSec(this)">🏭 Depo/Fabrika</button>
+    <!-- Emlak Tipi -->
+    <div class="filtre-bolum-baslik">🏢 Emlak Tipi</div>
+    <div class="filtre-emlak-row">
+      <button class="filtre-emlak-btn" data-grup="konut"  onclick="filtrEmlakTipSec(this)">🏢 Daire</button>
+      <button class="filtre-emlak-btn" data-grup="konut"  onclick="filtrEmlakTipSec(this)">🏡 Villa</button>
+      <button class="filtre-emlak-btn" data-grup="konut"  onclick="filtrEmlakTipSec(this)">🏠 Müstakil</button>
+      <button class="filtre-emlak-btn" data-grup="konut"  onclick="filtrEmlakTipSec(this)">🏘️ Residence</button>
+      <button class="filtre-emlak-btn" data-grup="arsa"   onclick="filtrEmlakTipSec(this)">🏗️ Arsa</button>
+      <button class="filtre-emlak-btn" data-grup="arsa"   onclick="filtrEmlakTipSec(this)">🌳 Tarla/Bağ Bahçe</button>
+      <button class="filtre-emlak-btn" data-grup="isyeri" onclick="filtrEmlakTipSec(this)">🏪 İşyeri/Ofis</button>
+      <button class="filtre-emlak-btn" data-grup="isyeri" onclick="filtrEmlakTipSec(this)">🏭 Depo/Fabrika</button>
     </div>
 
     <!-- Konum -->
-    <div class="filtre-bolum">📍 Konum</div>
+    <div class="filtre-bolum-baslik">📍 Konum</div>
     <div class="filtre-satir">
       <div class="filtre-grup">
         <div class="filtre-etiket">İl</div>
@@ -356,7 +541,7 @@
         </select>
       </div>
     </div>
-    <div class="filtre-satir tek">
+    <div class="filtre-satir tek" style="margin-bottom:0">
       <div class="filtre-grup">
         <div class="filtre-etiket">Mahalle / Cadde / Sokak</div>
         <input class="filtre-input" type="text" id="filtreMahalle" placeholder="ör. Kızılay, Bağdat Cad...">
@@ -364,7 +549,7 @@
     </div>
 
     <!-- Fiyat -->
-    <div class="filtre-bolum">💸 Fiyat (₺)</div>
+    <div class="filtre-bolum-baslik">💸 Fiyat (₺)</div>
     <div class="filtre-satir">
       <div class="filtre-grup">
         <div class="filtre-etiket">Min</div>
@@ -376,22 +561,25 @@
       </div>
     </div>
 
-    <!-- ── KONUT KRİTERLERİ ─────────────────────────────── -->
+    <!-- ── KONUT KRİTERLERİ ── -->
     <div id="fKonut" style="display:none">
-      <div class="filtre-bolum">🛏️ Oda Sayısı</div>
-      <div class="filtre-chip-row" id="fOdaRow">
-        <div class="filtre-chip" onclick="chipTekSec(this,'fOdaRow')">Stüdyo</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fOdaRow')">1+0</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fOdaRow')">1+1</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fOdaRow')">2+1</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fOdaRow')">3+1</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fOdaRow')">3+2</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fOdaRow')">4+1</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fOdaRow')">4+2</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fOdaRow')">5+1 ve üzeri</div>
+
+      <div class="filtre-bolum-baslik">🛏️ Oda Sayısı</div>
+      <div class="filtre-sec-row" id="fOdaRow">
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fOdaRow')">Stüdyo</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fOdaRow')">1+0</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fOdaRow')">1+1</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fOdaRow')">2+1</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fOdaRow')">3+1</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fOdaRow')">3+2</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fOdaRow')">4+1</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fOdaRow')">4+2</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fOdaRow')">5+1</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fOdaRow')">5+2</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fOdaRow')">6+1 ve üzeri</button>
       </div>
 
-      <div class="filtre-bolum">📐 m² Aralığı</div>
+      <div class="filtre-bolum-baslik">📐 m² Aralığı</div>
       <div class="filtre-satir">
         <div class="filtre-grup">
           <div class="filtre-etiket">Min m²</div>
@@ -403,39 +591,106 @@
         </div>
       </div>
 
-      <div class="filtre-bolum">🏗️ Bina Yaşı</div>
-      <div class="filtre-chip-row" id="fBinaYasiRow">
-        <div class="filtre-chip" onclick="chipTekSec(this,'fBinaYasiRow')">0 (Sıfır)</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fBinaYasiRow')">1-5 Yıl</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fBinaYasiRow')">6-10 Yıl</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fBinaYasiRow')">11-20 Yıl</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fBinaYasiRow')">20+ Yıl</div>
+      <div class="filtre-bolum-baslik">🏗️ Bina Yaşı</div>
+      <div class="filtre-sec-row" id="fBinaYasiRow">
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fBinaYasiRow')">0 (Sıfır)</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fBinaYasiRow')">1-5 Yıl</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fBinaYasiRow')">6-10 Yıl</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fBinaYasiRow')">11-15 Yıl</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fBinaYasiRow')">16-20 Yıl</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fBinaYasiRow')">21-30 Yıl</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fBinaYasiRow')">30+ Yıl</button>
       </div>
 
-      <div class="filtre-bolum">🔥 Isıtma</div>
-      <div class="filtre-chip-row" id="fIsitmaRow">
-        <div class="filtre-chip" onclick="chipTekSec(this,'fIsitmaRow')">Kombi (Doğalgaz)</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fIsitmaRow')">Merkezi</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fIsitmaRow')">Yerden Isıtma</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fIsitmaRow')">Klima</div>
+      <div class="filtre-bolum-baslik">🔥 Isıtma</div>
+      <div class="filtre-sec-row" id="fIsitmaRow">
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fIsitmaRow')">Kombi (Doğalgaz)</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fIsitmaRow')">Kombi (LPG)</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fIsitmaRow')">Merkezi Isıtma</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fIsitmaRow')">Merkezi (Pay Ölçer)</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fIsitmaRow')">Yerden Isıtma</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fIsitmaRow')">Klima</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fIsitmaRow')">Soba</button>
+        <button class="filtre-sec-btn" onclick="chipTekSec(this,'fIsitmaRow')">Şömine</button>
       </div>
 
-      <div class="filtre-bolum">✨ Özellikler</div>
-      <div class="filtre-chip-row" id="fOzellikRow">
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🪟 Balkon</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🛗 Asansör</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🅿️ Otopark</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">👮 Güvenlik</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🏊 Havuz</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🏠 Site İçinde</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🚿 Ebeveyn Banyosu</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🔐 Çelik Kapı</div>
+      <div class="filtre-bolum-baslik">📄 Kullanım & Tapu</div>
+      <div class="filtre-satir">
+        <div class="filtre-grup">
+          <div class="filtre-etiket">Kullanım Durumu</div>
+          <select class="filtre-select" id="filtreKullanim">
+            <option value="">Fark Etmez</option>
+            <option>Boş</option>
+            <option>Kiracılı</option>
+            <option>Mülk Sahibi Kullanıyor</option>
+          </select>
+        </div>
+        <div class="filtre-grup">
+          <div class="filtre-etiket">Tapu Durumu</div>
+          <select class="filtre-select" id="filtreTapu">
+            <option value="">Fark Etmez</option>
+            <option>Kat Mülkiyeti</option>
+            <option>Kat İrtifakı</option>
+            <option>Hisseli Tapu</option>
+            <option>Arsa Tapusu</option>
+            <option>Kooperatif Tapusu</option>
+          </select>
+        </div>
+      </div>
+      <div class="filtre-satir">
+        <div class="filtre-grup">
+          <div class="filtre-etiket">Eşya Durumu</div>
+          <select class="filtre-select" id="filtreEsya">
+            <option value="">Fark Etmez</option>
+            <option>Eşyalı</option>
+            <option>Yarı Eşyalı</option>
+            <option>Eşyasız (Boş)</option>
+          </select>
+        </div>
+        <div class="filtre-grup">
+          <div class="filtre-etiket">Site İçinde</div>
+          <select class="filtre-select" id="filtreSite">
+            <option value="">Fark Etmez</option>
+            <option>Evet</option>
+            <option>Hayır</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filtre-bolum-baslik">✨ İç Özellikler</div>
+      <div class="filtre-sec-row" id="fIcOzRow">
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🪟 Balkon</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🌿 Teras</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🚿 Ebeveyn Banyosu</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🍽️ Amerikan Mutfak</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🔧 Ankastre Mutfak</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">👕 Giyinme Odası</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🔐 Çelik Kapı</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🌐 İnternet Altyapısı</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">📦 Depo / Kiler</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🤖 Akıllı Ev Sistemi</button>
+      </div>
+
+      <div class="filtre-bolum-baslik">🏢 Dış Özellikler</div>
+      <div class="filtre-sec-row" id="fDisOzRow">
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🛗 Asansör</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🅿️ Kapalı Otopark</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🚗 Açık Otopark</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🏊 Havuz</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🏋️ Fitness / Spor Salonu</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">👮 Güvenlik / Kapıcı</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">📷 Kamera Sistemi</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🧒 Çocuk Oyun Parkı</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">⚡ Jeneratör</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">♿ Engelli Erişimi</button>
       </div>
     </div>
+    <!-- /fKonut -->
 
-    <!-- ── ARSA KRİTERLERİ ──────────────────────────────── -->
+    <!-- ── ARSA KRİTERLERİ ── -->
     <div id="fArsa" style="display:none">
-      <div class="filtre-bolum">📐 Alan (m²)</div>
+
+      <div class="filtre-bolum-baslik">📐 Alan (m²)</div>
       <div class="filtre-satir">
         <div class="filtre-grup">
           <div class="filtre-etiket">Min m²</div>
@@ -447,29 +702,89 @@
         </div>
       </div>
 
-      <div class="filtre-bolum">🏗️ İmar Durumu</div>
-      <div class="filtre-chip-row" id="fImarRow">
-        <div class="filtre-chip" onclick="chipTekSec(this,'fImarRow')">İmarlı</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fImarRow')">İmarsız</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fImarRow')">Konut İmarlı</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fImarRow')">Ticari/Sanayi</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fImarRow')">Tarım Arazisi</div>
+      <div class="filtre-bolum-baslik">📋 Tapu & İmar</div>
+      <div class="filtre-satir">
+        <div class="filtre-grup">
+          <div class="filtre-etiket">Tapu Türü</div>
+          <select class="filtre-select" id="filtreArsaTapu">
+            <option value="">Fark Etmez</option>
+            <option>Müstakil Tapulu</option>
+            <option>Hisseli Tapu</option>
+            <option>Özel Mülk</option>
+            <option>Hazine</option>
+            <option>Vakıf Tapusu</option>
+            <option>Tarla Tapusu</option>
+          </select>
+        </div>
+        <div class="filtre-grup">
+          <div class="filtre-etiket">İmar Durumu</div>
+          <select class="filtre-select" id="filtreImar">
+            <option value="">Fark Etmez</option>
+            <option>İmarlı</option>
+            <option>İmarsız</option>
+            <option>Ada İmarlı</option>
+            <option>Köy İmarlı</option>
+            <option>Konut İmarlı</option>
+            <option>Ticaret İmarlı</option>
+            <option>Sanayi İmarlı</option>
+            <option>Turizm İmarlı</option>
+            <option>Tarla / Tarım Arazisi</option>
+          </select>
+        </div>
       </div>
 
-      <div class="filtre-bolum">✨ Arsa Özellikleri</div>
-      <div class="filtre-chip-row" id="fArsaOzRow">
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🛣️ Yola Cepheli</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">⚡ Elektrik Var</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">💧 Su Var</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🔲 Köşe Parsel</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🏔️ Manzaralı</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🌊 Denize Yakın</div>
+      <div class="filtre-bolum-baslik">✨ Arazi Özellikleri</div>
+      <div class="filtre-sec-row" id="fArsaOzRow">
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🔲 Köşe Parsel</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🛣️ Yola Cepheli</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🌊 Denize Cepheli / Yakın</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🏔️ Manzaralı</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">⚡ Elektrik Var</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">💧 Su Var</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🔥 Doğalgaz Bağlantısı</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🛣️ Yol Bağlantısı (Asfalt)</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🏗️ Ruhsatlı Yapı Mevcut</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🌳 Ağaçlık</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🫒 Zeytinlik</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🍇 Bağ / Bahçe</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🌾 Tarıma Elverişli</button>
       </div>
     </div>
+    <!-- /fArsa -->
 
-    <!-- ── İŞYERİ KRİTERLERİ ────────────────────────────── -->
+    <!-- ── İŞYERİ KRİTERLERİ ── -->
     <div id="fIsyeri" style="display:none">
-      <div class="filtre-bolum">📐 m² Aralığı</div>
+
+      <div class="filtre-bolum-baslik">🏪 İşyeri Bilgileri</div>
+      <div class="filtre-satir">
+        <div class="filtre-grup">
+          <div class="filtre-etiket">İşyeri Türü</div>
+          <select class="filtre-select" id="filtreIsyeriTuru">
+            <option value="">Fark Etmez</option>
+            <option>Dükkan / Mağaza</option>
+            <option>Ofis / Büro</option>
+            <option>Depo / Antrepo</option>
+            <option>Fabrika / Atölye</option>
+            <option>Restoran / Kafe</option>
+            <option>Showroom</option>
+            <option>Klinik / Muayenehane</option>
+            <option>Eğitim Kurumu</option>
+            <option>Diğer</option>
+          </select>
+        </div>
+        <div class="filtre-grup">
+          <div class="filtre-etiket">Kullanım Durumu</div>
+          <select class="filtre-select" id="filtreIsyeriKullanim">
+            <option value="">Fark Etmez</option>
+            <option>Boş</option>
+            <option>Kiracılı</option>
+            <option>Mal Sahibi Kullanıyor</option>
+            <option>Devir</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filtre-bolum-baslik">📐 m² Aralığı</div>
       <div class="filtre-satir">
         <div class="filtre-grup">
           <div class="filtre-etiket">Min m²</div>
@@ -481,38 +796,65 @@
         </div>
       </div>
 
-      <div class="filtre-bolum">🏪 İşyeri Türü</div>
-      <div class="filtre-chip-row" id="fIsyeriTurRow">
-        <div class="filtre-chip" onclick="chipTekSec(this,'fIsyeriTurRow')">Dükkan/Mağaza</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fIsyeriTurRow')">Ofis/Büro</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fIsyeriTurRow')">Depo</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fIsyeriTurRow')">Restoran/Cafe</div>
-        <div class="filtre-chip" onclick="chipTekSec(this,'fIsyeriTurRow')">Klinik</div>
+      <div class="filtre-bolum-baslik">📍 Kat & Cephe</div>
+      <div class="filtre-satir">
+        <div class="filtre-grup">
+          <div class="filtre-etiket">Bulunduğu Kat</div>
+          <select class="filtre-select" id="filtreIsyeriKat">
+            <option value="">Fark Etmez</option>
+            <option>Bodrum</option>
+            <option>Zemin (Cadde)</option>
+            <option>1. Kat</option>
+            <option>2. Kat</option>
+            <option>3. Kat ve üzeri</option>
+          </select>
+        </div>
+        <div class="filtre-grup">
+          <div class="filtre-etiket">Cephe</div>
+          <select class="filtre-select" id="filtreIsyeriCephe">
+            <option value="">Fark Etmez</option>
+            <option>Caddeye Cepheli</option>
+            <option>Köşe Dükkan</option>
+            <option>Yan Sokak</option>
+            <option>AVM İçi</option>
+            <option>Pasaj İçi</option>
+          </select>
+        </div>
       </div>
 
-      <div class="filtre-bolum">✨ Özellikler</div>
-      <div class="filtre-chip-row" id="fIsyeriOzRow">
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🛣️ Caddeye Cepheli</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🛗 Asansör</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🅿️ Otopark</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">🚛 TIR Girişi</div>
-        <div class="filtre-chip" onclick="chipCokluSec(this)">📦 Depo Alanı</div>
+      <div class="filtre-bolum-baslik">✨ İşyeri Özellikleri</div>
+      <div class="filtre-sec-row" id="fIsyeriOzRow">
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🚻 WC / Tuvalet</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">📦 Depo Alanı</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🪟 Vitrin Penceresi</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🛗 Asansör</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">♿ Engelli Erişimi</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">👮 Güvenlik</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🅿️ Kapalı Otopark</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🚛 TIR / Kamyon Girişi</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">📐 Yükleme Rampası</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">⬆️ Yüksek Tavan (5m+)</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">❄️ Soğuk Hava Deposu</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">⚡ Jeneratör</button>
+        <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🌐 Fiber İnternet</button>
       </div>
     </div>
+    <!-- /fIsyeri -->
 
-    <!-- Butonlar -->
+    <!-- Alt butonlar -->
     <div class="filtre-btn-row">
       <button class="filtre-uygula" onclick="filtreUygula()">🔍 İlanları Listele</button>
       <button class="filtre-temizle" onclick="filtreSifirla()">✕ Temizle</button>
     </div>
   </div>
+  <!-- /filtre-panel -->
 
   <!-- Aktif filtre özeti -->
   <div class="filtre-ozet" id="filtreOzet"></div>
 
   <div class="desktop-layout">
 
-    <!-- SOL PANEL - Hizmetler (sadece masaüstü) -->
+    <!-- SOL - Hizmetler (masaüstü) -->
     <div class="desktop-sol">
       <div class="sag-kart">
         <div class="sag-kart-baslik">🏠 Ev Hizmetleri</div>
@@ -534,7 +876,7 @@
       </div>
     </div>
 
-    <!-- ORTA PANEL - İlanlar -->
+    <!-- ORTA - İlanlar -->
     <div class="desktop-orta">
       <div class="section-head">
         <div class="section-title" id="bolumBaslik">Öne Çıkan İlanlar</div>
@@ -544,20 +886,18 @@
       <div id="pagination" style="display:flex;gap:8px;justify-content:center;margin:16px 0;flex-wrap:wrap"></div>
     </div>
 
-    <!-- SAĞ PANEL - Masaüstü -->
+    <!-- SAĞ - Masaüstü -->
     <div class="desktop-sag">
       <div class="sag-kart">
         <div class="sag-kart-baslik">🏢 Site Yönetimi</div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Aidatını online öde, arıza bildir</p>
         <a href="site-yonetimi.html" class="btn btn-green btn-md" style="width:100%;text-align:center">Gir →</a>
       </div>
-
       <div class="sag-kart">
         <div class="sag-kart-baslik">✨ Eşleşmeler</div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Sana uygun ilanları keşfet</p>
         <a href="eslesmeler.html" class="btn btn-gold btn-md" style="width:100%;text-align:center">Eşleşmelere Git →</a>
       </div>
-
       <div class="sag-kart">
         <div class="sag-kart-baslik">📊 Ekspertiz Raporu</div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Gayrimenkulünün değerini öğren</p>
@@ -567,7 +907,7 @@
 
   </div>
 
-  <!-- MOBİL - Hizmetler ve promo -->
+  <!-- MOBİL - Hizmetler -->
   <div class="mobile-only">
     <div class="section-head" style="margin-top:8px">
       <div class="section-title">Ev Hizmetleri</div>
@@ -626,96 +966,45 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 const SAYFA_BOYUTU = 12;
 let aktifSayfa = 1;
 let toplamSayfa = 1;
+let aramaTimer = null;
 const emojiler = { satilik: '🏙️', kiralik: '🏘️' };
 
-// Aktif filtre state
-let filtreler = {
-  tip: 'tumu',       // tumu / satilik / kiralik
-  sehir: '',
-  ilce: '',
-  tur: '',           // daire / villa / arsa / isyeri / depo / bina
-  minFiyat: '',
-  maxFiyat: '',
-  minM2: '',
-  maxM2: '',
-  oda: ''            // 1+0 / 1+1 / 2+1 ...
-};
-
-// İlçe veritabanı
-const ilceler = {
-  'Ankara': ['Çankaya','Keçiören','Yenimahalle','Mamak','Altındağ','Sincan','Etimesgut','Pursaklar','Gölbaşı','Polatlı','Beypazarı','Elmadağ','Haymana','Nallıhan','Güdül','Bala'],
-  'İstanbul': ['Kadıköy','Beşiktaş','Üsküdar','Bakırköy','Şişli','Beyoğlu','Fatih','Sarıyer','Maltepe','Pendik','Ataşehir','Kartal','Başakşehir','Esenyurt','Bahçelievler','Güngören','Bağcılar','Eyüpsultan'],
-  'İzmir': ['Konak','Karşıyaka','Bornova','Buca','Gaziemir','Çiğli','Balçova','Narlıdere','Bayraklı','Aliağa','Urla','Çeşme','Selçuk'],
-  'Bursa': ['Osmangazi','Nilüfer','Yıldırım','Mudanya','Kestel','Gürsu','Karacabey','İnegöl'],
-  'Antalya': ['Muratpaşa','Kepez','Konyaaltı','Alanya','Manavgat','Serik','Döşemealtı'],
-  'Adana': ['Seyhan','Yüreğir','Çukurova','Sarıçam','Ceyhan','Kozan'],
-  'Konya': ['Meram','Selçuklu','Karatay','Ereğli','Akşehir'],
-  'Gaziantep': ['Şahinbey','Şehitkamil','Nizip','İslahiye'],
-  'Mersin': ['Yenişehir','Mezitli','Toroslar','Akdeniz','Tarsus','Erdemli'],
-  'Kayseri': ['Kocasinan','Melikgazi','Talas','Develi'],
-  'Eskişehir': ['Odunpazarı','Tepebaşı','Sivrihisar'],
-  'Samsun': ['İlkadım','Canik','Atakum','Tekkeköy'],
-  'Trabzon': ['Ortahisar','Akçaabat','Araklı','Of']
-};
-
-// ── GOOGLE OAUTH HASH HANDLER ──────────────────────────────────────────────
-if (window.location.hash && window.location.hash.includes('access_token')) {
-  const hashParams = new URLSearchParams(window.location.hash.substring(1));
-  const access_token = hashParams.get('access_token');
-  const refresh_token = hashParams.get('refresh_token');
-  if (access_token) {
-    sb.auth.setSession({ access_token, refresh_token }).then(({ data, error }) => {
-      if (error) { window.location.replace('index.html'); }
-      else { window.history.replaceState(null, '', window.location.pathname); init(); }
-    });
-  } else { init(); }
-} else if (new URLSearchParams(window.location.search).get('code')) {
-  window.location.replace('index.html' + window.location.search);
-} else {
-  init();
-}
-// ──────────────────────────────────────────────────────────────────────────
-
-function init() {
-  sb.auth.getSession().then(({ data }) => {
-    if (!data.session) { window.location.replace('index.html'); return; }
-    document.body.style.visibility = 'visible';
-    filtreSehirDoldur();
-    ilanlarYukle();
-    mesajSay();
-    tercihKontrol(data.session.user.id);
-  });
-}
-
-async function tercihKontrol(userId) {
-  const tercihStr = localStorage.getItem('gotapu_tercihler');
-  if (tercihStr) {
-    try {
-      const t = JSON.parse(tercihStr);
-      if (t.sehir || t.minFiyat || t.oda?.length) {
-        document.getElementById('eslesmeBadge').style.display = 'flex';
-      }
-    } catch(e) {}
-  }
-}
-
-// ── FİLTRE STATE ──────────────────────────────────────────────────────────
+// Filtre state
 let filtreler = {
   tip: 'tumu',
+  aramaMetni: '',
   sehir: '', ilce: '', mahalle: '',
-  emlakTipi: '',  // buton metni
-  emlakGrup: '', // konut / arsa / isyeri
+  emlakTipi: '',
+  emlakGrup: '',
   minFiyat: '', maxFiyat: '',
+  // konut
   minM2: '', maxM2: '',
   oda: '',
   binaYasi: '',
   isitma: '',
+  kullanim: '',
+  tapu: '',
+  esya: '',
+  site: '',
+  icOzellikler: [],
+  disOzellikler: [],
+  // arsa
+  minM2Arsa: '', maxM2Arsa: '',
+  arsaTapu: '',
   imarDurumu: '',
+  arsaOzellikler: [],
+  // isyeri
   isyeriTuru: '',
-  ozellikler: [] // çoklu seçim
+  isyeriKullanim: '',
+  minM2Isyeri: '', maxM2Isyeri: '',
+  isyeriKat: '',
+  isyeriCephe: '',
+  isyeriOzellikler: []
 };
 
-// ── İL/İLÇE VERİSİ (ilan-ver.html ile aynı) ──────────────────────────────
+/* ═══════════════════════════════════════════════════
+   81 İL + TÜM İLÇELER (ilan-ver ile aynı)
+═══════════════════════════════════════════════════ */
 const ILLER = [
   "Adana","Adıyaman","Afyonkarahisar","Ağrı","Aksaray","Amasya","Ankara","Antalya",
   "Ardahan","Artvin","Aydın","Balıkesir","Bartın","Batman","Bayburt","Bilecik",
@@ -814,13 +1103,57 @@ const ILCELER = {
   "Zonguldak":["Alaplı","Çaycuma","Devrek","Ereğli","Gökçebey","Kilimli","Kozlu","Merkez"]
 };
 
-// ── FİLTRE UI ─────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════
+   AUTH HANDLER (Google OAuth hash)
+═══════════════════════════════════════════════════ */
+if (window.location.hash && window.location.hash.includes('access_token')) {
+  const hashParams = new URLSearchParams(window.location.hash.substring(1));
+  const access_token = hashParams.get('access_token');
+  const refresh_token = hashParams.get('refresh_token');
+  if (access_token) {
+    sb.auth.setSession({ access_token, refresh_token }).then(({ data, error }) => {
+      if (error) { window.location.replace('index.html'); }
+      else { window.history.replaceState(null, '', window.location.pathname); init(); }
+    });
+  } else { init(); }
+} else if (new URLSearchParams(window.location.search).get('code')) {
+  window.location.replace('index.html' + window.location.search);
+} else {
+  init();
+}
+
+function init() {
+  sb.auth.getSession().then(({ data }) => {
+    if (!data.session) { window.location.replace('index.html'); return; }
+    document.body.style.visibility = 'visible';
+    filtreSehirDoldur();
+    ilanlarYukle();
+    mesajSay();
+    tercihKontrol(data.session.user.id);
+  });
+}
+
+async function tercihKontrol(userId) {
+  const tercihStr = localStorage.getItem('gotapu_tercihler');
+  if (tercihStr) {
+    try {
+      const t = JSON.parse(tercihStr);
+      if (t.sehir || t.minFiyat || t.oda?.length) {
+        document.getElementById('eslesmeBadge').style.display = 'flex';
+      }
+    } catch(e) {}
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   FİLTRE UI FONKSİYONLARI
+═══════════════════════════════════════════════════ */
 
 function filtreToggle() {
   const panel = document.getElementById('filtrePanel');
-  const btn   = document.getElementById('filtreTglBtn');
-  panel.classList.toggle('acik');
-  btn.classList.toggle('acik');
+  const btn   = document.getElementById('filtreAcBtn');
+  const acik  = panel.classList.toggle('acik');
+  btn.classList.toggle('aktif', acik);
 }
 
 function toggleTip(tip) {
@@ -829,8 +1162,7 @@ function toggleTip(tip) {
   document.getElementById('ft' + tip.charAt(0).toUpperCase() + tip.slice(1)).classList.add('aktif');
 }
 
-function emlakTipSec(el) {
-  // Toggle — aynıya tekrar tıklayınca iptal
+function filtrEmlakTipSec(el) {
   const aktifti = el.classList.contains('aktif');
   document.querySelectorAll('.filtre-emlak-btn').forEach(b => b.classList.remove('aktif'));
   if (!aktifti) {
@@ -841,20 +1173,26 @@ function emlakTipSec(el) {
     filtreler.emlakTipi = '';
     filtreler.emlakGrup = '';
   }
-  // Dinamik kriterler
+  // Dinamik kriterler göster/gizle
   document.getElementById('fKonut').style.display  = filtreler.emlakGrup === 'konut'  ? 'block' : 'none';
   document.getElementById('fArsa').style.display   = filtreler.emlakGrup === 'arsa'   ? 'block' : 'none';
   document.getElementById('fIsyeri').style.display = filtreler.emlakGrup === 'isyeri' ? 'block' : 'none';
-  // m² input'larında duplicate id olmasın diye arsa/isyeri bloğunda ayrı id kullanmıyoruz,
-  // görünür olan bloğun input'larını okuruz filtreUygula'da
+  // Filtre paneli her zaman açık kalsın
+  const panel = document.getElementById('filtrePanel');
+  if (!panel.classList.contains('acik')) {
+    panel.classList.add('acik');
+    document.getElementById('filtreAcBtn').classList.add('aktif');
+  }
 }
 
+// Tek seçim chip
 function chipTekSec(el, rowId) {
   const aktifti = el.classList.contains('aktif');
-  document.querySelectorAll('#' + rowId + ' .filtre-chip').forEach(c => c.classList.remove('aktif'));
+  document.querySelectorAll('#' + rowId + ' .filtre-sec-btn, #' + rowId + ' .filtre-chip').forEach(c => c.classList.remove('aktif'));
   if (!aktifti) el.classList.add('aktif');
 }
 
+// Çoklu seçim chip
 function chipCokluSec(el) { el.classList.toggle('aktif'); }
 
 function filtreIlceDoldur() {
@@ -880,37 +1218,17 @@ function filtreSehirDoldur() {
     opt.value = il; opt.textContent = il;
     sel.appendChild(opt);
   });
+  document.getElementById('filtreIlce').disabled = true;
 }
 
 function getAktifChip(rowId) {
-  const el = document.querySelector('#' + rowId + ' .filtre-chip.aktif');
+  const el = document.querySelector('#' + rowId + ' .filtre-sec-btn.aktif, #' + rowId + ' .filtre-chip.aktif');
   return el ? el.textContent.trim() : '';
 }
 
 function getAktifCoklu(rowId) {
-  return [...document.querySelectorAll('#' + rowId + ' .filtre-chip.aktif')]
+  return [...document.querySelectorAll('#' + rowId + ' .filtre-sec-btn.aktif, #' + rowId + ' .filtre-chip.aktif')]
     .map(e => e.textContent.trim());
-}
-
-function getM2() {
-  const grup = filtreler.emlakGrup;
-  if (grup === 'konut') {
-    return {
-      min: document.getElementById('filtreMinM2')?.value || '',
-      max: document.getElementById('filtreMaxM2')?.value || ''
-    };
-  } else if (grup === 'arsa') {
-    return {
-      min: document.getElementById('filtreMinM2Arsa')?.value || '',
-      max: document.getElementById('filtreMaxM2Arsa')?.value || ''
-    };
-  } else if (grup === 'isyeri') {
-    return {
-      min: document.getElementById('filtreMinM2Isyeri')?.value || '',
-      max: document.getElementById('filtreMaxM2Isyeri')?.value || ''
-    };
-  }
-  return { min: '', max: '' };
 }
 
 function filtreUygula() {
@@ -920,91 +1238,139 @@ function filtreUygula() {
   filtreler.minFiyat = document.getElementById('filtreMinFiyat').value;
   filtreler.maxFiyat = document.getElementById('filtreMaxFiyat').value;
 
-  const m2 = getM2();
-  filtreler.minM2 = m2.min;
-  filtreler.maxM2 = m2.max;
-
   if (filtreler.emlakGrup === 'konut') {
-    filtreler.oda      = getAktifChip('fOdaRow');
-    filtreler.binaYasi = getAktifChip('fBinaYasiRow');
-    filtreler.isitma   = getAktifChip('fIsitmaRow');
-    filtreler.ozellikler = getAktifCoklu('fOzellikRow');
+    filtreler.oda        = getAktifChip('fOdaRow');
+    filtreler.binaYasi   = getAktifChip('fBinaYasiRow');
+    filtreler.isitma     = getAktifChip('fIsitmaRow');
+    filtreler.minM2      = document.getElementById('filtreMinM2').value;
+    filtreler.maxM2      = document.getElementById('filtreMaxM2').value;
+    filtreler.kullanim   = document.getElementById('filtreKullanim').value;
+    filtreler.tapu       = document.getElementById('filtreTapu').value;
+    filtreler.esya       = document.getElementById('filtreEsya').value;
+    filtreler.site       = document.getElementById('filtreSite').value;
+    filtreler.icOzellikler  = getAktifCoklu('fIcOzRow');
+    filtreler.disOzellikler = getAktifCoklu('fDisOzRow');
   } else if (filtreler.emlakGrup === 'arsa') {
-    filtreler.imarDurumu = getAktifChip('fImarRow');
-    filtreler.ozellikler = getAktifCoklu('fArsaOzRow');
+    filtreler.minM2Arsa   = document.getElementById('filtreMinM2Arsa').value;
+    filtreler.maxM2Arsa   = document.getElementById('filtreMaxM2Arsa').value;
+    filtreler.arsaTapu    = document.getElementById('filtreArsaTapu').value;
+    filtreler.imarDurumu  = document.getElementById('filtreImar').value;
+    filtreler.arsaOzellikler = getAktifCoklu('fArsaOzRow');
   } else if (filtreler.emlakGrup === 'isyeri') {
-    filtreler.isyeriTuru = getAktifChip('fIsyeriTurRow');
-    filtreler.ozellikler = getAktifCoklu('fIsyeriOzRow');
+    filtreler.isyeriTuru     = document.getElementById('filtreIsyeriTuru').value;
+    filtreler.isyeriKullanim = document.getElementById('filtreIsyeriKullanim').value;
+    filtreler.minM2Isyeri    = document.getElementById('filtreMinM2Isyeri').value;
+    filtreler.maxM2Isyeri    = document.getElementById('filtreMaxM2Isyeri').value;
+    filtreler.isyeriKat      = document.getElementById('filtreIsyeriKat').value;
+    filtreler.isyeriCephe    = document.getElementById('filtreIsyeriCephe').value;
+    filtreler.isyeriOzellikler = getAktifCoklu('fIsyeriOzRow');
   }
 
   ilanlarYukle(1);
 }
 
 function filtreSifirla() {
-  filtreler = { tip:'tumu', sehir:'', ilce:'', mahalle:'', emlakTipi:'', emlakGrup:'',
-    minFiyat:'', maxFiyat:'', minM2:'', maxM2:'', oda:'', binaYasi:'', isitma:'',
-    imarDurumu:'', isyeriTuru:'', ozellikler:[] };
+  filtreler = {
+    tip:'tumu', aramaMetni:'', sehir:'', ilce:'', mahalle:'', emlakTipi:'', emlakGrup:'',
+    minFiyat:'', maxFiyat:'',
+    minM2:'', maxM2:'', oda:'', binaYasi:'', isitma:'', kullanim:'', tapu:'', esya:'', site:'',
+    icOzellikler:[], disOzellikler:[],
+    minM2Arsa:'', maxM2Arsa:'', arsaTapu:'', imarDurumu:'', arsaOzellikler:[],
+    isyeriTuru:'', isyeriKullanim:'', minM2Isyeri:'', maxM2Isyeri:'',
+    isyeriKat:'', isyeriCephe:'', isyeriOzellikler:[]
+  };
 
-  document.getElementById('filtreSehir').value = '';
-  document.getElementById('filtreIlce').innerHTML = '<option value="">Tüm İlçeler</option>';
-  document.getElementById('filtreIlce').disabled = true;
-  document.getElementById('filtreMahalle').value = '';
-  document.getElementById('filtreMinFiyat').value = '';
-  document.getElementById('filtreMaxFiyat').value = '';
-  document.querySelectorAll('.filtre-chip').forEach(c => c.classList.remove('aktif'));
+  document.getElementById('aramaInput').value       = '';
+  document.getElementById('filtreSehir').value      = '';
+  document.getElementById('filtreIlce').innerHTML   = '<option value="">Tüm İlçeler</option>';
+  document.getElementById('filtreIlce').disabled    = true;
+  document.getElementById('filtreMahalle').value    = '';
+  document.getElementById('filtreMinFiyat').value   = '';
+  document.getElementById('filtreMaxFiyat').value   = '';
+
+  document.querySelectorAll('.filtre-sec-btn.aktif, .filtre-chip.aktif').forEach(c => c.classList.remove('aktif'));
   document.querySelectorAll('.filtre-emlak-btn').forEach(b => b.classList.remove('aktif'));
   document.querySelectorAll('.filtre-tip-row button').forEach(b => b.classList.remove('aktif'));
   document.getElementById('ftTumu').classList.add('aktif');
+
   document.getElementById('fKonut').style.display  = 'none';
   document.getElementById('fArsa').style.display   = 'none';
   document.getElementById('fIsyeri').style.display = 'none';
-  ['filtreMinM2','filtreMaxM2','filtreMinM2Arsa','filtreMaxM2Arsa','filtreMinM2Isyeri','filtreMaxM2Isyeri']
-    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+
+  const selIds = ['filtreKullanim','filtreTapu','filtreEsya','filtreSite',
+    'filtreArsaTapu','filtreImar','filtreIsyeriTuru','filtreIsyeriKullanim',
+    'filtreIsyeriKat','filtreIsyeriCephe'];
+  selIds.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+
+  const inputIds = ['filtreMinM2','filtreMaxM2','filtreMinM2Arsa','filtreMaxM2Arsa',
+    'filtreMinM2Isyeri','filtreMaxM2Isyeri'];
+  inputIds.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
 
   const ozet = document.getElementById('filtreOzet');
   ozet.classList.remove('goster'); ozet.innerHTML = '';
-  filtreAktifSayacGuncelle();
+  filtreSayacGuncelle();
   ilanlarYukle(1);
 }
 
-function filtreAktifSayacGuncelle() {
+function filtreSayacGuncelle() {
   let say = 0;
   if (filtreler.tip !== 'tumu') say++;
   if (filtreler.sehir) say++;
   if (filtreler.emlakTipi) say++;
+  if (filtreler.aramaMetni) say++;
   if (filtreler.minFiyat || filtreler.maxFiyat) say++;
-  if (filtreler.minM2 || filtreler.maxM2) say++;
+  if (filtreler.minM2 || filtreler.maxM2 || filtreler.minM2Arsa || filtreler.maxM2Arsa || filtreler.minM2Isyeri || filtreler.maxM2Isyeri) say++;
   if (filtreler.oda) say++;
   if (filtreler.binaYasi) say++;
   if (filtreler.isitma) say++;
   if (filtreler.imarDurumu) say++;
   if (filtreler.isyeriTuru) say++;
-  say += (filtreler.ozellikler || []).length;
+  if (filtreler.kullanim) say++;
+  if (filtreler.tapu || filtreler.arsaTapu) say++;
+  if (filtreler.esya) say++;
+  if (filtreler.site) say++;
+  say += (filtreler.icOzellikler||[]).length;
+  say += (filtreler.disOzellikler||[]).length;
+  say += (filtreler.arsaOzellikler||[]).length;
+  say += (filtreler.isyeriOzellikler||[]).length;
 
-  const el = document.getElementById('filtreAktifSayac');
+  const el = document.getElementById('filtreSayacBadge');
   el.textContent = say;
   el.classList.toggle('goster', say > 0);
 }
 
 function filtreOzetGuncelle() {
-  filtreAktifSayacGuncelle();
+  filtreSayacGuncelle();
   const ozet = document.getElementById('filtreOzet');
   const etiketler = [];
+  if (filtreler.aramaMetni) etiketler.push('🔍 "' + filtreler.aramaMetni + '"');
   if (filtreler.tip !== 'tumu') etiketler.push(filtreler.tip === 'satilik' ? '💰 Satılık' : '🔑 Kiralık');
   if (filtreler.emlakTipi) etiketler.push(filtreler.emlakTipi);
-  if (filtreler.sehir) etiketler.push('📍 ' + filtreler.sehir + (filtreler.ilce ? ' / ' + filtreler.ilce : '') + (filtreler.mahalle ? ' · ' + filtreler.mahalle : ''));
+  if (filtreler.sehir) {
+    let konumEt = '📍 ' + filtreler.sehir;
+    if (filtreler.ilce) konumEt += ' / ' + filtreler.ilce;
+    if (filtreler.mahalle) konumEt += ' · ' + filtreler.mahalle;
+    etiketler.push(konumEt);
+  }
   if (filtreler.minFiyat || filtreler.maxFiyat) {
     const mn = filtreler.minFiyat ? Number(filtreler.minFiyat).toLocaleString('tr-TR') + '₺' : '0';
     const mx = filtreler.maxFiyat ? Number(filtreler.maxFiyat).toLocaleString('tr-TR') + '₺' : '∞';
     etiketler.push('💸 ' + mn + ' – ' + mx);
   }
-  if (filtreler.minM2 || filtreler.maxM2) etiketler.push('📐 ' + (filtreler.minM2||'0') + '–' + (filtreler.maxM2||'∞') + 'm²');
+  const minM2 = filtreler.minM2 || filtreler.minM2Arsa || filtreler.minM2Isyeri;
+  const maxM2 = filtreler.maxM2 || filtreler.maxM2Arsa || filtreler.maxM2Isyeri;
+  if (minM2 || maxM2) etiketler.push('📐 ' + (minM2||'0') + '–' + (maxM2||'∞') + 'm²');
   if (filtreler.oda) etiketler.push('🛏️ ' + filtreler.oda);
   if (filtreler.binaYasi) etiketler.push('🏗️ ' + filtreler.binaYasi);
   if (filtreler.isitma) etiketler.push('🔥 ' + filtreler.isitma);
   if (filtreler.imarDurumu) etiketler.push('📋 ' + filtreler.imarDurumu);
   if (filtreler.isyeriTuru) etiketler.push('🏪 ' + filtreler.isyeriTuru);
-  (filtreler.ozellikler || []).forEach(o => etiketler.push(o));
+  if (filtreler.kullanim) etiketler.push('🔑 ' + filtreler.kullanim);
+  if (filtreler.tapu) etiketler.push('📄 ' + filtreler.tapu);
+  if (filtreler.esya) etiketler.push('🪑 ' + filtreler.esya);
+  [...(filtreler.icOzellikler||[]), ...(filtreler.disOzellikler||[]),
+   ...(filtreler.arsaOzellikler||[]), ...(filtreler.isyeriOzellikler||[])
+  ].forEach(o => etiketler.push(o));
 
   if (etiketler.length > 0) {
     ozet.innerHTML = '<span style="color:var(--text3);font-size:11px;font-weight:700">Filtreler:</span>' +
@@ -1015,8 +1381,18 @@ function filtreOzetGuncelle() {
   }
 }
 
-// ── İLANLAR YÜKLE ─────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════
+   ARAMA GECİKME
+═══════════════════════════════════════════════════ */
+function aramaGecikme() {
+  filtreler.aramaMetni = document.getElementById('aramaInput').value.trim();
+  clearTimeout(aramaTimer);
+  aramaTimer = setTimeout(() => ilanlarYukle(1), 400);
+}
 
+/* ═══════════════════════════════════════════════════
+   İLANLAR YÜKLE
+═══════════════════════════════════════════════════ */
 async function ilanlarYukle(sayfa = 1) {
   aktifSayfa = sayfa;
   filtreOzetGuncelle();
@@ -1025,22 +1401,63 @@ async function ilanlarYukle(sayfa = 1) {
   listEl.innerHTML = '<div class="spinner"></div>';
   document.getElementById('pagination').innerHTML = '';
 
-  // Sorgu oluştur
   function sorguOlustur(query) {
     query = query.eq('onay_durumu', 'onaylandi').neq('tip', 'devren');
+
     if (filtreler.tip === 'satilik') query = query.eq('tip', 'satilik');
     if (filtreler.tip === 'kiralik') query = query.eq('tip', 'kiralik');
-    // Konum: mahalle varsa onu, ilçe varsa onu, il varsa onu ara
-    const konumStr = [filtreler.mahalle, filtreler.ilce, filtreler.sehir].filter(Boolean).join(' ');
-    if (konumStr) query = query.ilike('konum', `%${konumStr.split(' ')[0]}%`);
-    if (filtreler.ilce && !filtreler.mahalle) query = query.ilike('konum', `%${filtreler.ilce}%`);
-    if (filtreler.sehir && !filtreler.ilce) query = query.ilike('konum', `%${filtreler.sehir}%`);
-    if (filtreler.emlakTipi) query = query.contains('kriterler', { emlak_tipi: filtreler.emlakTipi });
+
+    // Metin araması (başlık veya konum)
+    if (filtreler.aramaMetni) {
+      query = query.or(`baslik.ilike.%${filtreler.aramaMetni}%,konum.ilike.%${filtreler.aramaMetni}%`);
+    }
+
+    // Konum: mahalle varsa onu, ilçe varsa onu, il varsa onu kullan
+    if (filtreler.mahalle) {
+      query = query.ilike('konum', `%${filtreler.mahalle}%`);
+    } else if (filtreler.ilce) {
+      query = query.ilike('konum', `%${filtreler.ilce}%`);
+    } else if (filtreler.sehir) {
+      query = query.ilike('konum', `%${filtreler.sehir}%`);
+    }
+
+    // Emlak tipi (kriterler jsonb alanında)
+    if (filtreler.emlakTipi) {
+      query = query.contains('kriterler', { emlak_tipi: filtreler.emlakTipi });
+    }
+
+    // Fiyat
     if (filtreler.minFiyat) query = query.gte('fiyat', Number(filtreler.minFiyat));
     if (filtreler.maxFiyat) query = query.lte('fiyat', Number(filtreler.maxFiyat));
-    if (filtreler.minM2) query = query.gte('metrekare', Number(filtreler.minM2));
-    if (filtreler.maxM2) query = query.lte('metrekare', Number(filtreler.maxM2));
-    if (filtreler.oda) query = query.eq('oda_sayisi', filtreler.oda);
+
+    // Konut kriterleri
+    if (filtreler.emlakGrup === 'konut') {
+      if (filtreler.oda) query = query.eq('oda_sayisi', filtreler.oda);
+      if (filtreler.minM2) query = query.gte('metrekare', Number(filtreler.minM2));
+      if (filtreler.maxM2) query = query.lte('metrekare', Number(filtreler.maxM2));
+      if (filtreler.binaYasi) query = query.contains('kriterler', { bina_yasi: filtreler.binaYasi });
+      if (filtreler.isitma) query = query.contains('kriterler', { isitma: filtreler.isitma });
+      if (filtreler.kullanim) query = query.contains('kriterler', { kullanim_durumu: filtreler.kullanim });
+      if (filtreler.tapu) query = query.contains('kriterler', { tapu_durumu: filtreler.tapu });
+      if (filtreler.esya) query = query.contains('kriterler', { esya_durumu: filtreler.esya });
+    }
+
+    // Arsa kriterleri
+    if (filtreler.emlakGrup === 'arsa') {
+      if (filtreler.minM2Arsa) query = query.gte('metrekare', Number(filtreler.minM2Arsa));
+      if (filtreler.maxM2Arsa) query = query.lte('metrekare', Number(filtreler.maxM2Arsa));
+      if (filtreler.imarDurumu) query = query.contains('kriterler', { imar_durumu: filtreler.imarDurumu });
+      if (filtreler.arsaTapu) query = query.contains('kriterler', { tapu_turu: filtreler.arsaTapu });
+    }
+
+    // İşyeri kriterleri
+    if (filtreler.emlakGrup === 'isyeri') {
+      if (filtreler.minM2Isyeri) query = query.gte('metrekare', Number(filtreler.minM2Isyeri));
+      if (filtreler.maxM2Isyeri) query = query.lte('metrekare', Number(filtreler.maxM2Isyeri));
+      if (filtreler.isyeriTuru) query = query.contains('kriterler', { isyeri_turu: filtreler.isyeriTuru });
+      if (filtreler.isyeriKullanim) query = query.contains('kriterler', { kullanim_durumu: filtreler.isyeriKullanim });
+    }
+
     return query;
   }
 
@@ -1052,7 +1469,7 @@ async function ilanlarYukle(sayfa = 1) {
   document.getElementById('sayfaBilgi').textContent = count > 0 ? `${sayfa}/${toplamSayfa} sayfa` : '';
 
   const from = (sayfa - 1) * SAYFA_BOYUTU;
-  const to = from + SAYFA_BOYUTU - 1;
+  const to   = from + SAYFA_BOYUTU - 1;
 
   const { data, error } = await sorguOlustur(
     sb.from('ilanlar').select('*')
@@ -1067,7 +1484,13 @@ async function ilanlarYukle(sayfa = 1) {
   }
 
   if (error || !data || data.length === 0) {
-    listEl.innerHTML = `<div class="empty"><div class="empty-icon">🏠</div><div class="empty-title">İlan bulunamadı</div><div class="empty-desc">Farklı filtreler deneyin veya ilk ilanı siz ekleyin!</div><a href="ilan-ver.html" class="btn btn-gold btn-md" style="margin-top:16px;max-width:200px">+ İlan Ver</a></div>`;
+    listEl.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🏠</div>
+        <div class="empty-title">İlan bulunamadı</div>
+        <div class="empty-desc">Farklı filtreler deneyin veya ilk ilanı siz ekleyin!</div>
+        <a href="ilan-ver.html" class="btn btn-gold btn-md" style="margin-top:16px;max-width:200px">+ İlan Ver</a>
+      </div>`;
     return;
   }
 
@@ -1079,29 +1502,34 @@ async function ilanlarYukle(sayfa = 1) {
           : (emojiler[ilan.tip] || '🏠')}
       </div>
       <div class="ilan-info">
-        <div class="ilan-price">${formatFiyat(ilan.fiyat, ilan.tip)} ${ilan.one_cikan ? '<span style="font-size:11px;color:var(--gold)">⭐ Öne Çıkan</span>' : ''}</div>
+        <div class="ilan-price">
+          ${formatFiyat(ilan.fiyat, ilan.tip)}
+          ${ilan.one_cikan ? '<span style="font-size:11px;color:var(--gold)">⭐ Öne Çıkan</span>' : ''}
+        </div>
         <div class="ilan-title">${ilan.baslik}</div>
         <div class="ilan-loc">📍 ${ilan.konum || ''}</div>
         <div class="ilan-tags">
           <span class="tag ${ilan.tip === 'kiralik' ? 'tag-green' : 'tag-rust'}">${ilan.tip === 'kiralik' ? 'KİRALIK' : 'SATILIK'}</span>
           ${ilan.oda_sayisi ? `<span class="tag tag-gold">🛏 ${ilan.oda_sayisi}</span>` : ''}
-          ${ilan.metrekare ? `<span class="tag tag-gold">📐 ${ilan.metrekare}m²</span>` : ''}
+          ${ilan.metrekare  ? `<span class="tag tag-gold">📐 ${ilan.metrekare}m²</span>` : ''}
         </div>
       </div>
     </a>`).join('');
 
   if (toplamSayfa > 1) {
     const pag = document.getElementById('pagination');
-    const style = 'padding:8px 14px;border-radius:50px;font-size:13px;font-weight:800;cursor:pointer;border:1.5px solid;font-family:Nunito,sans-serif;';
+    const s = 'padding:8px 14px;border-radius:50px;font-size:13px;font-weight:800;cursor:pointer;border:1.5px solid;font-family:Nunito,sans-serif;';
     if (sayfa > 1) {
-      pag.innerHTML += `<button onclick="ilanlarYukle(${sayfa-1})" style="${style}background:var(--card);color:var(--text);border-color:var(--border)">← Önceki</button>`;
+      pag.innerHTML += `<button onclick="ilanlarYukle(${sayfa-1})" style="${s}background:var(--card);color:var(--text);border-color:var(--border)">← Önceki</button>`;
     }
-    for (let i = 1; i <= toplamSayfa; i++) {
+    const baslangic = Math.max(1, sayfa - 2);
+    const bitis     = Math.min(toplamSayfa, sayfa + 2);
+    for (let i = baslangic; i <= bitis; i++) {
       const aktif = i === sayfa;
-      pag.innerHTML += `<button onclick="ilanlarYukle(${i})" style="${style}background:${aktif?'var(--gold)':'var(--card)'};color:${aktif?'var(--bg)':'var(--text)'};border-color:${aktif?'var(--gold)':'var(--border)'}">${i}</button>`;
+      pag.innerHTML += `<button onclick="ilanlarYukle(${i})" style="${s}background:${aktif?'var(--gold)':'var(--card)'};color:${aktif?'var(--bg)':'var(--text)'};border-color:${aktif?'var(--gold)':'var(--border)'}">${i}</button>`;
     }
     if (sayfa < toplamSayfa) {
-      pag.innerHTML += `<button onclick="ilanlarYukle(${sayfa+1})" style="${style}background:var(--gold);color:var(--bg);border-color:var(--gold)">Sonraki →</button>`;
+      pag.innerHTML += `<button onclick="ilanlarYukle(${sayfa+1})" style="${s}background:var(--gold);color:var(--bg);border-color:var(--gold)">Sonraki →</button>`;
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
