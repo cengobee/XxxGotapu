@@ -213,8 +213,6 @@
     padding-right: 36px;
   }
   .kriter-select:focus { border-color: var(--gold); }
-
-  /* YENİ: Çoklu arama kartları */
   .arama-kart {
     background: var(--card); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 14px 16px;
@@ -243,7 +241,6 @@
     transition: background .2s;
   }
   .yeni-arama-btn:active { background: rgba(245,200,66,0.1); }
-  /* YENİ: Düzenleme banner */
   .duzenleme-banner {
     background: rgba(74,144,217,0.1); border: 1px solid rgba(74,144,217,0.3);
     border-radius: var(--radius-sm); padding: 12px 14px;
@@ -290,7 +287,7 @@
 <input type="file" id="fotoInput_isyeri_ic" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'isyeri_ic')">
 <input type="file" id="fotoInput_isyeri_dis" accept="image/*" multiple style="display:none" onchange="odaFotoSecildi(this,'isyeri_dis')">
 
-<!-- ÖDEME MODALI - Öne Çıkar -->
+<!-- ÖDEME MODALI -->
 <div class="odeme-modal-overlay" id="odemeModal" onclick="if(event.target===this)odemeKapat()">
   <div class="odeme-modal">
     <div class="odeme-handle"></div>
@@ -343,7 +340,6 @@
   </div>
   <p style="font-size:13px;color:var(--text3);margin-bottom:20px" id="sayfaAciklama">Ücretsiz yayınla, komisyon ödemeden</p>
 
-  <!-- ROL SEÇİMİ — alıcı düzenleme modunda gizlenir -->
   <div id="rolSecimBolum">
     <div style="font-size:12px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">BEN BİR...</div>
     <div class="role-grid">
@@ -364,14 +360,17 @@
   <div id="saticiForm">
     <div class="bolum-baslik">📋 Temel Bilgiler</div>
 
+    <!-- DEĞİŞİKLİK 1: Günlük Kiralık eklendi -->
     <div class="form-group">
       <label class="form-label">İlan Tipi</label>
       <div class="type-row">
         <button class="type-btn active" onclick="secTip(this,'satilik')">Satılık</button>
         <button class="type-btn" onclick="secTip(this,'kiralik')">Kiralık</button>
+        <button class="type-btn" onclick="secTip(this,'gunluk')">Günlük Kiralık</button>
       </div>
     </div>
 
+    <!-- DEĞİŞİKLİK 2: Oda butonu eklendi -->
     <div class="form-group">
       <label class="form-label">Emlak Tipi</label>
       <div class="sec-row" id="emlakTipi">
@@ -383,6 +382,7 @@
         <button class="sec-btn" data-tip="arsa" onclick="secEmlakBtn(this)">🌳 Tarla/Bağ Bahçe</button>
         <button class="sec-btn" data-tip="isyeri" onclick="secEmlakBtn(this)">🏪 İşyeri/Ofis</button>
         <button class="sec-btn" data-tip="isyeri" onclick="secEmlakBtn(this)">🏭 Depo/Fabrika</button>
+        <button class="sec-btn" data-tip="konut" onclick="secEmlakBtn(this)">🚪 Oda</button>
       </div>
     </div>
 
@@ -392,7 +392,7 @@
     </div>
 
     <div class="form-group">
-      <label class="form-label">Fiyat (₺) *</label>
+      <label class="form-label" id="fiyatLabel">Fiyat (₺) *</label>
       <input class="input" type="number" id="fiyat" placeholder="ör. 5000000">
     </div>
 
@@ -854,16 +854,13 @@
   <!-- ===== ALICI FORMU ===== -->
   <div id="aliciForm" style="display:none">
 
-    <!-- YENİ: Mevcut aramalar listesi -->
     <div id="mevcutAramalarBolum" style="display:none">
       <div class="bolum-baslik">📋 Mevcut Aramalarım</div>
       <div id="mevcutAramalarListesi"></div>
       <button class="yeni-arama-btn" onclick="yeniAramaBaslat()">+ Yeni Arama Ekle</button>
     </div>
 
-    <!-- Arama formu (yeni veya düzenleme) -->
     <div id="aramaFormu">
-      <!-- YENİ: Düzenleme banner -->
       <div class="duzenleme-banner" id="duzlemeBanner"></div>
 
       <div class="alici-info">
@@ -873,14 +870,15 @@
       <div class="t-section">
         <div class="t-label">🏷️ Ne Arıyorsun? <span class="sec-btn farketmez" id="afm-tip" onclick="aliciFarketmez('tip',this)">Farketmez</span></div>
         <div class="sec-row" id="apg-tip">
-          <button class="sec-btn" onclick="aliciTekSec('tip',this)">Satılık</button>
-          <button class="sec-btn" onclick="aliciTekSec('tip',this)">Kiralık</button>
-          <button class="sec-btn" onclick="aliciTekSec('tip',this)">Günlük Kiralık</button>
-          <button class="sec-btn" onclick="aliciTekSec('tip',this)">Oda Kiralama</button>
+          <button class="sec-btn" onclick="aliciTekSec('tip',this);gunlukKiralikDegisti()">Satılık</button>
+          <button class="sec-btn" onclick="aliciTekSec('tip',this);gunlukKiralikDegisti()">Kiralık</button>
+          <button class="sec-btn" onclick="aliciTekSec('tip',this);gunlukKiralikDegisti()">Günlük Kiralık</button>
+          <button class="sec-btn" onclick="aliciTekSec('tip',this);gunlukKiralikDegisti()">Oda Kiralama</button>
         </div>
       </div>
 
-      <div class="t-section">
+      <!-- DEĞİŞİKLİK 3: Oda Kiralama duplicate kaldırıldı -->
+      <div class="t-section" id="aliciEmlakTipiSection">
         <div class="t-label">🏠 Emlak Tipi <span class="sec-btn farketmez" id="afm-emlak" onclick="aliciFarketmez('emlak',this)">Farketmez</span></div>
         <div class="sec-row" id="apg-emlak">
           <button class="sec-btn" data-grup="konut" onclick="aliciCokluSec('emlak',this);aliciEmlakDegisti()">🏢 Daire</button>
@@ -894,11 +892,10 @@
           <button class="sec-btn" data-grup="isyeri" onclick="aliciCokluSec('emlak',this);aliciEmlakDegisti()">🏪 İşyeri / Ofis</button>
           <button class="sec-btn" data-grup="isyeri" onclick="aliciCokluSec('emlak',this);aliciEmlakDegisti()">🏭 Depo / Fabrika</button>
           <button class="sec-btn" data-grup="isyeri" onclick="aliciCokluSec('emlak',this);aliciEmlakDegisti()">💼 Büro</button>
-          <button class="sec-btn" data-grup="konut" onclick="aliciCokluSec('emlak',this);aliciEmlakDegisti()">🛏️ Oda Kiralama</button>
         </div>
       </div>
 
-      <!-- Konut kriterleri -->
+      <!-- DEĞİŞİKLİK 4: Günlük Kiralık seçilince bu blok gizlenir, sadece konum+bütçe kalır -->
       <div id="aliciKriterKonut">
         <div class="t-section">
           <div class="t-label">🛏 Oda Sayısı <span class="sec-btn farketmez" id="afm-oda" onclick="aliciFarketmez('oda',this)">Farketmez</span></div>
@@ -1029,7 +1026,6 @@
           </div>
         </div>
       </div>
-      <!-- /aliciKriterArsa -->
 
       <!-- İşyeri kriterleri -->
       <div id="aliciKriterIsyeri" style="display:none">
@@ -1072,7 +1068,6 @@
           </div>
         </div>
       </div>
-      <!-- /aliciKriterIsyeri -->
 
       <!-- Konum (alıcı) -->
       <div class="t-section">
@@ -1100,10 +1095,8 @@
 
       <div id="aliciError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
       <button class="btn btn-gold btn-lg" onclick="aliciKaydet()" id="aliciKaydetBtn">🔍 Aramayı Kaydet &amp; Başla</button>
-      <!-- YENİ: İptal butonu düzenleme modunda görünür -->
       <button class="btn btn-outline btn-md" onclick="aramaIptal()" id="aramaIptalBtn" style="margin-top:10px;display:none">İptal</button>
     </div>
-    <!-- /aramaFormu -->
   </div>
   <!-- /aliciForm -->
 
@@ -1142,7 +1135,6 @@ let seciliTip = 'satilik';
 let currentUser = null;
 let aktifRol = 0;
 let seciliEmlakGrup = 'konut';
-// YENİ: düzenleme modu için
 let duzenlemeId = null;
 let aliciState = {};
 
@@ -1153,21 +1145,17 @@ const odaFotolar = {
   dis:[], parsel:[], isyeri_ic:[], isyeri_dis:[], otopark:[], spor:[], diger:[]
 };
 
-// YENİ: URL parametrelerini oku
 const urlParams = new URLSearchParams(window.location.search);
-const modParam = urlParams.get('mod');       // 'alici-duzenle'
-const aramaIdParam = urlParams.get('arama'); // düzenlenecek aramanın id'si
+const modParam = urlParams.get('mod');
+const aramaIdParam = urlParams.get('arama');
 
-// ===== KISA KOD ÜRETİCİ =====
+// ===== KISA KOD =====
 function kisaKodUret() {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let kod = '';
-  for (let i = 0; i < 7; i++) {
-    kod += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
+  for (let i = 0; i < 7; i++) kod += chars.charAt(Math.floor(Math.random() * chars.length));
   return kod;
 }
-
 async function benzersizKisaKodUret() {
   let kod, mevcut;
   do {
@@ -1322,6 +1310,18 @@ function aliciIlceDoldur() {
     ilceSel.appendChild(opt);
   });
   ilceSel.disabled = ilceler.length === 0;
+}
+
+// DEĞİŞİKLİK 4: Günlük Kiralık seçilince gereksiz kriterleri gizle
+function gunlukKiralikDegisti() {
+  const aktifBtn = document.querySelector('#apg-tip .sec-btn.active');
+  const isGunluk = aktifBtn && aktifBtn.textContent.trim() === 'Günlük Kiralık';
+  
+  // Günlük kiralık seçilince: emlak tipi + tüm konut kriterleri gizle
+  document.getElementById('aliciEmlakTipiSection').style.display = isGunluk ? 'none' : '';
+  document.getElementById('aliciKriterKonut').style.display = isGunluk ? 'none' : '';
+  document.getElementById('aliciKriterArsa').style.display = 'none';
+  document.getElementById('aliciKriterIsyeri').style.display = 'none';
 }
 
 function secEmlakBtn(el) {
@@ -1600,7 +1600,6 @@ function aliciFarketmez(grup, el) {
   }
 }
 
-// YENİ: Mevcut aramaları listele
 async function mevcutAramalariYukle() {
   const { data } = await sb.from('arayan_ilanlar')
     .select('*').eq('user_id', currentUser.id)
@@ -1638,12 +1637,10 @@ async function mevcutAramalariYukle() {
   }).join('');
 }
 
-// YENİ: Formu mevcut verilerle doldur
 function formuDoldur(veri) {
   if (!veri) return;
   const k = veri.kriterler || {};
 
-  // Tip — seçili butonu aktif yap
   const tipDeger = k.tip || veri.tip || '';
   if (tipDeger) {
     document.querySelectorAll('#apg-tip .sec-btn').forEach(b => {
@@ -1655,9 +1652,10 @@ function formuDoldur(veri) {
         b.classList.add('active');
       }
     });
+    // Günlük kiralık ise kriterleri gizle
+    gunlukKiralikDegisti();
   }
 
-  // Emlak tipi
   if (k.emlak && k.emlak.length) {
     document.querySelectorAll('#apg-emlak .sec-btn').forEach(b => {
       const bClean = b.textContent.replace(/[🏢🏡🏠🏘️🌊🏗️🌾🍇🏪🏭💼🛏️]/g,'').trim().toLowerCase();
@@ -1669,7 +1667,6 @@ function formuDoldur(veri) {
     aliciEmlakDegisti();
   }
 
-  // Oda sayısı
   if (k.oda && k.oda.length) {
     document.querySelectorAll('#apg-oda .sec-btn').forEach(b => {
       if (k.oda.includes(b.textContent.trim())) b.classList.add('active');
@@ -1677,7 +1674,6 @@ function formuDoldur(veri) {
     aliciState.oda = k.oda;
   }
 
-  // Bina yaşı
   if (k.bina && k.bina.length) {
     document.querySelectorAll('#apg-bina .sec-btn').forEach(b => {
       if (k.bina.includes(b.textContent.trim())) b.classList.add('active');
@@ -1685,7 +1681,6 @@ function formuDoldur(veri) {
     aliciState.bina = k.bina;
   }
 
-  // Isıtma
   if (k.isitma && k.isitma.length) {
     document.querySelectorAll('#apg-isitma .sec-btn').forEach(b => {
       const bClean = b.textContent.replace(/[🔥🏢🌡️❄️]/g,'').trim().toLowerCase();
@@ -1696,7 +1691,6 @@ function formuDoldur(veri) {
     aliciState.isitma = k.isitma;
   }
 
-  // Eşya
   if (k.esya) {
     document.querySelectorAll('#apg-esya .sec-btn').forEach(b => {
       const bClean = b.textContent.replace(/[🪑📦🏠]/g,'').trim().toLowerCase();
@@ -1707,7 +1701,6 @@ function formuDoldur(veri) {
     aliciState.esya = k.esya;
   }
 
-  // Konut özellikleri
   if (k.konutoz && k.konutoz.length) {
     document.querySelectorAll('#apg-konutoz .sec-btn').forEach(b => {
       const bClean = b.textContent.replace(/[🪟🛗🅿️👮🏊🚿🍽️🌡️]/g,'').trim().toLowerCase();
@@ -1718,14 +1711,12 @@ function formuDoldur(veri) {
     aliciState.konutoz = k.konutoz;
   }
 
-  // Fiyat
   if (veri.fiyat_min) document.getElementById('aMinFiyat').value = veri.fiyat_min;
   if (veri.fiyat_max) document.getElementById('aMaxFiyat').value = veri.fiyat_max;
 
-  // Konum — il/ilçe/mahalle
-  const il       = k.sehir || veri.sehir || '';
-  const ilce     = k.ilce || '';
-  const mahalle  = k.mahalle_cadde || '';
+  const il      = k.sehir || veri.sehir || '';
+  const ilce    = k.ilce || '';
+  const mahalle = k.mahalle_cadde || '';
 
   if (il) {
     const ilSel = document.getElementById('aliciIlSec');
@@ -1739,41 +1730,31 @@ function formuDoldur(veri) {
         if (mahalle) document.getElementById('aliciMahalleInput').value = mahalle;
       }, 150);
     };
-    // İller yüklendikten sonra set et
     if (ilSel.options.length > 1) trySetIl();
     else setTimeout(trySetIl, 400);
   }
 
-  // State'i güncelle
   aliciState = { ...aliciState, ...k,
     minFiyat: veri.fiyat_min, maxFiyat: veri.fiyat_max,
     sehir: il, ilce, mahalle_cadde: mahalle
   };
 }
 
-// YENİ: Düzenle butonuna basılınca
 async function aramaDuzenle(id) {
   const { data } = await sb.from('arayan_ilanlar').select('*').eq('id', id).single();
   if (!data) return;
 
   duzenlemeId = id;
 
-  // Banner göster
   const banner = document.getElementById('duzlemeBanner');
   banner.style.display = 'block';
   banner.textContent = '✏️ Mevcut aramanı düzenliyorsun. Kaydet butonuna basınca güncellenir.';
 
-  // İptal butonu göster
   document.getElementById('aramaIptalBtn').style.display = 'block';
-
-  // Forma scroll
   document.getElementById('aramaFormu').scrollIntoView({ behavior: 'smooth' });
-
-  // Formu mevcut verilerle doldur
   formuDoldur(data);
 }
 
-// YENİ: Arama sil
 async function aramaSil(id) {
   if (!confirm('Bu aramayı silmek istiyor musun?')) return;
   await sb.from('arayan_ilanlar').delete().eq('id', id);
@@ -1781,11 +1762,9 @@ async function aramaSil(id) {
   mevcutAramalariYukle();
 }
 
-// YENİ: Yeni arama formu aç (temiz)
 function yeniAramaBaslat() {
   duzenlemeId = null;
   aliciState = {};
-  // Tüm seçimleri temizle
   document.querySelectorAll('#aramaFormu .sec-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('#aramaFormu input[type="number"]').forEach(i => i.value = '');
   document.getElementById('aliciIlSec').value = '';
@@ -1793,10 +1772,14 @@ function yeniAramaBaslat() {
   document.getElementById('aliciMahalleInput').value = '';
   document.getElementById('duzlemeBanner').style.display = 'none';
   document.getElementById('aramaIptalBtn').style.display = 'none';
+  // Tüm kriterleri tekrar göster
+  document.getElementById('aliciEmlakTipiSection').style.display = '';
+  document.getElementById('aliciKriterKonut').style.display = '';
+  document.getElementById('aliciKriterArsa').style.display = 'none';
+  document.getElementById('aliciKriterIsyeri').style.display = 'none';
   document.getElementById('aramaFormu').scrollIntoView({ behavior: 'smooth' });
 }
 
-// YENİ: Düzenlemeyi iptal et
 function aramaIptal() {
   duzenlemeId = null;
   document.getElementById('duzlemeBanner').style.display = 'none';
@@ -1804,7 +1787,6 @@ function aramaIptal() {
   document.getElementById('mevcutAramalarBolum').scrollIntoView({ behavior: 'smooth' });
 }
 
-// YENİ: Kaydet — insert veya update
 async function aliciKaydet() {
   const il    = document.getElementById('aliciIlSec').value;
   const ilce  = document.getElementById('aliciIlceSec').value;
@@ -1824,7 +1806,6 @@ async function aliciKaydet() {
   aliciState.ilce     = ilce;
   aliciState.mahalle_cadde = document.getElementById('aliciMahalleInput').value.trim();
 
-  // Tip — seçili butonu DB'ye kaydet (satilik / kiralik / gunluk / oda)
   const tipBtn = document.querySelector('#apg-tip .sec-btn.active');
   if (tipBtn) {
     const tipTR = tipBtn.textContent.trim();
@@ -1854,10 +1835,8 @@ async function aliciKaydet() {
 
   let error;
   if (duzenlemeId) {
-    // Güncelle
     ({ error } = await sb.from('arayan_ilanlar').update(kayitVerisi).eq('id', duzenlemeId));
   } else {
-    // Yeni ekle
     ({ error } = await sb.from('arayan_ilanlar').insert(kayitVerisi));
   }
 
@@ -1877,21 +1856,13 @@ sb.auth.getSession().then(async ({ data }) => {
   if (!data.session) { window.location.href = 'auth.html'; return; }
   currentUser = data.session.user;
 
-  // YENİ: Alıcı düzenleme modunda
   if (modParam === 'alici-duzenle') {
-    // Rol seçimini gizle — direkt alıcı formu
     document.getElementById('rolSecimBolum').style.display = 'none';
     document.getElementById('sayfaBaslik').textContent = 'Arama Tercihlerim';
     document.getElementById('sayfaAciklama').textContent = 'Aramalarını yönet ve düzenle';
-    secRole(1); // alıcı formunu göster
-
-    // Mevcut aramaları listele
+    secRole(1);
     await mevcutAramalariYukle();
-
-    // Belirli bir arama düzenlenecekse direkt yükle
-    if (aramaIdParam) {
-      await aramaDuzenle(aramaIdParam);
-    }
+    if (aramaIdParam) await aramaDuzenle(aramaIdParam);
   }
 });
 
