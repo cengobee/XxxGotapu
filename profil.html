@@ -360,7 +360,7 @@ async function profilYukle() {
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
             ${ozellikler.map(o => `<span style="background:var(--card);border:1px solid var(--border);border-radius:50px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--text2)">${o}</span>`).join('')}
           </div>
-          <a href="ilan-ver.html" style="display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;font-weight:800;color:var(--text);text-align:center;text-decoration:none">✏️ Tercihleri Düzenle</a>
+          <a href="ilan-ver.html?mod=alici-duzenle&arama=${a.id}" style="display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;font-weight:800;color:var(--text);text-align:center;text-decoration:none">✏️ Tercihleri Düzenle</a>
         </div>`;
     }).join('');
   }
