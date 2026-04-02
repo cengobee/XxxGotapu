@@ -28,7 +28,8 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Nunito', sans-serif;
-  min-height: fit-content;
+  min-height: 100vh;
+  min-height: 100dvh;
   padding-top: var(--nav-h);
   padding-bottom: calc(var(--bot-h) + 16px);
   overflow-x: hidden;
@@ -79,10 +80,11 @@ body {
   border-top: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-around;
   padding: 0 8px;
-  /* Sayfa içerik değişiminden etkilenmesin */
   will-change: transform;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
+  /* Android Chrome adres çubuğu kaymasını önle */
+  bottom: env(safe-area-inset-bottom, 0);
 }
 .bnav-item {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
