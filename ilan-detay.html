@@ -365,45 +365,65 @@ function sayfayiOlustur() {
 }
 
 // ── LİGHTBOX ──
+var lbAktifIndex = 0;
+var lbTouchStartX = 0;
+var lbTouchStartY = 0;
+var lbSwiping = false;
+
 function lightboxAc(index) {
   var galeri = document.getElementById('lightboxGaleri');
-  galeri.innerHTML = tumFotolar.map(function(foto, i) {
+  galeri.innerHTML = tumFotolar.map(function(foto) {
     return '<div class="lightbox-item">' +
       '<img src="' + foto.url + '">' +
       (foto.ad ? '<div class="lightbox-oda-etiket">' + foto.em + ' ' + foto.ad + '</div>' : '') +
       '</div>';
   }).join('');
 
-  function sayacGuncelle(i) {
-    var f = tumFotolar[i];
-    var etiket = f && f.ad ? (f.em + ' ' + f.ad + ' · ') : '';
-    document.getElementById('lightboxSayac').textContent = etiket + (i + 1) + ' / ' + tumFotolar.length;
-  }
-
-  sayacGuncelle(index);
+  lbAktifIndex = index;
+  lbSayacGuncelle();
   document.getElementById('lightbox').classList.add('open');
-  setTimeout(function() { galeri.scrollLeft = index * window.innerWidth; }, 50);
 
-  galeri.onscroll = function() {
-    var i = Math.round(galeri.scrollLeft / window.innerWidth);
-    sayacGuncelle(i);
+  // scroll-snap KAPALI — manuel kontrol
+  galeri.style.scrollSnapType = 'none';
+  galeri.style.overflow = 'hidden';
+  galeri.scrollLeft = index * window.innerWidth;
+
+  // Touch olayları
+  galeri.ontouchstart = function(e) {
+    lbTouchStartX = e.touches[0].clientX;
+    lbTouchStartY = e.touches[0].clientY;
+    lbSwiping = true;
+  };
+  galeri.ontouchend = function(e) {
+    if (!lbSwiping) return;
+    lbSwiping = false;
+    var dx = lbTouchStartX - e.changedTouches[0].clientX;
+    var dy = lbTouchStartY - e.changedTouches[0].clientY;
+    // Dikey swipe → kapat
+    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 60) { lightboxKapat(); return; }
+    // Yatay swipe → sadece 1 ileri veya 1 geri
+    if (Math.abs(dx) > 40) {
+      if (dx > 0 && lbAktifIndex < tumFotolar.length - 1) lbAktifIndex++;
+      else if (dx < 0 && lbAktifIndex > 0) lbAktifIndex--;
+      lbGit(lbAktifIndex);
+    }
   };
 }
 
-function lightboxKapat() { document.getElementById('lightbox').classList.remove('open'); }
+function lbGit(index) {
+  lbAktifIndex = index;
+  var galeri = document.getElementById('lightboxGaleri');
+  galeri.scrollTo({ left: index * window.innerWidth, behavior: 'smooth' });
+  lbSayacGuncelle();
+}
 
-// Lightbox'ta swipe ile kapatma (yukarı/aşağı kaydır)
-(function() {
-  var startY = 0;
-  document.addEventListener('touchstart', function(e) {
-    if (document.getElementById('lightbox').classList.contains('open')) startY = e.touches[0].clientY;
-  });
-  document.addEventListener('touchend', function(e) {
-    if (!document.getElementById('lightbox').classList.contains('open')) return;
-    var diff = startY - e.changedTouches[0].clientY;
-    if (Math.abs(diff) > 80) lightboxKapat();
-  });
-})();
+function lbSayacGuncelle() {
+  var f = tumFotolar[lbAktifIndex];
+  var etiket = f && f.ad ? (f.em + ' ' + f.ad + ' · ') : '';
+  document.getElementById('lightboxSayac').textContent = etiket + (lbAktifIndex + 1) + ' / ' + tumFotolar.length;
+}
+
+function lightboxKapat() { document.getElementById('lightbox').classList.remove('open'); }
 
 async function ekspertizKontrolDetay() {
   var el = document.getElementById('ekspertizBlok');
