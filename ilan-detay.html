@@ -62,11 +62,9 @@
     background: rgba(255,255,255,0.15); border-radius: 50px; padding: 6px 16px;
     white-space: nowrap;
   }
-  /* Sayac etiketsiz fotoğraflarda altta, etiketli olanlarda üstte */
   .lightbox-footer { display: flex; align-items: center; justify-content: center; padding: 10px 16px 16px; gap: 12px; }
   .lightbox-sayac-bar { font-size: 13px; font-weight: 800; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.1); border-radius: 50px; padding: 6px 16px; }
 
-  /* Galeri çubuğundaki oda özeti */
   .galeri-oda-ozet { position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); border-radius: 50px; padding: 4px 12px; font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.85); max-width: calc(100% - 80px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .sikayet-sebep-btn { width: 100%; padding: 14px 16px; border-radius: var(--radius-sm); background: var(--card); border: 1.5px solid var(--border); color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; text-align: left; transition: all .2s; }
@@ -80,6 +78,125 @@
   .kriter-satir:first-child { border-top: none; }
   .kriter-label { font-size: 13px; color: var(--text3); font-weight: 700; flex-shrink: 0; margin-right: 12px; }
   .kriter-deger { font-size: 13px; font-weight: 800; text-align: right; }
+
+  /* ── KREDİ HESAPLAYICI ── */
+  .kredi-wrap {
+    background: var(--card);
+    border: 1.5px solid rgba(245,200,66,0.25);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .kredi-header {
+    background: linear-gradient(135deg, rgba(245,200,66,0.12), rgba(245,200,66,0.04));
+    border-bottom: 1px solid rgba(245,200,66,0.2);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .kredi-header-icon { font-size: 22px; }
+  .kredi-header-text { flex: 1; }
+  .kredi-header-title { font-size: 15px; font-weight: 900; color: var(--gold); }
+  .kredi-header-sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
+  .kredi-header-arrow {
+    font-size: 16px; color: var(--gold); transition: transform .3s;
+    display: inline-block;
+  }
+  .kredi-header-arrow.acik { transform: rotate(180deg); }
+  .kredi-body { padding: 16px; display: none; }
+  .kredi-body.acik { display: block; }
+
+  /* Banka seçici */
+  .banka-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .banka-btn {
+    background: var(--card2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all .2s;
+    text-align: left;
+  }
+  .banka-btn.secili {
+    border-color: var(--gold);
+    background: rgba(245,200,66,0.08);
+  }
+  .banka-btn-ad { font-size: 13px; font-weight: 900; color: var(--text); }
+  .banka-btn-faiz { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .banka-btn.secili .banka-btn-faiz { color: var(--gold); font-weight: 800; }
+
+  /* Input grubu */
+  .kredi-input-grup { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+  .kredi-input-row { display: flex; flex-direction: column; gap: 4px; }
+  .kredi-input-label { font-size: 12px; font-weight: 800; color: var(--text3); }
+  .kredi-input-inner { display: flex; align-items: center; gap: 8px; }
+  .kredi-input {
+    flex: 1;
+    background: var(--bg2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 11px 12px;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .kredi-input:focus { border-color: var(--gold); }
+  .kredi-input-birim { font-size: 13px; font-weight: 800; color: var(--text3); white-space: nowrap; }
+
+  /* Vade slider */
+  .vade-slider-wrap { margin-top: 4px; }
+  .vade-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+  .vade-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .vade-slider::-moz-range-thumb {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .vade-isaretler { display: flex; justify-content: space-between; margin-top: 6px; }
+  .vade-isaret { font-size: 10px; font-weight: 700; color: var(--text3); }
+
+  /* Sonuç */
+  .kredi-sonuc {
+    background: linear-gradient(135deg, rgba(245,200,66,0.1), rgba(245,200,66,0.03));
+    border: 1px solid rgba(245,200,66,0.2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    display: none;
+  }
+  .kredi-sonuc.goster { display: block; }
+  .kredi-sonuc-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(245,200,66,0.1); }
+  .kredi-sonuc-row:last-child { border-bottom: none; padding-top: 10px; }
+  .kredi-sonuc-label { font-size: 12px; color: var(--text3); font-weight: 700; }
+  .kredi-sonuc-val { font-size: 14px; font-weight: 900; color: var(--text); }
+  .kredi-sonuc-taksit { font-size: 22px; font-weight: 900; color: var(--gold); }
+  .kredi-uyari { font-size: 11px; color: var(--text3); line-height: 1.5; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -168,6 +285,11 @@ var kisaKod = null;
 // Birleşik fotoğraf dizisi: [{url, oda, ad, em}]
 var tumFotolar = [];
 
+// ── KREDİ HESAPLAYICI DEĞİŞKENLERİ ──
+var bankalar = [];          // [{ad, faiz}] — Supabase'den veya fallback
+var seciliBankaIndex = 0;
+var krediAcikMi = false;
+
 function ilanIdCoz() {
   var hash = window.location.hash.replace('#','').trim();
   if (hash && hash.length > 0) return {tip:'kisa_kod', deger:hash};
@@ -216,7 +338,6 @@ async function ilanYukle(sorgu) {
   }
 
   // ── Birleşik fotoğraf dizisi oluştur ──
-  // Önce oda_fotograflari (etiketli), sonra foto_urls (etiketsiz, daha önce eklenmemişler)
   tumFotolar = [];
   var eklenenUrlSet = new Set();
 
@@ -233,7 +354,6 @@ async function ilanYukle(sorgu) {
     });
   }
 
-  // foto_urls'den, oda_fotograflari'nda olmayan fotoğrafları ekle (etiketsiz)
   var ekstraUrls = ilan.foto_urls && ilan.foto_urls.length > 0
     ? ilan.foto_urls
     : (ilan.foto_url ? [ilan.foto_url] : []);
@@ -244,9 +364,38 @@ async function ilanYukle(sorgu) {
     }
   });
 
+  // ── Banka faizlerini yükle ──
+  await bankaFaizleriYukle();
+
   favoriKontrol();
   sayfayiOlustur();
   document.getElementById('actionBottom').style.display = 'flex';
+}
+
+// ─────────────────────────────────────────────
+//  BANKA FAİZ YÜKLEYİCİ
+//  Supabase'de `banka_faizleri` tablosu varsa oradan çeker.
+//  Tablo: { id, banka_adi text, aylik_faiz numeric, aktif boolean }
+//  Yoksa sabit fallback değerleri kullanır.
+// ─────────────────────────────────────────────
+async function bankaFaizleriYukle() {
+  var fallback = [
+    { ad: 'Ziraat Bankası',   faiz: 3.49 },
+    { ad: 'Halkbank',         faiz: 3.59 },
+    { ad: 'Vakıfbank',        faiz: 3.69 },
+    { ad: 'Garanti BBVA',     faiz: 3.79 }
+  ];
+
+  try {
+    var res = await sb.from('banka_faizleri').select('banka_adi, aylik_faiz').eq('aktif', true).order('aylik_faiz', {ascending: true}).limit(4);
+    if (!res.error && res.data && res.data.length >= 2) {
+      bankalar = res.data.map(function(r) { return { ad: r.banka_adi, faiz: parseFloat(r.aylik_faiz) }; });
+    } else {
+      bankalar = fallback;
+    }
+  } catch(e) {
+    bankalar = fallback;
+  }
 }
 
 async function favoriKontrol() {
@@ -279,7 +428,6 @@ function sayfayiOlustur() {
         '</div>';
     }
 
-    // Oda özetini hesapla
     var odaSet = [];
     var odaGoruldu = {};
     tumFotolar.forEach(function(f) { if (f.ad && !odaGoruldu[f.oda]) { odaSet.push(f.em + ' ' + f.ad); odaGoruldu[f.oda] = true; } });
@@ -348,6 +496,9 @@ function sayfayiOlustur() {
     (sahip && sahip.verified ? '<div class="sahip-verified">✓ Doğrulanmış Üye</div>' : '') + '</div>' +
     '<button class="btn btn-outline btn-sm" onclick="mesajGonder()">Mesaj</button>';
 
+  // ── Kredi hesaplayıcı HTML (sadece kredi_uygun === 'Evet' ise) ──
+  var krediHTML = krediHesaplayiciHTML();
+
   document.getElementById('icerik').innerHTML =
     fotoHTML +
     '<div class="detay-fiyat">' + fiyatStr + ' TL' + fiyatEk + '</div>' +
@@ -356,12 +507,202 @@ function sayfayiOlustur() {
     '<div class="specs-row">' + specRow + '</div>' +
     (ilan.aciklama ? '<div class="detay-section"><div class="detay-section-title">Açıklama</div><div class="detay-aciklama">' + ilan.aciklama + '</div></div>' : '') +
     kriterHTML +
+    krediHTML +
     '<div class="detay-section"><div class="detay-section-title">Konum</div><div class="harita-placeholder" onclick="haritaAc()"><div style="font-size:36px">🗺️</div><div>' + (ilan.konum || 'Konum bilgisi yok') + '</div><div style="font-size:12px;color:var(--gold);margin-top:4px">Haritada Gör</div></div></div>' +
     '<div class="detay-section"><div class="detay-section-title">İlan Sahibi</div><div class="sahip-card">' + sahipHTML + '</div></div>' +
     '<div id="ekspertizBlok"></div><div style="height:80px"></div>';
 
   ekspertizKontrolDetay();
   favoriKontrol();
+
+  // Kredi hesaplayıcı event listener'larını bağla
+  if (krediHTML) krediEventleriEkle();
+}
+
+// ─────────────────────────────────────────────
+//  KREDİ HESAPLAYICI HTML OLUŞTURUCU
+// ─────────────────────────────────────────────
+function krediHesaplayiciHTML() {
+  // Kontrol: sadece kredi_uygun === 'Evet' ise göster
+  if (!ilan || !ilan.kriterler || ilan.kriterler.kredi_uygun !== 'Evet') return '';
+
+  // Banka butonları
+  var bankaGriHTML = bankalar.map(function(b, i) {
+    return '<button class="banka-btn' + (i === 0 ? ' secili' : '') + '" id="bankaBtn_' + i + '" onclick="bankaSeç(' + i + ')">' +
+      '<div class="banka-btn-ad">' + b.ad + '</div>' +
+      '<div class="banka-btn-faiz">%' + b.faiz.toFixed(2) + ' aylık</div>' +
+    '</button>';
+  }).join('');
+
+  var pesinatDefault = Math.round(ilan.fiyat * 0.20);
+  var pesinatStr = pesinatDefault.toLocaleString('tr-TR');
+
+  return '<div class="detay-section" id="krediSection">' +
+    '<div class="kredi-wrap">' +
+      '<div class="kredi-header" id="krediHeader" onclick="krediToggle()">' +
+        '<div class="kredi-header-icon">🏦</div>' +
+        '<div class="kredi-header-text">' +
+          '<div class="kredi-header-title">Krediyi Hesapla</div>' +
+          '<div class="kredi-header-sub">Bu ilan krediye uygundur</div>' +
+        '</div>' +
+        '<span class="kredi-header-arrow" id="krediArrow">▼</span>' +
+      '</div>' +
+      '<div class="kredi-body" id="krediBody">' +
+
+        '<div style="font-size:12px;font-weight:800;color:var(--text3);margin-bottom:8px">Banka Seçin</div>' +
+        '<div class="banka-grid">' + bankaGriHTML + '</div>' +
+
+        '<div class="kredi-input-grup">' +
+          '<div class="kredi-input-row">' +
+            '<div class="kredi-input-label">Peşinat Tutarı <span style="color:var(--text3);font-weight:600">(min. %20)</span></div>' +
+            '<div class="kredi-input-inner">' +
+              '<input type="number" class="kredi-input" id="krediPesinat" value="' + pesinatDefault + '" min="' + pesinatDefault + '" oninput="krediHesapla()" onchange="pesinatKontrol()">' +
+              '<span class="kredi-input-birim">TL</span>' +
+            '</div>' +
+            '<div style="font-size:11px;color:var(--text3);margin-top:4px">İlan fiyatı: <strong style="color:var(--text)">' + Number(ilan.fiyat).toLocaleString('tr-TR') + ' TL</strong> — %20 peşinat: <strong style="color:var(--gold)">' + pesinatStr + ' TL</strong></div>' +
+          '</div>' +
+
+          '<div class="kredi-input-row">' +
+            '<div class="kredi-input-label">Vade: <span id="vadeLabel" style="color:var(--gold)">120 ay (10 yıl)</span></div>' +
+            '<div class="vade-slider-wrap">' +
+              '<input type="range" class="vade-slider" id="vadeSlider" min="12" max="120" step="12" value="120" oninput="vadeDegisti(this.value)">' +
+              '<div class="vade-isaretler">' +
+                '<span class="vade-isaret">12 ay</span>' +
+                '<span class="vade-isaret">36</span>' +
+                '<span class="vade-isaret">60</span>' +
+                '<span class="vade-isaret">84</span>' +
+                '<span class="vade-isaret">120 ay</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="kredi-sonuc" id="krediSonuc">' +
+          '<div class="kredi-sonuc-row">' +
+            '<span class="kredi-sonuc-label">Kredi Tutarı</span>' +
+            '<span class="kredi-sonuc-val" id="sonucKrediTutar">—</span>' +
+          '</div>' +
+          '<div class="kredi-sonuc-row">' +
+            '<span class="kredi-sonuc-label">Aylık Faiz Oranı</span>' +
+            '<span class="kredi-sonuc-val" id="sonucFaiz">—</span>' +
+          '</div>' +
+          '<div class="kredi-sonuc-row">' +
+            '<span class="kredi-sonuc-label">Vade</span>' +
+            '<span class="kredi-sonuc-val" id="sonucVade">—</span>' +
+          '</div>' +
+          '<div class="kredi-sonuc-row" style="background:rgba(245,200,66,0.06);border-radius:8px;padding:10px 12px;margin-top:4px">' +
+            '<span class="kredi-sonuc-label" style="font-size:13px;font-weight:900;color:var(--text)">Aylık Taksit</span>' +
+            '<span class="kredi-sonuc-taksit" id="sonucTaksit">—</span>' +
+          '</div>' +
+          '<div class="kredi-sonuc-row">' +
+            '<span class="kredi-sonuc-label">Toplam Ödeme</span>' +
+            '<span class="kredi-sonuc-val" id="sonucToplam">—</span>' +
+          '</div>' +
+          '<div class="kredi-sonuc-row">' +
+            '<span class="kredi-sonuc-label">Toplam Faiz Maliyeti</span>' +
+            '<span class="kredi-sonuc-val" id="sonucFaizMaliyet" style="color:var(--rust)">—</span>' +
+          '</div>' +
+          '<div class="kredi-uyari">* Bu hesaplama bilgi amaçlıdır. Gerçek kredi koşulları banka onayına, gelir durumuna ve güncel faiz oranlarına göre değişiklik gösterebilir.</div>' +
+        '</div>' +
+
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function krediEventleriEkle() {
+  // İlk yüklemede otomatik hesapla
+  krediHesapla();
+}
+
+function krediToggle() {
+  krediAcikMi = !krediAcikMi;
+  var body = document.getElementById('krediBody');
+  var arrow = document.getElementById('krediArrow');
+  if (krediAcikMi) {
+    body.classList.add('acik');
+    arrow.classList.add('acik');
+    krediHesapla();
+  } else {
+    body.classList.remove('acik');
+    arrow.classList.remove('acik');
+  }
+}
+
+function bankaSeç(index) {
+  seciliBankaIndex = index;
+  // Tüm butonları sıfırla
+  bankalar.forEach(function(_, i) {
+    var btn = document.getElementById('bankaBtn_' + i);
+    if (btn) btn.classList.remove('secili');
+  });
+  var secBtn = document.getElementById('bankaBtn_' + index);
+  if (secBtn) secBtn.classList.add('secili');
+  krediHesapla();
+}
+
+function vadeDegisti(val) {
+  var ay = parseInt(val);
+  var yilLabel = ay >= 12 ? ' (' + Math.round(ay/12) + ' yıl)' : '';
+  var el = document.getElementById('vadeLabel');
+  if (el) el.textContent = ay + ' ay' + yilLabel;
+  krediHesapla();
+}
+
+function pesinatKontrol() {
+  var minPesinat = Math.round(ilan.fiyat * 0.20);
+  var input = document.getElementById('krediPesinat');
+  if (!input) return;
+  var girilenDeger = parseFloat(input.value) || 0;
+  if (girilenDeger < minPesinat) {
+    input.value = minPesinat;
+    input.style.borderColor = 'var(--rust)';
+    setTimeout(function() { input.style.borderColor = ''; }, 1500);
+  }
+  krediHesapla();
+}
+
+function krediHesapla() {
+  var pesinatInput = document.getElementById('krediPesinat');
+  var vadeInput = document.getElementById('vadeSlider');
+  var sonucEl = document.getElementById('krediSonuc');
+  if (!pesinatInput || !vadeInput || !sonucEl) return;
+
+  var fiyat = parseFloat(ilan.fiyat) || 0;
+  var pesinat = parseFloat(pesinatInput.value) || 0;
+  var vade = parseInt(vadeInput.value) || 120;
+  var faizOrani = bankalar[seciliBankaIndex] ? bankalar[seciliBankaIndex].faiz : 3.49;
+
+  // Kredi tutarı
+  var krediTutar = fiyat - pesinat;
+  if (krediTutar <= 0) {
+    sonucEl.classList.remove('goster');
+    return;
+  }
+
+  // Aylık taksit hesabı (standart eşit taksit formülü)
+  // Taksit = P * r * (1+r)^n / ((1+r)^n - 1)
+  var r = faizOrani / 100;  // aylık faiz (ondalık)
+  var n = vade;
+  var taksit;
+  if (r === 0) {
+    taksit = krediTutar / n;
+  } else {
+    taksit = krediTutar * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+  }
+
+  var toplamOdeme = taksit * n;
+  var toplamFaiz = toplamOdeme - krediTutar;
+
+  // UI güncelle
+  document.getElementById('sonucKrediTutar').textContent = Math.round(krediTutar).toLocaleString('tr-TR') + ' TL';
+  document.getElementById('sonucFaiz').textContent = '%' + faizOrani.toFixed(2) + ' / ay';
+  document.getElementById('sonucVade').textContent = vade + ' ay';
+  document.getElementById('sonucTaksit').textContent = Math.round(taksit).toLocaleString('tr-TR') + ' TL';
+  document.getElementById('sonucToplam').textContent = Math.round(toplamOdeme).toLocaleString('tr-TR') + ' TL';
+  document.getElementById('sonucFaizMaliyet').textContent = Math.round(toplamFaiz).toLocaleString('tr-TR') + ' TL';
+
+  sonucEl.classList.add('goster');
 }
 
 // ── LİGHTBOX ──
@@ -383,12 +724,10 @@ function lightboxAc(index) {
   lbSayacGuncelle();
   document.getElementById('lightbox').classList.add('open');
 
-  // scroll-snap KAPALI — manuel kontrol
   galeri.style.scrollSnapType = 'none';
   galeri.style.overflow = 'hidden';
   galeri.scrollLeft = index * window.innerWidth;
 
-  // Touch olayları
   galeri.ontouchstart = function(e) {
     lbTouchStartX = e.touches[0].clientX;
     lbTouchStartY = e.touches[0].clientY;
@@ -399,9 +738,7 @@ function lightboxAc(index) {
     lbSwiping = false;
     var dx = lbTouchStartX - e.changedTouches[0].clientX;
     var dy = lbTouchStartY - e.changedTouches[0].clientY;
-    // Dikey swipe → kapat
     if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 60) { lightboxKapat(); return; }
-    // Yatay swipe → sadece 1 ileri veya 1 geri
     if (Math.abs(dx) > 40) {
       if (dx > 0 && lbAktifIndex < tumFotolar.length - 1) lbAktifIndex++;
       else if (dx < 0 && lbAktifIndex > 0) lbAktifIndex--;
