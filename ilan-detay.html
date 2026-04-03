@@ -37,7 +37,7 @@
   .sahip-verified { font-size: 12px; color: var(--green); font-weight: 700; margin-top: 3px; }
   .action-bottom { position: fixed; bottom: var(--bot-h); left: 0; right: 0; background: var(--bg2); border-top: 1px solid var(--border); padding: 12px 16px; display: flex; gap: 10px; z-index: 150; }
   .btn-ara { background: var(--card2); color: var(--text); border: 1.5px solid var(--border); border-radius: 50px; padding: 14px 20px; font-size: 15px; font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif; display: flex; align-items: center; gap: 8px; }
-  .harita-placeholder { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); height: 140px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--text3); font-size: 14px; font-weight: 700; cursor: pointer; }
+  .harita-placeholder { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); height: 110px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px; color: var(--text3); font-size: 13px; font-weight: 700; cursor: pointer; flex: 1; text-align: center; padding: 8px; }
   .page { padding-bottom: 100px !important; }
 
   /* ── LİGHTBOX ── */
@@ -372,12 +372,6 @@ async function ilanYukle(sorgu) {
   document.getElementById('actionBottom').style.display = 'flex';
 }
 
-// ─────────────────────────────────────────────
-//  BANKA FAİZ YÜKLEYİCİ
-//  Supabase'de `banka_faizleri` tablosu varsa oradan çeker.
-//  Tablo: { id, banka_adi text, aylik_faiz numeric, aktif boolean }
-//  Yoksa sabit fallback değerleri kullanır.
-// ─────────────────────────────────────────────
 async function bankaFaizleriYukle() {
   var fallback = [
     { ad: 'Ziraat Bankası',   faiz: 3.49 },
@@ -496,8 +490,24 @@ function sayfayiOlustur() {
     (sahip && sahip.verified ? '<div class="sahip-verified">✓ Doğrulanmış Üye</div>' : '') + '</div>' +
     '<button class="btn btn-outline btn-sm" onclick="mesajGonder()">Mesaj</button>';
 
-  // ── Kredi hesaplayıcı HTML (sadece kredi_uygun === 'Evet' ise) ──
   var krediHTML = krediHesaplayiciHTML();
+
+  // ── Konum: yanyana iki kutu ──
+  var konumHTML = '<div class="detay-section">' +
+    '<div class="detay-section-title">Konum</div>' +
+    '<div style="display:flex;gap:10px">' +
+      '<div class="harita-placeholder" onclick="haritaAc()">' +
+        '<div style="font-size:28px">🗺️</div>' +
+        '<div style="font-size:12px;color:var(--text2)">' + (ilan.konum || 'Konum bilgisi yok') + '</div>' +
+        '<div style="font-size:11px;color:var(--gold);font-weight:800">Haritada Gör</div>' +
+      '</div>' +
+      '<div class="harita-placeholder" onclick="sokakGorunumuAc()">' +
+        '<div style="font-size:28px">🚶</div>' +
+        '<div style="font-size:12px;color:var(--text2)">Sokak Görünümü</div>' +
+        '<div style="font-size:11px;color:var(--gold);font-weight:800">Street View</div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
 
   document.getElementById('icerik').innerHTML =
     fotoHTML +
@@ -508,26 +518,20 @@ function sayfayiOlustur() {
     (ilan.aciklama ? '<div class="detay-section"><div class="detay-section-title">Açıklama</div><div class="detay-aciklama">' + ilan.aciklama + '</div></div>' : '') +
     kriterHTML +
     krediHTML +
-    '<div class="detay-section"><div class="detay-section-title">Konum</div><div class="harita-placeholder" onclick="haritaAc()"><div style="font-size:36px">🗺️</div><div>' + (ilan.konum || 'Konum bilgisi yok') + '</div><div style="font-size:12px;color:var(--gold);margin-top:4px">Haritada Gör</div></div></div>' +
+    konumHTML +
     '<div class="detay-section"><div class="detay-section-title">İlan Sahibi</div><div class="sahip-card">' + sahipHTML + '</div></div>' +
     '<div id="ekspertizBlok"></div><div style="height:80px"></div>';
 
   ekspertizKontrolDetay();
   favoriKontrol();
 
-  // Kredi hesaplayıcı event listener'larını bağla
   if (krediHTML) krediEventleriEkle();
 }
 
-// ─────────────────────────────────────────────
-//  KREDİ HESAPLAYICI HTML OLUŞTURUCU
-// ─────────────────────────────────────────────
 function krediHesaplayiciHTML() {
-  // Kontrol: sadece kredi_uygun === 'Evet' ise göster
   var kuygun = ilan.kriterler && ilan.kriterler.kredi_uygun ? String(ilan.kriterler.kredi_uygun) : '';
-if (!ilan || !ilan.kriterler || !kuygun.includes('Evet')) return '';
+  if (!ilan || !ilan.kriterler || !kuygun.includes('Evet')) return '';
 
-  // Banka butonları
   var bankaGriHTML = bankalar.map(function(b, i) {
     return '<button class="banka-btn' + (i === 0 ? ' secili' : '') + '" id="bankaBtn_' + i + '" onclick="bankaSeç(' + i + ')">' +
       '<div class="banka-btn-ad">' + b.ad + '</div>' +
@@ -549,10 +553,8 @@ if (!ilan || !ilan.kriterler || !kuygun.includes('Evet')) return '';
         '<span class="kredi-header-arrow" id="krediArrow">▼</span>' +
       '</div>' +
       '<div class="kredi-body" id="krediBody">' +
-
         '<div style="font-size:12px;font-weight:800;color:var(--text3);margin-bottom:8px">Banka Seçin</div>' +
         '<div class="banka-grid">' + bankaGriHTML + '</div>' +
-
         '<div class="kredi-input-grup">' +
           '<div class="kredi-input-row">' +
             '<div class="kredi-input-label">Peşinat Tutarı <span style="color:var(--text3);font-weight:600">(min. %20)</span></div>' +
@@ -562,7 +564,6 @@ if (!ilan || !ilan.kriterler || !kuygun.includes('Evet')) return '';
             '</div>' +
             '<div style="font-size:11px;color:var(--text3);margin-top:4px">İlan fiyatı: <strong style="color:var(--text)">' + Number(ilan.fiyat).toLocaleString('tr-TR') + ' TL</strong> — %20 peşinat: <strong style="color:var(--gold)">' + pesinatStr + ' TL</strong></div>' +
           '</div>' +
-
           '<div class="kredi-input-row">' +
             '<div class="kredi-input-label">Vade: <span id="vadeLabel" style="color:var(--gold)">120 ay (10 yıl)</span></div>' +
             '<div class="vade-slider-wrap">' +
@@ -577,66 +578,33 @@ if (!ilan || !ilan.kriterler || !kuygun.includes('Evet')) return '';
             '</div>' +
           '</div>' +
         '</div>' +
-
         '<div class="kredi-sonuc" id="krediSonuc">' +
-          '<div class="kredi-sonuc-row">' +
-            '<span class="kredi-sonuc-label">Kredi Tutarı</span>' +
-            '<span class="kredi-sonuc-val" id="sonucKrediTutar">—</span>' +
-          '</div>' +
-          '<div class="kredi-sonuc-row">' +
-            '<span class="kredi-sonuc-label">Aylık Faiz Oranı</span>' +
-            '<span class="kredi-sonuc-val" id="sonucFaiz">—</span>' +
-          '</div>' +
-          '<div class="kredi-sonuc-row">' +
-            '<span class="kredi-sonuc-label">Vade</span>' +
-            '<span class="kredi-sonuc-val" id="sonucVade">—</span>' +
-          '</div>' +
-          '<div class="kredi-sonuc-row" style="background:rgba(245,200,66,0.06);border-radius:8px;padding:10px 12px;margin-top:4px">' +
-            '<span class="kredi-sonuc-label" style="font-size:13px;font-weight:900;color:var(--text)">Aylık Taksit</span>' +
-            '<span class="kredi-sonuc-taksit" id="sonucTaksit">—</span>' +
-          '</div>' +
-          '<div class="kredi-sonuc-row">' +
-            '<span class="kredi-sonuc-label">Toplam Ödeme</span>' +
-            '<span class="kredi-sonuc-val" id="sonucToplam">—</span>' +
-          '</div>' +
-          '<div class="kredi-sonuc-row">' +
-            '<span class="kredi-sonuc-label">Toplam Faiz Maliyeti</span>' +
-            '<span class="kredi-sonuc-val" id="sonucFaizMaliyet" style="color:var(--rust)">—</span>' +
-          '</div>' +
+          '<div class="kredi-sonuc-row"><span class="kredi-sonuc-label">Kredi Tutarı</span><span class="kredi-sonuc-val" id="sonucKrediTutar">—</span></div>' +
+          '<div class="kredi-sonuc-row"><span class="kredi-sonuc-label">Aylık Faiz Oranı</span><span class="kredi-sonuc-val" id="sonucFaiz">—</span></div>' +
+          '<div class="kredi-sonuc-row"><span class="kredi-sonuc-label">Vade</span><span class="kredi-sonuc-val" id="sonucVade">—</span></div>' +
+          '<div class="kredi-sonuc-row" style="background:rgba(245,200,66,0.06);border-radius:8px;padding:10px 12px;margin-top:4px"><span class="kredi-sonuc-label" style="font-size:13px;font-weight:900;color:var(--text)">Aylık Taksit</span><span class="kredi-sonuc-taksit" id="sonucTaksit">—</span></div>' +
+          '<div class="kredi-sonuc-row"><span class="kredi-sonuc-label">Toplam Ödeme</span><span class="kredi-sonuc-val" id="sonucToplam">—</span></div>' +
+          '<div class="kredi-sonuc-row"><span class="kredi-sonuc-label">Toplam Faiz Maliyeti</span><span class="kredi-sonuc-val" id="sonucFaizMaliyet" style="color:var(--rust)">—</span></div>' +
           '<div class="kredi-uyari">* Bu hesaplama bilgi amaçlıdır. Gerçek kredi koşulları banka onayına, gelir durumuna ve güncel faiz oranlarına göre değişiklik gösterebilir.</div>' +
         '</div>' +
-
       '</div>' +
     '</div>' +
   '</div>';
 }
 
-function krediEventleriEkle() {
-  // İlk yüklemede otomatik hesapla
-  krediHesapla();
-}
+function krediEventleriEkle() { krediHesapla(); }
 
 function krediToggle() {
   krediAcikMi = !krediAcikMi;
   var body = document.getElementById('krediBody');
   var arrow = document.getElementById('krediArrow');
-  if (krediAcikMi) {
-    body.classList.add('acik');
-    arrow.classList.add('acik');
-    krediHesapla();
-  } else {
-    body.classList.remove('acik');
-    arrow.classList.remove('acik');
-  }
+  if (krediAcikMi) { body.classList.add('acik'); arrow.classList.add('acik'); krediHesapla(); }
+  else { body.classList.remove('acik'); arrow.classList.remove('acik'); }
 }
 
 function bankaSeç(index) {
   seciliBankaIndex = index;
-  // Tüm butonları sıfırla
-  bankalar.forEach(function(_, i) {
-    var btn = document.getElementById('bankaBtn_' + i);
-    if (btn) btn.classList.remove('secili');
-  });
+  bankalar.forEach(function(_, i) { var btn = document.getElementById('bankaBtn_' + i); if (btn) btn.classList.remove('secili'); });
   var secBtn = document.getElementById('bankaBtn_' + index);
   if (secBtn) secBtn.classList.add('secili');
   krediHesapla();
@@ -674,28 +642,18 @@ function krediHesapla() {
   var vade = parseInt(vadeInput.value) || 120;
   var faizOrani = bankalar[seciliBankaIndex] ? bankalar[seciliBankaIndex].faiz : 3.49;
 
-  // Kredi tutarı
   var krediTutar = fiyat - pesinat;
-  if (krediTutar <= 0) {
-    sonucEl.classList.remove('goster');
-    return;
-  }
+  if (krediTutar <= 0) { sonucEl.classList.remove('goster'); return; }
 
-  // Aylık taksit hesabı (standart eşit taksit formülü)
-  // Taksit = P * r * (1+r)^n / ((1+r)^n - 1)
-  var r = faizOrani / 100;  // aylık faiz (ondalık)
+  var r = faizOrani / 100;
   var n = vade;
   var taksit;
-  if (r === 0) {
-    taksit = krediTutar / n;
-  } else {
-    taksit = krediTutar * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
-  }
+  if (r === 0) { taksit = krediTutar / n; }
+  else { taksit = krediTutar * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1); }
 
   var toplamOdeme = taksit * n;
   var toplamFaiz = toplamOdeme - krediTutar;
 
-  // UI güncelle
   document.getElementById('sonucKrediTutar').textContent = Math.round(krediTutar).toLocaleString('tr-TR') + ' TL';
   document.getElementById('sonucFaiz').textContent = '%' + faizOrani.toFixed(2) + ' / ay';
   document.getElementById('sonucVade').textContent = vade + ' ay';
@@ -815,6 +773,10 @@ function telefon() {
 
 function haritaAc() {
   window.open('https://www.google.com/maps/search/' + encodeURIComponent(ilan ? ilan.konum || '' : ''), '_blank');
+}
+
+function sokakGorunumuAc() {
+  window.open('https://www.google.com/maps/search/' + encodeURIComponent(ilan ? ilan.konum || '' : '') + '/@?api=1&map_action=pano', '_blank');
 }
 
 var seciliSikayetSebep = null;
