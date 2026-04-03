@@ -989,6 +989,8 @@ async function ilanYukle() {
   const { data: ilan, error } = await sb.from('ilanlar').select('*').eq('id', ilanId).eq('user_id', currentUser.id).single();
   if (error || !ilan) { alert('İlan bulunamadı veya erişim yetkiniz yok.'); history.back(); return; }
 
+  eskiFiyat = ilan.fiyat;
+
   const kr = ilan.kriterler || {};
 
   // Temel alanlar
@@ -1234,8 +1236,15 @@ async function ilanGuncelle() {
     errEl.style.display = 'block';
     btn.textContent = '💾 Değişiklikleri Kaydet'; btn.disabled = false; return;
   }
+  const yeniFiyat = Number(fiyat);
+  if (eskiFiyat && yeniFiyat !== Number(eskiFiyat)) {
+    await sb.from('ilan_fiyat_gecmisi').insert({
+      ilan_id: ilanId,
+      eski_fiyat: Number(eskiFiyat),
+      yeni_fiyat: yeniFiyat
+    });
+  }
   document.getElementById('successOverlay').classList.add('show');
-}
 
 // ===== İLAN SİL =====
 async function ilanSil() {
