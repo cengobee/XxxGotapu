@@ -58,6 +58,117 @@
   .kurumsal-kart.bekliyor { border-color: rgba(245,200,66,0.4); background: rgba(245,200,66,0.03); }
   .kurumsal-kart.onaylandi { border-color: rgba(46,204,113,0.3); }
   .filtre-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+
+  /* ── BANKA FAİZ YÖNETİMİ ── */
+  .banka-yonetim-kart {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: border-color .2s;
+  }
+  .banka-yonetim-kart.aktif-kart { border-color: rgba(46,204,113,0.4); }
+  .banka-yonetim-kart.pasif-kart { border-color: var(--border); opacity: 0.6; }
+  .banka-isim-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .banka-ikon { font-size: 24px; }
+  .banka-isim-input {
+    flex: 1;
+    background: var(--bg2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+  }
+  .banka-isim-input:focus { border-color: var(--gold); }
+  .faiz-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .faiz-label { font-size: 12px; color: var(--text3); font-weight: 800; white-space: nowrap; }
+  .faiz-input-wrap { display: flex; align-items: center; gap: 6px; flex: 1; }
+  .faiz-input {
+    width: 90px;
+    background: var(--bg2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--gold);
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+    text-align: center;
+  }
+  .faiz-input:focus { border-color: var(--gold); }
+  .faiz-birim { font-size: 14px; font-weight: 800; color: var(--text3); }
+  .faiz-aylik-label { font-size: 11px; color: var(--text3); }
+  .aktif-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--bg2);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text);
+    transition: all .2s;
+  }
+  .aktif-toggle.on { border-color: rgba(46,204,113,0.5); background: rgba(46,204,113,0.08); color: var(--green); }
+  .toggle-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--border); transition: background .2s; }
+  .aktif-toggle.on .toggle-dot { background: var(--green); }
+  .banka-kaydet-btn {
+    width: 100%;
+    background: rgba(245,200,66,0.12);
+    border: 1.5px solid rgba(245,200,66,0.3);
+    border-radius: 50px;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--gold);
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .banka-kaydet-btn:active { opacity: 0.7; }
+  .banka-kaydet-btn.kaydedildi { background: rgba(46,204,113,0.12); border-color: rgba(46,204,113,0.3); color: var(--green); }
+  .yeni-banka-form {
+    background: rgba(245,200,66,0.04);
+    border: 1.5px dashed rgba(245,200,66,0.3);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .faiz-bilgi-kutu {
+    background: rgba(74,144,217,0.08);
+    border: 1px solid rgba(74,144,217,0.2);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.6;
+  }
+  .faiz-bilgi-kutu strong { color: var(--text); }
+  .faiz-onizleme {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .faiz-onizleme-val { color: var(--gold); font-weight: 900; font-size: 14px; }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -84,6 +195,7 @@
   <button class="tab-btn" onclick="sekmeAc('raporlar',this)">📈 Raporlar</button>
   <button class="tab-btn" onclick="sekmeAc('mesajlar',this)">💬 Mesajlar</button>
   <button class="tab-btn" onclick="sekmeAc('sikayetler',this)">🚨 Şikayetler</button>
+  <button class="tab-btn" onclick="sekmeAc('bankalar',this)">🏦 Bankalar</button>
 </div>
 
 <div class="detay-modal" id="detayModal" onclick="if(event.target===this)detayKapat()">
@@ -139,13 +251,11 @@
   <!-- KURUMSAL ÜYELER -->
   <div id="sekme-kurumsal" style="display:none">
     <input class="arama-input" placeholder="🔍 Ara (isim, firma, şehir...)" oninput="kurumsalAra(this.value)">
-
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="kurumsalTipFiltre">
       <button class="act-btn act-gold" onclick="kurumsalFiltrele('tip','tumu',this)">Tümü</button>
       <button class="act-btn" onclick="kurumsalFiltrele('tip','kurumsal',this)">🏢 Kurumsal</button>
       <button class="act-btn" onclick="kurumsalFiltrele('tip','freelancer',this)">🔧 Freelancer</button>
     </div>
-
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="kurumsalKatFiltre">
       <button class="act-btn act-gold" onclick="kurumsalFiltrele('kat','tumu',this)">Tüm Kategoriler</button>
       <button class="act-btn" onclick="kurumsalFiltrele('kat','emlakci',this)">🏠 Emlakçı</button>
@@ -161,14 +271,12 @@
       <button class="act-btn" onclick="kurumsalFiltrele('kat','aracyikama',this)">🚗 Araç Yıkama</button>
       <button class="act-btn" onclick="kurumsalFiltrele('kat','vasıfsız',this)">👷 Vasıfsız</button>
     </div>
-
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="kurumsalOnayFiltre">
       <button class="act-btn act-gold" onclick="kurumsalFiltrele('onay','tumu',this)">Tüm Durumlar</button>
       <button class="act-btn" onclick="kurumsalFiltrele('onay','bekliyor',this)">⏳ Bekliyor</button>
       <button class="act-btn" onclick="kurumsalFiltrele('onay','onaylandi',this)">✅ Onaylı</button>
       <button class="act-btn" onclick="kurumsalFiltrele('onay','reddedildi',this)">❌ Reddedildi</button>
     </div>
-
     <div id="kurumsalListesi"><div class="spinner"></div></div>
   </div>
 
@@ -196,6 +304,39 @@
       <button class="act-btn" onclick="sikayetFiltrele('cozuldu',this)">✅ Çözüldü</button>
     </div>
     <div id="sikayetListesi"><div class="spinner"></div></div>
+  </div>
+
+  <!-- 🏦 BANKA FAİZ YÖNETİMİ -->
+  <div id="sekme-bankalar" style="display:none">
+
+    <div class="faiz-bilgi-kutu">
+      <strong>💡 Nasıl çalışır?</strong><br>
+      Buradan güncellediğin faiz oranları, ilan detay sayfasındaki <strong>"Krediyi Hesapla"</strong> bölümüne otomatik yansır.
+      Maksimum <strong>4 banka</strong> aktif gösterilir. Faiz oranı <strong>aylık %</strong> olarak girilmeli.
+    </div>
+
+    <div id="bankaListesiAdmin"><div class="spinner"></div></div>
+
+    <!-- Yeni Banka Ekle -->
+    <div class="yeni-banka-form">
+      <div style="font-size:14px;font-weight:900;margin-bottom:14px">➕ Yeni Banka Ekle</div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:12px;color:var(--text3);font-weight:800;margin-bottom:6px">Banka Adı</div>
+        <input type="text" class="arama-input" id="yeniBankaAd" placeholder="Örn: Akbank" style="margin-bottom:0">
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:12px;color:var(--text3);font-weight:800;margin-bottom:6px">Aylık Faiz Oranı (%)</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="number" class="faiz-input" id="yeniBankaFaiz" placeholder="3.49" step="0.01" min="0.01" max="99" style="width:100px">
+          <span style="font-size:13px;color:var(--text3);font-weight:800">% aylık</span>
+        </div>
+        <div class="faiz-onizleme" id="yeniBankaOnizleme" style="display:none">
+          2.000.000 TL, 120 ay için tahmini taksit: <span class="faiz-onizleme-val" id="yeniOnizlemeTaksit">—</span>
+        </div>
+      </div>
+      <button class="btn btn-gold btn-lg" onclick="yeniBankaEkle()" style="width:100%">➕ Bankayı Ekle</button>
+    </div>
+
   </div>
 
 </div>
@@ -226,8 +367,10 @@ sb.auth.getSession().then(({ data }) => {
   tumunuYukle();
 });
 
+const TÜM_SEKMELER = ['ozet','onay','ilanlar','teklifler','kullanicilar','kurumsal','raporlar','mesajlar','sikayetler','bankalar'];
+
 function sekmeAc(sekme, btn) {
-  ['ozet','onay','ilanlar','teklifler','kullanicilar','kurumsal','raporlar','mesajlar','sikayetler'].forEach(s => {
+  TÜM_SEKMELER.forEach(s => {
     document.getElementById('sekme-'+s).style.display = s === sekme ? 'block' : 'none';
   });
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -237,9 +380,8 @@ function sekmeAc(sekme, btn) {
 
 function baslangicSekmesi() {
   const hash = location.hash.replace('#','');
-  const gecerli = ['ozet','onay','ilanlar','teklifler','kullanicilar','kurumsal','raporlar','mesajlar','sikayetler'];
-  const sekme = gecerli.includes(hash) ? hash : 'ozet';
-  const idx = gecerli.indexOf(sekme);
+  const sekme = TÜM_SEKMELER.includes(hash) ? hash : 'ozet';
+  const idx = TÜM_SEKMELER.indexOf(sekme);
   const btn = document.querySelectorAll('.tab-btn')[idx];
   sekmeAc(sekme, btn || null);
 }
@@ -254,7 +396,8 @@ async function tumunuYukle() {
     kurumsalUyeleriYukle(),
     raporlariYukle(),
     mesajlariYukle(),
-    sikayetleriYukle()
+    sikayetleriYukle(),
+    bankalariYukle()
   ]);
 }
 
@@ -278,7 +421,6 @@ async function ozetYukle() {
     badge.textContent = onay.count;
     badge.style.display = 'inline';
   }
-  // FIX: Badge sadece bekleyenleri göstersin
   if (kurumsal.count > 0) {
     const badge = document.getElementById('kurumsalBadge');
     badge.textContent = kurumsal.count;
@@ -719,19 +861,15 @@ async function kurumsalUyeleriYukle() {
     .in('kullanici_tipi', ['kurumsal', 'freelancer'])
     .order('created_at', { ascending: false });
   tumKurumsal = data || [];
-
-  // FIX: Sadece bekleyenleri say
   const bekleyenSayi = tumKurumsal.filter(k => k.kurumsal_onay === 'bekliyor').length;
   const badge = document.getElementById('kurumsalBadge');
   if (bekleyenSayi > 0) { badge.textContent = bekleyenSayi; badge.style.display = 'inline'; }
   else badge.style.display = 'none';
-
   kurumsalListeGoster();
 }
 
 function kurumsalListeGoster() {
   let liste = [...tumKurumsal];
-
   if (kurumsalTipAktif !== 'tumu') liste = liste.filter(k => k.kullanici_tipi === kurumsalTipAktif);
   if (kurumsalKatAktif !== 'tumu') liste = liste.filter(k => k.kategori === kurumsalKatAktif);
   if (kurumsalOnayAktif !== 'tumu') liste = liste.filter(k => (k.kurumsal_onay||'bekliyor') === kurumsalOnayAktif);
@@ -745,25 +883,15 @@ function kurumsalListeGoster() {
       (k.phone||'').includes(q)
     );
   }
-
   const el = document.getElementById('kurumsalListesi');
-  if (!liste.length) {
-    el.innerHTML = '<div class="empty" style="padding:30px"><div class="empty-icon">🏢</div><div class="empty-title">Kurumsal üye bulunamadı</div></div>';
-    return;
-  }
-
+  if (!liste.length) { el.innerHTML = '<div class="empty" style="padding:30px"><div class="empty-icon">🏢</div><div class="empty-title">Kurumsal üye bulunamadı</div></div>'; return; }
   const bekleyenler = liste.filter(k => (k.kurumsal_onay||'bekliyor') === 'bekliyor');
-
   el.innerHTML = `
     <div style="font-size:12px;color:var(--text3);font-weight:700;margin-bottom:10px">${liste.length} üye listeleniyor</div>
-    ${bekleyenler.length > 0 ? `
-    <div class="onay-banner" style="margin-bottom:16px">
-      <div><div style="font-size:14px;font-weight:900;color:var(--gold)">⏳ ${bekleyenler.length} Kurumsal Başvuru Bekliyor</div></div>
-    </div>` : ''}
+    ${bekleyenler.length > 0 ? `<div class="onay-banner" style="margin-bottom:16px"><div><div style="font-size:14px;font-weight:900;color:var(--gold)">⏳ ${bekleyenler.length} Kurumsal Başvuru Bekliyor</div></div></div>` : ''}
     ${liste.map(k => kurumsalKartHTML(k)).join('')}`;
 }
 
-// FIX: onclick içinde tırnak çakışmasını düzelttik - data-id kullanıyoruz
 function kurumsalKartHTML(k) {
   const onay = k.kurumsal_onay || 'bekliyor';
   const onayRenk = onay === 'onaylandi' ? 'durum-onaylandi' : onay === 'reddedildi' ? 'durum-reddedildi' : 'durum-bekliyor';
@@ -772,17 +900,14 @@ function kurumsalKartHTML(k) {
   const kat = kategoriAdlari[k.kategori] || k.kategori || '-';
   const em = kategoriEm[k.kategori] || '📋';
   const isim = k.kullanici_tipi === 'kurumsal' ? (k.firma_adi || k.full_name || 'İsimsiz') : (k.full_name || 'İsimsiz');
-
   return `
     <div class="kurumsal-kart ${onay}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <span style="font-size:18px">${em}</span>
-            <div>
-              <div style="font-size:14px;font-weight:900">${isim}</div>
-              <div style="font-size:12px;color:var(--text3)">${tip} • ${kat}</div>
-            </div>
+            <div><div style="font-size:14px;font-weight:900">${isim}</div>
+            <div style="font-size:12px;color:var(--text3)">${tip} • ${kat}</div></div>
           </div>
           <div style="font-size:12px;color:var(--text2);margin-top:4px">
             👤 ${k.full_name||'-'} &nbsp;•&nbsp;
@@ -790,9 +915,7 @@ function kurumsalKartHTML(k) {
             📍 ${k.kurumsal_sehir||'-'}
           </div>
           ${k.calisan_sayisi ? `<div style="font-size:12px;color:var(--text3);margin-top:2px">👷 Çalışan Sayısı: ${k.calisan_sayisi}</div>` : ''}
-          <div style="font-size:12px;color:var(--text3);margin-top:2px">
-            📧 ${k.email||'-'} &nbsp;•&nbsp; 📅 ${new Date(k.created_at).toLocaleDateString('tr-TR')}
-          </div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px">📧 ${k.email||'-'} &nbsp;•&nbsp; 📅 ${new Date(k.created_at).toLocaleDateString('tr-TR')}</div>
         </div>
         <span class="durum-badge ${onayRenk}">${onayText}</span>
       </div>
@@ -806,56 +929,32 @@ function kurumsalKartHTML(k) {
 }
 
 function kurumsalFiltrele(tip, deger, el) {
-  if (tip === 'tip') {
-    kurumsalTipAktif = deger;
-    document.querySelectorAll('#kurumsalTipFiltre .act-btn').forEach(b => b.classList.remove('act-gold'));
-  } else if (tip === 'kat') {
-    kurumsalKatAktif = deger;
-    document.querySelectorAll('#kurumsalKatFiltre .act-btn').forEach(b => b.classList.remove('act-gold'));
-  } else {
-    kurumsalOnayAktif = deger;
-    document.querySelectorAll('#kurumsalOnayFiltre .act-btn').forEach(b => b.classList.remove('act-gold'));
-  }
+  if (tip === 'tip') { kurumsalTipAktif = deger; document.querySelectorAll('#kurumsalTipFiltre .act-btn').forEach(b => b.classList.remove('act-gold')); }
+  else if (tip === 'kat') { kurumsalKatAktif = deger; document.querySelectorAll('#kurumsalKatFiltre .act-btn').forEach(b => b.classList.remove('act-gold')); }
+  else { kurumsalOnayAktif = deger; document.querySelectorAll('#kurumsalOnayFiltre .act-btn').forEach(b => b.classList.remove('act-gold')); }
   el.classList.add('act-gold');
   kurumsalListeGoster();
 }
 
-function kurumsalAra(q) {
-  kurumsalAramaQ = q;
-  kurumsalListeGoster();
-}
+function kurumsalAra(q) { kurumsalAramaQ = q; kurumsalListeGoster(); }
 
 async function kurumsalOnayla(id) {
   await sb.from('profiles').update({ kurumsal_onay: 'onaylandi' }).eq('id', id);
-  await sb.from('bildirimler').insert({
-    user_id: id, tip: 'kurumsal_onay',
-    baslik: '✅ Başvurunuz Onaylandı!',
-    mesaj: 'Kurumsal üyelik başvurunuz onaylandı. Artık GoTapu\'da aktifsiniz.',
-    okundu: false
-  });
+  await sb.from('bildirimler').insert({ user_id: id, tip: 'kurumsal_onay', baslik: '✅ Başvurunuz Onaylandı!', mesaj: 'Kurumsal üyelik başvurunuz onaylandı. Artık GoTapu\'da aktifsiniz.', okundu: false });
   await kurumsalUyeleriYukle(); await ozetYukle();
 }
 
 async function kurumsalReddet(id) {
-  const sebep = prompt('Red sebebi (kullanıcıya bildirim gönderilecek):');
+  const sebep = prompt('Red sebebi:');
   if (sebep === null) return;
   await sb.from('profiles').update({ kurumsal_onay: 'reddedildi' }).eq('id', id);
-  await sb.from('bildirimler').insert({
-    user_id: id, tip: 'kurumsal_red',
-    baslik: '❌ Başvurunuz Reddedildi',
-    mesaj: `Kurumsal üyelik başvurunuz reddedildi.${sebep ? ' Sebep: ' + sebep : ''}`,
-    okundu: false
-  });
+  await sb.from('bildirimler').insert({ user_id: id, tip: 'kurumsal_red', baslik: '❌ Başvurunuz Reddedildi', mesaj: `Kurumsal üyelik başvurunuz reddedildi.${sebep ? ' Sebep: ' + sebep : ''}`, okundu: false });
   await kurumsalUyeleriYukle(); await ozetYukle();
 }
 
 async function kurumsalSil(id) {
   if (!confirm('Bu üyeyi silmek istediğinizden emin misiniz?')) return;
-  await sb.from('profiles').update({
-    kullanici_tipi: 'normal', kurumsal_tip: null,
-    firma_adi: null, kategori: null,
-    kurumsal_sehir: null, kurumsal_onay: null
-  }).eq('id', id);
+  await sb.from('profiles').update({ kullanici_tipi: 'normal', kurumsal_tip: null, firma_adi: null, kategori: null, kurumsal_sehir: null, kurumsal_onay: null }).eq('id', id);
   await kurumsalUyeleriYukle();
 }
 
@@ -970,6 +1069,193 @@ async function sikayetSilAdmin(id) {
   if (!confirm('Bu şikayeti silmek istediğinizden emin misiniz?')) return;
   await sb.from('sikayetler').delete().eq('id', id);
   await sikayetleriYukle();
+}
+
+// ─────────────────────────────────────────────
+//  🏦 BANKA FAİZ YÖNETİMİ
+// ─────────────────────────────────────────────
+async function bankalariYukle() {
+  const el = document.getElementById('bankaListesiAdmin');
+  if (!el) return;
+
+  const { data, error } = await sb
+    .from('banka_faizleri')
+    .select('*')
+    .order('aylik_faiz', { ascending: true });
+
+  if (error) {
+    el.innerHTML = `<div class="faiz-bilgi-kutu" style="border-color:rgba(232,96,58,0.3);color:var(--rust)">
+      ⚠️ <strong>Tablo bulunamadı.</strong> Supabase SQL Editor'da tabloyu oluşturduğundan emin ol.<br>
+      <span style="font-size:11px;opacity:0.8">Hata: ${error.message}</span>
+    </div>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    el.innerHTML = '<div class="empty" style="padding:30px"><div class="empty-icon">🏦</div><div class="empty-title">Henüz banka eklenmedi</div></div>';
+    return;
+  }
+
+  // Aktif banka sayısı
+  const aktifSayi = data.filter(b => b.aktif).length;
+
+  el.innerHTML = `
+    <div style="background:rgba(245,200,66,0.06);border:1px solid rgba(245,200,66,0.15);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:13px;font-weight:800">🏦 ${data.length} banka kayıtlı</div>
+      <span class="durum-badge durum-${aktifSayi > 0 ? 'onaylandi' : 'reddedildi'}">${aktifSayi} aktif gösteriliyor</span>
+    </div>
+    ${data.map(b => bankaKartHTML(b)).join('')}`;
+
+  // Yeni banka önizleme listener
+  const yeniFaizInput = document.getElementById('yeniBankaFaiz');
+  if (yeniFaizInput) {
+    yeniFaizInput.addEventListener('input', function() {
+      const faiz = parseFloat(this.value);
+      const onizEl = document.getElementById('yeniBankaOnizleme');
+      const taksitEl = document.getElementById('yeniOnizlemeTaksit');
+      if (faiz > 0 && onizEl && taksitEl) {
+        const taksit = hesaplaTaksit(2000000, faiz, 120);
+        taksitEl.textContent = Math.round(taksit).toLocaleString('tr-TR') + ' TL';
+        onizEl.style.display = 'block';
+      } else if (onizEl) {
+        onizEl.style.display = 'none';
+      }
+    });
+  }
+}
+
+function bankaKartHTML(b) {
+  // Örnek hesaplama: 2M TL, 120 ay için taksit
+  const ornekTaksit = b.aylik_faiz > 0 ? Math.round(hesaplaTaksit(2000000, b.aylik_faiz, 120)).toLocaleString('tr-TR') + ' TL' : '—';
+  const aktifClass = b.aktif ? 'aktif-kart' : 'pasif-kart';
+
+  return `
+    <div class="banka-yonetim-kart ${aktifClass}" id="banka-kart-${b.id}">
+      <div class="banka-isim-row">
+        <span class="banka-ikon">🏦</span>
+        <input type="text" class="banka-isim-input" id="banka-ad-${b.id}" value="${b.banka_adi}" placeholder="Banka adı">
+        <button class="aktif-toggle ${b.aktif ? 'on' : ''}" id="banka-toggle-${b.id}" onclick="bankaToggle('${b.id}',${b.aktif})">
+          <span class="toggle-dot"></span>
+          <span id="banka-toggle-label-${b.id}">${b.aktif ? 'Aktif' : 'Pasif'}</span>
+        </button>
+      </div>
+      <div class="faiz-row">
+        <span class="faiz-label">Aylık Faiz:</span>
+        <div class="faiz-input-wrap">
+          <span style="font-size:16px;font-weight:800;color:var(--text3)">%</span>
+          <input type="number" class="faiz-input" id="banka-faiz-${b.id}" value="${b.aylik_faiz}"
+            step="0.01" min="0.01" max="99"
+            oninput="bankaOnizlemeGuncelle('${b.id}')">
+          <span class="faiz-birim">aylık</span>
+        </div>
+      </div>
+      <div class="faiz-onizleme">
+        2.000.000 TL, 120 ay → <span class="faiz-onizleme-val" id="banka-onizleme-${b.id}">${ornekTaksit}</span>/ay
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="banka-kaydet-btn" id="banka-kaydet-btn-${b.id}" onclick="bankaKaydet('${b.id}')">
+          💾 Kaydet
+        </button>
+        <button class="act-btn act-rust" onclick="bankaSil('${b.id}')" style="flex-shrink:0">🗑️</button>
+      </div>
+    </div>`;
+}
+
+function bankaOnizlemeGuncelle(id) {
+  const faizInput = document.getElementById(`banka-faiz-${id}`);
+  const onizEl = document.getElementById(`banka-onizleme-${id}`);
+  if (!faizInput || !onizEl) return;
+  const faiz = parseFloat(faizInput.value);
+  if (faiz > 0) {
+    const taksit = hesaplaTaksit(2000000, faiz, 120);
+    onizEl.textContent = Math.round(taksit).toLocaleString('tr-TR') + ' TL';
+  }
+}
+
+function bankaToggle(id, mevcut) {
+  const btn = document.getElementById(`banka-toggle-${id}`);
+  const label = document.getElementById(`banka-toggle-label-${id}`);
+  const yeniDurum = !mevcut;
+  if (yeniDurum) { btn.classList.add('on'); label.textContent = 'Aktif'; }
+  else { btn.classList.remove('on'); label.textContent = 'Pasif'; }
+  // Kaydet butonuna tıklanınca aktif bilgisini de kaydedecek
+}
+
+async function bankaKaydet(id) {
+  const adInput = document.getElementById(`banka-ad-${id}`);
+  const faizInput = document.getElementById(`banka-faiz-${id}`);
+  const toggleBtn = document.getElementById(`banka-toggle-${id}`);
+  const kaydetBtn = document.getElementById(`banka-kaydet-btn-${id}`);
+  if (!adInput || !faizInput) return;
+
+  const yeniAd = adInput.value.trim();
+  const yeniFaiz = parseFloat(faizInput.value);
+  const yeniAktif = toggleBtn ? toggleBtn.classList.contains('on') : true;
+
+  if (!yeniAd) { alert('Banka adı boş olamaz!'); return; }
+  if (isNaN(yeniFaiz) || yeniFaiz <= 0) { alert('Geçerli bir faiz oranı girin!'); return; }
+
+  const { error } = await sb.from('banka_faizleri').update({
+    banka_adi: yeniAd,
+    aylik_faiz: yeniFaiz,
+    aktif: yeniAktif,
+    updated_at: new Date().toISOString()
+  }).eq('id', id);
+
+  if (error) { alert('Hata: ' + error.message); return; }
+
+  // Başarı animasyonu
+  if (kaydetBtn) {
+    kaydetBtn.classList.add('kaydedildi');
+    kaydetBtn.textContent = '✅ Kaydedildi!';
+    setTimeout(() => {
+      kaydetBtn.classList.remove('kaydedildi');
+      kaydetBtn.innerHTML = '💾 Kaydet';
+    }, 2000);
+  }
+
+  // Kart stilini güncelle
+  const kart = document.getElementById(`banka-kart-${id}`);
+  if (kart) {
+    kart.classList.remove('aktif-kart', 'pasif-kart');
+    kart.classList.add(yeniAktif ? 'aktif-kart' : 'pasif-kart');
+  }
+}
+
+async function bankaSil(id) {
+  if (!confirm('Bu bankayı silmek istediğinizden emin misiniz?')) return;
+  const { error } = await sb.from('banka_faizleri').delete().eq('id', id);
+  if (error) { alert('Hata: ' + error.message); return; }
+  await bankalariYukle();
+}
+
+async function yeniBankaEkle() {
+  const ad = document.getElementById('yeniBankaAd').value.trim();
+  const faiz = parseFloat(document.getElementById('yeniBankaFaiz').value);
+
+  if (!ad) { alert('Banka adı girin!'); return; }
+  if (isNaN(faiz) || faiz <= 0) { alert('Geçerli bir faiz oranı girin!'); return; }
+
+  const { error } = await sb.from('banka_faizleri').insert({
+    banka_adi: ad,
+    aylik_faiz: faiz,
+    aktif: true
+  });
+
+  if (error) { alert('Hata: ' + error.message); return; }
+
+  document.getElementById('yeniBankaAd').value = '';
+  document.getElementById('yeniBankaFaiz').value = '';
+  document.getElementById('yeniBankaOnizleme').style.display = 'none';
+  alert('✅ ' + ad + ' eklendi!');
+  await bankalariYukle();
+}
+
+// Standart eşit taksit formülü — admin panelde önizleme için
+function hesaplaTaksit(kredi, aylikFaizYuzde, vadeAy) {
+  const r = aylikFaizYuzde / 100;
+  if (r === 0) return kredi / vadeAy;
+  return kredi * r * Math.pow(1 + r, vadeAy) / (Math.pow(1 + r, vadeAy) - 1);
 }
 
 function detayKapat() { document.getElementById('detayModal').classList.remove('open'); }
