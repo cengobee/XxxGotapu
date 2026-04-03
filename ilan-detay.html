@@ -197,6 +197,31 @@
   .kredi-sonuc-val { font-size: 14px; font-weight: 900; color: var(--text); }
   .kredi-sonuc-taksit { font-size: 22px; font-weight: 900; color: var(--gold); }
   .kredi-uyari { font-size: 11px; color: var(--text3); line-height: 1.5; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+
+  /* ── FİYAT GEÇMİŞİ ── */
+  .fiyat-gecmisi-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .fiyat-gecmisi-satir {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px 14px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .fiyat-gecmisi-satir:first-child { border-top: none; }
+  .fiyat-gecmisi-tarih { font-size: 12px; color: var(--text3); font-weight: 700; flex-shrink: 0; }
+  .fiyat-gecmisi-sag { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+  .fiyat-gecmisi-eski { font-size: 11px; color: var(--text3); text-decoration: line-through; }
+  .fiyat-gecmisi-yeni { font-size: 13px; font-weight: 900; color: var(--text); }
+  .fiyat-gecmisi-fark-asagi { font-size: 11px; font-weight: 800; color: var(--green); }
+  .fiyat-gecmisi-fark-yukari { font-size: 11px; font-weight: 800; color: var(--rust); }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -286,7 +311,7 @@ var kisaKod = null;
 var tumFotolar = [];
 
 // ── KREDİ HESAPLAYICI DEĞİŞKENLERİ ──
-var bankalar = [];          // [{ad, faiz}] — Supabase'den veya fallback
+var bankalar = [];
 var seciliBankaIndex = 0;
 var krediAcikMi = false;
 
@@ -520,12 +545,54 @@ function sayfayiOlustur() {
     krediHTML +
     konumHTML +
     '<div class="detay-section"><div class="detay-section-title">İlan Sahibi</div><div class="sahip-card">' + sahipHTML + '</div></div>' +
-    '<div id="ekspertizBlok"></div><div style="height:80px"></div>';
+    '<div id="fiyatGecmisiBlok"></div>' +
+    '<div id="ekspertizBlok"></div>' +
+    '<div style="height:80px"></div>';
 
   ekspertizKontrolDetay();
+  fiyatGecmisiGoster();
   favoriKontrol();
 
   if (krediHTML) krediEventleriEkle();
+}
+
+// ── FİYAT GEÇMİŞİ ──
+async function fiyatGecmisiGoster() {
+  var el = document.getElementById('fiyatGecmisiBlok');
+  if (!el || !ilanId) return;
+
+  var res = await sb
+    .from('ilan_fiyat_gecmisi')
+    .select('*')
+    .eq('ilan_id', ilanId)
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (res.error || !res.data || res.data.length === 0) return;
+
+  var satirlar = res.data.map(function(r) {
+    var tarih = new Date(r.created_at).toLocaleDateString('tr-TR');
+    var eski = Number(r.eski_fiyat).toLocaleString('tr-TR');
+    var yeni = Number(r.yeni_fiyat).toLocaleString('tr-TR');
+    var fark = r.yeni_fiyat - r.eski_fiyat;
+    var farkStr = Math.abs(fark).toLocaleString('tr-TR');
+    var farkClass = fark < 0 ? 'fiyat-gecmisi-fark-asagi' : 'fiyat-gecmisi-fark-yukari';
+    var farkIsaret = fark < 0 ? '▼' : '▲';
+    return '<div class="fiyat-gecmisi-satir">' +
+      '<span class="fiyat-gecmisi-tarih">📅 ' + tarih + '</span>' +
+      '<div class="fiyat-gecmisi-sag">' +
+        '<span class="fiyat-gecmisi-eski">' + eski + ' TL</span>' +
+        '<span class="fiyat-gecmisi-yeni">' + yeni + ' TL</span>' +
+        '<span class="' + farkClass + '">' + farkIsaret + ' ' + farkStr + ' TL</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  el.innerHTML =
+    '<div class="detay-section">' +
+      '<div class="detay-section-title">📉 Fiyat Geçmişi</div>' +
+      '<div class="fiyat-gecmisi-wrap">' + satirlar + '</div>' +
+    '</div>';
 }
 
 function krediHesaplayiciHTML() {
