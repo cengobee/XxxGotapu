@@ -524,7 +524,8 @@ function sayfayiOlustur() {
 // ─────────────────────────────────────────────
 function krediHesaplayiciHTML() {
   // Kontrol: sadece kredi_uygun === 'Evet' ise göster
-  if (!ilan || !ilan.kriterler || ilan.kriterler.kredi_uygun !== 'Evet') return '';
+  var kuygun = ilan.kriterler && ilan.kriterler.kredi_uygun ? String(ilan.kriterler.kredi_uygun) : '';
+if (!ilan || !ilan.kriterler || !kuygun.includes('Evet')) return '';
 
   // Banka butonları
   var bankaGriHTML = bankalar.map(function(b, i) {
