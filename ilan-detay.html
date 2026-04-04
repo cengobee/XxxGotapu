@@ -64,7 +64,7 @@
   }
   .detay-fiyat { font-size: 26px; font-weight: 900; color: var(--gold); line-height: 1.1; }
   .detay-baslik { font-size: 16px; font-weight: 800; margin: 6px 0 4px; }
-  .detay-konum { font-size: 13px; color: var(--text3); padding-bottom: 14px; }
+  .detay-konum { font-size: 13px; color: var(--text2); font-weight: 600; padding-bottom: 14px; }
 
   /* ── LİSTE BÖLÜMÜ ── */
   .liste-bolum {
@@ -110,7 +110,7 @@
   .satir-link:first-of-type { border-top: none; }
   .satir-link-sol { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; }
   .satir-link-ikon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
-  .satir-link-ok { font-size: 18px; color: var(--text3); }
+  .satir-link-ok { font-size: 18px; color: var(--text2); }
 
   /* ── KREDİ ACCORDION ── */
   .kredi-accordion-header {
@@ -119,7 +119,7 @@
     cursor: pointer; user-select: none;
   }
   .kredi-accordion-header-sol { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 800; color: var(--gold); }
-  .kredi-accordion-ok { font-size: 16px; color: var(--text3); transition: transform .25s; }
+  .kredi-accordion-ok { font-size: 16px; color: var(--text2); transition: transform .25s; }
   .kredi-accordion-ok.acik { transform: rotate(180deg); color: var(--gold); }
   .kredi-accordion-body { display: none; padding-bottom: 12px; }
   .kredi-accordion-body.acik { display: block; }
@@ -137,11 +137,11 @@
   }
   .banka-btn.secili { border-color: var(--gold); background: rgba(245,200,66,0.07); }
   .banka-btn-ad { font-size: 12px; font-weight: 900; color: var(--text); }
-  .banka-btn-faiz { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .banka-btn-faiz { font-size: 11px; color: var(--text2); margin-top: 1px; font-weight: 700; }
   .banka-btn.secili .banka-btn-faiz { color: var(--gold); font-weight: 800; }
 
   .kredi-input-blok { margin-bottom: 12px; }
-  .kredi-input-label { font-size: 11px; font-weight: 800; color: var(--text3); margin-bottom: 5px; }
+  .kredi-input-label { font-size: 12px; font-weight: 800; color: var(--text); margin-bottom: 5px; }
   .kredi-input {
     width: 100%; box-sizing: border-box;
     background: var(--bg); border: 1.5px solid var(--border);
@@ -151,7 +151,7 @@
     transition: border-color .2s;
   }
   .kredi-input:focus { border-color: var(--gold); }
-  .kredi-input-alt { font-size: 11px; color: var(--text3); margin-top: 4px; }
+  .kredi-input-alt { font-size: 12px; color: var(--text2); margin-top: 4px; font-weight: 600; }
   .vade-slider {
     -webkit-appearance: none; width: 100%; height: 5px;
     border-radius: 3px; background: var(--border); outline: none; cursor: pointer;
@@ -161,7 +161,7 @@
     border-radius: 50%; background: var(--gold); cursor: pointer;
   }
   .vade-isaretler { display: flex; justify-content: space-between; margin-top: 5px; }
-  .vade-isaret { font-size: 10px; color: var(--text3); }
+  .vade-isaret { font-size: 11px; color: var(--text2); font-weight: 700; }
 
   .kredi-sonuc-liste { margin-top: 10px; }
   .kredi-sonuc-satir {
@@ -169,7 +169,7 @@
     padding: 8px 0; border-top: 1px solid var(--border);
   }
   .kredi-sonuc-satir:first-child { border-top: none; }
-  .kredi-sonuc-label { font-size: 12px; color: var(--text3); }
+  .kredi-sonuc-label { font-size: 13px; color: var(--text2); font-weight: 700; }
   .kredi-sonuc-val { font-size: 13px; font-weight: 900; color: var(--text); }
   .kredi-taksit-satir {
     display: flex; justify-content: space-between; align-items: center;
@@ -177,7 +177,7 @@
   }
   .kredi-taksit-label { font-size: 13px; font-weight: 900; }
   .kredi-taksit-val { font-size: 22px; font-weight: 900; color: var(--gold); }
-  .kredi-uyari { font-size: 10px; color: var(--text3); line-height: 1.5; padding-top: 8px; margin-top: 4px; border-top: 1px solid var(--border); }
+  .kredi-uyari { font-size: 11px; color: var(--text2); line-height: 1.5; padding-top: 8px; margin-top: 4px; border-top: 1px solid var(--border); }
 
   /* ── AKSİYON BAR ── */
   .action-bottom {
@@ -261,9 +261,9 @@
     padding: 10px 0; border-top: 1px solid var(--border); gap: 8px; flex-wrap: wrap;
   }
   .fiyat-gecmis-satir:first-child { border-top: none; }
-  .fg-tarih { font-size: 12px; color: var(--text3); font-weight: 700; }
+  .fg-tarih { font-size: 13px; color: var(--text2); font-weight: 700; }
   .fg-sag { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
-  .fg-eski { font-size: 11px; color: var(--text3); text-decoration: line-through; }
+  .fg-eski { font-size: 12px; color: var(--text2); text-decoration: line-through; }
   .fg-yeni { font-size: 13px; font-weight: 900; }
   .fg-asagi { font-size: 11px; font-weight: 800; color: var(--green); }
   .fg-yukari { font-size: 11px; font-weight: 800; color: var(--rust); }
@@ -484,7 +484,7 @@ function sayfayiOlustur(){
   if(ilan.aciklama){
     aciklamaHTML='<div class="liste-bolum">'+
       '<div class="liste-bolum-baslik">Açıklama</div>'+
-      '<div class="liste-satir" style="border-top:none"><span style="font-size:13px;color:var(--text2);line-height:1.8">'+ilan.aciklama+'</span></div>'+
+      '<div class="liste-satir" style="border-top:none"><span style="font-size:13px;color:var(--text);line-height:1.8;font-weight:600">'+ilan.aciklama+'</span></div>'+
     '</div>';
   }
 
@@ -541,10 +541,10 @@ function sayfayiOlustur(){
         '<span class="kredi-accordion-ok" id="krediArrow">▼</span>'+
       '</div>'+
       '<div class="kredi-accordion-body" id="krediBody">'+
-        '<div style="font-size:11px;font-weight:800;color:var(--text3);margin-bottom:8px">Banka Seçin</div>'+
+        '<div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:8px">Banka Seçin</div>'+
         '<div class="banka-grid">'+bankaGriHTML+'</div>'+
         '<div class="kredi-input-blok">'+
-          '<div class="kredi-input-label">Peşinat Tutarı <span style="color:var(--text3)">(min. %20)</span></div>'+
+          '<div class="kredi-input-label">Peşinat Tutarı <span style="color:var(--text2)">(min. %20)</span></div>'+
           '<input type="number" class="kredi-input" id="krediPesinat" value="'+pesinatDef+'" min="'+pesinatDef+'" oninput="krediHesapla()" onchange="pesinatKontrol()">'+
           '<div class="kredi-input-alt">İlan fiyatı: <strong>'+Number(ilan.fiyat).toLocaleString('tr-TR')+' ₺</strong> — %20 peşinat: <strong style="color:var(--gold)">'+pesinatDef.toLocaleString('tr-TR')+' ₺</strong></div>'+
         '</div>'+
@@ -590,7 +590,7 @@ function sayfayiOlustur(){
         '<div style="width:46px;height:46px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;flex-shrink:0">'+sahipAva+'</div>'+
         '<div>'+
           '<div style="font-size:14px;font-weight:800">'+sahipAd+'</div>'+
-          '<div style="font-size:12px;color:var(--text3)">GoTapu üyesi</div>'+
+          '<div style="font-size:12px;color:var(--text2);font-weight:600">GoTapu üyesi</div>'+
           dogrulanmis+
         '</div>'+
       '</div>'+
