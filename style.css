@@ -257,6 +257,13 @@ body {
 
 @media (min-width: 900px) {
   .page { padding: 16px 40px; }
+  .arama-filtre-cubugu { padding: 0 0 12px 0; }
+  .section-head { padding: 0; }
+  .ilan-liste-wrap {
+    border-radius: var(--radius) !important;
+    border-left: 1px solid var(--border) !important;
+    border-right: 1px solid var(--border) !important;
+  }
 }
 /* SECTION */
 .section-head {
