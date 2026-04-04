@@ -1397,14 +1397,71 @@ function odaToggle(oda) {
   if(!ic) return; ic.classList.toggle('acik'); if(ok) ok.classList.toggle('acik');
 }
 function toplamFotoSayisi() { return Object.values(odaFotolar).reduce((t,a)=>t+a.length,0); }
+/* ── WATERMARK HELPER ── */
+function watermarkEkle(file) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width  = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        /* Yazı boyutu: görüntünün kısa kenarının %7'si, min 24 max 120px */
+        const kisa  = Math.min(img.width, img.height);
+        const boyut = Math.max(24, Math.min(120, Math.round(kisa * 0.07)));
+
+        ctx.save();
+        ctx.font        = `900 ${boyut}px Arial, sans-serif`;
+        ctx.textAlign   = 'center';
+        ctx.textBaseline= 'middle';
+        ctx.globalAlpha = 0.30;           /* %30 şeffaflık */
+
+        /* Hafif gölge — okunabilirliği artırır */
+        ctx.shadowColor  = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur   = boyut * 0.15;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+
+        /* Beyaz yazı — hem açık hem koyu fotoğraflarda görünür */
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText('gotapu.com', img.width / 2, img.height / 2);
+        ctx.restore();
+
+        canvas.toBlob(blob => {
+          /* Orijinal dosya adını ve tipini koru */
+          resolve(new File([blob], file.name, { type: file.type || 'image/jpeg' }));
+        }, file.type || 'image/jpeg', 0.92);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function odaFotoSecildi(input, oda) {
-  const mevcut=toplamFotoSayisi(); const yeni=Array.from(input.files);
-  const eklenebilecek=MAKS_FOTO-mevcut;
-  if(eklenebilecek<=0){document.getElementById('fotoUyari').style.display='block';input.value='';return;}
-  odaFotolar[oda]=[...(odaFotolar[oda]||[]),...yeni.slice(0,eklenebilecek)];
-  input.value='';
-  document.getElementById('fotoUyari').style.display=yeni.length>eklenebilecek?'block':'none';
-  odaGridGuncelle(oda); toplamSayacGuncelle();
+  const mevcut       = toplamFotoSayisi();
+  const yeni         = Array.from(input.files);
+  const eklenebilecek = MAKS_FOTO - mevcut;
+  if (eklenebilecek <= 0) {
+    document.getElementById('fotoUyari').style.display = 'block';
+    input.value = '';
+    return;
+  }
+  const secilen = yeni.slice(0, eklenebilecek);
+  document.getElementById('fotoUyari').style.display =
+    yeni.length > eklenebilecek ? 'block' : 'none';
+  input.value = '';
+
+  /* Her fotoğrafa watermark uygula, sonra listeye ekle */
+  Promise.all(secilen.map(f => watermarkEkle(f))).then(islenmisFotolar => {
+    odaFotolar[oda] = [...(odaFotolar[oda] || []), ...islenmisFotolar];
+    odaGridGuncelle(oda);
+    toplamSayacGuncelle();
+  });
 }
 function odaGridGuncelle(oda) {
   const grid=document.getElementById('grid-'+oda); const sayac=document.getElementById('sayi-'+oda);
