@@ -39,91 +39,106 @@
   .menu-text { flex: 1; font-size: 15px; font-weight: 700; }
   .menu-arrow { color: var(--text3); }
 
-  /* ── STAT ROW: şeffaf arka plan, liste görünümü ── */
+  /* ── STAT ROW ── */
   .stat-row-inline {
-    display: flex;
-    gap: 0;
-    margin-bottom: 20px;
-    background: transparent;
+    display: flex; gap: 0; margin-bottom: 20px; background: transparent;
   }
   .stat-inline-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 16px 6px 0;
+    display: flex; align-items: center; gap: 8px; padding: 6px 16px 6px 0;
   }
   .stat-inline-box + .stat-inline-box {
-    padding-left: 16px;
-    border-left: 1px solid var(--border);
+    padding-left: 16px; border-left: 1px solid var(--border);
   }
-  .stat-inline-num {
-    font-size: 18px;
-    font-weight: 900;
-    color: var(--gold);
-  }
-  .stat-inline-lbl {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text2);
-  }
+  .stat-inline-num { font-size: 18px; font-weight: 900; color: var(--gold); }
+  .stat-inline-lbl { font-size: 13px; font-weight: 700; color: var(--text2); }
 
-  /* ── İLAN KARTLARI ── */
+  /* ── İLAN LİSTE KARTI (sahibinden stili) ── */
   .ilanim-item {
-    display: flex; gap: 12px; align-items: flex-start;
-    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    cursor: default;
+    transition: background .15s;
   }
   .ilanim-item:last-child { border-bottom: none; }
-  .ilanim-thumb { width: 60px; height: 60px; border-radius: 10px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; overflow: hidden; }
+  .ilanim-item:active { background: var(--card2); }
+
+  .ilanim-thumb {
+    width: 110px;
+    min-height: 90px;
+    flex-shrink: 0;
+    background: var(--card2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    overflow: hidden;
+    border-radius: 0;
+  }
   .ilanim-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+  .ilanim-body {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 10px 10px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .ilanim-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
   .ilanim-price { font-size: 15px; font-weight: 900; color: var(--gold); }
-  .ilanim-title { font-size: 13px; font-weight: 700; }
-  .ilanim-loc { font-size: 12px; color: var(--text3); }
+  .ilanim-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; margin-top: 2px; }
+  .ilanim-loc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
   .onay-badge {
-    display: inline-block; padding: 2px 10px; border-radius: 50px;
-    font-size: 11px; font-weight: 800; margin-bottom: 4px;
+    display: inline-block; padding: 2px 8px; border-radius: 50px;
+    font-size: 10px; font-weight: 800; white-space: nowrap;
   }
   .onay-bekliyor { background: rgba(245,200,66,0.15); color: var(--gold); }
   .onay-onaylandi { background: rgba(46,204,113,0.15); color: var(--green); }
   .onay-reddedildi { background: rgba(232,96,58,0.15); color: var(--rust); }
 
-  /* ── İLAN SATIR AKSİYONLARI: thumb yanında sağ taraf ── */
-  .ilan-right {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 6px;
-    flex-shrink: 0;
-    align-items: flex-end;
-    min-width: 90px;
-  }
-  .ilan-actions-col {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 84px;
+  .ilanim-actions {
+    display: flex; gap: 6px; margin-top: 6px;
   }
   .btn-duzenle, .btn-sil {
-    display: block;
-    border-radius: 8px;
+    flex: 1;
+    border-radius: 6px;
     padding: 5px 0;
     font-size: 11px;
     font-weight: 800;
     text-align: center;
     cursor: pointer;
     font-family: Nunito, sans-serif;
-    width: 100%;
     border: none;
+    text-decoration: none;
+    display: block;
   }
   .btn-duzenle {
     background: var(--card2);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border) !important;
     color: var(--text);
-    text-decoration: none;
   }
   .btn-sil {
     background: rgba(232,96,58,0.1);
-    border: 1px solid rgba(232,96,58,0.3);
+    border: 1px solid rgba(232,96,58,0.3) !important;
     color: var(--rust);
+  }
+
+  /* Light modda ilan arka planı açık olsun */
+  body.light .ilanim-item { background: #ffffff; }
+  body.light .ilanim-item:active { background: #f5f5f5; }
+
+  .ekspertiz-link {
+    display: block; margin-top: 6px;
+    background: linear-gradient(135deg,rgba(245,200,66,0.15),rgba(245,200,66,0.05));
+    border: 1px solid rgba(245,200,66,0.3);
+    border-radius: 6px; padding: 5px 8px;
+    font-size: 10px; font-weight: 800; color: var(--gold);
+    text-align: center; text-decoration: none;
   }
 
   .alici-ilan-card {
@@ -133,32 +148,16 @@
 
   /* ── HİZMETLER AÇILIR/KAPANIR ── */
   .hizmetler-toggle-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    font-size: 15px;
-    font-weight: 800;
-    color: var(--text);
-    cursor: pointer;
-    font-family: Nunito, sans-serif;
-    transition: background .2s;
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    font-size: 15px; font-weight: 800; color: var(--text);
+    cursor: pointer; font-family: Nunito, sans-serif; transition: background .2s;
   }
   .hizmetler-toggle-btn:active { background: var(--card2); }
-  .hizmetler-toggle-arrow {
-    font-size: 18px;
-    color: var(--text3);
-    transition: transform .25s;
-  }
+  .hizmetler-toggle-arrow { font-size: 18px; color: var(--text3); transition: transform .25s; }
   .hizmetler-toggle-arrow.open { transform: rotate(180deg); }
-  .hizmetler-body {
-    display: none;
-    margin-top: 10px;
-  }
+  .hizmetler-body { display: none; margin-top: 10px; }
   .hizmetler-body.open { display: block; }
   .hizmet-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
   .hizmet-item {
@@ -170,7 +169,7 @@
   .hizmet-em { font-size: 26px; display: block; margin-bottom: 6px; }
   .hizmet-lbl { font-size: 11px; font-weight: 700; color: var(--text2); }
 
-  /* ── HİZMET VER BUTONU ── */
+  /* ── HİZMET VER ── */
   .hizmet-ver-btn {
     display: flex; align-items: center; gap: 14px;
     padding: 14px 16px; background: var(--card);
@@ -192,20 +191,15 @@
 <script>
 (function() {
   var kaydedilenTema = localStorage.getItem('gotapu_tema');
-  if (kaydedilenTema === 'light') {
-    document.body.classList.add('light');
-  }
-
+  if (kaydedilenTema === 'light') { document.body.classList.add('light'); }
   function temaButonuOlustur() {
     if (document.getElementById('themeToggleBtn')) return;
-
     var btn = document.createElement('button');
     btn.id = 'themeToggleBtn';
     btn.className = 'theme-toggle-btn nav-icon-btn';
     btn.style.cssText = 'flex-shrink:0;';
     btn.setAttribute('title', 'Temayı Değiştir');
     btn.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
-
     btn.addEventListener('click', function() {
       var acikMi = document.body.classList.toggle('light');
       localStorage.setItem('gotapu_tema', acikMi ? 'light' : 'dark');
@@ -213,13 +207,9 @@
       btn.style.transform = 'scale(0.8) rotate(20deg)';
       setTimeout(function() { btn.style.transform = ''; }, 200);
     });
-
     var navActions = document.querySelector('.nav-actions');
-    if (navActions) {
-      navActions.insertBefore(btn, navActions.firstChild);
-    }
+    if (navActions) { navActions.insertBefore(btn, navActions.firstChild); }
   }
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', temaButonuOlustur);
   } else {
@@ -227,6 +217,7 @@
   }
 })();
 </script>
+
 <nav class="top-nav">
   <a href="index.html" class="nav-logo"><div class="logo-icon">🏠</div>GoTapu</a>
   <div class="nav-actions"><a href="ilan-ver.html" class="nav-btn">+ İlan Ver</a></div>
@@ -252,7 +243,6 @@
     <div class="verified" id="verifiedBadge" style="display:none">✓ Doğrulanmış Üye</div>
   </div>
 
-  <!-- ── KÜÇÜK STAT SATIRI (şeffaf, liste görünümü) ── -->
   <div class="stat-row-inline" style="justify-content:center;margin-bottom:20px">
     <div class="stat-inline-box">
       <span class="stat-inline-num" id="ilanSayisi">0</span>
@@ -266,7 +256,7 @@
 
   <div class="menu-section">
     <div class="menu-label">Satıcı İlanlarım</div>
-    <div class="card" id="ilanlarimCard"><div class="spinner"></div></div>
+    <div class="card" style="padding:0;overflow:hidden" id="ilanlarimCard"><div class="spinner" style="padding:24px"></div></div>
   </div>
 
   <div class="menu-section">
@@ -274,7 +264,7 @@
     <div id="aliciIlanCard"><div class="spinner"></div></div>
   </div>
 
-  <!-- ── HİZMETLER AÇILIR/KAPANIR ── -->
+  <!-- HİZMETLER AÇILIR/KAPANIR -->
   <div class="menu-section">
     <button class="hizmetler-toggle-btn" id="hizmetlerToggleBtn" onclick="hizmetlerToggle()">
       <span>🏠 Ev Hizmetleri</span>
@@ -301,7 +291,6 @@
 
   <div class="menu-section">
     <div class="menu-label">Hesap</div>
-    <!-- ── HİZMET VER BUTONU (Favorilerin üstünde) ── -->
     <div class="hizmet-ver-btn" onclick="hizmetVerTikla()">
       <div class="menu-icon">🛠️</div>
       <div class="menu-text">Hizmet Ver</div>
@@ -342,7 +331,6 @@
     </div>
   </div>
 
-  <!-- Mesaj Gönder butonu -->
   <div style="margin-bottom:20px">
     <button id="mesajGonderBtn" onclick="mesajGonder()" style="width:100%;padding:16px;border-radius:50px;background:var(--gold);color:var(--bg);border:none;font-family:Nunito,sans-serif;font-size:15px;font-weight:900;cursor:pointer">
       💬 Mesaj Gönder
@@ -351,7 +339,7 @@
 
   <div class="menu-section">
     <div class="menu-label">İlanları</div>
-    <div class="card" id="baskaIlanlar"><div class="spinner"></div></div>
+    <div class="card" style="padding:0;overflow:hidden" id="baskaIlanlar"><div class="spinner" style="padding:24px"></div></div>
   </div>
 
 </div>
@@ -377,7 +365,6 @@ const hedefId = urlParams.get('id');
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) { window.location.href = 'index.html'; return; }
   currentUser = data.session.user;
-
   if (hedefId && hedefId !== currentUser.id) {
     document.getElementById('benimProfilSayfasi').style.display = 'none';
     document.getElementById('baskaProfil').style.display = 'block';
@@ -387,15 +374,11 @@ sb.auth.getSession().then(({ data }) => {
   }
 });
 
-// ── HİZMETLER AÇILIR/KAPANIR ──
 function hizmetlerToggle() {
-  const body = document.getElementById('hizmetlerBody');
-  const arrow = document.getElementById('hizmetlerArrow');
-  body.classList.toggle('open');
-  arrow.classList.toggle('open');
+  document.getElementById('hizmetlerBody').classList.toggle('open');
+  document.getElementById('hizmetlerArrow').classList.toggle('open');
 }
 
-// ── HİZMET VER ──
 function hizmetVerTikla() {
   const modal = document.createElement('div');
   modal.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end';
@@ -420,25 +403,56 @@ function hizmetVerTikla() {
   modal.onclick = e => { if(e.target===modal) modal.remove(); };
 }
 
-// ===================== BAŞKASININ PROFİLİ =====================
+// İlan kartı HTML üretici (hem kendi hem başkasının ilanları için)
+function ilanKartHTML(i, kendi = false) {
+  const onayClass = i.onay_durumu === 'onaylandi' ? 'onay-onaylandi' : i.onay_durumu === 'reddedildi' ? 'onay-reddedildi' : 'onay-bekliyor';
+  const onayText  = i.onay_durumu === 'onaylandi' ? '✅ Onaylandı' : i.onay_durumu === 'reddedildi' ? '❌ Reddedildi' : '⏳ Onay Bekleniyor';
+  const fiyat = Number(i.fiyat).toLocaleString('tr-TR') + ' ₺' + (i.tip === 'kiralik' ? '/ay' : '');
+  const resim = i.foto_url
+    ? `<img src="${i.foto_url}">`
+    : (i.tip === 'kiralik' ? '🏘️' : '🏙️');
 
+  const kendiAksiyonlar = kendi ? `
+    <div class="ilanim-actions">
+      <a href="ilan-duzenle.html?id=${i.id}" class="btn-duzenle">✏️ Düzenle</a>
+      <button onclick="ilanSil('${i.id}')" class="btn-sil">🗑️ Sil</button>
+    </div>
+    <a href="degerleme.html?ilan_id=${i.id}" class="ekspertiz-link">📊 Ekspertiz Raporu — 800 ₺</a>
+  ` : '';
+
+  const tikla = !kendi ? `onclick="location.href='ilan-detay.html?id=${i.id}'"` : '';
+
+  return `
+    <div class="ilanim-item" ${tikla}>
+      <div class="ilanim-thumb">${resim}</div>
+      <div class="ilanim-body">
+        <div>
+          <div class="ilanim-top">
+            <div class="ilanim-price">${fiyat}</div>
+            ${kendi ? `<span class="onay-badge ${onayClass}">${onayText}</span>` : ''}
+            ${i.one_cikan ? '<span style="font-size:10px;color:var(--gold)">⭐</span>' : ''}
+          </div>
+          <div class="ilanim-title">${i.baslik}</div>
+          <div class="ilanim-loc">📍 ${i.konum || ''}</div>
+        </div>
+        ${kendiAksiyonlar}
+      </div>
+    </div>`;
+}
+
+// ===================== BAŞKASININ PROFİLİ =====================
 let baskaKullaniciId = null;
 
 async function baskaProfilYukle(uid) {
   baskaKullaniciId = uid;
-
   const { data: profil } = await sb.from('profiles').select('*').eq('id', uid).single();
-  if (!profil) {
-    document.getElementById('bAvAd').textContent = 'Kullanıcı bulunamadı';
-    return;
-  }
+  if (!profil) { document.getElementById('bAvAd').textContent = 'Kullanıcı bulunamadı'; return; }
 
   document.getElementById('bAvAd').textContent = profil.full_name || 'İsimsiz';
   if (profil.sehir) document.getElementById('bAvSehir').textContent = '📍 ' + profil.sehir;
   if (profil.kullanici_tipi) document.getElementById('bAvTip').textContent = profil.kullanici_tipi.charAt(0).toUpperCase() + profil.kullanici_tipi.slice(1);
   if (profil.hakkimda) { const h = document.getElementById('bAvHakkimda'); h.textContent = profil.hakkimda; h.style.display = 'block'; }
   if (profil.verified) document.getElementById('bAvVerified').style.display = 'inline-flex';
-
   if (profil.avatar_url) {
     document.getElementById('bAvEmoji').style.display = 'none';
     const img = document.getElementById('bAvImg');
@@ -450,31 +464,19 @@ async function baskaProfilYukle(uid) {
     .order('created_at', { ascending: false });
 
   document.getElementById('bAvIlanSay').textContent = ilanlar?.length || 0;
-
   const kart = document.getElementById('baskaIlanlar');
   if (!ilanlar || ilanlar.length === 0) {
     kart.innerHTML = `<div class="empty" style="padding:24px"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div></div>`;
   } else {
-    kart.innerHTML = ilanlar.map(i => `
-      <div class="ilanim-item" onclick="location.href='ilan-detay.html?id=${i.id}'" style="cursor:pointer">
-        <div class="ilanim-thumb">${i.foto_url ? `<img src="${i.foto_url}">` : '🏠'}</div>
-        <div style="flex:1;min-width:0">
-          <div class="ilanim-price">${Number(i.fiyat).toLocaleString('tr-TR')} ₺${i.tip==='kiralik'?'/ay':''}</div>
-          <div class="ilanim-title">${i.baslik}</div>
-          <div class="ilanim-loc">📍 ${i.konum || ''}</div>
-        </div>
-      </div>`).join('');
+    kart.innerHTML = ilanlar.map(i => ilanKartHTML(i, false)).join('');
   }
 }
 
 function mesajGonder() {
-  if (baskaKullaniciId) {
-    window.location.href = `mesajlar.html?karsi_id=${baskaKullaniciId}`;
-  }
+  if (baskaKullaniciId) window.location.href = `mesajlar.html?karsi_id=${baskaKullaniciId}`;
 }
 
 // ===================== KENDİ PROFİLİM =====================
-
 async function profilYukle() {
   const { data: profil } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
   if (profil) {
@@ -505,31 +507,7 @@ async function profilYukle() {
       <a href="ilan-ver.html" class="btn btn-gold btn-md" style="margin-top:12px;max-width:200px">+ İlan Ver</a>
     </div>`;
   } else {
-    kart.innerHTML = ilanlar.map(i => {
-      const onayClass = i.onay_durumu === 'onaylandi' ? 'onay-onaylandi' : i.onay_durumu === 'reddedildi' ? 'onay-reddedildi' : 'onay-bekliyor';
-      const onayText = i.onay_durumu === 'onaylandi' ? '✅ Onaylandı' : i.onay_durumu === 'reddedildi' ? '❌ Reddedildi' : '⏳ Onay Bekleniyor';
-      return `
-        <div class="ilanim-item">
-          <div class="ilanim-thumb">${i.foto_url ? `<img src="${i.foto_url}">` : (i.tip === 'kiralik' ? '🏘️' : '🏙️')}</div>
-          <div style="flex:1;min-width:0">
-            <div class="onay-badge ${onayClass}">${onayText}</div>
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px">
-              <div class="ilanim-price">${Number(i.fiyat).toLocaleString('tr-TR')} ₺${i.tip==='kiralik'?'/ay':''}</div>
-              ${i.one_cikan ? '<span class="tag tag-gold" style="font-size:10px;padding:2px 8px">⭐ Öne Çıkan</span>' : ''}
-            </div>
-            <div class="ilanim-title">${i.baslik}</div>
-            <div class="ilanim-loc">📍 ${i.konum || ''}</div>
-            <a href="degerleme.html?ilan_id=${i.id}" style="display:block;margin-top:6px;background:linear-gradient(135deg,rgba(245,200,66,0.15),rgba(245,200,66,0.05));border:1px solid rgba(245,200,66,0.3);border-radius:8px;padding:6px;font-size:11px;font-weight:800;color:var(--gold);text-align:center;text-decoration:none">
-              📊 Ekspertiz Raporu — 800 ₺
-            </a>
-          </div>
-          <!-- Düzenle / Sil: sağ sütunda -->
-          <div class="ilan-actions-col">
-            <a href="ilan-duzenle.html?id=${i.id}" class="btn-duzenle">✏️ Düzenle</a>
-            <button onclick="ilanSil('${i.id}')" class="btn-sil">🗑️ Sil</button>
-          </div>
-        </div>`;
-    }).join('');
+    kart.innerHTML = ilanlar.map(i => ilanKartHTML(i, true)).join('');
   }
 
   const { data: aliciIlan } = await sb.from('arayan_ilanlar').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
