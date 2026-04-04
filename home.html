@@ -61,7 +61,7 @@
 
 <style>
 /* ═══════════════════════════════════════════════════════
-   ÜST ARAMA + FİLTRE ÇUBUĞU
+   ARAMA + FİLTRE ÇUBUĞU
 ═══════════════════════════════════════════════════════ */
 .arama-filtre-cubugu {
   display: flex;
@@ -137,7 +137,7 @@
 .filtre-sayac-badge.goster { display: inline-block; }
 
 /* ═══════════════════════════════════════════════════════
-   FİLTRE PANELİ
+   FİLTRE PANELİ — varsayılan KAPALI
 ═══════════════════════════════════════════════════════ */
 .filtre-panel {
   background: var(--card);
@@ -145,11 +145,10 @@
   border-radius: var(--radius);
   padding: 16px;
   margin-bottom: 12px;
-  display: none;
+  display: none; /* KAPALI BAŞLAR */
 }
 .filtre-panel.acik { display: block; }
 
-/* Satılık / Kiralık / Tümü toggle */
 .filtre-tip-row {
   display: flex;
   background: var(--bg);
@@ -173,7 +172,6 @@
 }
 .filtre-tip-row button.aktif { background: var(--gold); color: var(--bg); }
 
-/* Emlak tipi butonları */
 .filtre-bolum-baslik {
   font-size: 10px;
   font-weight: 900;
@@ -210,7 +208,6 @@
   color: var(--gold);
 }
 
-/* Grid */
 .filtre-satir {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -253,7 +250,6 @@
 .filtre-select:focus, .filtre-input:focus { border-color: var(--gold); }
 .filtre-input::placeholder { color: var(--text3); font-weight: 600; }
 
-/* Chip'ler */
 .filtre-chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
 .filtre-chip {
   padding: 6px 11px;
@@ -269,7 +265,6 @@
 }
 .filtre-chip.aktif { background: var(--gold); border-color: var(--gold); color: var(--bg); }
 
-/* Kriter seçim butonları (ilan-ver'deki sec-btn stili) */
 .filtre-sec-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
 .filtre-sec-btn {
   padding: 7px 12px;
@@ -289,7 +284,6 @@
   color: var(--gold);
 }
 
-/* Alt butonlar */
 .filtre-btn-row {
   display: flex;
   gap: 8px;
@@ -325,7 +319,6 @@
 }
 .filtre-temizle:hover { border-color: var(--text2); color: var(--text); }
 
-/* Aktif filtre özeti */
 .filtre-ozet {
   display: none;
   align-items: center;
@@ -348,42 +341,157 @@
 }
 
 /* ═══════════════════════════════════════════════════════
-   İLAN KARTI
+   İLAN KARTI — LİSTE GÖRÜNÜMÜ (Sahibinden stili)
 ═══════════════════════════════════════════════════════ */
+.ilan-liste-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
 .ilan-item {
   display: flex;
   gap: 12px;
   align-items: center;
   background: var(--card);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
   padding: 12px;
-  margin-bottom: 10px;
   cursor: pointer;
-  transition: border-color .2s;
+  transition: background .15s;
   text-decoration: none;
   color: var(--text);
+  border-bottom: 1px solid var(--border);
 }
-.ilan-item.one-cikan-ilan { border-color: rgba(245,200,66,0.4); background: rgba(245,200,66,0.04); }
-.ilan-item:hover { border-color: var(--gold); }
+.ilan-item:last-child { border-bottom: none; }
+.ilan-item.one-cikan-ilan { background: rgba(245,200,66,0.04); border-left: 3px solid var(--gold); }
+.ilan-item:hover { background: rgba(245,200,66,0.06); }
+
 .ilan-thumb {
-  width: 76px;
-  height: 76px;
-  border-radius: var(--radius-sm);
+  width: 88px;
+  height: 72px;
+  border-radius: 8px;
   background: var(--card2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 34px;
+  font-size: 30px;
   flex-shrink: 0;
   overflow: hidden;
 }
 .ilan-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
 .ilan-info { flex: 1; min-width: 0; }
-.ilan-price { font-size: 16px; font-weight: 900; color: var(--gold); }
-.ilan-title { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 2px 0; }
-.ilan-loc { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
-.ilan-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.ilan-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ilan-loc { font-size: 12px; color: var(--text3); margin-bottom: 5px; }
+.ilan-price { font-size: 15px; font-weight: 900; color: var(--gold); }
+.ilan-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+
+/* ═══════════════════════════════════════════════════════
+   EV HİZMETLERİ — ACCORDION
+═══════════════════════════════════════════════════════ */
+.hizmet-accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  user-select: none;
+}
+.hizmet-accordion-header:hover { border-color: var(--gold); }
+.hizmet-accordion-header.acik {
+  border-color: var(--gold);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background: rgba(245,200,66,0.05);
+}
+.hizmet-accordion-header .baslik-grup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+}
+.hizmet-accordion-ok {
+  font-size: 18px;
+  color: var(--text3);
+  transition: transform .25s;
+}
+.hizmet-accordion-header.acik .hizmet-accordion-ok {
+  transform: rotate(180deg);
+  color: var(--gold);
+}
+.hizmet-accordion-body {
+  display: none;
+  background: var(--card);
+  border: 1px solid var(--gold);
+  border-top: none;
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+  padding: 14px;
+}
+.hizmet-accordion-body.acik { display: block; }
+
+/* Sahibinden stili hizmet listesi */
+.hizmet-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.hizmet-liste-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 4px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .15s;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.hizmet-liste-item:last-child { border-bottom: none; }
+.hizmet-liste-item:hover { background: rgba(245,200,66,0.06); padding-left: 8px; }
+.hizmet-liste-ikon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(245,200,66,0.1);
+  border: 1px solid rgba(245,200,66,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.hizmet-liste-metin { flex: 1; }
+.hizmet-liste-ad {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.hizmet-liste-alt {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 1px;
+}
+.hizmet-liste-ok {
+  font-size: 16px;
+  color: var(--text3);
+}
 
 /* ═══════════════════════════════════════════════════════
    HİZMETLER & PROMO
@@ -441,17 +549,11 @@
   .desktop-sol .service-item { padding: 10px 4px; }
   .desktop-sol .service-em { font-size: 22px; }
   .desktop-sol .service-lbl { font-size: 10px; }
-  #ilanlarList { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-  .ilan-item { flex-direction: column !important; align-items: flex-start !important; margin-bottom: 0 !important; height: 100%; }
-  .ilan-thumb { width: 100% !important; height: 180px !important; border-radius: var(--radius) !important; }
   .mobile-only { display: none !important; }
   .desktop-sag .promo { margin-top: 0; }
   .sag-kart { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
   .sag-kart-baslik { font-size: 13px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
   .filtre-satir { grid-template-columns: 1fr 1fr 1fr; }
-}
-@media (min-width: 1200px) {
-  #ilanlarList { grid-template-columns: repeat(3, 1fr) !important; }
 }
 
 .site-footer {
@@ -467,47 +569,34 @@
 </head>
 <body style="visibility:hidden">
 
-<!-- ═══════════════════════════════════════
-     TEMA GEÇİŞ BUTONU — Her sayfaya ekle
-     </body> etiketinden hemen önce yapıştır
-═══════════════════════════════════════ -->
 <script>
 (function() {
-  // Sayfa açılınca kayıtlı temayı uygula — flash önlemek için hemen çalışır
   var kaydedilenTema = localStorage.getItem('gotapu_tema');
   if (kaydedilenTema === 'light') {
     document.body.classList.add('light');
   }
 
   function temaButonuOlustur() {
-    // Zaten varsa oluşturma
     if (document.getElementById('themeToggleBtn')) return;
-
     var btn = document.createElement('button');
     btn.id = 'themeToggleBtn';
     btn.className = 'theme-toggle-btn nav-icon-btn';
     btn.style.cssText = 'flex-shrink:0;';
     btn.setAttribute('title', 'Temayı Değiştir');
     btn.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
-
     btn.addEventListener('click', function() {
       var acikMi = document.body.classList.toggle('light');
       localStorage.setItem('gotapu_tema', acikMi ? 'light' : 'dark');
       btn.textContent = acikMi ? '🌙' : '☀️';
-
-      // Kısa animasyon geri bildirimi
       btn.style.transform = 'scale(0.8) rotate(20deg)';
       setTimeout(function() { btn.style.transform = ''; }, 200);
     });
-
-    // Nav actions'ın ilk çocuğu olarak ekle
     var navActions = document.querySelector('.nav-actions');
     if (navActions) {
       navActions.insertBefore(btn, navActions.firstChild);
     }
   }
 
-  // DOM hazır olduğunda butonu ekle
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', temaButonuOlustur);
   } else {
@@ -532,9 +621,7 @@
 
 <div class="page fade-up">
 
-  <!-- ════════════════════════════════════════════════════
-       ARAMA ÇUBUĞU + FİLTRE BUTONU
-  ════════════════════════════════════════════════════ -->
+  <!-- ARAMA + FİLTRE BUTONU -->
   <div class="arama-filtre-cubugu">
     <div class="arama-input-wrap">
       <span class="arama-ikon">🔍</span>
@@ -542,26 +629,22 @@
         placeholder="Başlık, konum, özellik ara..."
         oninput="aramaGecikme()">
     </div>
-    <button class="filtre-ac-btn aktif" id="filtreAcBtn" onclick="filtreToggle()">
+    <button class="filtre-ac-btn" id="filtreAcBtn" onclick="filtreToggle()">
       <span>⚙️ Filtrele</span>
       <span class="filtre-sayac-badge" id="filtreSayacBadge">0</span>
       <span class="filtre-ok">›</span>
     </button>
   </div>
 
-  <!-- ════════════════════════════════════════════════════
-       FİLTRE PANELİ — başlangıçta açık
-  ════════════════════════════════════════════════════ -->
-  <div class="filtre-panel acik" id="filtrePanel">
+  <!-- FİLTRE PANELİ — KAPALI BAŞLAR (acik class yok) -->
+  <div class="filtre-panel" id="filtrePanel">
 
-    <!-- Satılık / Kiralık / Tümü -->
     <div class="filtre-tip-row">
       <button id="ftTumu"    class="aktif" onclick="toggleTip('tumu')">🏠 Tümü</button>
       <button id="ftSatilik"             onclick="toggleTip('satilik')">💰 Satılık</button>
       <button id="ftKiralik"             onclick="toggleTip('kiralik')">🔑 Kiralık</button>
     </div>
 
-    <!-- Emlak Tipi -->
     <div class="filtre-bolum-baslik">🏢 Emlak Tipi</div>
     <div class="filtre-emlak-row">
       <button class="filtre-emlak-btn" data-grup="konut"  onclick="filtrEmlakTipSec(this)">🏢 Daire</button>
@@ -574,7 +657,6 @@
       <button class="filtre-emlak-btn" data-grup="isyeri" onclick="filtrEmlakTipSec(this)">🏭 Depo/Fabrika</button>
     </div>
 
-    <!-- Konum -->
     <div class="filtre-bolum-baslik">📍 Konum</div>
     <div class="filtre-satir">
       <div class="filtre-grup">
@@ -597,7 +679,6 @@
       </div>
     </div>
 
-    <!-- Fiyat -->
     <div class="filtre-bolum-baslik">💸 Fiyat (₺)</div>
     <div class="filtre-satir">
       <div class="filtre-grup">
@@ -610,9 +691,8 @@
       </div>
     </div>
 
-    <!-- ── KONUT KRİTERLERİ ── -->
+    <!-- KONUT KRİTERLERİ -->
     <div id="fKonut" style="display:none">
-
       <div class="filtre-bolum-baslik">🛏️ Oda Sayısı</div>
       <div class="filtre-sec-row" id="fOdaRow">
         <button class="filtre-sec-btn" onclick="chipTekSec(this,'fOdaRow')">Stüdyo</button>
@@ -734,11 +814,9 @@
         <button class="filtre-sec-btn" onclick="chipCokluSec(this)">♿ Engelli Erişimi</button>
       </div>
     </div>
-    <!-- /fKonut -->
 
-    <!-- ── ARSA KRİTERLERİ ── -->
+    <!-- ARSA KRİTERLERİ -->
     <div id="fArsa" style="display:none">
-
       <div class="filtre-bolum-baslik">📐 Alan (m²)</div>
       <div class="filtre-satir">
         <div class="filtre-grup">
@@ -799,11 +877,9 @@
         <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🌾 Tarıma Elverişli</button>
       </div>
     </div>
-    <!-- /fArsa -->
 
-    <!-- ── İŞYERİ KRİTERLERİ ── -->
+    <!-- İŞYERİ KRİTERLERİ -->
     <div id="fIsyeri" style="display:none">
-
       <div class="filtre-bolum-baslik">🏪 İşyeri Bilgileri</div>
       <div class="filtre-satir">
         <div class="filtre-grup">
@@ -888,9 +964,7 @@
         <button class="filtre-sec-btn" onclick="chipCokluSec(this)">🌐 Fiber İnternet</button>
       </div>
     </div>
-    <!-- /fIsyeri -->
 
-    <!-- Alt butonlar -->
     <div class="filtre-btn-row">
       <button class="filtre-uygula" onclick="filtreUygula()">🔍 İlanları Listele</button>
       <button class="filtre-temizle" onclick="filtreSifirla()">✕ Temizle</button>
@@ -903,7 +977,7 @@
 
   <div class="desktop-layout">
 
-    <!-- SOL - Hizmetler (masaüstü) -->
+    <!-- SOL — Hizmetler (masaüstü) -->
     <div class="desktop-sol">
       <div class="sag-kart">
         <div class="sag-kart-baslik">🏠 Ev Hizmetleri</div>
@@ -925,7 +999,7 @@
       </div>
     </div>
 
-    <!-- ORTA - İlanlar -->
+    <!-- ORTA — İlanlar -->
     <div class="desktop-orta">
       <div class="section-head">
         <div class="section-title" id="bolumBaslik">Öne Çıkan İlanlar</div>
@@ -935,7 +1009,7 @@
       <div id="pagination" style="display:flex;gap:8px;justify-content:center;margin:16px 0;flex-wrap:wrap"></div>
     </div>
 
-    <!-- SAĞ - Masaüstü -->
+    <!-- SAĞ — Masaüstü -->
     <div class="desktop-sag">
       <div class="sag-kart">
         <div class="sag-kart-baslik">🏢 Site Yönetimi</div>
@@ -956,26 +1030,128 @@
 
   </div>
 
-  <!-- MOBİL - Hizmetler -->
-  <div class="mobile-only">
-    <div class="section-head" style="margin-top:8px">
-      <div class="section-title">Ev Hizmetleri</div>
+  <!-- MOBİL — Ev Hizmetleri ACCORDION -->
+  <div class="mobile-only" style="margin-top: 16px;">
+
+    <!-- Accordion başlık -->
+    <div class="hizmet-accordion-header" id="hizmetAccordionHeader" onclick="hizmetToggle()">
+      <div class="baslik-grup">
+        <span>🏠</span>
+        <span>Ev Hizmetleri</span>
+      </div>
+      <span class="hizmet-accordion-ok" id="hizmetAccordionOk">▼</span>
     </div>
-    <div class="services-grid">
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=temizlik'"><span class="service-em">🧹</span><div class="service-lbl">Temizlik</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=boya'"><span class="service-em">🪣</span><div class="service-lbl">Boya</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=nakliye'"><span class="service-em">🚚</span><div class="service-lbl">Nakliye</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=cilingir'"><span class="service-em">🔑</span><div class="service-lbl">Çilingir</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=tadilat'"><span class="service-em">🔧</span><div class="service-lbl">Tadilat</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=sigorta'"><span class="service-em">🛡️</span><div class="service-lbl">Sigorta</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=teknik'"><span class="service-em">🖥️</span><div class="service-lbl">Teknik Servis</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><span class="service-em">🪴</span><div class="service-lbl">Dekorasyon</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=aracyikama'"><span class="service-em">🚗</span><div class="service-lbl">Araç Yıkama</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=koltukyikama'"><span class="service-em">🛋️</span><div class="service-lbl">Koltuk Yıkama</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=haliyikama'"><span class="service-em">🧼</span><div class="service-lbl">Halı Yıkama</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=ilacalama'"><span class="service-em">🦟</span><div class="service-lbl">İlaçlama</div></div>
-      <div class="service-item" onclick="location.href='hizmetler.html?kategori=petek'"><span class="service-em">🔥</span><div class="service-lbl">Petek & Kombi</div></div>
+
+    <!-- Accordion body — Sahibinden stili liste -->
+    <div class="hizmet-accordion-body" id="hizmetAccordionBody">
+      <div class="hizmet-liste">
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=temizlik">
+          <div class="hizmet-liste-ikon">🧹</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">Temizlik</div>
+            <div class="hizmet-liste-alt">Ev, ofis, derin temizlik</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=boya">
+          <div class="hizmet-liste-ikon">🪣</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">Boya & Badana</div>
+            <div class="hizmet-liste-alt">İç ve dış cephe boyama</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=nakliye">
+          <div class="hizmet-liste-ikon">🚚</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">Nakliye & Taşımacılık</div>
+            <div class="hizmet-liste-alt">Ev, ofis, şehiriçi & şehirlerarası</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=cilingir">
+          <div class="hizmet-liste-ikon">🔑</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">Çilingir</div>
+            <div class="hizmet-liste-alt">Kilit açma, değiştirme, montaj</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=tadilat">
+          <div class="hizmet-liste-ikon">🔧</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">Tadilat & Onarım</div>
+            <div class="hizmet-liste-alt">Elektrik, su tesisatı, genel tadilat</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=sigorta">
+          <div class="hizmet-liste-ikon">🛡️</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">Sigorta</div>
+            <div class="hizmet-liste-alt">Konut, dask, içerik sigortası</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=teknik">
+          <div class="hizmet-liste-ikon">🖥️</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">Teknik Servis</div>
+            <div class="hizmet-liste-alt">Beyaz eşya, klima, elektronik</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=dekorasyon">
+          <div class="hizmet-liste-ikon">🪴</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">Dekorasyon & Tasarım</div>
+            <div class="hizmet-liste-alt">İç mimarlık, dizayn danışmanlığı</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=aracyikama">
+          <div class="hizmet-liste-ikon">🚗</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">Araç Yıkama</div>
+            <div class="hizmet-liste-alt">İç dış yıkama, detaylı temizlik</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=koltukyikama">
+          <div class="hizmet-liste-ikon">🛋️</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">Koltuk Yıkama</div>
+            <div class="hizmet-liste-alt">Buharlı koltuk & kanepe temizliği</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=haliyikama">
+          <div class="hizmet-liste-ikon">🧼</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">Halı Yıkama</div>
+            <div class="hizmet-liste-alt">Evden alıp teslim, yıkama</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=ilacalama">
+          <div class="hizmet-liste-ikon">🦟</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">İlaçlama & Haşere</div>
+            <div class="hizmet-liste-alt">Böcek, fare, güve ilaçlama</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+        <a class="hizmet-liste-item" href="hizmetler.html?kategori=petek" style="border-bottom:none">
+          <div class="hizmet-liste-ikon">🔥</div>
+          <div class="hizmet-liste-metin">
+            <div class="hizmet-liste-ad">Petek & Kombi</div>
+            <div class="hizmet-liste-alt">Temizleme, bakım, onarım</div>
+          </div>
+          <span class="hizmet-liste-ok">›</span>
+        </a>
+      </div>
     </div>
+
     <div class="promo">
       <div>
         <h3>🏢 Site Yönetimi</h3>
@@ -1018,7 +1194,6 @@ let toplamSayfa = 1;
 let aramaTimer = null;
 const emojiler = { satilik: '🏙️', kiralik: '🏘️' };
 
-// Filtre state
 let filtreler = {
   tip: 'tumu',
   aramaMetni: '',
@@ -1026,7 +1201,6 @@ let filtreler = {
   emlakTipi: '',
   emlakGrup: '',
   minFiyat: '', maxFiyat: '',
-  // konut
   minM2: '', maxM2: '',
   oda: '',
   binaYasi: '',
@@ -1037,12 +1211,10 @@ let filtreler = {
   site: '',
   icOzellikler: [],
   disOzellikler: [],
-  // arsa
   minM2Arsa: '', maxM2Arsa: '',
   arsaTapu: '',
   imarDurumu: '',
   arsaOzellikler: [],
-  // isyeri
   isyeriTuru: '',
   isyeriKullanim: '',
   minM2Isyeri: '', maxM2Isyeri: '',
@@ -1051,9 +1223,6 @@ let filtreler = {
   isyeriOzellikler: []
 };
 
-/* ═══════════════════════════════════════════════════
-   81 İL + TÜM İLÇELER (ilan-ver ile aynı)
-═══════════════════════════════════════════════════ */
 const ILLER = [
   "Adana","Adıyaman","Afyonkarahisar","Ağrı","Aksaray","Amasya","Ankara","Antalya",
   "Ardahan","Artvin","Aydın","Balıkesir","Bartın","Batman","Bayburt","Bilecik",
@@ -1153,7 +1322,17 @@ const ILCELER = {
 };
 
 /* ═══════════════════════════════════════════════════
-   AUTH HANDLER (Google OAuth hash)
+   EV HİZMETLERİ ACCORDION
+═══════════════════════════════════════════════════ */
+function hizmetToggle() {
+  const header = document.getElementById('hizmetAccordionHeader');
+  const body   = document.getElementById('hizmetAccordionBody');
+  const acik   = body.classList.toggle('acik');
+  header.classList.toggle('acik', acik);
+}
+
+/* ═══════════════════════════════════════════════════
+   AUTH HANDLER
 ═══════════════════════════════════════════════════ */
 if (window.location.hash && window.location.hash.includes('access_token')) {
   const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -1195,9 +1374,8 @@ async function tercihKontrol(userId) {
 }
 
 /* ═══════════════════════════════════════════════════
-   FİLTRE UI FONKSİYONLARI
+   FİLTRE FONKSİYONLARI
 ═══════════════════════════════════════════════════ */
-
 function filtreToggle() {
   const panel = document.getElementById('filtrePanel');
   const btn   = document.getElementById('filtreAcBtn');
@@ -1222,26 +1400,17 @@ function filtrEmlakTipSec(el) {
     filtreler.emlakTipi = '';
     filtreler.emlakGrup = '';
   }
-  // Dinamik kriterler göster/gizle
   document.getElementById('fKonut').style.display  = filtreler.emlakGrup === 'konut'  ? 'block' : 'none';
   document.getElementById('fArsa').style.display   = filtreler.emlakGrup === 'arsa'   ? 'block' : 'none';
   document.getElementById('fIsyeri').style.display = filtreler.emlakGrup === 'isyeri' ? 'block' : 'none';
-  // Filtre paneli her zaman açık kalsın
-  const panel = document.getElementById('filtrePanel');
-  if (!panel.classList.contains('acik')) {
-    panel.classList.add('acik');
-    document.getElementById('filtreAcBtn').classList.add('aktif');
-  }
 }
 
-// Tek seçim chip
 function chipTekSec(el, rowId) {
   const aktifti = el.classList.contains('aktif');
   document.querySelectorAll('#' + rowId + ' .filtre-sec-btn, #' + rowId + ' .filtre-chip').forEach(c => c.classList.remove('aktif'));
   if (!aktifti) el.classList.add('aktif');
 }
 
-// Çoklu seçim chip
 function chipCokluSec(el) { el.classList.toggle('aktif'); }
 
 function filtreIlceDoldur() {
@@ -1315,6 +1484,10 @@ function filtreUygula() {
     filtreler.isyeriOzellikler = getAktifCoklu('fIsyeriOzRow');
   }
 
+  // Filtre panelini kapat
+  document.getElementById('filtrePanel').classList.remove('acik');
+  document.getElementById('filtreAcBtn').classList.remove('aktif');
+
   ilanlarYukle(1);
 }
 
@@ -1346,14 +1519,16 @@ function filtreSifirla() {
   document.getElementById('fArsa').style.display   = 'none';
   document.getElementById('fIsyeri').style.display = 'none';
 
-  const selIds = ['filtreKullanim','filtreTapu','filtreEsya','filtreSite',
-    'filtreArsaTapu','filtreImar','filtreIsyeriTuru','filtreIsyeriKullanim',
-    'filtreIsyeriKat','filtreIsyeriCephe'];
-  selIds.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['filtreKullanim','filtreTapu','filtreEsya','filtreSite',
+   'filtreArsaTapu','filtreImar','filtreIsyeriTuru','filtreIsyeriKullanim',
+   'filtreIsyeriKat','filtreIsyeriCephe'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
 
-  const inputIds = ['filtreMinM2','filtreMaxM2','filtreMinM2Arsa','filtreMaxM2Arsa',
-    'filtreMinM2Isyeri','filtreMaxM2Isyeri'];
-  inputIds.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['filtreMinM2','filtreMaxM2','filtreMinM2Arsa','filtreMaxM2Arsa',
+   'filtreMinM2Isyeri','filtreMaxM2Isyeri'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
 
   const ozet = document.getElementById('filtreOzet');
   ozet.classList.remove('goster'); ozet.innerHTML = '';
@@ -1382,7 +1557,6 @@ function filtreSayacGuncelle() {
   say += (filtreler.disOzellikler||[]).length;
   say += (filtreler.arsaOzellikler||[]).length;
   say += (filtreler.isyeriOzellikler||[]).length;
-
   const el = document.getElementById('filtreSayacBadge');
   el.textContent = say;
   el.classList.toggle('goster', say > 0);
@@ -1440,7 +1614,7 @@ function aramaGecikme() {
 }
 
 /* ═══════════════════════════════════════════════════
-   İLANLAR YÜKLE
+   İLANLAR YÜKLE — LİSTE GÖRÜNÜMÜ
 ═══════════════════════════════════════════════════ */
 async function ilanlarYukle(sayfa = 1) {
   aktifSayfa = sayfa;
@@ -1452,16 +1626,11 @@ async function ilanlarYukle(sayfa = 1) {
 
   function sorguOlustur(query) {
     query = query.eq('onay_durumu', 'onaylandi').neq('tip', 'devren');
-
     if (filtreler.tip === 'satilik') query = query.eq('tip', 'satilik');
     if (filtreler.tip === 'kiralik') query = query.eq('tip', 'kiralik');
-
-    // Metin araması (başlık veya konum)
     if (filtreler.aramaMetni) {
       query = query.or(`baslik.ilike.%${filtreler.aramaMetni}%,konum.ilike.%${filtreler.aramaMetni}%`);
     }
-
-    // Konum: mahalle varsa onu, ilçe varsa onu, il varsa onu kullan
     if (filtreler.mahalle) {
       query = query.ilike('konum', `%${filtreler.mahalle}%`);
     } else if (filtreler.ilce) {
@@ -1469,17 +1638,11 @@ async function ilanlarYukle(sayfa = 1) {
     } else if (filtreler.sehir) {
       query = query.ilike('konum', `%${filtreler.sehir}%`);
     }
-
-    // Emlak tipi (kriterler jsonb alanında)
     if (filtreler.emlakTipi) {
       query = query.contains('kriterler', { emlak_tipi: filtreler.emlakTipi });
     }
-
-    // Fiyat
     if (filtreler.minFiyat) query = query.gte('fiyat', Number(filtreler.minFiyat));
     if (filtreler.maxFiyat) query = query.lte('fiyat', Number(filtreler.maxFiyat));
-
-    // Konut kriterleri
     if (filtreler.emlakGrup === 'konut') {
       if (filtreler.oda) query = query.eq('oda_sayisi', filtreler.oda);
       if (filtreler.minM2) query = query.gte('metrekare', Number(filtreler.minM2));
@@ -1490,23 +1653,18 @@ async function ilanlarYukle(sayfa = 1) {
       if (filtreler.tapu) query = query.contains('kriterler', { tapu_durumu: filtreler.tapu });
       if (filtreler.esya) query = query.contains('kriterler', { esya_durumu: filtreler.esya });
     }
-
-    // Arsa kriterleri
     if (filtreler.emlakGrup === 'arsa') {
       if (filtreler.minM2Arsa) query = query.gte('metrekare', Number(filtreler.minM2Arsa));
       if (filtreler.maxM2Arsa) query = query.lte('metrekare', Number(filtreler.maxM2Arsa));
       if (filtreler.imarDurumu) query = query.contains('kriterler', { imar_durumu: filtreler.imarDurumu });
       if (filtreler.arsaTapu) query = query.contains('kriterler', { tapu_turu: filtreler.arsaTapu });
     }
-
-    // İşyeri kriterleri
     if (filtreler.emlakGrup === 'isyeri') {
       if (filtreler.minM2Isyeri) query = query.gte('metrekare', Number(filtreler.minM2Isyeri));
       if (filtreler.maxM2Isyeri) query = query.lte('metrekare', Number(filtreler.maxM2Isyeri));
       if (filtreler.isyeriTuru) query = query.contains('kriterler', { isyeri_turu: filtreler.isyeriTuru });
       if (filtreler.isyeriKullanim) query = query.contains('kriterler', { kullanim_durumu: filtreler.isyeriKullanim });
     }
-
     return query;
   }
 
@@ -1528,8 +1686,12 @@ async function ilanlarYukle(sayfa = 1) {
 
   const bolumBaslik = document.getElementById('bolumBaslik');
   if (bolumBaslik) {
-    const oneCikanVar = data && data.some(i => i.one_cikan);
-    bolumBaslik.textContent = oneCikanVar ? 'Öne Çıkan İlanlar & Tüm İlanlar' : 'Tüm İlanlar';
+    bolumBaslik.textContent = (count || 0) > 0
+      ? `Tüm İlanlar`
+      : 'İlanlar';
+    if (count) {
+      document.getElementById('sayfaBilgi').textContent = `${count.toLocaleString('tr-TR')} ilan · Sayfa ${sayfa}/${toplamSayfa}`;
+    }
   }
 
   if (error || !data || data.length === 0) {
@@ -1543,27 +1705,30 @@ async function ilanlarYukle(sayfa = 1) {
     return;
   }
 
-  listEl.innerHTML = data.map(ilan => `
+  // Liste görünümü — Sahibinden stili
+  listEl.innerHTML = `<div class="ilan-liste-wrap">` +
+    data.map(ilan => `
     <a class="ilan-item ${ilan.one_cikan ? 'one-cikan-ilan' : ''}" href="ilan-detay.html?id=${ilan.id}">
       <div class="ilan-thumb">
         ${(ilan.foto_url || (ilan.foto_urls && ilan.foto_urls[0]))
-          ? `<img src="${ilan.foto_url || ilan.foto_urls[0]}">`
+          ? `<img src="${ilan.foto_url || ilan.foto_urls[0]}" loading="lazy">`
           : (emojiler[ilan.tip] || '🏠')}
       </div>
       <div class="ilan-info">
-        <div class="ilan-price">
-          ${formatFiyat(ilan.fiyat, ilan.tip)}
-          ${ilan.one_cikan ? '<span style="font-size:11px;color:var(--gold)">⭐ Öne Çıkan</span>' : ''}
-        </div>
         <div class="ilan-title">${ilan.baslik}</div>
         <div class="ilan-loc">📍 ${ilan.konum || ''}</div>
+        <div class="ilan-price">
+          ${formatFiyat(ilan.fiyat, ilan.tip)}
+          ${ilan.one_cikan ? ' <span style="font-size:10px;color:var(--gold)">⭐</span>' : ''}
+        </div>
         <div class="ilan-tags">
           <span class="tag ${ilan.tip === 'kiralik' ? 'tag-green' : 'tag-rust'}">${ilan.tip === 'kiralik' ? 'KİRALIK' : 'SATILIK'}</span>
           ${ilan.oda_sayisi ? `<span class="tag tag-gold">🛏 ${ilan.oda_sayisi}</span>` : ''}
           ${ilan.metrekare  ? `<span class="tag tag-gold">📐 ${ilan.metrekare}m²</span>` : ''}
         </div>
       </div>
-    </a>`).join('');
+    </a>`).join('') +
+  `</div>`;
 
   if (toplamSayfa > 1) {
     const pag = document.getElementById('pagination');
