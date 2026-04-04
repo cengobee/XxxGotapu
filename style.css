@@ -253,12 +253,11 @@ body {
 }
 
 /* PAGE */
-.page { padding: 16px; max-width: 600px; margin: 0 auto; }
+.page { padding: 16px; width: 100%; box-sizing: border-box; }
 
 @media (min-width: 900px) {
-  .page { max-width: 1400px; padding: 16px 40px; }
+  .page { padding: 16px 40px; }
 }
-
 /* SECTION */
 .section-head {
   display: flex; align-items: center; justify-content: space-between;
