@@ -253,12 +253,7 @@ body {
 }
 
 /* PAGE */
-.page { 
-  padding: 12px; 
-  width: 100%; 
-  max-width: 100%;
-  box-sizing: border-box; 
-}
+.page { padding: 0; width: 100%; max-width: 100%; box-sizing: border-box; }
 
 @media (min-width: 900px) {
   .page { padding: 16px 40px; }
