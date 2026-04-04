@@ -7,221 +7,266 @@
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  .detay-img {
-    width: 100%; height: 260px;
-    background: linear-gradient(135deg, #1a2340, #2a3560);
+  /* ── GENEL SAYFA ── */
+  .page { padding-bottom: 90px !important; }
+
+  /* ── GALERİ ── */
+  .detay-galeri {
+    margin: -16px -16px 0;
+    width: calc(100% + 32px);
+    position: relative;
+  }
+  .galeri-scroll {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .galeri-scroll::-webkit-scrollbar { display: none; }
+  .galeri-kare {
+    flex-shrink: 0;
+    width: 100%;
+    height: 260px;
+    scroll-snap-align: start;
+    background: #1a2340;
+    cursor: pointer;
+    position: relative;
+  }
+  .galeri-kare img { width: 100%; height: 100%; object-fit: cover; }
+  .galeri-oda-etiket {
+    position: absolute; bottom: 10px; left: 10px;
+    background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+    border-radius: 50px; padding: 4px 12px;
+    font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.9);
+  }
+  .galeri-foto-sayac {
+    position: absolute; bottom: 10px; right: 10px;
+    background: rgba(0,0,0,0.6); border-radius: 50px;
+    padding: 4px 10px; font-size: 12px; font-weight: 800; color: white;
+  }
+  .galeri-tip-badge {
+    position: absolute; top: 12px; left: 12px;
+    padding: 5px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;
+  }
+  .galeri-fav-btn {
+    position: absolute; top: 10px; right: 10px;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+    border: none; font-size: 20px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    font-size: 100px; position: relative; overflow: hidden;
-    margin: -16px -16px 20px; width: calc(100% + 32px);
   }
-  .detay-img img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-  .detay-tip-badge { position: absolute; top: 16px; left: 16px; padding: 6px 14px; border-radius: 50px; font-size: 12px; font-weight: 800; }
-  .detay-fav-btn { position: absolute; top: 16px; right: 16px; width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; border: none; transition: transform .2s; }
-  .detay-fav-btn:active { transform: scale(1.2); }
-  .detay-fiyat { font-size: 28px; font-weight: 900; color: var(--gold); }
-  .detay-baslik { font-size: 18px; font-weight: 800; margin: 6px 0; }
-  .detay-konum { font-size: 14px; color: var(--text3); margin-bottom: 16px; }
-  .specs-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-  .spec-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; text-align: center; flex: 1; min-width: 70px; }
-  .spec-icon { font-size: 22px; display: block; margin-bottom: 4px; }
-  .spec-val { font-size: 14px; font-weight: 800; }
-  .spec-lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
-  .detay-section { margin-bottom: 20px; }
-  .detay-section-title { font-size: 16px; font-weight: 900; margin-bottom: 10px; }
-  .detay-aciklama { font-size: 14px; color: var(--text2); line-height: 1.8; }
-  .sahip-card { display: flex; gap: 14px; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
-  .sahip-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; overflow: hidden; }
-  .sahip-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .sahip-name { font-size: 15px; font-weight: 800; }
-  .sahip-since { font-size: 12px; color: var(--text3); margin-top: 2px; }
-  .sahip-verified { font-size: 12px; color: var(--green); font-weight: 700; margin-top: 3px; }
-  .action-bottom { position: fixed; bottom: var(--bot-h); left: 0; right: 0; background: var(--bg2); border-top: 1px solid var(--border); padding: 12px 16px; display: flex; gap: 10px; z-index: 150; }
-  .btn-ara { background: var(--card2); color: var(--text); border: 1.5px solid var(--border); border-radius: 50px; padding: 14px 20px; font-size: 15px; font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif; display: flex; align-items: center; gap: 8px; }
-  .harita-placeholder { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); height: 110px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px; color: var(--text3); font-size: 13px; font-weight: 700; cursor: pointer; flex: 1; text-align: center; padding: 8px; }
-  .page { padding-bottom: 100px !important; }
 
-  /* ── LİGHTBOX ── */
-  .lightbox { position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.97); display: none; flex-direction: column; align-items: center; justify-content: center; }
-  .lightbox.open { display: flex; }
-  .lightbox-close { position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
-  .lightbox-galeri { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; width: 100%; flex: 1; }
-  .lightbox-galeri::-webkit-scrollbar { display: none; }
-  .lightbox-item { flex-shrink: 0; width: 100vw; height: 80vh; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; position: relative; }
-  .lightbox-item img { max-width: 100%; max-height: 100%; object-fit: contain; }
-  .lightbox-oda-etiket {
-    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
-    background: rgba(0,0,0,0.72); backdrop-filter: blur(10px);
-    border: 1px solid rgba(245,200,66,0.35);
-    border-radius: 50px; padding: 6px 18px;
-    font-size: 13px; font-weight: 800; color: var(--gold);
-    white-space: nowrap; pointer-events: none;
+  /* ── BAŞLIK BLOKU ── */
+  .detay-baslik-blok {
+    padding: 14px 0 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
   }
-  .lightbox-sayac {
-    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
-    font-size: 13px; font-weight: 800; color: white;
-    background: rgba(255,255,255,0.15); border-radius: 50px; padding: 6px 16px;
-    white-space: nowrap;
+  .detay-fiyat { font-size: 26px; font-weight: 900; color: var(--gold); line-height: 1.1; }
+  .detay-baslik { font-size: 16px; font-weight: 800; margin: 6px 0 4px; }
+  .detay-konum { font-size: 13px; color: var(--text3); padding-bottom: 14px; }
+
+  /* ── LİSTE BÖLÜMÜ ── */
+  .liste-bolum {
+    border-bottom: 1px solid var(--border);
   }
-  .lightbox-footer { display: flex; align-items: center; justify-content: center; padding: 10px 16px 16px; gap: 12px; }
-  .lightbox-sayac-bar { font-size: 13px; font-weight: 800; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.1); border-radius: 50px; padding: 6px 16px; }
-
-  .galeri-oda-ozet { position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); border-radius: 50px; padding: 4px 12px; font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.85); max-width: calc(100% - 80px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-  .sikayet-sebep-btn { width: 100%; padding: 14px 16px; border-radius: var(--radius-sm); background: var(--card); border: 1.5px solid var(--border); color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; text-align: left; transition: all .2s; }
-  .sikayet-sebep-btn.selected { border-color: var(--rust); background: rgba(232,96,58,0.08); color: var(--rust); }
-  .btn-rust { background: var(--rust); color: white; }
-  .fav-toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--card2); border: 1px solid var(--border); border-radius: 50px; padding: 10px 20px; font-size: 13px; font-weight: 700; color: var(--text); display: none; align-items: center; gap: 8px; z-index: 500; white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
-  .fav-toast.show { display: flex; animation: toastIn .3s ease; }
-  @keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(10px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
-  .kriter-tablo { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .kriter-satir { display: flex; justify-content: space-between; align-items: flex-start; padding: 11px 14px; border-top: 1px solid var(--border); }
-  .kriter-satir:first-child { border-top: none; }
-  .kriter-label { font-size: 13px; color: var(--text3); font-weight: 700; flex-shrink: 0; margin-right: 12px; }
-  .kriter-deger { font-size: 13px; font-weight: 800; text-align: right; }
-
-  /* ── KREDİ HESAPLAYICI ── */
-  .kredi-wrap {
-    background: var(--card);
-    border: 1.5px solid rgba(245,200,66,0.25);
-    border-radius: var(--radius);
-    overflow: hidden;
-    margin-bottom: 20px;
+  .liste-bolum-baslik {
+    font-size: 11px; font-weight: 900;
+    color: var(--text3); text-transform: uppercase;
+    letter-spacing: 0.6px; padding: 12px 0 4px;
   }
-  .kredi-header {
-    background: linear-gradient(135deg, rgba(245,200,66,0.12), rgba(245,200,66,0.04));
-    border-bottom: 1px solid rgba(245,200,66,0.2);
-    padding: 14px 16px;
+  .liste-satir {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 11px 0;
+    border-top: 1px solid var(--border);
+    gap: 10px;
+  }
+  .liste-satir:first-of-type { border-top: none; }
+  .satir-label {
+    font-size: 13px; color: var(--text3); font-weight: 600;
+    flex-shrink: 0; min-width: 100px;
+  }
+  .satir-deger {
+    font-size: 13px; font-weight: 800;
+    text-align: right; color: var(--text); word-break: break-word;
+  }
+  .satir-deger.gold { color: var(--gold); }
+  .satir-deger.green { color: var(--green); }
+  .satir-deger.rust { color: var(--rust); }
+
+  /* ── TIKLANILEBILIR SATIR ── */
+  .satir-link {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    padding: 13px 0;
+    border-top: 1px solid var(--border);
     cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none;
+    text-decoration: none;
+    color: var(--text);
   }
-  .kredi-header-icon { font-size: 22px; }
-  .kredi-header-text { flex: 1; }
-  .kredi-header-title { font-size: 15px; font-weight: 900; color: var(--gold); }
-  .kredi-header-sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
-  .kredi-header-arrow {
-    font-size: 16px; color: var(--gold); transition: transform .3s;
-    display: inline-block;
+  .satir-link:first-of-type { border-top: none; }
+  .satir-link-sol { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; }
+  .satir-link-ikon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
+  .satir-link-ok { font-size: 18px; color: var(--text3); }
+
+  /* ── KREDİ ACCORDION ── */
+  .kredi-accordion-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 0; border-top: 1px solid var(--border);
+    cursor: pointer; user-select: none;
   }
-  .kredi-header-arrow.acik { transform: rotate(180deg); }
-  .kredi-body { padding: 16px; display: none; }
-  .kredi-body.acik { display: block; }
+  .kredi-accordion-header-sol { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 800; color: var(--gold); }
+  .kredi-accordion-ok { font-size: 16px; color: var(--text3); transition: transform .25s; }
+  .kredi-accordion-ok.acik { transform: rotate(180deg); color: var(--gold); }
+  .kredi-accordion-body { display: none; padding-bottom: 12px; }
+  .kredi-accordion-body.acik { display: block; }
 
   /* Banka seçici */
-  .banka-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .banka-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 14px; }
   .banka-btn {
-    background: var(--card2);
+    background: var(--bg);
     border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
+    border-radius: 8px;
+    padding: 9px 10px;
     cursor: pointer;
-    transition: all .2s;
     text-align: left;
+    transition: border-color .2s;
   }
-  .banka-btn.secili {
-    border-color: var(--gold);
-    background: rgba(245,200,66,0.08);
-  }
-  .banka-btn-ad { font-size: 13px; font-weight: 900; color: var(--text); }
-  .banka-btn-faiz { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .banka-btn.secili { border-color: var(--gold); background: rgba(245,200,66,0.07); }
+  .banka-btn-ad { font-size: 12px; font-weight: 900; color: var(--text); }
+  .banka-btn-faiz { font-size: 11px; color: var(--text3); margin-top: 1px; }
   .banka-btn.secili .banka-btn-faiz { color: var(--gold); font-weight: 800; }
 
-  /* Input grubu */
-  .kredi-input-grup { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
-  .kredi-input-row { display: flex; flex-direction: column; gap: 4px; }
-  .kredi-input-label { font-size: 12px; font-weight: 800; color: var(--text3); }
-  .kredi-input-inner { display: flex; align-items: center; gap: 8px; }
+  .kredi-input-blok { margin-bottom: 12px; }
+  .kredi-input-label { font-size: 11px; font-weight: 800; color: var(--text3); margin-bottom: 5px; }
   .kredi-input {
-    flex: 1;
-    background: var(--bg2);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 11px 12px;
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--text);
-    font-family: 'Nunito', sans-serif;
-    outline: none;
+    width: 100%; box-sizing: border-box;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+    font-size: 14px; font-weight: 800; color: var(--text);
+    font-family: 'Nunito', sans-serif; outline: none;
     transition: border-color .2s;
   }
   .kredi-input:focus { border-color: var(--gold); }
-  .kredi-input-birim { font-size: 13px; font-weight: 800; color: var(--text3); white-space: nowrap; }
-
-  /* Vade slider */
-  .vade-slider-wrap { margin-top: 4px; }
+  .kredi-input-alt { font-size: 11px; color: var(--text3); margin-top: 4px; }
   .vade-slider {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 6px;
-    border-radius: 3px;
-    background: var(--border);
-    outline: none;
-    cursor: pointer;
+    -webkit-appearance: none; width: 100%; height: 5px;
+    border-radius: 3px; background: var(--border); outline: none; cursor: pointer;
   }
   .vade-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    background: var(--gold);
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    -webkit-appearance: none; width: 18px; height: 18px;
+    border-radius: 50%; background: var(--gold); cursor: pointer;
   }
-  .vade-slider::-moz-range-thumb {
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    background: var(--gold);
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-  .vade-isaretler { display: flex; justify-content: space-between; margin-top: 6px; }
-  .vade-isaret { font-size: 10px; font-weight: 700; color: var(--text3); }
+  .vade-isaretler { display: flex; justify-content: space-between; margin-top: 5px; }
+  .vade-isaret { font-size: 10px; color: var(--text3); }
 
-  /* Sonuç */
-  .kredi-sonuc {
-    background: linear-gradient(135deg, rgba(245,200,66,0.1), rgba(245,200,66,0.03));
-    border: 1px solid rgba(245,200,66,0.2);
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-    display: none;
+  .kredi-sonuc-liste { margin-top: 10px; }
+  .kredi-sonuc-satir {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-top: 1px solid var(--border);
   }
-  .kredi-sonuc.goster { display: block; }
-  .kredi-sonuc-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(245,200,66,0.1); }
-  .kredi-sonuc-row:last-child { border-bottom: none; padding-top: 10px; }
-  .kredi-sonuc-label { font-size: 12px; color: var(--text3); font-weight: 700; }
-  .kredi-sonuc-val { font-size: 14px; font-weight: 900; color: var(--text); }
-  .kredi-sonuc-taksit { font-size: 22px; font-weight: 900; color: var(--gold); }
-  .kredi-uyari { font-size: 11px; color: var(--text3); line-height: 1.5; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .kredi-sonuc-satir:first-child { border-top: none; }
+  .kredi-sonuc-label { font-size: 12px; color: var(--text3); }
+  .kredi-sonuc-val { font-size: 13px; font-weight: 900; color: var(--text); }
+  .kredi-taksit-satir {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-top: 1px solid var(--border); margin-top: 2px;
+  }
+  .kredi-taksit-label { font-size: 13px; font-weight: 900; }
+  .kredi-taksit-val { font-size: 22px; font-weight: 900; color: var(--gold); }
+  .kredi-uyari { font-size: 10px; color: var(--text3); line-height: 1.5; padding-top: 8px; margin-top: 4px; border-top: 1px solid var(--border); }
+
+  /* ── AKSİYON BAR ── */
+  .action-bottom {
+    position: fixed; bottom: var(--bot-h); left: 0; right: 0;
+    background: var(--bg2); border-top: 1px solid var(--border);
+    padding: 10px 16px; display: flex; gap: 10px; z-index: 150;
+  }
+  .btn-ara {
+    background: var(--card); color: var(--text);
+    border: 1.5px solid var(--border); border-radius: 50px;
+    padding: 13px 18px; font-size: 14px; font-weight: 800;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* ── LİGHTBOX ── */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.97);
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox-close {
+    position: absolute; top: 14px; right: 14px;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); border: none;
+    color: white; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; z-index: 10;
+  }
+  .lightbox-galeri {
+    display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+    scrollbar-width: none; width: 100%; flex: 1;
+  }
+  .lightbox-galeri::-webkit-scrollbar { display: none; }
+  .lightbox-item {
+    flex-shrink: 0; width: 100vw; height: 80vh;
+    scroll-snap-align: start; display: flex;
+    align-items: center; justify-content: center; position: relative;
+  }
+  .lightbox-item img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .lightbox-oda-etiket {
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.7); border-radius: 50px; padding: 5px 16px;
+    font-size: 12px; font-weight: 800; color: var(--gold); white-space: nowrap;
+  }
+  .lightbox-footer {
+    padding: 8px 16px 14px; display: flex;
+    align-items: center; justify-content: center;
+  }
+  .lightbox-sayac-bar {
+    font-size: 13px; font-weight: 800; color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.1); border-radius: 50px; padding: 5px 14px;
+  }
+
+  /* ── TOAST ── */
+  .fav-toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+    background: var(--card2); border: 1px solid var(--border); border-radius: 50px;
+    padding: 9px 18px; font-size: 13px; font-weight: 700; color: var(--text);
+    display: none; align-items: center; gap: 8px; z-index: 500; white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .fav-toast.show { display: flex; animation: toastIn .3s ease; }
+  @keyframes toastIn { from{opacity:0;transform:translateX(-50%) translateY(8px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+
+  /* ── ŞİKAYET ── */
+  .sikayet-sebep-btn {
+    width: 100%; padding: 13px 14px; border-radius: 8px;
+    background: var(--card); border: 1.5px solid var(--border);
+    color: var(--text); font-family: 'Nunito', sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer; text-align: left;
+    transition: all .2s;
+  }
+  .sikayet-sebep-btn.selected { border-color: var(--rust); background: rgba(232,96,58,0.08); color: var(--rust); }
+  .btn-rust { background: var(--rust); color: white; }
 
   /* ── FİYAT GEÇMİŞİ ── */
-  .fiyat-gecmisi-wrap {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    margin-bottom: 20px;
+  .fiyat-gecmis-satir {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-top: 1px solid var(--border); gap: 8px; flex-wrap: wrap;
   }
-  .fiyat-gecmisi-satir {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 11px 14px;
-    border-top: 1px solid var(--border);
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .fiyat-gecmisi-satir:first-child { border-top: none; }
-  .fiyat-gecmisi-tarih { font-size: 12px; color: var(--text3); font-weight: 700; flex-shrink: 0; }
-  .fiyat-gecmisi-sag { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
-  .fiyat-gecmisi-eski { font-size: 11px; color: var(--text3); text-decoration: line-through; }
-  .fiyat-gecmisi-yeni { font-size: 13px; font-weight: 900; color: var(--text); }
-  .fiyat-gecmisi-fark-asagi { font-size: 11px; font-weight: 800; color: var(--green); }
-  .fiyat-gecmisi-fark-yukari { font-size: 11px; font-weight: 800; color: var(--rust); }
+  .fiyat-gecmis-satir:first-child { border-top: none; }
+  .fg-tarih { font-size: 12px; color: var(--text3); font-weight: 700; }
+  .fg-sag { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+  .fg-eski { font-size: 11px; color: var(--text3); text-decoration: line-through; }
+  .fg-yeni { font-size: 13px; font-weight: 900; }
+  .fg-asagi { font-size: 11px; font-weight: 800; color: var(--green); }
+  .fg-yukari { font-size: 11px; font-weight: 800; color: var(--rust); }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -232,76 +277,53 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
-<!-- ═══════════════════════════════════════ -->
 <script>
-(function() {
-  // Sayfa açılınca kayıtlı temayı uygula — flash önlemek için hemen çalışır
-  var kaydedilenTema = localStorage.getItem('gotapu_tema');
-  if (kaydedilenTema === 'light') {
-    document.body.classList.add('light');
-  }
-
-  function temaButonuOlustur() {
-    // Zaten varsa oluşturma
-    if (document.getElementById('themeToggleBtn')) return;
-
-    var btn = document.createElement('button');
-    btn.id = 'themeToggleBtn';
-    btn.className = 'theme-toggle-btn nav-icon-btn';
-    btn.style.cssText = 'flex-shrink:0;';
-    btn.setAttribute('title', 'Temayı Değiştir');
-    btn.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
-
-    btn.addEventListener('click', function() {
-      var acikMi = document.body.classList.toggle('light');
-      localStorage.setItem('gotapu_tema', acikMi ? 'light' : 'dark');
-      btn.textContent = acikMi ? '🌙' : '☀️';
-
-      // Kısa animasyon geri bildirimi
-      btn.style.transform = 'scale(0.8) rotate(20deg)';
-      setTimeout(function() { btn.style.transform = ''; }, 200);
+(function(){
+  var k=localStorage.getItem('gotapu_tema');
+  if(k==='light') document.body.classList.add('light');
+  function ekle(){
+    if(document.getElementById('themeToggleBtn')) return;
+    var btn=document.createElement('button');
+    btn.id='themeToggleBtn'; btn.className='theme-toggle-btn nav-icon-btn'; btn.style.cssText='flex-shrink:0;';
+    btn.textContent=document.body.classList.contains('light')?'🌙':'☀️';
+    btn.addEventListener('click',function(){
+      var a=document.body.classList.toggle('light');
+      localStorage.setItem('gotapu_tema',a?'light':'dark'); btn.textContent=a?'🌙':'☀️';
+      btn.style.transform='scale(0.8) rotate(20deg)';
+      setTimeout(function(){btn.style.transform='';},200);
     });
-
-    // Nav actions'ın ilk çocuğu olarak ekle
-    var navActions = document.querySelector('.nav-actions');
-    if (navActions) {
-      navActions.insertBefore(btn, navActions.firstChild);
-    }
+    var na=document.querySelector('.nav-actions');
+    if(na) na.insertBefore(btn,na.firstChild);
   }
-
-  // DOM hazır olduğunda butonu ekle
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', temaButonuOlustur);
-  } else {
-    temaButonuOlustur();
-  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',ekle); else ekle();
 })();
 </script>
 
 <nav class="top-nav">
   <a href="javascript:history.back()" class="nav-logo" style="font-size:15px">
-    <div class="back-btn" style="margin-right:4px">&#8592;</div>
+    <div class="back-btn" style="margin-right:4px">←</div>
     İlan Detay
   </a>
   <div class="nav-actions">
-    <button class="nav-icon-btn" onclick="sikayetAc()" style="font-size:16px">&#9888;&#65039;</button>
-    <button class="nav-icon-btn" onclick="paylas()">&#128228;</button>
+    <button class="nav-icon-btn" onclick="sikayetAc()" style="font-size:16px">⚠️</button>
+    <button class="nav-icon-btn" onclick="paylas()">📤</button>
   </div>
 </nav>
 
+<!-- Şikayet Modal -->
 <div class="modal-overlay" id="sikayetModal" onclick="if(event.target===this)sikayetKapat()">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <h3 style="font-size:18px;font-weight:900;margin-bottom:6px">İlanı Şikayet Et</h3>
-    <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Şikayet sebebini seçin</p>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+    <p style="font-size:13px;color:var(--text3);margin-bottom:14px">Şikayet sebebini seçin</p>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
       <button class="sikayet-sebep-btn" onclick="sikayetSebepSec(this,'Sahte İlan')">Sahte İlan</button>
       <button class="sikayet-sebep-btn" onclick="sikayetSebepSec(this,'Dolandırıcılık')">Dolandırıcılık</button>
       <button class="sikayet-sebep-btn" onclick="sikayetSebepSec(this,'Uygunsuz İçerik')">Uygunsuz İçerik</button>
       <button class="sikayet-sebep-btn" onclick="sikayetSebepSec(this,'Yanlış Fiyat/Bilgi')">Yanlış Fiyat/Bilgi</button>
       <button class="sikayet-sebep-btn" onclick="sikayetSebepSec(this,'Diğer')">Diğer</button>
     </div>
-    <textarea class="input" id="sikayetAciklama" rows="3" placeholder="Ek açıklama (isteğe bağlı)..." style="resize:none;margin-bottom:12px"></textarea>
+    <textarea class="input" id="sikayetAciklama" rows="3" placeholder="Ek açıklama (isteğe bağlı)..." style="resize:none;margin-bottom:10px"></textarea>
     <button class="btn btn-rust btn-lg" onclick="sikayetGonder()">Şikayeti Gönder</button>
   </div>
 </div>
@@ -311,13 +333,13 @@
 </div>
 
 <div class="action-bottom" id="actionBottom" style="display:none">
-  <button class="btn-ara" onclick="telefon()">Ara</button>
+  <button class="btn-ara" onclick="telefon()">📞 Ara</button>
   <button class="btn btn-gold btn-lg" onclick="mesajGonder()" style="flex:1">Mesaj Gönder</button>
 </div>
 
 <div class="fav-toast" id="favToast"></div>
 
-<!-- LİGHTBOX — oda etiketli -->
+<!-- Lightbox -->
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" onclick="lightboxKapat()">✕</button>
   <div class="lightbox-galeri" id="lightboxGaleri"></div>
@@ -327,607 +349,450 @@
 </div>
 
 <nav class="bottom-nav">
-  <a href="index.html" class="bnav-item"><div class="bnav-icon">&#127968;</div>Ana Sayfa</a>
-  <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">&#10024;</div>Eslesme</a>
+  <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
+  <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">✨</div>Eşleşme</a>
   <a href="ilan-ver.html" class="bnav-center">+</a>
-  <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">&#128172;</div>Mesajlar</a>
-  <a href="profil.html" class="bnav-item"><div class="bnav-icon">&#128100;</div>Profil</a>
+  <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">💬</div>Mesajlar</a>
+  <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
 </nav>
 
 <script>
-var SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
-var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
-var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+var SUPABASE_URL='https://ncmzfaszaowiynzjdefb.supabase.co';
+var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+var sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-var odaAdlari = {
-  salon:{em:'🛋️',ad:'Salon'}, mutfak:{em:'🍳',ad:'Mutfak'}, yatak:{em:'🛏️',ad:'Yatak Odası'},
-  banyo:{em:'🚿',ad:'Banyo'}, balkon:{em:'🌿',ad:'Balkon / Bahçe'}, havuz:{em:'🏊',ad:'Havuz'},
-  otopark:{em:'🚗',ad:'Otopark'}, tenis:{em:'🎾',ad:'Tenis Kortu'}, spor:{em:'💪',ad:'Spor Salonu'},
-  dis:{em:'🏠',ad:'Dış Görünüm'}, diger:{em:'📷',ad:'Diğer'}
+var odaAdlari={
+  salon:{em:'🛋️',ad:'Salon'},mutfak:{em:'🍳',ad:'Mutfak'},yatak:{em:'🛏️',ad:'Yatak Odası'},
+  banyo:{em:'🚿',ad:'Banyo'},balkon:{em:'🌿',ad:'Balkon/Bahçe'},havuz:{em:'🏊',ad:'Havuz'},
+  otopark:{em:'🚗',ad:'Otopark'},tenis:{em:'🎾',ad:'Tenis'},spor:{em:'💪',ad:'Spor'},
+  dis:{em:'🏠',ad:'Dış Görünüm'},diger:{em:'📷',ad:'Diğer'}
 };
+var ilan=null,currentUser=null,favori=false,ilanId=null,kisaKod=null;
+var tumFotolar=[];
+var bankalar=[];
+var seciliBankaIndex=0;
+var krediAcikMi=false;
 
-var ilan = null;
-var currentUser = null;
-var favori = false;
-var ilanId = null;
-var kisaKod = null;
-
-// Birleşik fotoğraf dizisi: [{url, oda, ad, em}]
-var tumFotolar = [];
-
-// ── KREDİ HESAPLAYICI DEĞİŞKENLERİ ──
-var bankalar = [];
-var seciliBankaIndex = 0;
-var krediAcikMi = false;
-
-function ilanIdCoz() {
-  var hash = window.location.hash.replace('#','').trim();
-  if (hash && hash.length > 0) return {tip:'kisa_kod', deger:hash};
-  var params = new URLSearchParams(window.location.search);
-  var id = params.get('id');
-  if (id) return {tip:'uuid', deger:id};
+function ilanIdCoz(){
+  var hash=window.location.hash.replace('#','').trim();
+  if(hash&&hash.length>0) return{tip:'kisa_kod',deger:hash};
+  var p=new URLSearchParams(window.location.search);
+  var id=p.get('id');
+  if(id) return{tip:'uuid',deger:id};
   return null;
 }
+function girisGerekli(){localStorage.setItem('gotapu_redirect',window.location.href);window.location.href='auth.html';}
 
-function girisGerekli() {
-  localStorage.setItem('gotapu_redirect', window.location.href);
-  window.location.href = 'auth.html';
-}
-
-sb.auth.getSession().then(function(res) {
-  currentUser = res.data.session ? res.data.session.user : null;
-  var sorgu = ilanIdCoz();
-  if (sorgu) {
-    ilanYukle(sorgu);
-  } else {
-    document.getElementById('icerik').innerHTML = '<div class="empty"><div class="empty-icon">?</div><div class="empty-title">Ilan bulunamadi</div><a href="index.html" class="btn btn-gold btn-md" style="margin-top:20px;max-width:200px">Ana Sayfaya Don</a></div>';
-  }
+sb.auth.getSession().then(function(res){
+  currentUser=res.data.session?res.data.session.user:null;
+  var sorgu=ilanIdCoz();
+  if(sorgu) ilanYukle(sorgu);
+  else document.getElementById('icerik').innerHTML='<div class="empty"><div class="empty-icon">?</div><div class="empty-title">İlan bulunamadı</div><a href="index.html" class="btn btn-gold btn-md" style="margin-top:20px;max-width:200px">Ana Sayfaya Dön</a></div>';
 });
 
-async function ilanYukle(sorgu) {
-  var query;
-  if (sorgu.tip === 'kisa_kod') {
-    query = sb.from('ilanlar').select('*').eq('kisa_kod', sorgu.deger).single();
-  } else {
-    query = sb.from('ilanlar').select('*').eq('id', sorgu.deger).single();
-  }
-  var res = await query;
-  if (res.error || !res.data) {
-    document.getElementById('icerik').innerHTML = '<div class="empty"><div class="empty-icon">?</div><div class="empty-title">Ilan bulunamadi</div><a href="index.html" class="btn btn-gold btn-md" style="margin-top:20px;max-width:200px">Ana Sayfaya Don</a></div>';
-    return;
-  }
-  ilan = res.data;
-  ilanId = ilan.id;
-  kisaKod = ilan.kisa_kod || null;
-  if (sorgu.tip === 'uuid' && kisaKod) {
-    window.history.replaceState(null, '', 'ilan-detay.html#' + kisaKod);
-  }
-  if (ilan.user_id) {
-    var pr = await sb.from('profiles').select('*').eq('id', ilan.user_id).single();
-    ilan.profiles = pr.data || null;
-  }
+async function ilanYukle(sorgu){
+  var q=sorgu.tip==='kisa_kod'?sb.from('ilanlar').select('*').eq('kisa_kod',sorgu.deger).single():sb.from('ilanlar').select('*').eq('id',sorgu.deger).single();
+  var res=await q;
+  if(res.error||!res.data){document.getElementById('icerik').innerHTML='<div class="empty"><div class="empty-icon">?</div><div class="empty-title">İlan bulunamadı</div><a href="index.html" class="btn btn-gold btn-md" style="margin-top:20px;max-width:200px">Ana Sayfaya Dön</a></div>';return;}
+  ilan=res.data; ilanId=ilan.id; kisaKod=ilan.kisa_kod||null;
+  if(sorgu.tip==='uuid'&&kisaKod) window.history.replaceState(null,'','ilan-detay.html#'+kisaKod);
+  if(ilan.user_id){var pr=await sb.from('profiles').select('*').eq('id',ilan.user_id).single();ilan.profiles=pr.data||null;}
 
-  // ── Birleşik fotoğraf dizisi oluştur ──
-  tumFotolar = [];
-  var eklenenUrlSet = new Set();
-
-  if (ilan.oda_fotograflari && typeof ilan.oda_fotograflari === 'object') {
-    Object.entries(ilan.oda_fotograflari).forEach(function(entry) {
-      var oda = entry[0];
-      var urls = entry[1];
-      if (!urls || !urls.length) return;
-      var bilgi = odaAdlari[oda] || {em:'📷', ad:'Diğer'};
-      urls.forEach(function(url) {
-        tumFotolar.push({url: url, oda: oda, ad: bilgi.ad, em: bilgi.em});
-        eklenenUrlSet.add(url);
-      });
+  // Fotoğrafları derle
+  tumFotolar=[];
+  var eklenen=new Set();
+  if(ilan.oda_fotograflari&&typeof ilan.oda_fotograflari==='object'){
+    Object.entries(ilan.oda_fotograflari).forEach(function(e){
+      var oda=e[0],urls=e[1];
+      if(!urls||!urls.length) return;
+      var b=odaAdlari[oda]||{em:'📷',ad:'Diğer'};
+      urls.forEach(function(u){tumFotolar.push({url:u,oda:oda,ad:b.ad,em:b.em});eklenen.add(u);});
     });
   }
+  var extra=ilan.foto_urls&&ilan.foto_urls.length>0?ilan.foto_urls:(ilan.foto_url?[ilan.foto_url]:[]);
+  extra.forEach(function(u){if(!eklenen.has(u)) tumFotolar.push({url:u,oda:null,ad:null,em:null});});
 
-  var ekstraUrls = ilan.foto_urls && ilan.foto_urls.length > 0
-    ? ilan.foto_urls
-    : (ilan.foto_url ? [ilan.foto_url] : []);
-
-  ekstraUrls.forEach(function(url) {
-    if (!eklenenUrlSet.has(url)) {
-      tumFotolar.push({url: url, oda: null, ad: null, em: null});
-    }
-  });
-
-  // ── Banka faizlerini yükle ──
   await bankaFaizleriYukle();
-
   favoriKontrol();
   sayfayiOlustur();
-  document.getElementById('actionBottom').style.display = 'flex';
+  document.getElementById('actionBottom').style.display='flex';
 }
 
-async function bankaFaizleriYukle() {
-  var fallback = [
-    { ad: 'Ziraat Bankası',   faiz: 3.49 },
-    { ad: 'Halkbank',         faiz: 3.59 },
-    { ad: 'Vakıfbank',        faiz: 3.69 },
-    { ad: 'Garanti BBVA',     faiz: 3.79 }
-  ];
-
-  try {
-    var res = await sb.from('banka_faizleri').select('banka_adi, aylik_faiz').eq('aktif', true).order('aylik_faiz', {ascending: true}).limit(4);
-    if (!res.error && res.data && res.data.length >= 2) {
-      bankalar = res.data.map(function(r) { return { ad: r.banka_adi, faiz: parseFloat(r.aylik_faiz) }; });
-    } else {
-      bankalar = fallback;
-    }
-  } catch(e) {
-    bankalar = fallback;
-  }
+async function bankaFaizleriYukle(){
+  var fb=[{ad:'Ziraat Bankası',faiz:3.49},{ad:'Halkbank',faiz:3.59},{ad:'Vakıfbank',faiz:3.69},{ad:'Garanti BBVA',faiz:3.79}];
+  try{
+    var r=await sb.from('banka_faizleri').select('banka_adi,aylik_faiz').eq('aktif',true).order('aylik_faiz',{ascending:true}).limit(4);
+    bankalar=(!r.error&&r.data&&r.data.length>=2)?r.data.map(function(x){return{ad:x.banka_adi,faiz:parseFloat(x.aylik_faiz)};}):fb;
+  }catch(e){bankalar=fb;}
 }
 
-async function favoriKontrol() {
-  if (!currentUser) return;
-  var res = await sb.from('favoriler').select('id').eq('user_id', currentUser.id).eq('ilan_id', ilanId).single();
-  favori = !!res.data;
-  var btn = document.getElementById('favBtn');
-  if (btn) btn.textContent = favori ? '❤️' : '🤍';
+async function favoriKontrol(){
+  if(!currentUser) return;
+  var r=await sb.from('favoriler').select('id').eq('user_id',currentUser.id).eq('ilan_id',ilanId).single();
+  favori=!!r.data;
+  var btn=document.getElementById('favBtn'); if(btn) btn.textContent=favori?'❤️':'🤍';
 }
 
-function sayfayiOlustur() {
-  var tipRenk = {satilik:'tag-rust', kiralik:'tag-green', devren:'tag-blue'};
-  var tipLabel = {satilik:'SATILIK', kiralik:'KIRALIK', devren:'DEVREN'};
-  var fiyatStr = Number(ilan.fiyat).toLocaleString('tr-TR');
-  var fiyatEk = ilan.tip === 'kiralik' ? '/ay' : '';
-  var sahip = ilan.profiles;
+function sayfayiOlustur(){
+  var tipRenk={satilik:'tag-rust',kiralik:'tag-green',devren:'tag-blue'};
+  var tipLabel={satilik:'SATILIK',kiralik:'KİRALIK',devren:'DEVREN'};
+  var fiyatStr=Number(ilan.fiyat).toLocaleString('tr-TR');
+  var fiyatEk=ilan.tip==='kiralik'?'/ay':'';
+  var sahip=ilan.profiles;
 
-  // ── Galeri HTML ──
-  var fotoHTML = '';
-  if (tumFotolar.length === 0) {
-    fotoHTML = '<div class="detay-img"><span>🏠</span><span class="detay-tip-badge tag ' + (tipRenk[ilan.tip]||'') + '">' + (tipLabel[ilan.tip]||'') + '</span><button class="detay-fav-btn" id="favBtn" onclick="favoriToggle()">🤍</button></div>';
-  } else if (tumFotolar.length === 1) {
-    fotoHTML = '<div class="detay-img"><img src="' + tumFotolar[0].url + '"><span class="detay-tip-badge tag ' + (tipRenk[ilan.tip]||'') + '">' + (tipLabel[ilan.tip]||'') + '</span><button class="detay-fav-btn" id="favBtn" onclick="favoriToggle()">🤍</button></div>';
+  // ── Galeri ──
+  var galeriHTML='';
+  if(tumFotolar.length===0){
+    galeriHTML='<div class="detay-galeri" style="margin:-16px -16px 0;width:calc(100%+32px)">' +
+      '<div style="height:220px;background:#1a2340;display:flex;align-items:center;justify-content:center;font-size:80px;position:relative">' +
+        '<span class="galeri-tip-badge tag '+(tipRenk[ilan.tip]||'')+'">'+(tipLabel[ilan.tip]||'')+'</span>' +
+        '<button class="galeri-fav-btn" id="favBtn" onclick="favoriToggle()">🤍</button>' +
+        '🏠' +
+      '</div></div>';
   } else {
-    var galeriHTML = '';
-    for (var i = 0; i < tumFotolar.length; i++) {
-      galeriHTML += '<div style="flex-shrink:0;width:100%;height:280px;scroll-snap-align:start;background:#1a2340;cursor:pointer;position:relative" onclick="lightboxAc(' + i + ')">' +
-        '<img src="' + tumFotolar[i].url + '" style="width:100%;height:100%;object-fit:cover">' +
-        (tumFotolar[i].ad ? '<div style="position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);border-radius:50px;padding:4px 12px;font-size:11px;font-weight:800;color:rgba(255,255,255,0.9)">' + tumFotolar[i].em + ' ' + tumFotolar[i].ad + '</div>' : '') +
-        '</div>';
-    }
-
-    var odaSet = [];
-    var odaGoruldu = {};
-    tumFotolar.forEach(function(f) { if (f.ad && !odaGoruldu[f.oda]) { odaSet.push(f.em + ' ' + f.ad); odaGoruldu[f.oda] = true; } });
-    var odaOzetStr = odaSet.length > 0 ? odaSet.join(' · ') : '';
-
-    fotoHTML = '<div style="position:relative;margin:-16px -16px 20px;width:calc(100% + 32px)">' +
-      '<div style="display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none" id="galeri">' + galeriHTML + '</div>' +
-      '<span class="detay-tip-badge tag ' + (tipRenk[ilan.tip]||'') + '" style="position:absolute;top:16px;left:16px">' + (tipLabel[ilan.tip]||'') + '</span>' +
-      '<button class="detay-fav-btn" id="favBtn" onclick="favoriToggle()" style="position:absolute;top:16px;right:16px">🤍</button>' +
-      '<div style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);border-radius:50px;padding:4px 10px;font-size:12px;font-weight:800;color:white">📷 ' + tumFotolar.length + '</div>' +
-      (odaOzetStr ? '<div class="galeri-oda-ozet">' + odaOzetStr + '</div>' : '') +
+    var kareler=tumFotolar.map(function(f,i){
+      return '<div class="galeri-kare" onclick="lightboxAc('+i+')">'+
+        '<img src="'+f.url+'" loading="lazy">'+
+        (f.ad?'<div class="galeri-oda-etiket">'+f.em+' '+f.ad+'</div>':'')+
       '</div>';
+    }).join('');
+    galeriHTML='<div class="detay-galeri">'+
+      '<div class="galeri-scroll" id="galeriScroll">'+kareler+'</div>'+
+      '<span class="galeri-tip-badge tag '+(tipRenk[ilan.tip]||'')+'">'+(tipLabel[ilan.tip]||'')+'</span>'+
+      '<button class="galeri-fav-btn" id="favBtn" onclick="favoriToggle()">🤍</button>'+
+      (tumFotolar.length>1?'<div class="galeri-foto-sayac">📷 '+tumFotolar.length+'</div>':'')+
+    '</div>';
+  }
+
+  // ── Başlık ──
+  var baslikHTML='<div class="detay-baslik-blok">'+
+    '<div class="detay-fiyat">'+fiyatStr+' ₺'+fiyatEk+'</div>'+
+    '<div class="detay-baslik">'+ilan.baslik+'</div>'+
+    '<div class="detay-konum">📍 '+(ilan.konum||'')+'</div>'+
+  '</div>';
+
+  // ── Özet bilgiler (liste satırı) ──
+  var ozetSatirlar='';
+  if(ilan.oda_sayisi) ozetSatirlar+='<div class="liste-satir"><span class="satir-label">🛏 Oda Sayısı</span><span class="satir-deger">'+ilan.oda_sayisi+'</span></div>';
+  if(ilan.metrekare) ozetSatirlar+='<div class="liste-satir"><span class="satir-label">📐 Metrekare</span><span class="satir-deger">'+ilan.metrekare+' m²</span></div>';
+  ozetSatirlar+='<div class="liste-satir"><span class="satir-label">🏷️ İlan Tipi</span><span class="satir-deger '+(tipRenk[ilan.tip]||'')+'">'+(tipLabel[ilan.tip]||'')+'</span></div>';
+  ozetSatirlar+='<div class="liste-satir"><span class="satir-label">📅 Tarih</span><span class="satir-deger">'+new Date(ilan.created_at).toLocaleDateString('tr-TR')+'</span></div>';
+  var ozetHTML='<div class="liste-bolum"><div class="liste-bolum-baslik">Genel</div>'+ozetSatirlar+'</div>';
+
+  // ── Açıklama ──
+  var aciklamaHTML='';
+  if(ilan.aciklama){
+    aciklamaHTML='<div class="liste-bolum">'+
+      '<div class="liste-bolum-baslik">Açıklama</div>'+
+      '<div class="liste-satir" style="border-top:none"><span style="font-size:13px;color:var(--text2);line-height:1.8">'+ilan.aciklama+'</span></div>'+
+    '</div>';
   }
 
   // ── Kriterler ──
-  var kriterHTML = '';
-  if (ilan.kriterler) {
-    var k = ilan.kriterler;
-    var s = [];
-    if (k.oda_sayisi) s.push(['Oda Sayısı', k.oda_sayisi]);
-    if (k.banyo_sayisi) s.push(['Banyo', k.banyo_sayisi]);
-    if (k.kat) s.push(['Kat', k.kat]);
-    if (k.kat_sayisi) s.push(['Bina Kat Sayısı', k.kat_sayisi]);
-    if (k.bina_yasi) s.push(['Bina Yaşı', k.bina_yasi]);
-    if (k.isitma) s.push(['Isıtma', k.isitma]);
-    if (k.kullanim_durumu) s.push(['Kullanım Durumu', k.kullanim_durumu]);
-    if (k.tapu_durumu) s.push(['Tapu Durumu', k.tapu_durumu]);
-    if (k.esya_durumu) s.push(['Eşya Durumu', k.esya_durumu]);
-    if (k.kredi_uygun) s.push(['Krediye Uygun', k.kredi_uygun]);
-    if (k.site_icinde) s.push(['Site İçinde', k.site_icinde]);
-    if (k.aidat) {
-      var aidatStr = k.aidat;
-      if (k.aidat_tutar) aidatStr += ' - ' + Number(k.aidat_tutar).toLocaleString('tr-TR') + ' TL/ay';
-      s.push(['Aidat', aidatStr]);
-    }
-    if (k.cephe && Array.isArray(k.cephe) && k.cephe.length > 0) s.push(['Cephe', k.cephe.join(', ')]);
-    if (k.arsa_m2) s.push(['Arsa Alanı', k.arsa_m2 + ' m²']);
-    if (k.tapu_turu) s.push(['Tapu Türü', k.tapu_turu]);
-    if (k.imar_durumu) s.push(['İmar Durumu', k.imar_durumu]);
-    if (k.gabari) s.push(['Gabari', k.gabari]);
-    if (k.isyeri_turu) s.push(['İşyeri Türü', k.isyeri_turu]);
-    if (k.isyeri_m2_net) s.push(['Net m²', k.isyeri_m2_net + ' m²']);
-    if (k.isyeri_m2_brut) s.push(['Brüt m²', k.isyeri_m2_brut + ' m²']);
-    if (k.isyeri_kat) s.push(['Kat', k.isyeri_kat]);
-    if (k.ic_ozellikler && k.ic_ozellikler.length > 0) s.push(['İç Özellikler', k.ic_ozellikler.join(', ')]);
-    if (k.dis_ozellikler && k.dis_ozellikler.length > 0) s.push(['Dış Özellikler / Site', k.dis_ozellikler.join(', ')]);
-    if (k.arsa_ozellikler && k.arsa_ozellikler.length > 0) s.push(['Arazi Özellikleri', k.arsa_ozellikler.join(', ')]);
-    if (k.isyeri_ozellikler && k.isyeri_ozellikler.length > 0) s.push(['İşyeri Özellikleri', k.isyeri_ozellikler.join(', ')]);
-    if (s.length > 0) {
-      var rows = '';
-      for (var i = 0; i < s.length; i++) {
-        rows += '<div class="kriter-satir"><span class="kriter-label">' + s[i][0] + '</span><span class="kriter-deger">' + s[i][1] + '</span></div>';
-      }
-      kriterHTML = '<div class="detay-section"><div class="detay-section-title">İlan Özellikleri</div><div class="kriter-tablo">' + rows + '</div></div>';
+  var kriterHTML='';
+  if(ilan.kriterler){
+    var k=ilan.kriterler;
+    var s=[];
+    if(k.oda_sayisi) s.push(['🛏 Oda Sayısı',k.oda_sayisi]);
+    if(k.banyo_sayisi) s.push(['🚿 Banyo',k.banyo_sayisi]);
+    if(k.kat) s.push(['🏢 Kat',k.kat]);
+    if(k.kat_sayisi) s.push(['🏗 Bina Kat Sayısı',k.kat_sayisi]);
+    if(k.bina_yasi) s.push(['🏚 Bina Yaşı',k.bina_yasi]);
+    if(k.isitma) s.push(['🔥 Isıtma',k.isitma]);
+    if(k.kullanim_durumu) s.push(['🔑 Kullanım',k.kullanim_durumu]);
+    if(k.tapu_durumu) s.push(['📄 Tapu',k.tapu_durumu]);
+    if(k.esya_durumu) s.push(['🪑 Eşya',k.esya_durumu]);
+    if(k.kredi_uygun) s.push(['💳 Krediye Uygun',k.kredi_uygun]);
+    if(k.site_icinde) s.push(['🏘 Site İçinde',k.site_icinde]);
+    if(k.aidat){var ai=k.aidat+(k.aidat_tutar?' — '+Number(k.aidat_tutar).toLocaleString('tr-TR')+' ₺/ay':'');s.push(['💰 Aidat',ai]);}
+    if(k.cephe&&Array.isArray(k.cephe)&&k.cephe.length>0) s.push(['🧭 Cephe',k.cephe.join(', ')]);
+    if(k.arsa_m2) s.push(['📐 Arsa Alanı',k.arsa_m2+' m²']);
+    if(k.tapu_turu) s.push(['📋 Tapu Türü',k.tapu_turu]);
+    if(k.imar_durumu) s.push(['🏗 İmar Durumu',k.imar_durumu]);
+    if(k.gabari) s.push(['📏 Gabari',k.gabari]);
+    if(k.isyeri_turu) s.push(['🏪 İşyeri Türü',k.isyeri_turu]);
+    if(k.isyeri_m2_net) s.push(['📐 Net m²',k.isyeri_m2_net+' m²']);
+    if(k.isyeri_m2_brut) s.push(['📐 Brüt m²',k.isyeri_m2_brut+' m²']);
+    if(k.isyeri_kat) s.push(['🏢 Kat',k.isyeri_kat]);
+    if(k.ic_ozellikler&&k.ic_ozellikler.length>0) s.push(['🪟 İç Özellikler',k.ic_ozellikler.join(' · ')]);
+    if(k.dis_ozellikler&&k.dis_ozellikler.length>0) s.push(['🏢 Dış Özellikler',k.dis_ozellikler.join(' · ')]);
+    if(k.arsa_ozellikler&&k.arsa_ozellikler.length>0) s.push(['🌿 Arazi Özellikleri',k.arsa_ozellikler.join(' · ')]);
+    if(k.isyeri_ozellikler&&k.isyeri_ozellikler.length>0) s.push(['🏪 İşyeri Özellikleri',k.isyeri_ozellikler.join(' · ')]);
+    if(s.length>0){
+      var satirlar=s.map(function(x){return '<div class="liste-satir"><span class="satir-label">'+x[0]+'</span><span class="satir-deger">'+x[1]+'</span></div>';}).join('');
+      kriterHTML='<div class="liste-bolum"><div class="liste-bolum-baslik">İlan Özellikleri</div>'+satirlar+'</div>';
     }
   }
 
-  var specRow = '';
-  if (ilan.oda_sayisi) specRow += '<div class="spec-box"><span class="spec-icon">🛏</span><div class="spec-val">' + ilan.oda_sayisi + '</div><div class="spec-lbl">Oda</div></div>';
-  if (ilan.metrekare) specRow += '<div class="spec-box"><span class="spec-icon">📐</span><div class="spec-val">' + ilan.metrekare + '</div><div class="spec-lbl">m²</div></div>';
-  specRow += '<div class="spec-box"><span class="spec-icon">🏷️</span><div class="spec-val">' + (tipLabel[ilan.tip]||'') + '</div><div class="spec-lbl">Tip</div></div>';
-  specRow += '<div class="spec-box"><span class="spec-icon">📅</span><div class="spec-val">' + new Date(ilan.created_at).toLocaleDateString('tr-TR') + '</div><div class="spec-lbl">Tarih</div></div>';
+  // ── Kredi hesaplayıcı ──
+  var krediHTML='';
+  var kuygun=ilan.kriterler&&ilan.kriterler.kredi_uygun?String(ilan.kriterler.kredi_uygun):'';
+  if(kuygun&&kuygun!=='Hayır'&&!kuygun.includes('Değil')){
+    var bankaGriHTML=bankalar.map(function(b,i){
+      return '<button class="banka-btn'+(i===0?' secili':'')+'" id="bankaBtn_'+i+'" onclick="bankaSeç('+i+')">'+
+        '<div class="banka-btn-ad">'+b.ad+'</div>'+
+        '<div class="banka-btn-faiz">%'+b.faiz.toFixed(2)+' aylık</div>'+
+      '</button>';
+    }).join('');
+    var pesinatDef=Math.round(ilan.fiyat*0.20);
+    krediHTML='<div class="liste-bolum">'+
+      '<div class="kredi-accordion-header" onclick="krediToggle()">'+
+        '<div class="kredi-accordion-header-sol"><span>🏦</span> Krediyi Hesapla</div>'+
+        '<span class="kredi-accordion-ok" id="krediArrow">▼</span>'+
+      '</div>'+
+      '<div class="kredi-accordion-body" id="krediBody">'+
+        '<div style="font-size:11px;font-weight:800;color:var(--text3);margin-bottom:8px">Banka Seçin</div>'+
+        '<div class="banka-grid">'+bankaGriHTML+'</div>'+
+        '<div class="kredi-input-blok">'+
+          '<div class="kredi-input-label">Peşinat Tutarı <span style="color:var(--text3)">(min. %20)</span></div>'+
+          '<input type="number" class="kredi-input" id="krediPesinat" value="'+pesinatDef+'" min="'+pesinatDef+'" oninput="krediHesapla()" onchange="pesinatKontrol()">'+
+          '<div class="kredi-input-alt">İlan fiyatı: <strong>'+Number(ilan.fiyat).toLocaleString('tr-TR')+' ₺</strong> — %20 peşinat: <strong style="color:var(--gold)">'+pesinatDef.toLocaleString('tr-TR')+' ₺</strong></div>'+
+        '</div>'+
+        '<div class="kredi-input-blok">'+
+          '<div class="kredi-input-label">Vade: <span id="vadeLabel" style="color:var(--gold)">120 ay (10 yıl)</span></div>'+
+          '<input type="range" class="vade-slider" id="vadeSlider" min="12" max="120" step="12" value="120" oninput="vadeDegisti(this.value)">'+
+          '<div class="vade-isaretler"><span class="vade-isaret">12</span><span class="vade-isaret">36</span><span class="vade-isaret">60</span><span class="vade-isaret">84</span><span class="vade-isaret">120 ay</span></div>'+
+        '</div>'+
+        '<div id="krediSonuc" style="display:none">'+
+          '<div class="kredi-sonuc-satir"><span class="kredi-sonuc-label">Kredi Tutarı</span><span class="kredi-sonuc-val" id="sonucKrediTutar">—</span></div>'+
+          '<div class="kredi-sonuc-satir"><span class="kredi-sonuc-label">Aylık Faiz</span><span class="kredi-sonuc-val" id="sonucFaiz">—</span></div>'+
+          '<div class="kredi-sonuc-satir"><span class="kredi-sonuc-label">Vade</span><span class="kredi-sonuc-val" id="sonucVade">—</span></div>'+
+          '<div class="kredi-taksit-satir"><span class="kredi-taksit-label">Aylık Taksit</span><span class="kredi-taksit-val" id="sonucTaksit">—</span></div>'+
+          '<div class="kredi-sonuc-satir"><span class="kredi-sonuc-label">Toplam Ödeme</span><span class="kredi-sonuc-val" id="sonucToplam">—</span></div>'+
+          '<div class="kredi-sonuc-satir"><span class="kredi-sonuc-label">Toplam Faiz</span><span class="kredi-sonuc-val" id="sonucFaizMaliyet" style="color:var(--rust)">—</span></div>'+
+          '<div class="kredi-uyari">* Bilgi amaçlıdır. Gerçek koşullar banka onayına göre değişir.</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
 
-  var sahipHTML = '<div class="sahip-avatar">' + (sahip && sahip.avatar_url ? '<img src="' + sahip.avatar_url + '">' : '👤') + '</div>' +
-    '<div style="flex:1"><div class="sahip-name">' + (sahip && sahip.full_name ? sahip.full_name : 'Kullanıcı') + '</div><div class="sahip-since">GoTapu üyesi</div>' +
-    (sahip && sahip.verified ? '<div class="sahip-verified">✓ Doğrulanmış Üye</div>' : '') + '</div>' +
-    '<button class="btn btn-outline btn-sm" onclick="mesajGonder()">Mesaj</button>';
-
-  var krediHTML = krediHesaplayiciHTML();
-
-  // ── Konum: yanyana iki kutu ──
-  var konumHTML = '<div class="detay-section">' +
-    '<div class="detay-section-title">Konum</div>' +
-    '<div style="display:flex;gap:10px">' +
-      '<div class="harita-placeholder" onclick="haritaAc()">' +
-        '<div style="font-size:28px">🗺️</div>' +
-        '<div style="font-size:12px;color:var(--text2)">' + (ilan.konum || 'Konum bilgisi yok') + '</div>' +
-        '<div style="font-size:11px;color:var(--gold);font-weight:800">Haritada Gör</div>' +
-      '</div>' +
-      '<div class="harita-placeholder" onclick="sokakGorunumuAc()">' +
-        '<div style="font-size:28px">🚶</div>' +
-        '<div style="font-size:12px;color:var(--text2)">Sokak Görünümü</div>' +
-        '<div style="font-size:11px;color:var(--gold);font-weight:800">Street View</div>' +
-      '</div>' +
-    '</div>' +
+  // ── Konum ──
+  var konumHTML='<div class="liste-bolum">'+
+    '<div class="liste-bolum-baslik">Konum</div>'+
+    '<div class="satir-link" onclick="haritaAc()">'+
+      '<div class="satir-link-sol"><span class="satir-link-ikon">🗺️</span>'+(ilan.konum||'Haritada Gör')+'</div>'+
+      '<span class="satir-link-ok">›</span>'+
+    '</div>'+
+    '<div class="satir-link" onclick="sokakGorunumuAc()">'+
+      '<div class="satir-link-sol"><span class="satir-link-ikon">🚶</span>Sokak Görünümü</div>'+
+      '<span class="satir-link-ok">›</span>'+
+    '</div>'+
   '</div>';
 
-  document.getElementById('icerik').innerHTML =
-    fotoHTML +
-    '<div class="detay-fiyat">' + fiyatStr + ' TL' + fiyatEk + '</div>' +
-    '<div class="detay-baslik">' + ilan.baslik + '</div>' +
-    '<div class="detay-konum">📍 ' + (ilan.konum || '') + '</div>' +
-    '<div class="specs-row">' + specRow + '</div>' +
-    (ilan.aciklama ? '<div class="detay-section"><div class="detay-section-title">Açıklama</div><div class="detay-aciklama">' + ilan.aciklama + '</div></div>' : '') +
-    kriterHTML +
-    krediHTML +
-    konumHTML +
-    '<div class="detay-section"><div class="detay-section-title">İlan Sahibi</div><div class="sahip-card">' + sahipHTML + '</div></div>' +
-    '<div id="fiyatGecmisiBlok"></div>' +
-    '<div id="ekspertizBlok"></div>' +
+  // ── İlan Sahibi ──
+  var sahipAd=sahip&&sahip.full_name?sahip.full_name:'Kullanıcı';
+  var sahipAva=sahip&&sahip.avatar_url?'<img src="'+sahip.avatar_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">':'👤';
+  var dogrulanmis=sahip&&sahip.verified?'<div style="font-size:12px;color:var(--green);font-weight:700">✓ Doğrulanmış Üye</div>':'';
+  var sahipHTML='<div class="liste-bolum">'+
+    '<div class="liste-bolum-baslik">İlan Sahibi</div>'+
+    '<div class="liste-satir" style="align-items:center">'+
+      '<div style="display:flex;align-items:center;gap:12px;flex:1">'+
+        '<div style="width:46px;height:46px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;flex-shrink:0">'+sahipAva+'</div>'+
+        '<div>'+
+          '<div style="font-size:14px;font-weight:800">'+sahipAd+'</div>'+
+          '<div style="font-size:12px;color:var(--text3)">GoTapu üyesi</div>'+
+          dogrulanmis+
+        '</div>'+
+      '</div>'+
+      '<button class="btn btn-outline btn-sm" onclick="mesajGonder()">Mesaj</button>'+
+    '</div>'+
+  '</div>';
+
+  // ── Ekspertiz placeholder ──
+  var ekspertizHTML='<div id="ekspertizBlok"></div>';
+  // ── Fiyat geçmişi placeholder ──
+  var fiyatGecmisiHTML='<div id="fiyatGecmisiBlok"></div>';
+
+  document.getElementById('icerik').innerHTML=
+    galeriHTML+
+    baslikHTML+
+    ozetHTML+
+    aciklamaHTML+
+    kriterHTML+
+    krediHTML+
+    konumHTML+
+    sahipHTML+
+    fiyatGecmisiHTML+
+    ekspertizHTML+
     '<div style="height:80px"></div>';
 
+  favoriKontrol();
   ekspertizKontrolDetay();
   fiyatGecmisiGoster();
-  favoriKontrol();
-
-  if (krediHTML) krediEventleriEkle();
+  if(krediHTML) krediHesapla();
 }
 
-// ── FİYAT GEÇMİŞİ ──
-async function fiyatGecmisiGoster() {
-  var el = document.getElementById('fiyatGecmisiBlok');
-  if (!el || !ilanId) return;
-
-  var res = await sb
-    .from('ilan_fiyat_gecmisi')
-    .select('*')
-    .eq('ilan_id', ilanId)
-    .order('created_at', { ascending: false })
-    .limit(10);
-
-  if (res.error || !res.data || res.data.length === 0) return;
-
-  var satirlar = res.data.map(function(r) {
-    var tarih = new Date(r.created_at).toLocaleDateString('tr-TR');
-    var eski = Number(r.eski_fiyat).toLocaleString('tr-TR');
-    var yeni = Number(r.yeni_fiyat).toLocaleString('tr-TR');
-    var fark = r.yeni_fiyat - r.eski_fiyat;
-    var farkStr = Math.abs(fark).toLocaleString('tr-TR');
-    var farkClass = fark < 0 ? 'fiyat-gecmisi-fark-asagi' : 'fiyat-gecmisi-fark-yukari';
-    var farkIsaret = fark < 0 ? '▼' : '▲';
-    return '<div class="fiyat-gecmisi-satir">' +
-      '<span class="fiyat-gecmisi-tarih">📅 ' + tarih + '</span>' +
-      '<div class="fiyat-gecmisi-sag">' +
-        '<span class="fiyat-gecmisi-eski">' + eski + ' TL</span>' +
-        '<span class="fiyat-gecmisi-yeni">' + yeni + ' TL</span>' +
-        '<span class="' + farkClass + '">' + farkIsaret + ' ' + farkStr + ' TL</span>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-
-  el.innerHTML =
-    '<div class="detay-section">' +
-      '<div class="detay-section-title">📉 Fiyat Geçmişi</div>' +
-      '<div class="fiyat-gecmisi-wrap">' + satirlar + '</div>' +
-    '</div>';
+/* ── KREDİ ── */
+function krediToggle(){
+  krediAcikMi=!krediAcikMi;
+  var body=document.getElementById('krediBody');
+  var arrow=document.getElementById('krediArrow');
+  if(krediAcikMi){body.classList.add('acik');arrow.classList.add('acik');krediHesapla();}
+  else{body.classList.remove('acik');arrow.classList.remove('acik');}
 }
-
-function krediHesaplayiciHTML() {
-  var kuygun = ilan.kriterler && ilan.kriterler.kredi_uygun ? String(ilan.kriterler.kredi_uygun) : '';
-  if (!kuygun || kuygun === 'Hayır' || kuygun.includes('Değil')) return '';
-
-  var bankaGriHTML = bankalar.map(function(b, i) {
-    return '<button class="banka-btn' + (i === 0 ? ' secili' : '') + '" id="bankaBtn_' + i + '" onclick="bankaSeç(' + i + ')">' +
-      '<div class="banka-btn-ad">' + b.ad + '</div>' +
-      '<div class="banka-btn-faiz">%' + b.faiz.toFixed(2) + ' aylık</div>' +
-    '</button>';
-  }).join('');
-
-  var pesinatDefault = Math.round(ilan.fiyat * 0.20);
-  var pesinatStr = pesinatDefault.toLocaleString('tr-TR');
-
-  return '<div class="detay-section" id="krediSection">' +
-    '<div class="kredi-wrap">' +
-      '<div class="kredi-header" id="krediHeader" onclick="krediToggle()">' +
-        '<div class="kredi-header-icon">🏦</div>' +
-        '<div class="kredi-header-text">' +
-          '<div class="kredi-header-title">Krediyi Hesapla</div>' +
-          '<div class="kredi-header-sub">Bu ilan krediye uygundur</div>' +
-        '</div>' +
-        '<span class="kredi-header-arrow" id="krediArrow">▼</span>' +
-      '</div>' +
-      '<div class="kredi-body" id="krediBody">' +
-        '<div style="font-size:12px;font-weight:800;color:var(--text3);margin-bottom:8px">Banka Seçin</div>' +
-        '<div class="banka-grid">' + bankaGriHTML + '</div>' +
-        '<div class="kredi-input-grup">' +
-          '<div class="kredi-input-row">' +
-            '<div class="kredi-input-label">Peşinat Tutarı <span style="color:var(--text3);font-weight:600">(min. %20)</span></div>' +
-            '<div class="kredi-input-inner">' +
-              '<input type="number" class="kredi-input" id="krediPesinat" value="' + pesinatDefault + '" min="' + pesinatDefault + '" oninput="krediHesapla()" onchange="pesinatKontrol()">' +
-              '<span class="kredi-input-birim">TL</span>' +
-            '</div>' +
-            '<div style="font-size:11px;color:var(--text3);margin-top:4px">İlan fiyatı: <strong style="color:var(--text)">' + Number(ilan.fiyat).toLocaleString('tr-TR') + ' TL</strong> — %20 peşinat: <strong style="color:var(--gold)">' + pesinatStr + ' TL</strong></div>' +
-          '</div>' +
-          '<div class="kredi-input-row">' +
-            '<div class="kredi-input-label">Vade: <span id="vadeLabel" style="color:var(--gold)">120 ay (10 yıl)</span></div>' +
-            '<div class="vade-slider-wrap">' +
-              '<input type="range" class="vade-slider" id="vadeSlider" min="12" max="120" step="12" value="120" oninput="vadeDegisti(this.value)">' +
-              '<div class="vade-isaretler">' +
-                '<span class="vade-isaret">12 ay</span>' +
-                '<span class="vade-isaret">36</span>' +
-                '<span class="vade-isaret">60</span>' +
-                '<span class="vade-isaret">84</span>' +
-                '<span class="vade-isaret">120 ay</span>' +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="kredi-sonuc" id="krediSonuc">' +
-          '<div class="kredi-sonuc-row"><span class="kredi-sonuc-label">Kredi Tutarı</span><span class="kredi-sonuc-val" id="sonucKrediTutar">—</span></div>' +
-          '<div class="kredi-sonuc-row"><span class="kredi-sonuc-label">Aylık Faiz Oranı</span><span class="kredi-sonuc-val" id="sonucFaiz">—</span></div>' +
-          '<div class="kredi-sonuc-row"><span class="kredi-sonuc-label">Vade</span><span class="kredi-sonuc-val" id="sonucVade">—</span></div>' +
-          '<div class="kredi-sonuc-row" style="background:rgba(245,200,66,0.06);border-radius:8px;padding:10px 12px;margin-top:4px"><span class="kredi-sonuc-label" style="font-size:13px;font-weight:900;color:var(--text)">Aylık Taksit</span><span class="kredi-sonuc-taksit" id="sonucTaksit">—</span></div>' +
-          '<div class="kredi-sonuc-row"><span class="kredi-sonuc-label">Toplam Ödeme</span><span class="kredi-sonuc-val" id="sonucToplam">—</span></div>' +
-          '<div class="kredi-sonuc-row"><span class="kredi-sonuc-label">Toplam Faiz Maliyeti</span><span class="kredi-sonuc-val" id="sonucFaizMaliyet" style="color:var(--rust)">—</span></div>' +
-          '<div class="kredi-uyari">* Bu hesaplama bilgi amaçlıdır. Gerçek kredi koşulları banka onayına, gelir durumuna ve güncel faiz oranlarına göre değişiklik gösterebilir.</div>' +
-        '</div>' +
-      '</div>' +
-    '</div>' +
-  '</div>';
-}
-
-function krediEventleriEkle() { krediHesapla(); }
-
-function krediToggle() {
-  krediAcikMi = !krediAcikMi;
-  var body = document.getElementById('krediBody');
-  var arrow = document.getElementById('krediArrow');
-  if (krediAcikMi) { body.classList.add('acik'); arrow.classList.add('acik'); krediHesapla(); }
-  else { body.classList.remove('acik'); arrow.classList.remove('acik'); }
-}
-
-function bankaSeç(index) {
-  seciliBankaIndex = index;
-  bankalar.forEach(function(_, i) { var btn = document.getElementById('bankaBtn_' + i); if (btn) btn.classList.remove('secili'); });
-  var secBtn = document.getElementById('bankaBtn_' + index);
-  if (secBtn) secBtn.classList.add('secili');
+function bankaSeç(i){
+  seciliBankaIndex=i;
+  bankalar.forEach(function(_,j){var b=document.getElementById('bankaBtn_'+j);if(b)b.classList.remove('secili');});
+  var sb2=document.getElementById('bankaBtn_'+i);if(sb2)sb2.classList.add('secili');
   krediHesapla();
 }
-
-function vadeDegisti(val) {
-  var ay = parseInt(val);
-  var yilLabel = ay >= 12 ? ' (' + Math.round(ay/12) + ' yıl)' : '';
-  var el = document.getElementById('vadeLabel');
-  if (el) el.textContent = ay + ' ay' + yilLabel;
+function vadeDegisti(val){
+  var ay=parseInt(val);
+  var el=document.getElementById('vadeLabel');
+  if(el) el.textContent=ay+' ay'+(ay>=12?' ('+Math.round(ay/12)+' yıl)':'');
   krediHesapla();
 }
+function pesinatKontrol(){
+  var min=Math.round(ilan.fiyat*0.20);
+  var inp=document.getElementById('krediPesinat');
+  if(!inp) return;
+  if((parseFloat(inp.value)||0)<min){inp.value=min;inp.style.borderColor='var(--rust)';setTimeout(function(){inp.style.borderColor='';},1500);}
+  krediHesapla();
+}
+function krediHesapla(){
+  var pInp=document.getElementById('krediPesinat');
+  var vInp=document.getElementById('vadeSlider');
+  var sEl=document.getElementById('krediSonuc');
+  if(!pInp||!vInp||!sEl) return;
+  var fiyat=parseFloat(ilan.fiyat)||0;
+  var pesinat=parseFloat(pInp.value)||0;
+  var vade=parseInt(vInp.value)||120;
+  var faiz=bankalar[seciliBankaIndex]?bankalar[seciliBankaIndex].faiz:3.49;
+  var kredi=fiyat-pesinat;
+  if(kredi<=0){sEl.style.display='none';return;}
+  var r=faiz/100,n=vade;
+  var taksit=r===0?kredi/n:kredi*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+  var toplam=taksit*n;
+  var faizMaliyet=toplam-kredi;
+  document.getElementById('sonucKrediTutar').textContent=Math.round(kredi).toLocaleString('tr-TR')+' ₺';
+  document.getElementById('sonucFaiz').textContent='%'+faiz.toFixed(2)+' / ay';
+  document.getElementById('sonucVade').textContent=vade+' ay';
+  document.getElementById('sonucTaksit').textContent=Math.round(taksit).toLocaleString('tr-TR')+' ₺';
+  document.getElementById('sonucToplam').textContent=Math.round(toplam).toLocaleString('tr-TR')+' ₺';
+  document.getElementById('sonucFaizMaliyet').textContent=Math.round(faizMaliyet).toLocaleString('tr-TR')+' ₺';
+  sEl.style.display='block';
+}
 
-function pesinatKontrol() {
-  var minPesinat = Math.round(ilan.fiyat * 0.20);
-  var input = document.getElementById('krediPesinat');
-  if (!input) return;
-  var girilenDeger = parseFloat(input.value) || 0;
-  if (girilenDeger < minPesinat) {
-    input.value = minPesinat;
-    input.style.borderColor = 'var(--rust)';
-    setTimeout(function() { input.style.borderColor = ''; }, 1500);
+/* ── FİYAT GEÇMİŞİ ── */
+async function fiyatGecmisiGoster(){
+  var el=document.getElementById('fiyatGecmisiBlok');
+  if(!el||!ilanId) return;
+  var r=await sb.from('ilan_fiyat_gecmisi').select('*').eq('ilan_id',ilanId).order('created_at',{ascending:false}).limit(10);
+  if(r.error||!r.data||r.data.length===0) return;
+  var satirlar=r.data.map(function(x){
+    var tarih=new Date(x.created_at).toLocaleDateString('tr-TR');
+    var fark=x.yeni_fiyat-x.eski_fiyat;
+    var fc=fark<0?'fg-asagi':'fg-yukari';
+    var fi=fark<0?'▼':'▲';
+    return '<div class="fiyat-gecmis-satir">'+
+      '<span class="fg-tarih">📅 '+tarih+'</span>'+
+      '<div class="fg-sag">'+
+        '<span class="fg-eski">'+Number(x.eski_fiyat).toLocaleString('tr-TR')+' ₺</span>'+
+        '<span class="fg-yeni">'+Number(x.yeni_fiyat).toLocaleString('tr-TR')+' ₺</span>'+
+        '<span class="'+fc+'">'+fi+' '+Math.abs(fark).toLocaleString('tr-TR')+' ₺</span>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  el.innerHTML='<div class="liste-bolum"><div class="liste-bolum-baslik">📉 Fiyat Geçmişi</div>'+satirlar+'</div>';
+}
+
+/* ── EKSPERTİZ ── */
+async function ekspertizKontrolDetay(){
+  var el=document.getElementById('ekspertizBlok');
+  if(!el) return;
+  var r=await sb.from('degerleme_raporlari').select('id').eq('ilan_id',ilanId).eq('durum','tamamlandi').limit(1).single();
+  if(r.data){
+    el.innerHTML='<div class="liste-bolum">'+
+      '<div class="satir-link" onclick="window.location.href=\'rapor.html?ilan_id='+ilanId+'\'">'+
+        '<div class="satir-link-sol"><span class="satir-link-ikon">📊</span>Ekspertiz Raporu Mevcut</div>'+
+        '<span class="satir-link-ok">›</span>'+
+      '</div>'+
+    '</div>';
+  } else if(ilan&&currentUser&&ilan.user_id===currentUser.id){
+    el.innerHTML='<div class="liste-bolum">'+
+      '<div class="satir-link" onclick="window.location.href=\'degerleme.html?ilan_id='+ilanId+'\'">'+
+        '<div class="satir-link-sol"><span class="satir-link-ikon">📊</span>Ekspertiz Raporu Al — 800 ₺</div>'+
+        '<span class="satir-link-ok">›</span>'+
+      '</div>'+
+    '</div>';
   }
-  krediHesapla();
 }
 
-function krediHesapla() {
-  var pesinatInput = document.getElementById('krediPesinat');
-  var vadeInput = document.getElementById('vadeSlider');
-  var sonucEl = document.getElementById('krediSonuc');
-  if (!pesinatInput || !vadeInput || !sonucEl) return;
-
-  var fiyat = parseFloat(ilan.fiyat) || 0;
-  var pesinat = parseFloat(pesinatInput.value) || 0;
-  var vade = parseInt(vadeInput.value) || 120;
-  var faizOrani = bankalar[seciliBankaIndex] ? bankalar[seciliBankaIndex].faiz : 3.49;
-
-  var krediTutar = fiyat - pesinat;
-  if (krediTutar <= 0) { sonucEl.classList.remove('goster'); return; }
-
-  var r = faizOrani / 100;
-  var n = vade;
-  var taksit;
-  if (r === 0) { taksit = krediTutar / n; }
-  else { taksit = krediTutar * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1); }
-
-  var toplamOdeme = taksit * n;
-  var toplamFaiz = toplamOdeme - krediTutar;
-
-  document.getElementById('sonucKrediTutar').textContent = Math.round(krediTutar).toLocaleString('tr-TR') + ' TL';
-  document.getElementById('sonucFaiz').textContent = '%' + faizOrani.toFixed(2) + ' / ay';
-  document.getElementById('sonucVade').textContent = vade + ' ay';
-  document.getElementById('sonucTaksit').textContent = Math.round(taksit).toLocaleString('tr-TR') + ' TL';
-  document.getElementById('sonucToplam').textContent = Math.round(toplamOdeme).toLocaleString('tr-TR') + ' TL';
-  document.getElementById('sonucFaizMaliyet').textContent = Math.round(toplamFaiz).toLocaleString('tr-TR') + ' TL';
-
-  sonucEl.classList.add('goster');
-}
-
-// ── LİGHTBOX ──
-var lbAktifIndex = 0;
-var lbTouchStartX = 0;
-var lbTouchStartY = 0;
-var lbSwiping = false;
-
-function lightboxAc(index) {
-  var galeri = document.getElementById('lightboxGaleri');
-  galeri.innerHTML = tumFotolar.map(function(foto) {
-    return '<div class="lightbox-item">' +
-      '<img src="' + foto.url + '">' +
-      (foto.ad ? '<div class="lightbox-oda-etiket">' + foto.em + ' ' + foto.ad + '</div>' : '') +
-      '</div>';
+/* ── LİGHTBOX ── */
+var lbIdx=0,lbTX=0,lbTY=0,lbSwipe=false;
+function lightboxAc(i){
+  var g=document.getElementById('lightboxGaleri');
+  g.innerHTML=tumFotolar.map(function(f){
+    return '<div class="lightbox-item"><img src="'+f.url+'">'+(f.ad?'<div class="lightbox-oda-etiket">'+f.em+' '+f.ad+'</div>':'')+'</div>';
   }).join('');
-
-  lbAktifIndex = index;
-  lbSayacGuncelle();
+  lbIdx=i; lbSayacGuncelle();
   document.getElementById('lightbox').classList.add('open');
-
-  galeri.style.scrollSnapType = 'none';
-  galeri.style.overflow = 'hidden';
-  galeri.scrollLeft = index * window.innerWidth;
-
-  galeri.ontouchstart = function(e) {
-    lbTouchStartX = e.touches[0].clientX;
-    lbTouchStartY = e.touches[0].clientY;
-    lbSwiping = true;
-  };
-  galeri.ontouchend = function(e) {
-    if (!lbSwiping) return;
-    lbSwiping = false;
-    var dx = lbTouchStartX - e.changedTouches[0].clientX;
-    var dy = lbTouchStartY - e.changedTouches[0].clientY;
-    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 60) { lightboxKapat(); return; }
-    if (Math.abs(dx) > 40) {
-      if (dx > 0 && lbAktifIndex < tumFotolar.length - 1) lbAktifIndex++;
-      else if (dx < 0 && lbAktifIndex > 0) lbAktifIndex--;
-      lbGit(lbAktifIndex);
+  g.style.scrollSnapType='none'; g.style.overflow='hidden';
+  g.scrollLeft=i*window.innerWidth;
+  g.ontouchstart=function(e){lbTX=e.touches[0].clientX;lbTY=e.touches[0].clientY;lbSwipe=true;};
+  g.ontouchend=function(e){
+    if(!lbSwipe) return; lbSwipe=false;
+    var dx=lbTX-e.changedTouches[0].clientX;
+    var dy=lbTY-e.changedTouches[0].clientY;
+    if(Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>60){lightboxKapat();return;}
+    if(Math.abs(dx)>40){
+      if(dx>0&&lbIdx<tumFotolar.length-1) lbIdx++;
+      else if(dx<0&&lbIdx>0) lbIdx--;
+      lbGit(lbIdx);
     }
   };
 }
-
-function lbGit(index) {
-  lbAktifIndex = index;
-  var galeri = document.getElementById('lightboxGaleri');
-  galeri.scrollTo({ left: index * window.innerWidth, behavior: 'smooth' });
-  lbSayacGuncelle();
+function lbGit(i){lbIdx=i;document.getElementById('lightboxGaleri').scrollTo({left:i*window.innerWidth,behavior:'smooth'});lbSayacGuncelle();}
+function lbSayacGuncelle(){
+  var f=tumFotolar[lbIdx];
+  var et=f&&f.ad?f.em+' '+f.ad+' · ':'';
+  document.getElementById('lightboxSayac').textContent=et+(lbIdx+1)+' / '+tumFotolar.length;
 }
+function lightboxKapat(){document.getElementById('lightbox').classList.remove('open');}
 
-function lbSayacGuncelle() {
-  var f = tumFotolar[lbAktifIndex];
-  var etiket = f && f.ad ? (f.em + ' ' + f.ad + ' · ') : '';
-  document.getElementById('lightboxSayac').textContent = etiket + (lbAktifIndex + 1) + ' / ' + tumFotolar.length;
-}
-
-function lightboxKapat() { document.getElementById('lightbox').classList.remove('open'); }
-
-async function ekspertizKontrolDetay() {
-  var el = document.getElementById('ekspertizBlok');
-  if (!el) return;
-  var res = await sb.from('degerleme_raporlari').select('id').eq('ilan_id', ilanId).eq('durum', 'tamamlandi').limit(1).single();
-  if (res.data) {
-    el.innerHTML = '<div style="background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.2);border-radius:var(--radius);padding:16px;margin-bottom:16px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:24px">📊</span><div><div style="font-size:14px;font-weight:900;color:var(--gold)">Ekspertiz Raporu Mevcut</div><div style="font-size:12px;color:var(--text3)">Bu ilan profesyonel değerleme raporuna sahip</div></div></div><a href="rapor.html?ilan_id=' + ilanId + '" class="btn btn-gold btn-md" style="width:100%;text-align:center">Ekspertiz Değerini Gör</a></div>';
-  } else if (ilan && currentUser && ilan.user_id === currentUser.id) {
-    el.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:24px">📊</span><div><div style="font-size:14px;font-weight:900">Ekspertiz Raporu Al</div><div style="font-size:12px;color:var(--text3)">Yapay zeka ile profesyonel değerleme - 800 TL</div></div></div><a href="degerleme.html?ilan_id=' + ilanId + '" class="btn btn-gold btn-md" style="width:100%;text-align:center">Rapor Al - 800 TL</a></div>';
-  }
-}
-
-async function favoriToggle() {
-  if (!currentUser) { girisGerekli(); return; }
-  var btn = document.getElementById('favBtn');
-  if (favori) {
-    await sb.from('favoriler').delete().eq('user_id', currentUser.id).eq('ilan_id', ilanId);
-    favori = false; btn.textContent = '🤍';
-    showToast('Favorilerden çıkarıldı');
-  } else {
-    await sb.from('favoriler').insert({user_id: currentUser.id, ilan_id: ilanId});
-    favori = true; btn.textContent = '❤️';
-    btn.style.transform = 'scale(1.3)';
-    setTimeout(function() { btn.style.transform = ''; }, 300);
-    showToast('Favorilere eklendi!', true);
-    if (ilan.user_id && ilan.user_id !== currentUser.id) {
-      await sb.from('bildirimler').insert({user_id: ilan.user_id, tip: 'favori', baslik: 'İlanınız favorilere eklendi!', mesaj: '"' + ilan.baslik + '" ilanınız favorilere eklendi.', ilan_id: ilanId, okundu: false});
+/* ── FAVORİ ── */
+async function favoriToggle(){
+  if(!currentUser){girisGerekli();return;}
+  var btn=document.getElementById('favBtn');
+  if(favori){
+    await sb.from('favoriler').delete().eq('user_id',currentUser.id).eq('ilan_id',ilanId);
+    favori=false; btn.textContent='🤍'; showToast('Favorilerden çıkarıldı');
+  }else{
+    await sb.from('favoriler').insert({user_id:currentUser.id,ilan_id:ilanId});
+    favori=true; btn.textContent='❤️'; btn.style.transform='scale(1.3)';
+    setTimeout(function(){btn.style.transform='';},300);
+    showToast('Favorilere eklendi! <a href="favoriler.html" style="color:var(--gold);font-weight:800;text-decoration:none">Görüntüle</a>');
+    if(ilan.user_id&&ilan.user_id!==currentUser.id){
+      await sb.from('bildirimler').insert({user_id:ilan.user_id,tip:'favori',baslik:'İlanınız favorilere eklendi!',mesaj:'"'+ilan.baslik+'" ilanınız favorilere eklendi.',ilan_id:ilanId,okundu:false});
     }
   }
 }
-
-function showToast(msg, withLink) {
-  var toast = document.getElementById('favToast');
-  toast.innerHTML = withLink ? msg + ' <a href="favoriler.html" style="color:var(--gold);font-weight:800;text-decoration:none">Görüntüle</a>' : msg;
-  toast.classList.add('show');
-  setTimeout(function() { toast.classList.remove('show'); }, 3000);
+function showToast(msg){
+  var t=document.getElementById('favToast');
+  t.innerHTML=msg; t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},3000);
 }
 
-function mesajGonder() {
-  if (!ilan) return;
-  if (!currentUser) { girisGerekli(); return; }
-  window.location.href = 'mesajlar.html?ilan_id=' + ilan.id + '&karsi_id=' + ilan.user_id;
-}
+/* ── DİĞER ── */
+function mesajGonder(){if(!ilan) return;if(!currentUser){girisGerekli();return;}window.location.href='mesajlar.html?ilan_id='+ilan.id+'&karsi_id='+ilan.user_id;}
+function telefon(){if(!currentUser){girisGerekli();return;}var tel=ilan&&ilan.profiles&&ilan.profiles.phone?ilan.profiles.phone:null;if(tel)window.location.href='tel:'+tel;else alert('Bu ilanda telefon numarası bulunmuyor.');}
+function haritaAc(){window.open('https://www.google.com/maps/search/'+encodeURIComponent(ilan?ilan.konum||'':''),'_blank');}
+function sokakGorunumuAc(){window.open('https://www.google.com/maps/search/'+encodeURIComponent(ilan?ilan.konum||'':'')+'/@?api=1&map_action=pano','_blank');}
 
-function telefon() {
-  if (!currentUser) { girisGerekli(); return; }
-  var tel = ilan && ilan.profiles && ilan.profiles.phone ? ilan.profiles.phone : null;
-  if (tel) window.location.href = 'tel:' + tel;
-  else alert('Bu ilanda telefon numarası bulunmuyor.');
-}
+var seciliSikayetSebep=null;
+function sikayetAc(){if(!currentUser){girisGerekli();return;}seciliSikayetSebep=null;document.querySelectorAll('.sikayet-sebep-btn').forEach(function(b){b.classList.remove('selected');});document.getElementById('sikayetAciklama').value='';document.getElementById('sikayetModal').classList.add('open');}
+function sikayetKapat(){document.getElementById('sikayetModal').classList.remove('open');}
+function sikayetSebepSec(el,sebep){seciliSikayetSebep=sebep;document.querySelectorAll('.sikayet-sebep-btn').forEach(function(b){b.classList.remove('selected');});el.classList.add('selected');}
+async function sikayetGonder(){if(!seciliSikayetSebep){alert('Lütfen bir şikayet sebebi seçin!');return;}await sb.from('sikayetler').insert({user_id:currentUser.id,tip:'ilan',sebep:seciliSikayetSebep,hedef_id:ilanId,hedef_tip:'ilan',aciklama:document.getElementById('sikayetAciklama').value.trim()||null,durum:'bekliyor'});sikayetKapat();alert('Şikayetiniz alındı.');}
 
-function haritaAc() {
-  window.open('https://www.google.com/maps/search/' + encodeURIComponent(ilan ? ilan.konum || '' : ''), '_blank');
-}
-
-function sokakGorunumuAc() {
-  window.open('https://www.google.com/maps/search/' + encodeURIComponent(ilan ? ilan.konum || '' : '') + '/@?api=1&map_action=pano', '_blank');
-}
-
-var seciliSikayetSebep = null;
-function sikayetAc() {
-  if (!currentUser) { girisGerekli(); return; }
-  seciliSikayetSebep = null;
-  document.querySelectorAll('.sikayet-sebep-btn').forEach(function(b) { b.classList.remove('selected'); });
-  document.getElementById('sikayetAciklama').value = '';
-  document.getElementById('sikayetModal').classList.add('open');
-}
-function sikayetKapat() { document.getElementById('sikayetModal').classList.remove('open'); }
-function sikayetSebepSec(el, sebep) {
-  seciliSikayetSebep = sebep;
-  document.querySelectorAll('.sikayet-sebep-btn').forEach(function(b) { b.classList.remove('selected'); });
-  el.classList.add('selected');
-}
-async function sikayetGonder() {
-  if (!seciliSikayetSebep) { alert('Lütfen bir şikayet sebebi seçin!'); return; }
-  await sb.from('sikayetler').insert({user_id: currentUser.id, tip: 'ilan', sebep: seciliSikayetSebep, hedef_id: ilanId, hedef_tip: 'ilan', aciklama: document.getElementById('sikayetAciklama').value.trim() || null, durum: 'bekliyor'});
-  sikayetKapat(); alert('Şikayetiniz alındı.');
-}
-
-function paylas() {
-  var kisaUrl = kisaKod
-    ? window.location.origin + window.location.pathname.replace(/[^\/]*$/, '') + 'ilan-detay.html#' + kisaKod
-    : window.location.href;
-  if (navigator.share) {
-    navigator.share({title: ilan ? ilan.baslik : 'GoTapu İlanı', text: ilan ? ilan.baslik + ' - ' + Number(ilan.fiyat).toLocaleString('tr-TR') + ' TL' : '', url: kisaUrl});
-  } else {
-    navigator.clipboard.writeText(kisaUrl);
-    alert('Link kopyalandı!\n' + kisaUrl);
-  }
+function paylas(){
+  var url=kisaKod?window.location.origin+window.location.pathname.replace(/[^\/]*$/,'')+'/ilan-detay.html#'+kisaKod:window.location.href;
+  if(navigator.share) navigator.share({title:ilan?ilan.baslik:'GoTapu',text:ilan?ilan.baslik+' - '+Number(ilan.fiyat).toLocaleString('tr-TR')+' ₺':'',url:url});
+  else{navigator.clipboard.writeText(url);alert('Link kopyalandı!\n'+url);}
 }
 </script>
 <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/XxxGotapu/sw.js", { scope: "/XxxGotapu/" })
-      .catch(function(e) { console.log("SW error:", e); });
-  }
+  if("serviceWorker" in navigator){navigator.serviceWorker.register("/XxxGotapu/sw.js",{scope:"/XxxGotapu/"}).catch(function(e){console.log("SW error:",e);});}
 </script>
 </body>
 </html>
