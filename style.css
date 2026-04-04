@@ -15,8 +15,8 @@
   --green: #2ECC71;
   --blue: #4A90D9;
   --text: #FFFFFF;
-  --text2: rgba(255,255,255,0.85);   /* eskisi 0.6 → şimdi 0.85 */
-  --text3: rgba(255,255,255,0.60);   /* eskisi 0.3 → şimdi 0.60 */
+  --text2: rgba(255,255,255,0.92);   /* neredeyse tam beyaz */
+  --text3: rgba(255,255,255,0.72);   /* belirgin gri-beyaz */
   --radius: 16px;
   --radius-sm: 10px;
   --nav-h: 64px;
@@ -39,9 +39,9 @@ body.light {
   --rust: #E8603A;
   --green: #00a878;
   --blue: #3a90e8;
-  --text: #0d2e2e;
-  --text2: rgba(13,46,46,0.80);      /* eskisi 0.65 → şimdi 0.80 */
-  --text3: rgba(13,46,46,0.60);      /* eskisi 0.38 → şimdi 0.60 */
+  --text: #0a1f1f;
+  --text2: #1a3a3a;                  /* koyu yeşil-siyah, tam okunur */
+  --text3: #2d5555;                  /* orta koyu, soluk değil */
   --shadow: 0 4px 20px rgba(0,150,150,0.1);
   --theme-icon: '🌙';
 }
