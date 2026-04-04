@@ -777,7 +777,27 @@ function showToast(msg){
 function mesajGonder(){if(!ilan) return;if(!currentUser){girisGerekli();return;}window.location.href='mesajlar.html?ilan_id='+ilan.id+'&karsi_id='+ilan.user_id;}
 function telefon(){if(!currentUser){girisGerekli();return;}var tel=ilan&&ilan.profiles&&ilan.profiles.phone?ilan.profiles.phone:null;if(tel)window.location.href='tel:'+tel;else alert('Bu ilanda telefon numarası bulunmuyor.');}
 function haritaAc(){window.open('https://www.google.com/maps/search/'+encodeURIComponent(ilan?ilan.konum||'':''),'_blank');}
-function sokakGorunumuAc(){window.open('https://www.google.com/maps/search/'+encodeURIComponent(ilan?ilan.konum||'':'')+'/@?api=1&map_action=pano','_blank');}
+async function sokakGorunumuAc(){
+  var konum=ilan?ilan.konum||'':'';
+  if(!konum){alert('Konum bilgisi bulunamadı.');return;}
+  try{
+    // Nominatim ile koordinat al (ücretsiz, API key gerektirmez)
+    var url='https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(konum+', Türkiye')+'&format=json&limit=1';
+    var res=await fetch(url,{headers:{'Accept-Language':'tr'}});
+    var data=await res.json();
+    if(data&&data.length>0){
+      var lat=parseFloat(data[0].lat);
+      var lon=parseFloat(data[0].lon);
+      // Google Maps Street View — koordinatla açılınca direkt sokak içi görünümü gelir
+      window.open('https://www.google.com/maps/@?api=1&map_action=pano&viewpoint='+lat+','+lon,'_blank');
+    } else {
+      // Koordinat bulunamazsa yine de dene, Google Maps kendisi bulsun
+      window.open('https://www.google.com/maps/@?api=1&map_action=pano&query='+encodeURIComponent(konum),'_blank');
+    }
+  }catch(e){
+    window.open('https://www.google.com/maps/@?api=1&map_action=pano&query='+encodeURIComponent(konum),'_blank');
+  }
+}
 
 var seciliSikayetSebep=null;
 function sikayetAc(){if(!currentUser){girisGerekli();return;}seciliSikayetSebep=null;document.querySelectorAll('.sikayet-sebep-btn').forEach(function(b){b.classList.remove('selected');});document.getElementById('sikayetAciklama').value='';document.getElementById('sikayetModal').classList.add('open');}
