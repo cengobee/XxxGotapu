@@ -597,7 +597,8 @@ async function fiyatGecmisiGoster() {
 
 function krediHesaplayiciHTML() {
   var kuygun = ilan.kriterler && ilan.kriterler.kredi_uygun ? String(ilan.kriterler.kredi_uygun) : '';
-  if (!ilan || !ilan.kriterler || !kuygun.includes('Evet')) return '';
+  // 'Evet', '✅ Krediye Uygun' → göster | 'Hayır', '❌ Krediye Uygun Değil', boş → gösterme
+  if (!kuygun || kuygun === 'Hayır' || kuygun.includes('Değil')) return '';
 
   var bankaGriHTML = bankalar.map(function(b, i) {
     return '<button class="banka-btn' + (i === 0 ? ' secili' : '') + '" id="bankaBtn_' + i + '" onclick="bankaSeç(' + i + ')">' +
