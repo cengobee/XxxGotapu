@@ -38,6 +38,36 @@
   .menu-icon { font-size: 20px; width: 28px; text-align: center; }
   .menu-text { flex: 1; font-size: 15px; font-weight: 700; }
   .menu-arrow { color: var(--text3); }
+
+  /* ── STAT ROW: şeffaf arka plan, liste görünümü ── */
+  .stat-row-inline {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    background: transparent;
+  }
+  .stat-inline-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px 6px 0;
+  }
+  .stat-inline-box + .stat-inline-box {
+    padding-left: 16px;
+    border-left: 1px solid var(--border);
+  }
+  .stat-inline-num {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--gold);
+  }
+  .stat-inline-lbl {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text2);
+  }
+
+  /* ── İLAN KARTLARI ── */
   .ilanim-item {
     display: flex; gap: 12px; align-items: flex-start;
     padding: 12px 16px; border-bottom: 1px solid var(--border);
@@ -55,10 +85,81 @@
   .onay-bekliyor { background: rgba(245,200,66,0.15); color: var(--gold); }
   .onay-onaylandi { background: rgba(46,204,113,0.15); color: var(--green); }
   .onay-reddedildi { background: rgba(232,96,58,0.15); color: var(--rust); }
+
+  /* ── İLAN SATIR AKSİYONLARI: thumb yanında sağ taraf ── */
+  .ilan-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6px;
+    flex-shrink: 0;
+    align-items: flex-end;
+    min-width: 90px;
+  }
+  .ilan-actions-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 84px;
+  }
+  .btn-duzenle, .btn-sil {
+    display: block;
+    border-radius: 8px;
+    padding: 5px 0;
+    font-size: 11px;
+    font-weight: 800;
+    text-align: center;
+    cursor: pointer;
+    font-family: Nunito, sans-serif;
+    width: 100%;
+    border: none;
+  }
+  .btn-duzenle {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+  }
+  .btn-sil {
+    background: rgba(232,96,58,0.1);
+    border: 1px solid rgba(232,96,58,0.3);
+    color: var(--rust);
+  }
+
   .alici-ilan-card {
     background: rgba(74,144,217,0.06); border: 1px solid rgba(74,144,217,0.2);
     border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
   }
+
+  /* ── HİZMETLER AÇILIR/KAPANIR ── */
+  .hizmetler-toggle-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+    cursor: pointer;
+    font-family: Nunito, sans-serif;
+    transition: background .2s;
+  }
+  .hizmetler-toggle-btn:active { background: var(--card2); }
+  .hizmetler-toggle-arrow {
+    font-size: 18px;
+    color: var(--text3);
+    transition: transform .25s;
+  }
+  .hizmetler-toggle-arrow.open { transform: rotate(180deg); }
+  .hizmetler-body {
+    display: none;
+    margin-top: 10px;
+  }
+  .hizmetler-body.open { display: block; }
   .hizmet-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
   .hizmet-item {
     background: var(--card); border-radius: var(--radius-sm);
@@ -68,6 +169,16 @@
   .hizmet-item:active { border-color: var(--gold); }
   .hizmet-em { font-size: 26px; display: block; margin-bottom: 6px; }
   .hizmet-lbl { font-size: 11px; font-weight: 700; color: var(--text2); }
+
+  /* ── HİZMET VER BUTONU ── */
+  .hizmet-ver-btn {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px; background: var(--card);
+    border-bottom: 1px solid var(--border); cursor: pointer;
+    transition: background .2s; text-decoration: none; color: var(--text);
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .hizmet-ver-btn:active { background: var(--card2); }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -78,20 +189,14 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
-<!-- ═══════════════════════════════════════
-     TEMA GEÇİŞ BUTONU — Her sayfaya ekle
-     </body> etiketinden hemen önce yapıştır
-═══════════════════════════════════════ -->
 <script>
 (function() {
-  // Sayfa açılınca kayıtlı temayı uygula — flash önlemek için hemen çalışır
   var kaydedilenTema = localStorage.getItem('gotapu_tema');
   if (kaydedilenTema === 'light') {
     document.body.classList.add('light');
   }
 
   function temaButonuOlustur() {
-    // Zaten varsa oluşturma
     if (document.getElementById('themeToggleBtn')) return;
 
     var btn = document.createElement('button');
@@ -105,20 +210,16 @@
       var acikMi = document.body.classList.toggle('light');
       localStorage.setItem('gotapu_tema', acikMi ? 'light' : 'dark');
       btn.textContent = acikMi ? '🌙' : '☀️';
-
-      // Kısa animasyon geri bildirimi
       btn.style.transform = 'scale(0.8) rotate(20deg)';
       setTimeout(function() { btn.style.transform = ''; }, 200);
     });
 
-    // Nav actions'ın ilk çocuğu olarak ekle
     var navActions = document.querySelector('.nav-actions');
     if (navActions) {
       navActions.insertBefore(btn, navActions.firstChild);
     }
   }
 
-  // DOM hazır olduğunda butonu ekle
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', temaButonuOlustur);
   } else {
@@ -151,9 +252,16 @@
     <div class="verified" id="verifiedBadge" style="display:none">✓ Doğrulanmış Üye</div>
   </div>
 
-  <div class="stat-row" style="margin-bottom:24px">
-    <div class="stat-box"><div class="stat-num" id="ilanSayisi">0</div><div class="stat-lbl">İlan</div></div>
-    <div class="stat-box"><div class="stat-num" id="hizmetSayisi">0</div><div class="stat-lbl">Hizmet</div></div>
+  <!-- ── KÜÇÜK STAT SATIRI (şeffaf, liste görünümü) ── -->
+  <div class="stat-row-inline" style="justify-content:center;margin-bottom:20px">
+    <div class="stat-inline-box">
+      <span class="stat-inline-num" id="ilanSayisi">0</span>
+      <span class="stat-inline-lbl">İlan</span>
+    </div>
+    <div class="stat-inline-box">
+      <span class="stat-inline-num" id="hizmetSayisi">0</span>
+      <span class="stat-inline-lbl">Hizmet</span>
+    </div>
   </div>
 
   <div class="menu-section">
@@ -166,32 +274,44 @@
     <div id="aliciIlanCard"><div class="spinner"></div></div>
   </div>
 
+  <!-- ── HİZMETLER AÇILIR/KAPANIR ── -->
   <div class="menu-section">
-    <div class="menu-label">🏠 Ev Hizmetleri</div>
-    <div class="hizmet-grid">
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=tadilat'"><span class="hizmet-em">🔧</span><div class="hizmet-lbl">Tadilat</div></div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=temizlik'"><span class="hizmet-em">🧹</span><div class="hizmet-lbl">Temizlik</div></div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=boya'"><span class="hizmet-em">🖌️</span><div class="hizmet-lbl">Boya</div></div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=nakliye'"><span class="hizmet-em">🚚</span><div class="hizmet-lbl">Nakliye</div></div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><span class="hizmet-em">🛋️</span><div class="hizmet-lbl">Dekorasyon</div></div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=sigorta'"><span class="hizmet-em">🛡️</span><div class="hizmet-lbl">Sigorta</div></div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=cilingir'"><span class="hizmet-em">🔑</span><div class="hizmet-lbl">Çilingir</div></div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=teknik'"><span class="hizmet-em">📱</span><div class="hizmet-lbl">Teknik Servis</div></div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=aracyikama'"><span class="hizmet-em">🚗</span><div class="hizmet-lbl">Araç Yıkama</div></div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=koltukyikama'"><span class="hizmet-em">🛋️</span><div class="hizmet-lbl">Koltuk Yıkama</div></div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=haliyikama'"><span class="hizmet-em">🪞</span><div class="hizmet-lbl">Halı Yıkama</div></div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=ilacalama'"><span class="hizmet-em">🦟</span><div class="hizmet-lbl">İlaçlama</div></div>
-      <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=petek'"><span class="hizmet-em">♨️</span><div class="hizmet-lbl">Petek & Kombi</div></div>
+    <button class="hizmetler-toggle-btn" id="hizmetlerToggleBtn" onclick="hizmetlerToggle()">
+      <span>🏠 Ev Hizmetleri</span>
+      <span class="hizmetler-toggle-arrow" id="hizmetlerArrow">▼</span>
+    </button>
+    <div class="hizmetler-body" id="hizmetlerBody">
+      <div class="hizmet-grid">
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=tadilat'"><span class="hizmet-em">🔧</span><div class="hizmet-lbl">Tadilat</div></div>
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=temizlik'"><span class="hizmet-em">🧹</span><div class="hizmet-lbl">Temizlik</div></div>
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=boya'"><span class="hizmet-em">🖌️</span><div class="hizmet-lbl">Boya</div></div>
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=nakliye'"><span class="hizmet-em">🚚</span><div class="hizmet-lbl">Nakliye</div></div>
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><span class="hizmet-em">🛋️</span><div class="hizmet-lbl">Dekorasyon</div></div>
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=sigorta'"><span class="hizmet-em">🛡️</span><div class="hizmet-lbl">Sigorta</div></div>
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=cilingir'"><span class="hizmet-em">🔑</span><div class="hizmet-lbl">Çilingir</div></div>
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=teknik'"><span class="hizmet-em">📱</span><div class="hizmet-lbl">Teknik Servis</div></div>
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=aracyikama'"><span class="hizmet-em">🚗</span><div class="hizmet-lbl">Araç Yıkama</div></div>
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=koltukyikama'"><span class="hizmet-em">🛋️</span><div class="hizmet-lbl">Koltuk Yıkama</div></div>
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=haliyikama'"><span class="hizmet-em">🪞</span><div class="hizmet-lbl">Halı Yıkama</div></div>
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=ilacalama'"><span class="hizmet-em">🦟</span><div class="hizmet-lbl">İlaçlama</div></div>
+        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=petek'"><span class="hizmet-em">♨️</span><div class="hizmet-lbl">Petek & Kombi</div></div>
+      </div>
     </div>
   </div>
 
   <div class="menu-section">
     <div class="menu-label">Hesap</div>
-    <a href="favoriler.html" class="menu-item"><div class="menu-icon">❤️</div><div class="menu-text">Favorilerim</div><div class="menu-arrow">›</div></a>
-    <a href="eslesmeler.html" class="menu-item"><div class="menu-icon">✨</div><div class="menu-text">Eşleşmelerim</div><div class="menu-arrow">›</div></a>
-    <a href="bildirimler.html" class="menu-item"><div class="menu-icon">🔔</div><div class="menu-text">Bildirimler</div><div class="menu-arrow">›</div></a>
-    <div class="menu-item" onclick="profilDuzenle()"><div class="menu-icon">⚙️</div><div class="menu-text">Profili Düzenle</div><div class="menu-arrow">›</div></div>
-    <div class="menu-item" onclick="cikisYap()" style="color:var(--rust)"><div class="menu-icon">🚪</div><div class="menu-text" style="color:var(--rust)">Çıkış Yap</div><div class="menu-arrow">›</div></div>
+    <!-- ── HİZMET VER BUTONU (Favorilerin üstünde) ── -->
+    <div class="hizmet-ver-btn" onclick="hizmetVerTikla()">
+      <div class="menu-icon">🛠️</div>
+      <div class="menu-text">Hizmet Ver</div>
+      <div class="menu-arrow">›</div>
+    </div>
+    <a href="favoriler.html" class="menu-item" style="border-radius:0"><div class="menu-icon">❤️</div><div class="menu-text">Favorilerim</div><div class="menu-arrow">›</div></a>
+    <a href="eslesmeler.html" class="menu-item" style="border-radius:0"><div class="menu-icon">✨</div><div class="menu-text">Eşleşmelerim</div><div class="menu-arrow">›</div></a>
+    <a href="bildirimler.html" class="menu-item" style="border-radius:0"><div class="menu-icon">🔔</div><div class="menu-text">Bildirimler</div><div class="menu-arrow">›</div></a>
+    <div class="menu-item" onclick="profilDuzenle()" style="border-radius:0"><div class="menu-icon">⚙️</div><div class="menu-text">Profili Düzenle</div><div class="menu-arrow">›</div></div>
+    <div class="menu-item" onclick="cikisYap()" style="color:var(--rust);border-radius:0 0 var(--radius) var(--radius)"><div class="menu-icon">🚪</div><div class="menu-text" style="color:var(--rust)">Çıkış Yap</div><div class="menu-arrow">›</div></div>
   </div>
 
 </div>
@@ -215,8 +335,11 @@
     <div class="verified" id="bAvVerified" style="display:none">✓ Doğrulanmış Üye</div>
   </div>
 
-  <div class="stat-row" style="margin-bottom:24px">
-    <div class="stat-box"><div class="stat-num" id="bAvIlanSay">0</div><div class="stat-lbl">İlan</div></div>
+  <div class="stat-row-inline" style="justify-content:center;margin-bottom:24px">
+    <div class="stat-inline-box">
+      <span class="stat-inline-num" id="bAvIlanSay">0</span>
+      <span class="stat-inline-lbl">İlan</span>
+    </div>
   </div>
 
   <!-- Mesaj Gönder butonu -->
@@ -249,22 +372,53 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentUser = null;
 
 const urlParams = new URLSearchParams(window.location.search);
-const hedefId = urlParams.get('id'); // başkasının profili mi?
+const hedefId = urlParams.get('id');
 
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) { window.location.href = 'index.html'; return; }
   currentUser = data.session.user;
 
   if (hedefId && hedefId !== currentUser.id) {
-    // Başkasının profilini göster
     document.getElementById('benimProfilSayfasi').style.display = 'none';
     document.getElementById('baskaProfil').style.display = 'block';
     baskaProfilYukle(hedefId);
   } else {
-    // Kendi profilini göster
     profilYukle();
   }
 });
+
+// ── HİZMETLER AÇILIR/KAPANIR ──
+function hizmetlerToggle() {
+  const body = document.getElementById('hizmetlerBody');
+  const arrow = document.getElementById('hizmetlerArrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+// ── HİZMET VER ──
+function hizmetVerTikla() {
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%">
+      <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
+      <div style="font-size:32px;text-align:center;margin-bottom:12px">🛠️</div>
+      <h3 style="font-size:20px;font-weight:900;margin-bottom:12px;text-align:center">Hizmet Ver</h3>
+      <p style="font-size:14px;color:var(--text2);text-align:center;line-height:1.7;margin-bottom:20px">
+        Bu özellik çok yakında geliyor!<br>
+        Tadilat, temizlik, nakliye ve daha fazla hizmet kategorisinde ilan verebilecek, müşteri bulabileceksiniz.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;font-weight:700;color:var(--text2);margin-bottom:24px">
+        <div>✅ Hizmet ilanı oluştur</div>
+        <div>✅ Müşterilerden teklif al</div>
+        <div>✅ Profil ve değerlendirme sistemi</div>
+        <div>✅ Güvenli ödeme altyapısı</div>
+      </div>
+      <button onclick="this.closest('[style]').remove()" style="width:100%;padding:14px;border-radius:50px;background:var(--gold);color:var(--bg);border:none;font-family:Nunito,sans-serif;font-size:15px;font-weight:900;cursor:pointer">Tamam</button>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.onclick = e => { if(e.target===modal) modal.remove(); };
+}
 
 // ===================== BAŞKASININ PROFİLİ =====================
 
@@ -291,7 +445,6 @@ async function baskaProfilYukle(uid) {
     img.src = profil.avatar_url; img.style.display = 'block';
   }
 
-  // İlanları yükle
   const { data: ilanlar } = await sb.from('ilanlar').select('*')
     .eq('user_id', uid).eq('onay_durumu', 'onaylandi')
     .order('created_at', { ascending: false });
@@ -354,7 +507,7 @@ async function profilYukle() {
   } else {
     kart.innerHTML = ilanlar.map(i => {
       const onayClass = i.onay_durumu === 'onaylandi' ? 'onay-onaylandi' : i.onay_durumu === 'reddedildi' ? 'onay-reddedildi' : 'onay-bekliyor';
-      const onayText = i.onay_durumu === 'onaylandi' ? '✅ Onaylandı' : i.onay_durumu === 'reddedildi' ? '❌ Reddedildi' : '⏳ Admin Onayı Bekleniyor';
+      const onayText = i.onay_durumu === 'onaylandi' ? '✅ Onaylandı' : i.onay_durumu === 'reddedildi' ? '❌ Reddedildi' : '⏳ Onay Bekleniyor';
       return `
         <div class="ilanim-item">
           <div class="ilanim-thumb">${i.foto_url ? `<img src="${i.foto_url}">` : (i.tip === 'kiralik' ? '🏘️' : '🏙️')}</div>
@@ -366,13 +519,14 @@ async function profilYukle() {
             </div>
             <div class="ilanim-title">${i.baslik}</div>
             <div class="ilanim-loc">📍 ${i.konum || ''}</div>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <a href="ilan-duzenle.html?id=${i.id}" style="flex:1;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:6px;font-size:12px;font-weight:800;color:var(--text);text-align:center;text-decoration:none">✏️ Düzenle</a>
-              <button onclick="ilanSil('${i.id}')" style="flex:1;background:rgba(232,96,58,0.1);border:1px solid rgba(232,96,58,0.3);border-radius:8px;padding:6px;font-size:12px;font-weight:800;color:var(--rust);cursor:pointer;font-family:Nunito,sans-serif">🗑️ Sil</button>
-            </div>
-            <a href="degerleme.html?ilan_id=${i.id}" style="display:block;margin-top:8px;background:linear-gradient(135deg,rgba(245,200,66,0.15),rgba(245,200,66,0.05));border:1px solid rgba(245,200,66,0.3);border-radius:8px;padding:8px;font-size:12px;font-weight:800;color:var(--gold);text-align:center;text-decoration:none">
-              📊 Gayrimenkul Ekspertiz Raporu Al — 800 ₺
+            <a href="degerleme.html?ilan_id=${i.id}" style="display:block;margin-top:6px;background:linear-gradient(135deg,rgba(245,200,66,0.15),rgba(245,200,66,0.05));border:1px solid rgba(245,200,66,0.3);border-radius:8px;padding:6px;font-size:11px;font-weight:800;color:var(--gold);text-align:center;text-decoration:none">
+              📊 Ekspertiz Raporu — 800 ₺
             </a>
+          </div>
+          <!-- Düzenle / Sil: sağ sütunda -->
+          <div class="ilan-actions-col">
+            <a href="ilan-duzenle.html?id=${i.id}" class="btn-duzenle">✏️ Düzenle</a>
+            <button onclick="ilanSil('${i.id}')" class="btn-sil">🗑️ Sil</button>
           </div>
         </div>`;
     }).join('');
