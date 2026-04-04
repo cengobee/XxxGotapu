@@ -452,12 +452,10 @@
       </div>
     </div>
   </div>
-  <!-- /bolumKonut -->
 
-  <!-- ===== ARSA / TARLA / BAĞ BAHÇE KRİTERLERİ ===== -->
+  <!-- ===== ARSA KRİTERLERİ ===== -->
   <div id="bolumArsa" class="gizli">
     <div class="bolum-baslik">🌍 Arsa / Tarla / Bağ Bahçe Özellikleri</div>
-
     <div class="two-col">
       <div class="form-group"><label class="form-label">Alan (m²)</label><input class="input" type="number" id="arsaM2" placeholder="ör. 500"></div>
       <div class="form-group"><label class="form-label">Alan (Dönüm)</label><input class="input" type="number" id="arsaDonum" placeholder="ör. 2.5" step="0.1"></div>
@@ -466,39 +464,25 @@
       <label class="form-label">Pafta / Ada / Parsel</label>
       <input class="input" type="text" id="parselNo" placeholder="isteğe bağlı">
     </div>
-
     <div class="form-group">
       <label class="form-label">Tapu Türü</label>
       <select class="kriter-select" id="arsaTapuTuru">
         <option value="">Seçiniz</option>
-        <option>Müstakil Tapulu</option>
-        <option>Hisseli Tapu</option>
-        <option>Özel Mülk</option>
-        <option>Hazine</option>
-        <option>Belediye</option>
-        <option>Vakıf Tapusu</option>
-        <option>Tarla Tapusu</option>
-        <option>Tahsis</option>
+        <option>Müstakil Tapulu</option><option>Hisseli Tapu</option><option>Özel Mülk</option>
+        <option>Hazine</option><option>Belediye</option><option>Vakıf Tapusu</option>
+        <option>Tarla Tapusu</option><option>Tahsis</option>
       </select>
     </div>
-
     <div class="form-group">
       <label class="form-label">İmar Durumu</label>
       <select class="kriter-select" id="imarDurumu">
         <option value="">Seçiniz</option>
-        <option>İmarlı</option>
-        <option>İmarsız</option>
-        <option>Ada İmarlı</option>
-        <option>Köy İmarlı</option>
-        <option>Konut İmarlı</option>
-        <option>Ticaret İmarlı</option>
-        <option>Sanayi İmarlı</option>
-        <option>Turizm İmarlı</option>
-        <option>Tarla / Tarım Arazisi</option>
-        <option>İmar Değişikliği Sürecinde</option>
+        <option>İmarlı</option><option>İmarsız</option><option>Ada İmarlı</option>
+        <option>Köy İmarlı</option><option>Konut İmarlı</option><option>Ticaret İmarlı</option>
+        <option>Sanayi İmarlı</option><option>Turizm İmarlı</option>
+        <option>Tarla / Tarım Arazisi</option><option>İmar Değişikliği Sürecinde</option>
       </select>
     </div>
-
     <div class="form-group">
       <label class="form-label">Gabari / Kat İzni</label>
       <select class="kriter-select" id="gabari">
@@ -508,7 +492,6 @@
         <option>Serbest</option><option>Belirtilmemiş</option>
       </select>
     </div>
-
     <div class="form-group">
       <label class="form-label">Krediye Uygunluk</label>
       <select class="kriter-select" id="arsaKrediUygun">
@@ -517,7 +500,6 @@
         <option>Hayır</option>
       </select>
     </div>
-
     <div class="form-group">
       <label class="form-label">Arazi Özellikleri</label>
       <div class="sec-row" id="arsaOzellikler">
@@ -543,37 +525,26 @@
       </div>
     </div>
   </div>
-  <!-- /bolumArsa -->
 
-  <!-- ===== İŞYERİ / DEPO / BÜRO KRİTERLERİ ===== -->
+  <!-- ===== İŞYERİ KRİTERLERİ ===== -->
   <div id="bolumIsyeri" class="gizli">
     <div class="bolum-baslik">🏪 İşyeri / Depo Özellikleri</div>
-
     <div class="form-group">
       <label class="form-label">İşyeri Türü</label>
       <select class="kriter-select" id="isyeriTuru">
         <option value="">Seçiniz</option>
-        <option>Dükkan / Mağaza</option>
-        <option>Ofis / Büro</option>
-        <option>Depo / Antrepo</option>
-        <option>Fabrika / Atölye</option>
-        <option>Restoran / Kafe (Hazır)</option>
-        <option>Showroom</option>
-        <option>Fırın (Hazır)</option>
-        <option>Kuaför (Hazır)</option>
-        <option>Eczane Devir</option>
-        <option>Klinik / Muayenehane</option>
-        <option>Eğitim Kurumu</option>
-        <option>Otel / Pansiyon</option>
-        <option>Diğer</option>
+        <option>Dükkan / Mağaza</option><option>Ofis / Büro</option>
+        <option>Depo / Antrepo</option><option>Fabrika / Atölye</option>
+        <option>Restoran / Kafe (Hazır)</option><option>Showroom</option>
+        <option>Fırın (Hazır)</option><option>Kuaför (Hazır)</option>
+        <option>Eczane Devir</option><option>Klinik / Muayenehane</option>
+        <option>Eğitim Kurumu</option><option>Otel / Pansiyon</option><option>Diğer</option>
       </select>
     </div>
-
     <div class="two-col">
       <div class="form-group"><label class="form-label">Net m²</label><input class="input" type="number" id="isyeriM2net" placeholder="ör. 80"></div>
       <div class="form-group"><label class="form-label">Brüt m²</label><input class="input" type="number" id="isyeriM2brut" placeholder="ör. 95"></div>
     </div>
-
     <div class="two-col">
       <div class="form-group">
         <label class="form-label">Bulunduğu Kat</label>
@@ -593,7 +564,6 @@
         </select>
       </div>
     </div>
-
     <div class="form-group">
       <label class="form-label">Isıtma</label>
       <select class="kriter-select" id="isyeriIsitma">
@@ -602,41 +572,30 @@
         <option>Yerden Isıtma</option><option>Soba</option><option>Yok</option>
       </select>
     </div>
-
     <div class="form-group">
       <label class="form-label">Kullanım Durumu</label>
       <select class="kriter-select" id="isyeriKullanimDurumu">
         <option value="">Seçiniz</option>
-        <option>Boş</option>
-        <option>Kiracılı</option>
-        <option>Mal Sahibi Kullanıyor</option>
-        <option>Devir (Halihazır Müşterili)</option>
+        <option>Boş</option><option>Kiracılı</option>
+        <option>Mal Sahibi Kullanıyor</option><option>Devir (Halihazır Müşterili)</option>
       </select>
     </div>
-
     <div class="form-group">
       <label class="form-label">Tapu Durumu</label>
       <select class="kriter-select" id="isyeriTapuDurumu">
         <option value="">Seçiniz</option>
-        <option>Kat Mülkiyeti</option>
-        <option>Kat İrtifakı</option>
-        <option>Hisseli Tapu</option>
-        <option>Arsa Tapusu</option>
+        <option>Kat Mülkiyeti</option><option>Kat İrtifakı</option>
+        <option>Hisseli Tapu</option><option>Arsa Tapusu</option>
       </select>
     </div>
-
     <div class="form-group">
       <label class="form-label">Cephe</label>
       <select class="kriter-select" id="isyeriCephe">
         <option value="">Seçiniz</option>
-        <option>Caddeye Cepheli</option>
-        <option>Köşe Dükkan</option>
-        <option>Yan Sokak</option>
-        <option>AVM İçi</option>
-        <option>Pasaj İçi</option>
+        <option>Caddeye Cepheli</option><option>Köşe Dükkan</option>
+        <option>Yan Sokak</option><option>AVM İçi</option><option>Pasaj İçi</option>
       </select>
     </div>
-
     <div class="form-group">
       <label class="form-label">Krediye Uygunluk</label>
       <div class="sec-row" id="isyeriKrediUygun">
@@ -644,12 +603,10 @@
         <button class="sec-btn" onclick="secBtn(this,'isyeriKrediUygun')">❌ Hayır</button>
       </div>
     </div>
-
     <div class="form-group">
       <label class="form-label">Aidat (₺/ay)</label>
       <input class="input" type="number" id="isyeriAidat" placeholder="0 ise boş bırakın">
     </div>
-
     <div class="form-group">
       <label class="form-label">İşyeri Özellikleri</label>
       <div class="sec-row" id="isyeriOzellikler">
@@ -678,9 +635,8 @@
       </div>
     </div>
   </div>
-  <!-- /bolumIsyeri -->
 
-  <!-- ÖNER ÇIKAR -->
+  <!-- ÖNE ÇIKAR -->
   <div class="bolum-baslik">⭐ Öne Çıkar</div>
   <div class="one-cikan-bar" onclick="odemeAc()">
     <div>
@@ -724,12 +680,10 @@
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('havuz')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏊</span><div><div class="oda-foto-ad">Havuz / Spor Alanı</div><div class="oda-foto-sayi" id="sayi-havuz">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-havuz">›</span></div><div class="oda-foto-icerik" id="icerik-havuz"><div class="oda-foto-grid" id="grid-havuz"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_havuz').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('diger')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">📷</span><div><div class="oda-foto-ad">Diğer</div><div class="oda-foto-sayi" id="sayi-diger">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-diger">›</span></div><div class="oda-foto-icerik" id="icerik-diger"><div class="oda-foto-grid" id="grid-diger"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_diger').click()">📷 Fotoğraf Ekle</button></div></div>
   </div>
-  <!-- /fotoGrupKonut -->
 
   <!-- Arsa fotoğrafları -->
   <div id="fotoGrupArsa" style="display:none">
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('parsel')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🗺️</span><div><div class="oda-foto-ad">Parsel / Arsa Görünümü</div><div class="oda-foto-sayi" id="sayi-parsel">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-parsel">›</span></div><div class="oda-foto-icerik" id="icerik-parsel"><div class="oda-foto-grid" id="grid-parsel"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_parsel').click()">📷 Fotoğraf Ekle</button></div></div>
-    <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('bahce')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛣️</span><div><div class="oda-foto-ad">Yol / Çevre Görünümü</div><div class="oda-foto-sayi" id="sayi-bahce-arsa">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-bahce-arsa">›</span></div><div class="oda-foto-icerik" id="icerik-bahce-arsa"><div class="oda-foto-grid" id="grid-bahce-arsa"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_bahce').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('diger')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">📄</span><div><div class="oda-foto-ad">Tapu / Belge Fotoğrafı</div><div class="oda-foto-sayi" id="sayi-diger-arsa">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-diger-arsa">›</span></div><div class="oda-foto-icerik" id="icerik-diger-arsa"><div class="oda-foto-grid" id="grid-diger-arsa"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_diger').click()">📷 Fotoğraf Ekle</button></div></div>
   </div>
 
@@ -737,7 +691,6 @@
   <div id="fotoGrupIsyeri" style="display:none">
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('isyeri_ic')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏪</span><div><div class="oda-foto-ad">İşyeri İç Görünüm</div><div class="oda-foto-sayi" id="sayi-isyeri_ic">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-isyeri_ic">›</span></div><div class="oda-foto-icerik" id="icerik-isyeri_ic"><div class="oda-foto-grid" id="grid-isyeri_ic"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_isyeri_ic').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('isyeri_dis')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏬</span><div><div class="oda-foto-ad">İşyeri Dış / Vitrin</div><div class="oda-foto-sayi" id="sayi-isyeri_dis">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-isyeri_dis">›</span></div><div class="oda-foto-icerik" id="icerik-isyeri_dis"><div class="oda-foto-grid" id="grid-isyeri_dis"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_isyeri_dis').click()">📷 Fotoğraf Ekle</button></div></div>
-    <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('otopark')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🅿️</span><div><div class="oda-foto-ad">Otopark / Depo</div><div class="oda-foto-sayi" id="sayi-otopark-is">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-otopark-is">›</span></div><div class="oda-foto-icerik" id="icerik-otopark-is"><div class="oda-foto-grid" id="grid-otopark-is"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_otopark').click()">📷 Fotoğraf Ekle</button></div></div>
     <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('diger')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">📷</span><div><div class="oda-foto-ad">Diğer</div><div class="oda-foto-sayi" id="sayi-diger-is">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-diger-is">›</span></div><div class="oda-foto-icerik" id="icerik-diger-is"><div class="oda-foto-grid" id="grid-diger-is"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_diger').click()">📷 Fotoğraf Ekle</button></div></div>
   </div>
 
@@ -776,7 +729,7 @@ let currentUser = null;
 let ilanId = null;
 let seciliTip = 'satilik';
 let eskiFiyat = null;
-let seciliEmlakGrup = 'konut'; // konut | arsa | isyeri
+let seciliEmlakGrup = 'konut';
 const MAKS_FOTO = 25;
 const odaFotolar = {
   dis:[], giris:[], salon:[], oturma:[], mutfak:[],
@@ -787,7 +740,14 @@ const odaFotolar = {
   parsel:[], isyeri_ic:[], isyeri_dis:[], diger:[]
 };
 
-// ===== 81 İL + İLÇELER =====
+// ── kredi_uygun değerini normalize et: her zaman 'Evet' veya 'Hayır' kaydeder ──
+function krediUygunNormalize(secimMetni) {
+  if (!secimMetni) return null;
+  // 'Değil', 'Hayır', '❌ Hayır', '❌ Krediye Uygun Değil' → 'Hayır'
+  if (secimMetni.includes('Değil') || secimMetni.includes('Hayır')) return 'Hayır';
+  return 'Evet';
+}
+
 const ILLER = [
   "Adana","Adıyaman","Afyonkarahisar","Ağrı","Aksaray","Amasya","Ankara","Antalya",
   "Ardahan","Artvin","Aydın","Balıkesir","Bartın","Batman","Bayburt","Bilecik",
@@ -833,7 +793,6 @@ const ILCELER = {
   "Yalova":["Altınova","Armutlu","Çınarcık","Çiftlikköy","Merkez","Termal"]
 };
 
-// ===== İL / İLÇE =====
 function illerDoldur(id) {
   const sel = document.getElementById(id);
   if (!sel) return;
@@ -866,7 +825,6 @@ function konumGuncelle() {
   document.getElementById('konum').value = [mahalle, ilce, il].filter(Boolean).join(', ');
 }
 
-// ===== EMlak TİPİ DİNAMİK =====
 function secEmlakBtn(el) {
   document.querySelectorAll('#emlakTipi .sec-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
@@ -905,7 +863,6 @@ function kopyala(metin, btn) {
   });
 }
 
-// ===== FOTOĞRAF =====
 function odaToggle(oda) {
   const ic = document.getElementById('icerik-' + oda);
   const ok = document.getElementById('ok-' + oda);
@@ -939,7 +896,6 @@ function odaGridGuncelle(oda) {
 }
 function odaFotoSil(oda, i) { odaFotolar[oda].splice(i,1); odaGridGuncelle(oda); toplamSayacGuncelle(); }
 
-// ===== YARDIMCI FONKSİYONLAR =====
 function getSecim(grupId) {
   const g = document.getElementById(grupId); if (!g) return null;
   const a = g.querySelector('.sec-btn.active'); return a ? a.textContent.trim() : null;
@@ -953,7 +909,6 @@ function getCokluSecim(grupId) {
   return [...g.querySelectorAll('.sec-btn.active')].map(b => b.textContent.trim());
 }
 
-// Buton seçim yardımcıları (ilan yüklerken kullanılır)
 function btnSec(grupId, deger) {
   if (!deger) return;
   const g = document.getElementById(grupId); if (!g) return;
@@ -971,13 +926,24 @@ function cokluBtnSec(grupId, degerler) {
 function selectSec(id, deger) {
   if (!deger) return;
   const el = document.getElementById(id); if (!el) return;
-  // Tam eşleşme dene
   for (const opt of el.options) {
     if (opt.value === deger || opt.textContent === deger) { el.value = opt.value; return; }
   }
 }
 
-// ===== İLAN YÜKLE =====
+// ── kredi_uygun buton seçimi: DB'de 'Evet'/'Hayır' var ──
+function krediUygunBtnSec(grupId, dbDeger) {
+  if (!dbDeger) return;
+  const g = document.getElementById(grupId); if (!g) return;
+  // dbDeger: 'Evet', 'Hayır', veya eski format '✅ Krediye Uygun' vb.
+  const uygun = !dbDeger.includes('Hayır') && !dbDeger.includes('Değil');
+  g.querySelectorAll('.sec-btn').forEach(b => {
+    const metin = b.textContent.trim();
+    const butonUygun = !metin.includes('Hayır') && !metin.includes('Değil');
+    if (uygun === butonUygun) b.classList.add('active');
+  });
+}
+
 async function ilanYukle() {
   const params = new URLSearchParams(window.location.search);
   ilanId = params.get('id');
@@ -991,15 +957,12 @@ async function ilanYukle() {
   if (error || !ilan) { alert('İlan bulunamadı veya erişim yetkiniz yok.'); history.back(); return; }
 
   eskiFiyat = ilan.fiyat;
-
   const kr = ilan.kriterler || {};
 
-  // Temel alanlar
   document.getElementById('baslik').value = ilan.baslik || '';
   document.getElementById('fiyat').value = ilan.fiyat || '';
   if (ilan.aciklama) document.getElementById('aciklama').value = ilan.aciklama;
 
-  // İlan tipi buton
   seciliTip = ilan.tip || 'satilik';
   document.querySelectorAll('#ilanTipiRow .type-btn').forEach(b => {
     const onclick = b.getAttribute('onclick') || '';
@@ -1007,9 +970,7 @@ async function ilanYukle() {
     else b.classList.remove('active');
   });
 
-  // Emlak tipi — data-tip ile eşleştir
   const emlakTipiText = kr.emlak_tipi || '';
-  // Grup belirle
   const konutTipleri = ['daire','villa','mustakil','residence','yazlik','ciftlik'];
   const arsaTipleri  = ['arsa','tarla','bag_bahce'];
   const isyeriTipleri = ['isyeri','depo','buro'];
@@ -1017,7 +978,6 @@ async function ilanYukle() {
   else if (arsaTipleri.includes(emlakTipiText)) seciliEmlakGrup = 'arsa';
   else if (isyeriTipleri.includes(emlakTipiText)) seciliEmlakGrup = 'isyeri';
 
-  // Emlak tipi butonunu seç (metin karşılaştırmasıyla)
   const emlakMetinMap = {
     daire: '🏢 Daire', villa: '🏡 Villa', mustakil: '🏠 Müstakil Ev',
     residence: '🏘️ Residence', yazlik: '🌊 Yazlık', ciftlik: '🌾 Çiftlik Evi',
@@ -1030,22 +990,17 @@ async function ilanYukle() {
   });
   _emlakGrupGoster(seciliEmlakGrup);
 
-  // Konum
   illerDoldur('ilSec');
   if (kr.il) {
     document.getElementById('ilSec').value = kr.il;
     ilceDoldur();
     await new Promise(r => setTimeout(r, 50));
-    if (kr.ilce) {
-      document.getElementById('ilceSec').value = kr.ilce;
-    }
+    if (kr.ilce) document.getElementById('ilceSec').value = kr.ilce;
   }
-  // Mahalle/cadde/sokak — artık serbest metin
   const mahalleVal = kr.mahalle_cadde_sokak || kr.mahalle || kr.sokak || '';
   document.getElementById('mahalleInput').value = mahalleVal;
   konumGuncelle();
 
-  // ===== KONUT KRİTERLERİ =====
   if (seciliEmlakGrup === 'konut') {
     btnSec('odaSayisi', kr.oda_sayisi);
     btnSec('banyoSayisi', kr.banyo_sayisi);
@@ -1059,7 +1014,7 @@ async function ilanYukle() {
     selectSec('kullanimDurumu', kr.kullanim_durumu);
     selectSec('tapuDurumu', kr.tapu_durumu);
     selectSec('esyaDurumu', kr.esya_durumu);
-    btnSec('krediUygunluk', kr.kredi_uygun || kr.kredi_uygunluk);
+    krediUygunBtnSec('krediUygunluk', kr.kredi_uygun);
     btnSec('siteIcinde', kr.site_icinde);
     if (kr.aidat) {
       btnSec('aidatDurumu', kr.aidat);
@@ -1072,7 +1027,6 @@ async function ilanYukle() {
     if (kr.dis_ozellikler) cokluBtnSec('disOzellikler', Array.isArray(kr.dis_ozellikler) ? kr.dis_ozellikler : [kr.dis_ozellikler]);
   }
 
-  // ===== ARSA KRİTERLERİ =====
   if (seciliEmlakGrup === 'arsa') {
     if (kr.arsa_m2 || ilan.metrekare) document.getElementById('arsaM2').value = kr.arsa_m2 || ilan.metrekare;
     if (kr.arsa_donum) document.getElementById('arsaDonum').value = kr.arsa_donum;
@@ -1084,7 +1038,6 @@ async function ilanYukle() {
     if (kr.arsa_ozellikler) cokluBtnSec('arsaOzellikler', Array.isArray(kr.arsa_ozellikler) ? kr.arsa_ozellikler : [kr.arsa_ozellikler]);
   }
 
-  // ===== İŞYERİ KRİTERLERİ =====
   if (seciliEmlakGrup === 'isyeri') {
     selectSec('isyeriTuru', kr.isyeri_turu);
     if (kr.isyeri_m2_net || ilan.metrekare) document.getElementById('isyeriM2net').value = kr.isyeri_m2_net || ilan.metrekare;
@@ -1095,7 +1048,7 @@ async function ilanYukle() {
     selectSec('isyeriKullanimDurumu', kr.kullanim_durumu);
     selectSec('isyeriTapuDurumu', kr.tapu_durumu);
     selectSec('isyeriCephe', kr.cephe);
-    btnSec('isyeriKrediUygun', kr.kredi_uygun ? '✅ Evet' : null);
+    krediUygunBtnSec('isyeriKrediUygun', kr.kredi_uygun);
     if (kr.aidat_tutar) document.getElementById('isyeriAidat').value = kr.aidat_tutar;
     if (kr.isyeri_ozellikler) cokluBtnSec('isyeriOzellikler', Array.isArray(kr.isyeri_ozellikler) ? kr.isyeri_ozellikler : [kr.isyeri_ozellikler]);
   }
@@ -1103,7 +1056,6 @@ async function ilanYukle() {
   document.getElementById('yuklenOverlay').classList.add('gizli');
 }
 
-// ===== İLAN GÜNCELLE =====
 async function ilanGuncelle() {
   const baslik = document.getElementById('baslik').value.trim();
   const fiyat = document.getElementById('fiyat').value;
@@ -1118,7 +1070,6 @@ async function ilanGuncelle() {
   const btn = document.getElementById('guncelleBtn');
   btn.textContent = '⏳ Kaydediliyor...'; btn.disabled = true; errEl.style.display = 'none';
 
-  // Fotoğraf yükleme
   let odaFotoURLler = {};
   let fotoIndex = 0;
   const toplamFoto = toplamFotoSayisi();
@@ -1137,30 +1088,20 @@ async function ilanGuncelle() {
     }
   }
 
-  // Kriterler
   let kriterler = {
-    emlak_tipi: seciliEmlakGrup === 'konut'
-      ? (document.querySelector('#emlakTipi .sec-btn.active')?.textContent.trim() || '')
-      : seciliEmlakGrup,
     il: document.getElementById('ilSec').value || null,
     ilce: document.getElementById('ilceSec').value || null,
     mahalle_cadde_sokak: document.getElementById('mahalleInput').value.trim() || null,
   };
 
-  // Emlak tipini data-tip'ten al
   const aktifEmlakBtn = document.querySelector('#emlakTipi .sec-btn.active');
-  if (aktifEmlakBtn) {
-    // Metinden tip kodunu bul
-    const onclick = aktifEmlakBtn.getAttribute('onclick') || '';
-    // Eğer onclick yoksa data-tip kullan
-    const tipKodMap = {
-      '🏢 Daire':'daire','🏡 Villa':'villa','🏠 Müstakil Ev':'mustakil',
-      '🏘️ Residence':'residence','🌊 Yazlık':'yazlik','🌾 Çiftlik Evi':'ciftlik',
-      '🏗️ Arsa':'arsa','🌾 Tarla':'tarla','🍇 Bağ & Bahçe':'bag_bahce',
-      '🏪 İşyeri / Ofis':'isyeri','🏭 Depo / Fabrika':'depo','💼 Büro':'buro'
-    };
-    kriterler.emlak_tipi = tipKodMap[aktifEmlakBtn.textContent.trim()] || seciliEmlakGrup;
-  }
+  const tipKodMap = {
+    '🏢 Daire':'daire','🏡 Villa':'villa','🏠 Müstakil Ev':'mustakil',
+    '🏘️ Residence':'residence','🌊 Yazlık':'yazlik','🌾 Çiftlik Evi':'ciftlik',
+    '🏗️ Arsa':'arsa','🌾 Tarla':'tarla','🍇 Bağ & Bahçe':'bag_bahce',
+    '🏪 İşyeri / Ofis':'isyeri','🏭 Depo / Fabrika':'depo','💼 Büro':'buro'
+  };
+  kriterler.emlak_tipi = aktifEmlakBtn ? (tipKodMap[aktifEmlakBtn.textContent.trim()] || seciliEmlakGrup) : seciliEmlakGrup;
 
   if (seciliEmlakGrup === 'konut') {
     kriterler = { ...kriterler,
@@ -1174,7 +1115,8 @@ async function ilanGuncelle() {
       kullanim_durumu: getSelectVal('kullanimDurumu'),
       tapu_durumu: getSelectVal('tapuDurumu'),
       esya_durumu: getSelectVal('esyaDurumu'),
-      kredi_uygun: getSecim('krediUygunluk'),
+      // ── NORMALİZE: her zaman 'Evet' veya 'Hayır' kaydeder ──
+      kredi_uygun: krediUygunNormalize(getSecim('krediUygunluk')),
       site_icinde: getSecim('siteIcinde'),
       aidat: getSecim('aidatDurumu'),
       aidat_tutar: document.getElementById('aidatTutar').value || null,
@@ -1189,6 +1131,7 @@ async function ilanGuncelle() {
       tapu_turu: getSelectVal('arsaTapuTuru'),
       imar_durumu: getSelectVal('imarDurumu'),
       gabari: getSelectVal('gabari'),
+      // Arsa için select zaten 'Evet'/'Hayır' değeri veriyor, normalize etmeye gerek yok
       kredi_uygun: getSelectVal('arsaKrediUygun'),
       arsa_ozellikler: getCokluSecim('arsaOzellikler'),
     };
@@ -1203,7 +1146,8 @@ async function ilanGuncelle() {
       kullanim_durumu: getSelectVal('isyeriKullanimDurumu'),
       tapu_durumu: getSelectVal('isyeriTapuDurumu'),
       cephe: getSelectVal('isyeriCephe'),
-      kredi_uygun: getSecim('isyeriKrediUygun'),
+      // ── NORMALİZE: her zaman 'Evet' veya 'Hayır' kaydeder ──
+      kredi_uygun: krediUygunNormalize(getSecim('isyeriKrediUygun')),
       aidat_tutar: document.getElementById('isyeriAidat').value || null,
       isyeri_ozellikler: getCokluSecim('isyeriOzellikler'),
     };
@@ -1237,6 +1181,7 @@ async function ilanGuncelle() {
     errEl.style.display = 'block';
     btn.textContent = '💾 Değişiklikleri Kaydet'; btn.disabled = false; return;
   }
+
   const yeniFiyat = Number(fiyat);
   if (eskiFiyat && yeniFiyat !== Number(eskiFiyat)) {
     await sb.from('ilan_fiyat_gecmisi').insert({
@@ -1247,7 +1192,7 @@ async function ilanGuncelle() {
   }
   document.getElementById('successOverlay').classList.add('show');
 }
-// ===== İLAN SİL =====
+
 async function ilanSil() {
   if (!confirm('İlanı silmek istediğinizden emin misiniz?')) return;
   const { error } = await sb.from('ilanlar').delete().eq('id', ilanId).eq('user_id', currentUser.id);
@@ -1255,7 +1200,6 @@ async function ilanSil() {
   else alert('Silme hatası: ' + error.message);
 }
 
-// ===== INIT =====
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('mahalleInput').addEventListener('input', konumGuncelle);
   document.getElementById('ilceSec').addEventListener('change', konumGuncelle);
