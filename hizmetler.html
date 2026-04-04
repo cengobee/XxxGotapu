@@ -7,30 +7,181 @@
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  .kategori-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 24px; }
-  .kategori-item { background: var(--card); border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 14px 8px; text-align: center; cursor: pointer; transition: all .2s; }
-  .kategori-item.active { border-color: var(--gold); background: rgba(245,200,66,0.08); }
-  .kategori-item:active { transform: scale(0.95); }
-  .kategori-em { font-size: 28px; display: block; margin-bottom: 6px; }
-  .kategori-lbl { font-size: 10px; font-weight: 700; color: var(--text2); }
-  .hizmet-header { background: linear-gradient(135deg, #1a2340, #2a3560); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; }
-  .hizmet-icon { font-size: 52px; }
-  .hizmet-title { font-size: 20px; font-weight: 900; }
-  .hizmet-desc { font-size: 13px; color: var(--text3); margin-top: 4px; line-height: 1.5; }
-  .teklif-form { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  /* ═══════════════════════════════════════════════════
+     KATEGORİ ACCORDION LİSTE
+  ═══════════════════════════════════════════════════ */
+  .kategori-liste {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .kategori-satir {
+    border-bottom: 1px solid var(--border);
+  }
+  .kategori-satir:last-child { border-bottom: none; }
+
+  .kategori-baslik {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 14px;
+    background: var(--card);
+    cursor: pointer;
+    transition: background .15s;
+    user-select: none;
+  }
+  .kategori-baslik:hover { background: rgba(245,200,66,0.06); }
+  .kategori-baslik.acik {
+    background: rgba(245,200,66,0.08);
+    border-bottom: 1px solid rgba(245,200,66,0.25);
+  }
+
+  .kategori-baslik-ikon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(245,200,66,0.1);
+    border: 1px solid rgba(245,200,66,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .kategori-baslik.acik .kategori-baslik-ikon {
+    background: rgba(245,200,66,0.2);
+    border-color: var(--gold);
+  }
+
+  .kategori-baslik-metin { flex: 1; }
+  .kategori-baslik-ad {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .kategori-baslik.acik .kategori-baslik-ad { color: var(--gold); }
+  .kategori-baslik-altad {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 1px;
+  }
+
+  .kategori-ok {
+    font-size: 18px;
+    color: var(--text3);
+    transition: transform .25s;
+    flex-shrink: 0;
+  }
+  .kategori-baslik.acik .kategori-ok {
+    transform: rotate(180deg);
+    color: var(--gold);
+  }
+
+  /* Accordion body — form alanları */
+  .kategori-body {
+    display: none;
+    background: var(--bg);
+    padding: 16px;
+    border-bottom: 2px solid var(--gold);
+  }
+  .kategori-body.acik { display: block; }
+
+  /* Form alanları */
   .form-group { margin-bottom: 16px; }
   .form-label { font-size: 13px; font-weight: 800; color: var(--text2); margin-bottom: 8px; display: block; }
   .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
-  .radio-btn { padding: 8px 16px; border-radius: 50px; background: var(--card2); border: 1.5px solid var(--border); color: var(--text2); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s; }
-  .radio-btn.selected { background: rgba(245,200,66,0.1); border-color: var(--gold); color: var(--gold); }
-  .foto-ekle-btn { width: 100%; height: 90px; background: var(--card2); border: 2px dashed var(--border); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; color: var(--text3); font-weight: 700; font-size: 14px; }
+  .radio-btn {
+    padding: 8px 14px;
+    border-radius: 50px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    color: var(--text2);
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .radio-btn.selected {
+    background: rgba(245,200,66,0.1);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .kullanici-bilgi {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .foto-ekle-btn {
+    width: 100%;
+    height: 80px;
+    background: var(--card);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--text3);
+    font-weight: 700;
+    font-size: 13px;
+  }
   .foto-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-  .foto-thumb { position: relative; width: 72px; height: 72px; }
-  .foto-thumb img { width: 72px; height: 72px; border-radius: 10px; object-fit: cover; }
-  .foto-remove { position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%; background: var(--rust); color: white; border: none; font-size: 11px; cursor: pointer; }
-  .kullanici-bilgi { background: var(--card2); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
-  .success-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; flex-direction: column; z-index: 999; padding: 24px; text-align: center; }
+  .foto-thumb { position: relative; width: 68px; height: 68px; }
+  .foto-thumb img { width: 68px; height: 68px; border-radius: 8px; object-fit: cover; }
+  .foto-remove {
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--rust);
+    color: white;
+    border: none;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .success-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 999;
+    padding: 24px;
+    text-align: center;
+  }
   .success-overlay.show { display: flex; }
+
+  .gonder-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: opacity .2s;
+    margin-top: 4px;
+  }
+  .gonder-btn:disabled { opacity: .6; cursor: not-allowed; }
 </style>
 <link rel="icon" href="ikon-192.png" type="image/png">
 <link rel="manifest" href="manifest.json">
@@ -42,47 +193,29 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
-<!-- ═══════════════════════════════════════
-     TEMA GEÇİŞ BUTONU — Her sayfaya ekle
-     </body> etiketinden hemen önce yapıştır
-═══════════════════════════════════════ -->
+
 <script>
 (function() {
-  // Sayfa açılınca kayıtlı temayı uygula — flash önlemek için hemen çalışır
   var kaydedilenTema = localStorage.getItem('gotapu_tema');
-  if (kaydedilenTema === 'light') {
-    document.body.classList.add('light');
-  }
-
+  if (kaydedilenTema === 'light') document.body.classList.add('light');
   function temaButonuOlustur() {
-    // Zaten varsa oluşturma
     if (document.getElementById('themeToggleBtn')) return;
-
     var btn = document.createElement('button');
     btn.id = 'themeToggleBtn';
     btn.className = 'theme-toggle-btn nav-icon-btn';
     btn.style.cssText = 'flex-shrink:0;';
     btn.setAttribute('title', 'Temayı Değiştir');
     btn.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
-
     btn.addEventListener('click', function() {
       var acikMi = document.body.classList.toggle('light');
       localStorage.setItem('gotapu_tema', acikMi ? 'light' : 'dark');
       btn.textContent = acikMi ? '🌙' : '☀️';
-
-      // Kısa animasyon geri bildirimi
       btn.style.transform = 'scale(0.8) rotate(20deg)';
       setTimeout(function() { btn.style.transform = ''; }, 200);
     });
-
-    // Nav actions'ın ilk çocuğu olarak ekle
     var navActions = document.querySelector('.nav-actions');
-    if (navActions) {
-      navActions.insertBefore(btn, navActions.firstChild);
-    }
+    if (navActions) navActions.insertBefore(btn, navActions.firstChild);
   }
-
-  // DOM hazır olduğunda butonu ekle
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', temaButonuOlustur);
   } else {
@@ -90,8 +223,9 @@
   }
 })();
 </script>
+
 <nav class="top-nav">
-  <a href="index.html" class="nav-logo" style="font-size:15px">
+  <a href="home.html" class="nav-logo" style="font-size:15px">
     <div class="back-btn" style="margin-right:4px">←</div>
     Ev Hizmetleri
   </a>
@@ -103,40 +237,22 @@
   <div style="font-size:80px;margin-bottom:20px">✅</div>
   <div style="font-size:24px;font-weight:900;margin-bottom:10px">Talebiniz Alındı!</div>
   <div style="font-size:14px;color:var(--text2);margin-bottom:30px">En kısa sürede sizinle iletişime geçeceğiz.</div>
-  <a href="index.html" class="btn btn-gold btn-lg" style="max-width:260px">Ana Sayfaya Dön</a>
+  <a href="home.html" class="btn btn-gold btn-lg" style="max-width:260px">Ana Sayfaya Dön</a>
 </div>
 
 <div class="page fade-up">
-  <div class="kategori-grid" id="kategoriGrid"></div>
-  <div class="hizmet-header" id="hizmetHeader"></div>
-  <div class="teklif-form">
-    <div style="font-size:16px;font-weight:900;margin-bottom:16px">📋 Teklif Formu</div>
-    <div class="kullanici-bilgi">
-      <span style="font-size:24px">👤</span>
-      <div>
-        <div style="font-size:14px;font-weight:800" id="kullaniciAd">Yükleniyor...</div>
-        <div style="font-size:12px;color:var(--text3)" id="kullaniciTel"></div>
-      </div>
-    </div>
-    <div id="formAlanlari"></div>
-    <div class="form-group">
-      <label class="form-label">📸 Fotoğraf Ekle (isteğe bağlı)</label>
-      <div class="foto-ekle-btn" onclick="document.getElementById('fotoInput').click()">
-        <span style="font-size:28px">📷</span> Fotoğraf Seç
-      </div>
-      <div class="foto-preview" id="fotoPreview"></div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">📝 Ek Açıklama (isteğe bağlı)</label>
-      <textarea class="input" id="aciklama" rows="3" placeholder="Eklemek istediğiniz detaylar..." style="resize:none"></textarea>
-    </div>
-    <div id="formError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
-    <button class="btn btn-gold btn-lg" onclick="teklifGonder()" id="gonderBtn">📩 Teklif İste</button>
-  </div>
+
+  <p style="font-size:12px;color:var(--text3);font-weight:700;margin-bottom:12px">
+    Hizmet seçin, formu doldurun, teklif isteyin.
+  </p>
+
+  <!-- KATEGORİ LİSTESİ -->
+  <div class="kategori-liste" id="kategoriListe"></div>
+
 </div>
 
 <nav class="bottom-nav">
-  <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
+  <a href="home.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
   <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">✨</div>Eşleşmeler</a>
   <a href="ilan-ver.html" class="bnav-center">+</a>
   <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">💬</div>Mesajlar</a>
@@ -150,7 +266,7 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const kategoriler = {
-  temizlik: { em: '🧹', ad: 'Temizlik', desc: 'Ev, ofis ve işyeri temizlik hizmetleri.', alanlar: [
+  temizlik: { em: '🧹', ad: 'Temizlik', desc: 'Ev, ofis ve işyeri temizlik hizmetleri', alanlar: [
     { id: 'tip', label: 'Temizlik Tipi', secenekler: ['Düzenli Temizlik', 'Tek Seferlik', 'Derin Temizlik', 'İnşaat/Tadilat Sonrası', 'Taşınma Öncesi/Sonrası', 'Boş Ev Temizliği'] },
     { id: 'oda', label: 'Ev Büyüklüğü', secenekler: ['Stüdyo/1+0', '1+1', '2+1', '3+1', '4+1', '5+1 ve üzeri'] },
     { id: 'durum', label: 'Eşya Durumu', secenekler: ['Eşyalı (Normal)', 'Eşyalı (Dolu)', 'Boş Ev'] },
@@ -159,7 +275,7 @@ const kategoriler = {
     { id: 'ekstra', label: 'Ekstra Hizmetler (çoklu seçilebilir)', secenekler: ['Ütü', 'Buzdolabı İçi', 'Fırın İçi', 'Cam Silme', 'Balkon Yıkama', 'Dolap İçi', 'Yok'], coklu: true },
     { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bugün veya Yarın', 'Bu Hafta', 'Önümüzdeki Hafta', 'Tarih Belirlemedim'] },
   ]},
-  boya: { em: '🪣', ad: 'Boya & Badana', desc: 'İç ve dış cephe boyama hizmetleri.', alanlar: [
+  boya: { em: '🪣', ad: 'Boya & Badana', desc: 'İç ve dış cephe boyama hizmetleri', alanlar: [
     { id: 'alan', label: 'Boya Alanı', secenekler: ['Sadece İç Cephe', 'Sadece Dış Cephe', 'İç + Dış Cephe', 'Tek Oda', 'Tavan'] },
     { id: 'metrekare', label: 'Yaklaşık Metrekare', secenekler: ['50m² altı', '50-100m²', '100-150m²', '150-200m²', '200m² üzeri'] },
     { id: 'durum', label: 'Eşya Durumu', secenekler: ['Ev Boş', 'Eşyalar Var (Örtülür)', 'Taşınırken'] },
@@ -168,23 +284,23 @@ const kategoriler = {
     { id: 'ek', label: 'Ek İşler Var mı?', secenekler: ['Sadece Boya', 'Alçı/Sıva Tamiri de Var', 'Kapı/Pencere Boyası da', 'Hepsi'] },
     { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bu Hafta', 'Önümüzdeki Hafta', 'Bu Ay', 'Tarih Belirlemedim'] },
   ]},
-  nakliye: { em: '🚚', ad: 'Nakliye', desc: 'Ev ve ofis taşımacılık hizmetleri.', alanlar: [
+  nakliye: { em: '🚚', ad: 'Nakliye & Taşımacılık', desc: 'Ev ve ofis taşımacılık hizmetleri', alanlar: [
     { id: 'tip', label: 'Taşıma Tipi', secenekler: ['Komple Ev Taşıma', 'Ofis Taşıma', 'Parça Eşya', 'Depolama'] },
     { id: 'oda', label: 'Ev Büyüklüğü', secenekler: ['1+1', '2+1', '3+1', '4+1', '5+1 ve üzeri'] },
     { id: 'cikis_kat', label: 'Çıkış Katı', secenekler: ['Giriş/Bodrum', '1-3. Kat', '4-7. Kat', '8+ Kat'] },
     { id: 'varis_kat', label: 'Varış Katı', secenekler: ['Giriş/Bodrum', '1-3. Kat', '4-7. Kat', '8+ Kat'] },
     { id: 'asansor', label: 'Asansör Durumu', secenekler: ['Her İki Binada Var', 'Sadece Birinde Var', 'Her İkisinde de Yok'] },
-    { id: 'ozel_esya', label: 'Özel/Ağır Eşya Var mı?', secenekler: ['Yok', 'Piyano', 'Kasa/Para Kasası', 'Ağır Beyaz Eşya', 'Birden Fazla'] },
+    { id: 'ozel_esya', label: 'Özel/Ağır Eşya Var mı?', secenekler: ['Yok', 'Piyano', 'Kasa', 'Ağır Beyaz Eşya', 'Birden Fazla'] },
     { id: 'ambalaj', label: 'Ambalajlama Hizmeti?', secenekler: ['Evet, Nakliyeci Paketlesin', 'Hayır, Ben Paketlerim', 'Sadece Kırılacaklar İçin'] },
     { id: 'mesafe', label: 'Taşıma Mesafesi', secenekler: ['Aynı İlçe', 'Aynı Şehir', 'Şehirlerarası'] },
     { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bu Hafta', 'Önümüzdeki Hafta', 'Bu Ay', 'Tarih Belirlemedim'] },
   ]},
-  cilingir: { em: '🔑', ad: 'Çilingir', desc: 'Kapı açma, kilit değiştirme hizmetleri.', alanlar: [
+  cilingir: { em: '🔑', ad: 'Çilingir', desc: 'Kapı açma, kilit değiştirme hizmetleri', alanlar: [
     { id: 'tip', label: 'Hizmet Tipi', secenekler: ['Kapı Açma (Acil)', 'Kilit Değiştirme', 'Çelik Kapı Kilidi', 'Anahtar Kopyalama', 'Kasa Açma', 'Araç Kapısı Açma'] },
     { id: 'kapi_tipi', label: 'Kapı Tipi', secenekler: ['Çelik Kapı', 'Ahşap Kapı', 'Demir Kapı', 'Araç Kapısı', 'Diğer'] },
     { id: 'acil', label: 'Aciliyet', secenekler: ['Şu An İçeride Kaldım!', 'Bugün İçinde', 'Randevu Alayım'] },
   ]},
-  tadilat: { em: '🔧', ad: 'Tadilat & Tamirat', desc: 'Her türlü tadilat ve tamirat hizmetleri.', alanlar: [
+  tadilat: { em: '🔧', ad: 'Tadilat & Tamirat', desc: 'Her türlü tadilat ve tamirat hizmetleri', alanlar: [
     { id: 'tip', label: 'Tadilat Tipi', secenekler: ['Komple Tadilat', 'Banyo Yenileme', 'Mutfak Yenileme', 'Elektrik Tesisatı', 'Su Tesisatı', 'Zemin/Döşeme', 'Alçıpan/Asma Tavan', 'Fayans/Seramik'] },
     { id: 'metrekare', label: 'Tadilat Alanı', secenekler: ['Tek Oda/Banyo', '50m² altı', '50-100m²', '100-150m²', '150m² üzeri'] },
     { id: 'durum', label: 'Eşya Durumu', secenekler: ['Ev Boş', 'Ev Dolu (Eşyalar Var)'] },
@@ -192,45 +308,45 @@ const kategoriler = {
     { id: 'zemin', label: 'Zemin Tercihi (varsa)', secenekler: ['Parke', 'Laminat', 'Seramik', 'Mermer', 'Fark Etmez', 'Gerekmiyor'] },
     { id: 'zaman', label: 'Ne Zaman Başlanacak?', secenekler: ['Hemen Başlayalım', '1 Ay İçinde', '3 Ay İçinde', 'Sadece Fiyat Alıyorum'] },
   ]},
-  sigorta: { em: '🛡️', ad: 'Konut Sigortası', desc: 'Ev ve eşya sigortası hizmetleri.', alanlar: [
+  sigorta: { em: '🛡️', ad: 'Konut Sigortası', desc: 'Ev ve eşya sigortası hizmetleri', alanlar: [
     { id: 'tip', label: 'Sigorta Tipi', secenekler: ['Konut Sigortası', 'Deprem Sigortası (DASK)', 'Eşya Sigortası', 'Tüm Paket'] },
     { id: 'konut', label: 'Konut Tipi', secenekler: ['Kiracı (Kiralık)', 'Ev Sahibi', 'İşyeri/Ofis', 'Yazlık'] },
     { id: 'yapi', label: 'Yapı Tipi', secenekler: ['Daire', 'Müstakil Ev', 'Villa', 'Dubleks'] },
     { id: 'metrekare', label: 'Yaklaşık Metrekare', secenekler: ['50m² altı', '50-100m²', '100-150m²', '150m² üzeri'] },
     { id: 'esya', label: 'Eşya Değeri (yaklaşık)', secenekler: ['50.000₺ altı', '50-150K₺', '150-300K₺', '300K₺ üzeri', 'Bilmiyorum'] },
   ]},
-  teknik: { em: '🖥️', ad: 'Teknik Servis', desc: 'Elektronik cihaz tamir ve bakım hizmetleri.', alanlar: [
+  teknik: { em: '🖥️', ad: 'Teknik Servis', desc: 'Elektronik cihaz tamir ve bakım hizmetleri', alanlar: [
     { id: 'cihaz', label: 'Cihaz Türü', secenekler: ['Telefon', 'Laptop/Notebook', 'Masaüstü PC', 'Tablet', 'TV/Monitör', 'Beyaz Eşya', 'Küçük Ev Aleti', 'Diğer'] },
-    { id: 'marka', label: 'Cihaz Markası (yaklaşık)', secenekler: ['Samsung', 'Apple', 'Huawei', 'Arçelik/Beko', 'Vestel', 'Bosch', 'Diğer'] },
+    { id: 'marka', label: 'Cihaz Markası', secenekler: ['Samsung', 'Apple', 'Huawei', 'Arçelik/Beko', 'Vestel', 'Bosch', 'Diğer'] },
     { id: 'sorun', label: 'Sorun Tipi', secenekler: ['Ekran Kırık/Çatlak', 'Açılmıyor/Kapanıyor', 'Batarya Sorunu', 'Yazılım/Virüs', 'Su Hasarı', 'Ses/Mikrofon Sorunu', 'Şarj Sorunu', 'Diğer'] },
     { id: 'servis', label: 'Servis Şekli', secenekler: ['Evime Gelsin (Yerinde)', 'Getirip Bırakayım', 'Kargo ile Göndereceğim'] },
   ]},
-  dekorasyon: { em: '🪴', ad: 'Dekorasyon', desc: 'İç mimari ve dekorasyon hizmetleri.', alanlar: [
+  dekorasyon: { em: '🪴', ad: 'Dekorasyon & Tasarım', desc: 'İç mimari ve dekorasyon hizmetleri', alanlar: [
     { id: 'tip', label: 'Hizmet Tipi', secenekler: ['Komple Dekorasyon', 'İç Mimari Danışmanlık', 'Mobilya Seçimi/Yerleşimi', 'Aydınlatma Tasarımı', 'Renk/Kumaş Danışmanlığı'] },
     { id: 'alan', label: 'Hangi Alan?', secenekler: ['Tüm Ev', 'Salon', 'Yatak Odası', 'Çocuk Odası', 'Mutfak', 'Banyo', 'Çalışma Odası'] },
     { id: 'oda', label: 'Ev Büyüklüğü', secenekler: ['1+1', '2+1', '3+1', '4+1 ve üzeri'] },
-    { id: 'tarzi', label: 'Stil Tercihi', secenekler: ['Modern/Minimalist', 'Klasik/Rustik', 'Endüstriyel', 'Bohem', 'Skandinav', 'Karışık/Fark Etmez'] },
+    { id: 'tarzi', label: 'Stil Tercihi', secenekler: ['Modern/Minimalist', 'Klasik/Rustik', 'Endüstriyel', 'Bohem', 'Skandinav', 'Fark Etmez'] },
     { id: 'butce', label: 'Bütçe Aralığı', secenekler: ['10.000₺ altı', '10-30K₺', '30-75K₺', '75-150K₺', '150K₺ üzeri'] },
   ]},
-  aracyikama: { em: '🚗', ad: 'Yerinde Araç Yıkama', desc: 'Kapınıza gelen yerinde araç yıkama hizmetleri.', alanlar: [
+  aracyikama: { em: '🚗', ad: 'Yerinde Araç Yıkama', desc: 'Kapınıza gelen yerinde araç yıkama hizmetleri', alanlar: [
     { id: 'tip', label: 'Yıkama Tipi', secenekler: ['Sadece Dış Yıkama', 'Sadece İç Temizlik', 'İç + Dış Yıkama'] },
     { id: 'arac', label: 'Araç Tipi', secenekler: ['Binek Araç', 'SUV/Arazi', 'Minivan/Panelvan', 'Kamyonet', 'Motosiklet'] },
     { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bugün', 'Yarın', 'Bu Hafta', 'Hafta Sonu', 'Tarih Belirlemedim'] },
   ]},
-  ilacalama: { em: '🐛', ad: 'İlaçlama', desc: 'Böcek, haşere ve fare ilaçlama hizmetleri.', alanlar: [
+  ilacalama: { em: '🐛', ad: 'İlaçlama & Haşere', desc: 'Böcek, haşere ve fare ilaçlama hizmetleri', alanlar: [
     { id: 'tip', label: 'İlaçlama Tipi', secenekler: ['Hamam Böceği', 'Pire/Bit', 'Karınca', 'Fare/Sıçan', 'Tahtakurusu', 'Genel İlaçlama (Hepsi)'] },
     { id: 'mekan', label: 'Mekan Tipi', secenekler: ['Ev/Daire', 'İşyeri/Ofis', 'Depo/Bodrum', 'Bahçe/Dış Alan'] },
     { id: 'metrekare', label: 'Yaklaşık Metrekare', secenekler: ['50m² altı', '50-100m²', '100-200m²', '200m² üzeri'] },
     { id: 'acil', label: 'Aciliyet', secenekler: ['Acil (1-2 Gün İçinde)', 'Bu Hafta', 'Bu Ay', 'Fiyat Alıyorum'] },
   ]},
-  petek: { em: '🔥', ad: 'Petek & Kombi', desc: 'Petek temizleme ve kombi bakım hizmetleri.', alanlar: [
+  petek: { em: '🔥', ad: 'Petek & Kombi', desc: 'Petek temizleme ve kombi bakım hizmetleri', alanlar: [
     { id: 'tip', label: 'Hizmet Tipi', secenekler: ['Petek Temizleme', 'Kombi Bakımı', 'Petek + Kombi Birlikte', 'Petek Sızdırmazlık', 'Kombi Arızası'] },
     { id: 'petek_adet', label: 'Petek Adedi (yaklaşık)', secenekler: ['1-3 Petek', '4-6 Petek', '7-10 Petek', '10+ Petek'] },
     { id: 'kombi', label: 'Kombi Markası', secenekler: ['Baymak', 'Demirdöküm', 'Vaillant', 'Bosch', 'Ariston', 'Diğer', 'Petek Yok'] },
     { id: 'sorun', label: 'Mevcut Sorun Var mı?', secenekler: ['Hayır, Rutin Bakım', 'Isınmıyor/Az Isıtıyor', 'Su Kaçırıyor', 'Gürültü Yapıyor', 'Kombi Arızası'] },
     { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Acil', 'Bu Hafta', 'Bu Ay', 'Kış Öncesi Hazırlık'] },
   ]},
-  koltukyikama: { em: '🛋️', ad: 'Koltuk Yıkama', desc: 'Koltuk, kanepe ve döşeme yıkama hizmetleri.', alanlar: [
+  koltukyikama: { em: '🛋️', ad: 'Koltuk Yıkama', desc: 'Koltuk, kanepe ve döşeme yıkama hizmetleri', alanlar: [
     { id: 'tip', label: 'Ürün Tipi', secenekler: ['L Koltuk Takımı', '3lü Koltuk Takımı', 'Tekli Koltuk', 'Kanepe/Chester', 'Sandalye', 'Yatak Başlığı', 'Araba Koltuğu'] },
     { id: 'malzeme', label: 'Koltuk Malzemesi', secenekler: ['Kumaş/Boucle', 'Deri/Suni Deri', 'Kadife', 'Bilmiyorum'] },
     { id: 'adet', label: 'Yaklaşık Koltuk Adedi', secenekler: ['1-2 Koltuk', '3-5 Koltuk', '6-10 Koltuk', '10+ Koltuk'] },
@@ -238,7 +354,7 @@ const kategoriler = {
     { id: 'servis', label: 'Servis Şekli', secenekler: ['Evime Gelsin (Yerinde)', 'Götürüp Getirsinler'] },
     { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bu Hafta', 'Önümüzdeki Hafta', 'Bu Ay', 'Tarih Belirlemedim'] },
   ]},
-  haliyikama: { em: '🧼', ad: 'Halı Yıkama', desc: 'Halı, kilim ve yolluk yıkama hizmetleri.', alanlar: [
+  haliyikama: { em: '🧼', ad: 'Halı Yıkama', desc: 'Halı, kilim ve yolluk yıkama hizmetleri', alanlar: [
     { id: 'tip', label: 'Ürün Tipi', secenekler: ['Makine Halısı', 'El Dokuma Kilim', 'Yolluk', 'Paspas', 'İpek Halı', 'Karma (Birden Fazla)'] },
     { id: 'boyut', label: 'En Büyük Halı Boyutu', secenekler: ['2x3m altı', '2x3m', '3x4m', '4x5m', '5m² üzeri'] },
     { id: 'adet', label: 'Toplam Adet', secenekler: ['1-2 Adet', '3-5 Adet', '6-10 Adet', '10+ Adet'] },
@@ -248,15 +364,22 @@ const kategoriler = {
   ]}
 };
 
-const params = new URLSearchParams(window.location.search);
-let aktifKategori = params.get('kategori') || 'temizlik';
+// Her kategori için ayrı state
+const state = {};
+Object.keys(kategoriler).forEach(k => {
+  state[k] = { secimler: {}, fotoFiles: [], aciklama: '' };
+});
+
 let currentUser = null;
 let currentProfil = null;
-let fotoFiles = [];
-let secimler = {};
+let acikKategori = null;
+
+// URL parametresinden kategori al
+const params = new URLSearchParams(window.location.search);
+const urlKategori = params.get('kategori');
 
 sb.auth.getSession().then(({ data }) => {
-  if (!data.session) { window.location.href = 'auth.html'; return; }
+  if (!data.session) { window.location.href = 'index.html'; return; }
   currentUser = data.session.user;
   profilYukle();
 });
@@ -265,100 +388,157 @@ async function profilYukle() {
   try {
     const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
     currentProfil = data;
-    document.getElementById('kullaniciAd').textContent = data?.full_name || currentUser.email;
-    document.getElementById('kullaniciTel').textContent = data?.phone ? '📞 ' + data.phone : '';
-  } catch(e) {
-    document.getElementById('kullaniciAd').textContent = currentUser.email;
-  }
+  } catch(e) {}
   sayfaOlustur();
 }
 
 function sayfaOlustur() {
-  const grid = document.getElementById('kategoriGrid');
-  grid.innerHTML = Object.entries(kategoriler).map(([key, val]) => `
-    <div class="kategori-item ${key === aktifKategori ? 'active' : ''}" onclick="kategoriSec('${key}')">
-      <span class="kategori-em">${val.em}</span>
-      <div class="kategori-lbl">${val.ad}</div>
-    </div>`).join('');
-  kategoriGoster();
-}
-
-function kategoriSec(key) {
-  aktifKategori = key;
-  secimler = {};
-  fotoFiles = [];
-  document.getElementById('fotoPreview').innerHTML = '';
-  document.getElementById('aciklama').value = '';
-  document.querySelectorAll('.kategori-item').forEach((el, i) => {
-    el.classList.toggle('active', Object.keys(kategoriler)[i] === key);
-  });
-  kategoriGoster();
-}
-
-function kategoriGoster() {
-  const kat = kategoriler[aktifKategori];
-  document.getElementById('hizmetHeader').innerHTML = `
-    <div class="hizmet-icon">${kat.em}</div>
-    <div>
-      <div class="hizmet-title">${kat.ad}</div>
-      <div class="hizmet-desc">${kat.desc}</div>
-    </div>`;
-  document.getElementById('formAlanlari').innerHTML = kat.alanlar.map(alan => {
-    const fnAdi = alan.coklu ? 'cokluSec' : 'tekSec';
-    return `
-    <div class="form-group">
-      <label class="form-label">${alan.label}</label>
-      <div class="radio-group" id="grp_${alan.id}">
-        ${alan.secenekler.map(s => `<button class="radio-btn" onclick="${fnAdi}('${alan.id}',this)">${s}</button>`).join('')}
+  const liste = document.getElementById('kategoriListe');
+  liste.innerHTML = Object.entries(kategoriler).map(([key, kat]) => `
+    <div class="kategori-satir" id="satir_${key}">
+      <div class="kategori-baslik" id="baslik_${key}" onclick="kategoriToggle('${key}')">
+        <div class="kategori-baslik-ikon">${kat.em}</div>
+        <div class="kategori-baslik-metin">
+          <div class="kategori-baslik-ad">${kat.ad}</div>
+          <div class="kategori-baslik-altad">${kat.desc}</div>
+        </div>
+        <span class="kategori-ok">▼</span>
       </div>
-    </div>`;
-  }).join('');
+      <div class="kategori-body" id="body_${key}">
+        ${formHtmlOlustur(key)}
+      </div>
+    </div>
+  `).join('');
+
+  // URL'den gelen kategoriyi aç
+  if (urlKategori && kategoriler[urlKategori]) {
+    setTimeout(() => kategoriToggle(urlKategori), 100);
+  }
 }
 
-function tekSec(alanId, el) {
-  secimler[alanId] = el.textContent.trim();
-  document.querySelectorAll(`#grp_${alanId} .radio-btn`).forEach(b => b.classList.remove('selected'));
+function formHtmlOlustur(key) {
+  const kat = kategoriler[key];
+  const kullaniciAd = currentProfil?.full_name || currentUser?.email || '';
+  const kullaniciTel = currentProfil?.phone || '';
+
+  return `
+    <div class="kullanici-bilgi">
+      <span style="font-size:22px">👤</span>
+      <div>
+        <div style="font-size:13px;font-weight:800">${kullaniciAd}</div>
+        ${kullaniciTel ? `<div style="font-size:11px;color:var(--text3)">📞 ${kullaniciTel}</div>` : ''}
+      </div>
+    </div>
+
+    <div id="formAlanlari_${key}">
+      ${kat.alanlar.map(alan => {
+        const fn = alan.coklu ? `cokluSec('${key}','${alan.id}',this)` : `tekSec('${key}','${alan.id}',this)`;
+        return `
+        <div class="form-group">
+          <label class="form-label">${alan.label}</label>
+          <div class="radio-group" id="grp_${key}_${alan.id}">
+            ${alan.secenekler.map(s => `<button class="radio-btn" onclick="${fn}">${s}</button>`).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">📸 Fotoğraf Ekle (isteğe bağlı)</label>
+      <div class="foto-ekle-btn" onclick="document.getElementById('fotoInput').setAttribute('data-key','${key}');document.getElementById('fotoInput').click()">
+        <span style="font-size:24px">📷</span> Fotoğraf Seç
+      </div>
+      <div class="foto-preview" id="fotoPreview_${key}"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">📝 Ek Açıklama (isteğe bağlı)</label>
+      <textarea class="input" id="aciklama_${key}" rows="3" placeholder="Eklemek istediğiniz detaylar..." style="resize:none"></textarea>
+    </div>
+
+    <div id="formError_${key}" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:13px;font-weight:700;display:none;margin-bottom:12px"></div>
+
+    <button class="gonder-btn" id="gonderBtn_${key}" onclick="teklifGonder('${key}')">
+      📩 Teklif İste — ${kat.ad}
+    </button>
+  `;
+}
+
+function kategoriToggle(key) {
+  const baslik = document.getElementById('baslik_' + key);
+  const body   = document.getElementById('body_' + key);
+
+  if (acikKategori && acikKategori !== key) {
+    // Diğerini kapat
+    document.getElementById('baslik_' + acikKategori).classList.remove('acik');
+    document.getElementById('body_' + acikKategori).classList.remove('acik');
+  }
+
+  const yeniDurum = body.classList.toggle('acik');
+  baslik.classList.toggle('acik', yeniDurum);
+  acikKategori = yeniDurum ? key : null;
+
+  if (yeniDurum) {
+    // Sayfayı o satıra kaydır
+    setTimeout(() => {
+      document.getElementById('satir_' + key).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
+  }
+}
+
+function tekSec(key, alanId, el) {
+  state[key].secimler[alanId] = el.textContent.trim();
+  document.querySelectorAll(`#grp_${key}_${alanId} .radio-btn`).forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
 }
 
-function cokluSec(alanId, el) {
+function cokluSec(key, alanId, el) {
   el.classList.toggle('selected');
-  const secili = [...document.querySelectorAll(`#grp_${alanId} .radio-btn.selected`)].map(b => b.textContent.trim());
-  secimler[alanId] = secili.join(', ');
+  const secili = [...document.querySelectorAll(`#grp_${key}_${alanId} .radio-btn.selected`)].map(b => b.textContent.trim());
+  state[key].secimler[alanId] = secili.join(', ');
 }
 
 function fotoSec(input) {
-  Array.from(input.files).forEach(f => { if (fotoFiles.length < 5) fotoFiles.push(f); });
+  const key = input.getAttribute('data-key');
+  if (!key) return;
+  Array.from(input.files).forEach(f => {
+    if (state[key].fotoFiles.length < 5) state[key].fotoFiles.push(f);
+  });
   input.value = '';
-  fotoPreviewGuncelle();
+  fotoPreviewGuncelle(key);
 }
 
-function fotoPreviewGuncelle() {
-  document.getElementById('fotoPreview').innerHTML = fotoFiles.map((f, i) => {
-    const url = URL.createObjectURL(f);
-    return `<div class="foto-thumb"><img src="${url}"><button class="foto-remove" onclick="fotoSil(${i})">✕</button></div>`;
-  }).join('');
+function fotoPreviewGuncelle(key) {
+  document.getElementById('fotoPreview_' + key).innerHTML =
+    state[key].fotoFiles.map((f, i) => {
+      const url = URL.createObjectURL(f);
+      return `<div class="foto-thumb"><img src="${url}"><button class="foto-remove" onclick="fotoSil('${key}',${i})">✕</button></div>`;
+    }).join('');
 }
 
-function fotoSil(i) {
-  fotoFiles.splice(i, 1);
-  fotoPreviewGuncelle();
+function fotoSil(key, i) {
+  state[key].fotoFiles.splice(i, 1);
+  fotoPreviewGuncelle(key);
 }
 
-async function teklifGonder() {
-  const kat = kategoriler[aktifKategori];
+async function teklifGonder(key) {
+  const kat = kategoriler[key];
   const zorunlu = kat.alanlar.filter(a => !a.coklu);
-  const eksik = zorunlu.find(a => !secimler[a.id]);
+  const eksik = zorunlu.find(a => !state[key].secimler[a.id]);
+  const errEl = document.getElementById('formError_' + key);
+
   if (eksik) {
-    const errEl = document.getElementById('formError');
     errEl.textContent = `⚠️ Lütfen "${eksik.label}" seçin!`;
     errEl.style.display = 'block';
     return;
   }
-  document.getElementById('formError').style.display = 'none';
-  const btn = document.getElementById('gonderBtn');
+  errEl.style.display = 'none';
+
+  const btn = document.getElementById('gonderBtn_' + key);
   btn.textContent = '⏳ Gönderiliyor...';
   btn.disabled = true;
+
+  const fotoFiles = state[key].fotoFiles;
   let foto_urls = [];
   for (let i = 0; i < fotoFiles.length; i++) {
     const file = fotoFiles[i];
@@ -370,28 +550,31 @@ async function teklifGonder() {
       foto_urls.push(u.publicUrl);
     }
   }
+
+  const aciklama = document.getElementById('aciklama_' + key).value.trim();
   const { error } = await sb.from('teklifler').insert({
     user_id: currentUser.id,
     ad_soyad: currentProfil?.full_name || '',
     telefon: currentProfil?.phone || '',
-    kategori: aktifKategori,
-    detaylar: { ...secimler, aciklama: document.getElementById('aciklama').value.trim(), foto_urls },
+    kategori: key,
+    detaylar: { ...state[key].secimler, aciklama, foto_urls },
     durum: 'bekliyor'
   });
+
   if (error) {
-    document.getElementById('formError').textContent = 'Hata: ' + error.message;
-    document.getElementById('formError').style.display = 'block';
-    btn.textContent = '📩 Teklif İste';
+    errEl.textContent = 'Hata: ' + error.message;
+    errEl.style.display = 'block';
+    btn.textContent = `📩 Teklif İste — ${kat.ad}`;
     btn.disabled = false;
     return;
   }
+
   document.getElementById('successOverlay').classList.add('show');
 }
 </script>
 <script>
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js")
-      .catch(e => console.log("SW error:", e));
+    navigator.serviceWorker.register("/sw.js").catch(e => console.log("SW error:", e));
   }
 </script>
 </body>
