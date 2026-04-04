@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
+/* ══════════════════════════════════════════
+   KOYU MOD (varsayılan)
+══════════════════════════════════════════ */
 :root {
   --bg: #0F1117;
   --bg2: #181B24;
@@ -18,8 +21,131 @@
   --radius-sm: 10px;
   --nav-h: 64px;
   --bot-h: 70px;
+  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+  --theme-icon: '☀️';
 }
 
+/* ══════════════════════════════════════════
+   AÇIK MOD
+══════════════════════════════════════════ */
+body.light {
+  --bg: #f0f9f9;
+  --bg2: #ffffff;
+  --card: #ffffff;
+  --card2: #e6f7f7;
+  --border: rgba(0,150,150,0.15);
+  --gold: #009999;
+  --gold2: #007a7a;
+  --rust: #E8603A;
+  --green: #00a878;
+  --blue: #3a90e8;
+  --text: #0d3d3d;
+  --text2: rgba(13,61,61,0.65);
+  --text3: rgba(13,61,61,0.38);
+  --shadow: 0 4px 20px rgba(0,150,150,0.1);
+  --theme-icon: '🌙';
+}
+
+/* Açık modda logo arka planı */
+body.light .logo-icon {
+  background: var(--gold);
+  color: white;
+}
+
+/* Açık modda bottom nav center butonu */
+body.light .bnav-center {
+  background: var(--gold);
+  color: white;
+  box-shadow: 0 4px 20px rgba(0,153,153,0.35);
+}
+
+/* Açık modda buton renkleri */
+body.light .btn-gold {
+  background: var(--gold);
+  color: white;
+}
+body.light .nav-btn {
+  background: var(--gold);
+  color: white;
+}
+
+/* Açık modda tag renkleri */
+body.light .tag-gold {
+  background: rgba(0,153,153,0.12);
+  color: var(--gold);
+}
+body.light .tag-green {
+  background: rgba(0,168,120,0.12);
+  color: var(--green);
+}
+
+/* Açık modda spinner */
+body.light .spinner {
+  border-color: var(--border);
+  border-top-color: var(--gold);
+}
+
+/* Açık modda chip active */
+body.light .chip.active {
+  background: var(--gold);
+  color: white;
+  border-color: var(--gold);
+}
+
+/* Açık modda stat num */
+body.light .stat-num { color: var(--gold); }
+
+/* Açık modda modal handle */
+body.light .modal-handle {
+  background: var(--border);
+}
+
+/* Açık modda input focus */
+body.light .input:focus { border-color: var(--gold); }
+
+/* Açık modda card shadow */
+body.light .card {
+  box-shadow: 0 2px 12px rgba(0,150,150,0.06);
+}
+
+/* ══════════════════════════════════════════
+   TEMA GEÇİŞ BUTONU
+══════════════════════════════════════════ */
+.theme-toggle-btn {
+  width: 38px; height: 38px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  transition: background .3s, border-color .3s, transform .2s;
+  flex-shrink: 0;
+}
+.theme-toggle-btn:active { transform: scale(0.9); }
+
+/* ══════════════════════════════════════════
+   GEÇİŞ ANİMASYONU
+══════════════════════════════════════════ */
+body {
+  transition:
+    background-color .3s ease,
+    color .3s ease;
+}
+.top-nav, .bottom-nav, .card, .modal-sheet,
+.input, .chip, .btn, .tag, .stat-box,
+.bnav-center, .logo-icon, .nav-icon-btn,
+.theme-toggle-btn {
+  transition:
+    background-color .3s ease,
+    border-color .3s ease,
+    color .3s ease,
+    box-shadow .3s ease;
+}
+
+/* ══════════════════════════════════════════
+   BASE STYLES (değişmez)
+══════════════════════════════════════════ */
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
 
 input, textarea, [contenteditable] { -webkit-user-select: text; user-select: text; }
@@ -34,6 +160,7 @@ body {
   padding-bottom: calc(var(--bot-h) + 16px);
   overflow-x: hidden;
 }
+
 /* TOP NAV */
 .top-nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 200;
@@ -83,7 +210,6 @@ body {
   will-change: transform;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  /* Android Chrome adres çubuğu kaymasını önle */
   bottom: env(safe-area-inset-bottom, 0);
 }
 .bnav-item {
@@ -92,7 +218,6 @@ body {
   text-decoration: none; color: var(--text3);
   font-size: 10px; font-weight: 700;
   flex: 1;
-  /* Sabit yükseklik ve genişlik — içerik değişiminde bozulmasın */
   height: var(--bot-h);
   min-width: 0;
   padding: 0;
@@ -104,7 +229,6 @@ body {
 .bnav-icon {
   font-size: 22px;
   line-height: 1;
-  /* Emoji'nin kaymaması için sabit boyut */
   display: block;
   width: 24px;
   height: 24px;
@@ -271,7 +395,4 @@ body {
 .fade-up { animation: fadeUp .4s ease both; }
 
 /* SUPABASE CONFIG */
-.sb-config {
-  display: none;
-  --url: 'https://ncmzfaszaowiynzjdefb.supabase.co';
-}
+.sb-config { display: none; }
