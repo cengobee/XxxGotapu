@@ -1347,7 +1347,7 @@ if (window.location.hash && window.location.hash.includes('access_token')) {
   if (access_token) {
     sb.auth.setSession({ access_token, refresh_token }).then(({ data, error }) => {
       if (error) { window.location.replace('index.html'); }
-    } else { window.history.replaceState(null, '', window.location.pathname); init(); }
+      else { window.history.replaceState(null, '', window.location.pathname); init(); }
     });
   } else { init(); }
 } else if (new URLSearchParams(window.location.search).get('code')) {
@@ -1358,7 +1358,7 @@ if (window.location.hash && window.location.hash.includes('access_token')) {
 
 function init() {
   sb.auth.getSession().then(({ data }) => {
-    if (!data.session) { window.location.href = 'index.html'; return; }
+    if (!data.session) { window.location.replace('index.html'); return; }
     document.body.style.visibility = 'visible';
     filtreSehirDoldur();
     ilanlarYukle();
@@ -1781,4 +1781,4 @@ async function mesajSay() {
 }
 </script>
 </body>
-</html>
+  </html>
