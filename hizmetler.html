@@ -42,7 +42,54 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
+<!-- ═══════════════════════════════════════
+     TEMA GEÇİŞ BUTONU — Her sayfaya ekle
+     </body> etiketinden hemen önce yapıştır
+═══════════════════════════════════════ -->
+<script>
+(function() {
+  // Sayfa açılınca kayıtlı temayı uygula — flash önlemek için hemen çalışır
+  var kaydedilenTema = localStorage.getItem('gotapu_tema');
+  if (kaydedilenTema === 'light') {
+    document.body.classList.add('light');
+  }
 
+  function temaButonuOlustur() {
+    // Zaten varsa oluşturma
+    if (document.getElementById('themeToggleBtn')) return;
+
+    var btn = document.createElement('button');
+    btn.id = 'themeToggleBtn';
+    btn.className = 'theme-toggle-btn nav-icon-btn';
+    btn.style.cssText = 'flex-shrink:0;';
+    btn.setAttribute('title', 'Temayı Değiştir');
+    btn.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
+
+    btn.addEventListener('click', function() {
+      var acikMi = document.body.classList.toggle('light');
+      localStorage.setItem('gotapu_tema', acikMi ? 'light' : 'dark');
+      btn.textContent = acikMi ? '🌙' : '☀️';
+
+      // Kısa animasyon geri bildirimi
+      btn.style.transform = 'scale(0.8) rotate(20deg)';
+      setTimeout(function() { btn.style.transform = ''; }, 200);
+    });
+
+    // Nav actions'ın ilk çocuğu olarak ekle
+    var navActions = document.querySelector('.nav-actions');
+    if (navActions) {
+      navActions.insertBefore(btn, navActions.firstChild);
+    }
+  }
+
+  // DOM hazır olduğunda butonu ekle
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', temaButonuOlustur);
+  } else {
+    temaButonuOlustur();
+  }
+})();
+</script>
 <nav class="top-nav">
   <a href="index.html" class="nav-logo" style="font-size:15px">
     <div class="back-btn" style="margin-right:4px">←</div>
