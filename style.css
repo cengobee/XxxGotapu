@@ -8,15 +8,15 @@
   --bg2: #181B24;
   --card: #1E2130;
   --card2: #252A3A;
-  --border: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.10);
   --gold: #F5C842;
   --gold2: #E8A820;
   --rust: #E8603A;
   --green: #2ECC71;
   --blue: #4A90D9;
   --text: #FFFFFF;
-  --text2: rgba(255,255,255,0.6);
-  --text3: rgba(255,255,255,0.3);
+  --text2: rgba(255,255,255,0.85);   /* eskisi 0.6 → şimdi 0.85 */
+  --text3: rgba(255,255,255,0.60);   /* eskisi 0.3 → şimdi 0.60 */
   --radius: 16px;
   --radius-sm: 10px;
   --nav-h: 64px;
@@ -33,15 +33,15 @@ body.light {
   --bg2: #ffffff;
   --card: #ffffff;
   --card2: #e6f7f7;
-  --border: rgba(0,150,150,0.15);
+  --border: rgba(0,150,150,0.18);
   --gold: #009999;
   --gold2: #007a7a;
   --rust: #E8603A;
   --green: #00a878;
   --blue: #3a90e8;
-  --text: #0d3d3d;
-  --text2: rgba(13,61,61,0.65);
-  --text3: rgba(13,61,61,0.38);
+  --text: #0d2e2e;
+  --text2: rgba(13,46,46,0.80);      /* eskisi 0.65 → şimdi 0.80 */
+  --text3: rgba(13,46,46,0.60);      /* eskisi 0.38 → şimdi 0.60 */
   --shadow: 0 4px 20px rgba(0,150,150,0.1);
   --theme-icon: '🌙';
 }
@@ -144,7 +144,7 @@ body {
 }
 
 /* ══════════════════════════════════════════
-   BASE STYLES (değişmez)
+   BASE STYLES
 ══════════════════════════════════════════ */
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
 
@@ -369,7 +369,7 @@ body {
 }
 .empty-icon { font-size: 60px; margin-bottom: 16px; }
 .empty-title { font-size: 18px; font-weight: 800; color: var(--text2); margin-bottom: 8px; }
-.empty-desc { font-size: 14px; line-height: 1.6; }
+.empty-desc { font-size: 14px; line-height: 1.6; color: var(--text2); }
 
 /* MODAL */
 .modal-overlay {
