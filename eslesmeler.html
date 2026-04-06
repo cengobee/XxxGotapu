@@ -7,84 +7,240 @@
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  .swipe-area {
-    position: relative; height: 460px;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 20px;
-  }
-  .swipe-card {
-    position: absolute; width: 100%;
-    border-radius: 24px; overflow: hidden;
-    cursor: grab; user-select: none; touch-action: none;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    background: var(--card);
-  }
-  .card-img {
-    height: 240px; display: flex; align-items: center;
-    justify-content: center; font-size: 80px; position: relative;
-  }
-  .card-img img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
-  .match-pct {
-    position: absolute; top: 12px; right: 12px;
-    background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
-    border-radius: 50px; padding: 5px 12px;
-    font-size: 13px; font-weight: 800; color: var(--gold); z-index: 2;
-  }
-  .like-stamp {
-    position: absolute; top: 20px; left: 14px; z-index: 3;
-    border: 4px solid var(--green); color: var(--green);
-    padding: 5px 12px; border-radius: 8px;
-    font-size: 22px; font-weight: 900; letter-spacing: 2px;
-    opacity: 0; transform: rotate(-15deg); pointer-events: none;
-  }
-  .nope-stamp {
-    position: absolute; top: 20px; right: 14px; z-index: 3;
-    border: 4px solid var(--rust); color: var(--rust);
-    padding: 5px 12px; border-radius: 8px;
-    font-size: 22px; font-weight: 900; letter-spacing: 2px;
-    opacity: 0; transform: rotate(15deg); pointer-events: none;
-  }
-  .card-body { padding: 14px 16px 16px; background: var(--card2); }
-  .card-price { font-size: 20px; font-weight: 900; color: var(--gold); }
-  .card-title { font-size: 14px; font-weight: 700; margin: 4px 0; line-height: 1.4; }
-  .card-loc { font-size: 12px; color: var(--text3); margin-bottom: 8px; }
-  .card-specs { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
-  .card-spec { font-size: 12px; color: var(--text2); }
-  .match-reasons { display: flex; gap: 5px; flex-wrap: wrap; }
-  .reason-chip { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 50px; background: rgba(46,204,113,0.12); color: var(--green); }
-  .card-detay-btn {
-    display: block; width: 100%; padding: 10px;
-    background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.3);
-    border-radius: 10px; color: var(--gold); font-size: 13px; font-weight: 800;
-    text-align: center; cursor: pointer; margin-top: 8px;
-    font-family: 'Nunito', sans-serif;
-  }
-  .action-btns { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 24px; }
-  .action-btn { border: none; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; transition: transform .15s; }
-  .action-btn:active { transform: scale(0.88); }
-  .btn-nope { width: 60px; height: 60px; background: rgba(232,96,58,0.15); }
-  .btn-like { width: 70px; height: 70px; background: rgba(46,204,113,0.15); }
-  .btn-super { width: 52px; height: 52px; background: rgba(74,144,217,0.15); }
-  .btn-rewind { width: 44px; height: 44px; background: rgba(255,255,255,0.05); font-size: 20px; }
-  .eslesen-item { display: flex; gap: 12px; align-items: center; background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; color: var(--text); transition: border-color .2s; text-decoration: none; }
-  .eslesen-item:active { border-color: var(--gold); }
-  .eslesen-thumb { width: 62px; height: 62px; border-radius: 12px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; overflow: hidden; }
-  .eslesen-thumb img { width:100%; height:100%; object-fit:cover; }
-  .pct-pill { display: inline-block; padding: 2px 10px; border-radius: 50px; font-size: 11px; font-weight: 800; margin-bottom: 4px; }
-  .pct-high { background: rgba(46,204,113,0.15); color: var(--green); }
-  .pct-mid  { background: rgba(245,200,66,0.15); color: var(--gold); }
-  .pct-low  { background: rgba(232,96,58,0.12); color: var(--rust); }
-  .eslesen-why { font-size: 11px; color: var(--green); margin-top: 3px; line-height: 1.4; }
-  .bos-yon { text-align: center; padding: 40px 20px; }
-  .bos-yon .bos-icon { font-size: 60px; margin-bottom: 12px; }
-  .bos-yon .bos-baslik { font-size: 18px; font-weight: 900; margin-bottom: 8px; }
-  .bos-yon .bos-aciklama { font-size: 13px; color: var(--text3); margin-bottom: 20px; }
-  .sil-btn {
-    background: rgba(232,96,58,0.15); border: none; border-radius: 8px;
-    color: var(--rust); font-size: 18px; width: 36px; height: 36px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; flex-shrink: 0;
-  }
+
+/* ══ 3'LÜ SEKME ══ */
+.sekme-bar {
+  display: flex; background: var(--card);
+  border: 1px solid var(--border); border-radius: 50px;
+  padding: 4px; gap: 2px; margin-bottom: 16px;
+}
+.sekme-btn {
+  flex: 1; padding: 10px 6px; border: none; border-radius: 50px;
+  background: transparent; color: var(--text3);
+  font-family: Nunito, sans-serif; font-size: 12px; font-weight: 800;
+  cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.sekme-btn.aktif { background: var(--gold); color: #1a1a1a; }
+
+/* ══ İLAN SEÇİCİ ══ */
+.ilan-secici {
+  display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px;
+  scrollbar-width: none; margin-bottom: 14px;
+}
+.ilan-secici::-webkit-scrollbar { display: none; }
+.ilan-sec-btn {
+  flex-shrink: 0; padding: 7px 14px; border-radius: 50px;
+  background: var(--card); border: 1.5px solid var(--border);
+  color: var(--text2); font-family: Nunito, sans-serif;
+  font-size: 12px; font-weight: 800; cursor: pointer; transition: all .2s;
+  white-space: nowrap;
+}
+.ilan-sec-btn.aktif {
+  background: rgba(245,200,66,0.1); border-color: var(--gold); color: var(--gold);
+}
+.ilan-sec-btn.yeni-ilan {
+  background: rgba(46,204,113,0.08); border-color: rgba(46,204,113,0.3); color: var(--green);
+}
+
+/* ══ ROL GÖSTERGE ══ */
+.rol-banner {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 10px 14px; margin-bottom: 14px;
+}
+.rol-banner-text { flex: 1; font-size: 12px; color: var(--text2); font-weight: 700; }
+.rol-banner-text b { color: var(--text); }
+.kredi-hap {
+  display: flex; align-items: center; gap: 5px;
+  background: linear-gradient(135deg,#1a1a2e,#0f3460);
+  border-radius: 50px; padding: 5px 12px; text-decoration: none;
+}
+.kredi-hap-sayi { font-size: 14px; font-weight: 900; color: #f5c518; }
+.kredi-hap-label { font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 700; }
+
+/* ══ SWIPE ALANI ══ */
+.swipe-area {
+  position: relative; height: 460px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.swipe-card {
+  position: absolute; width: 100%;
+  border-radius: 24px; overflow: hidden;
+  cursor: grab; user-select: none; touch-action: none;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  background: var(--card);
+}
+.card-img {
+  height: 240px; display: flex; align-items: center;
+  justify-content: center; font-size: 80px; position: relative;
+}
+.card-img img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+.match-pct {
+  position: absolute; top: 12px; right: 12px;
+  background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+  border-radius: 50px; padding: 5px 12px;
+  font-size: 13px; font-weight: 800; color: var(--gold); z-index: 2;
+}
+.like-stamp {
+  position: absolute; top: 20px; left: 14px; z-index: 3;
+  border: 4px solid var(--green); color: var(--green);
+  padding: 5px 12px; border-radius: 8px;
+  font-size: 22px; font-weight: 900; letter-spacing: 2px;
+  opacity: 0; transform: rotate(-15deg); pointer-events: none;
+}
+.nope-stamp {
+  position: absolute; top: 20px; right: 14px; z-index: 3;
+  border: 4px solid var(--rust); color: var(--rust);
+  padding: 5px 12px; border-radius: 8px;
+  font-size: 22px; font-weight: 900; letter-spacing: 2px;
+  opacity: 0; transform: rotate(15deg); pointer-events: none;
+}
+.card-body { padding: 14px 16px 16px; background: var(--card2); }
+.card-price { font-size: 20px; font-weight: 900; color: var(--gold); }
+.card-title { font-size: 14px; font-weight: 700; margin: 4px 0; line-height: 1.4; }
+.card-loc { font-size: 12px; color: var(--text3); margin-bottom: 8px; }
+.card-specs { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.card-spec { font-size: 12px; color: var(--text2); }
+.match-reasons { display: flex; gap: 5px; flex-wrap: wrap; }
+.reason-chip { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 50px; background: rgba(46,204,113,0.12); color: var(--green); }
+.card-detay-btn {
+  display: block; width: 100%; padding: 10px;
+  background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.3);
+  border-radius: 10px; color: var(--gold); font-size: 13px; font-weight: 800;
+  text-align: center; cursor: pointer; margin-top: 8px; font-family: Nunito, sans-serif;
+}
+
+/* ══ BLUR KART (Alıcı/Müşteri profili) ══ */
+.blur-kart {
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 24px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  width: 100%; position: absolute;
+}
+.blur-kart-ust {
+  padding: 20px 16px 16px; display: flex; align-items: center; gap: 14px;
+}
+.blur-avatar {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: var(--card2); border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; flex-shrink: 0;
+  filter: blur(6px); user-select: none;
+}
+.blur-kart.acik .blur-avatar { filter: none; }
+.blur-isim {
+  font-size: 16px; font-weight: 900; color: var(--text);
+  letter-spacing: 3px; opacity: 0.4;
+}
+.blur-kart.acik .blur-isim { letter-spacing: 0; opacity: 1; }
+.blur-konum { font-size: 13px; color: var(--text2); font-weight: 700; margin-top: 3px; }
+.blur-tip-badge {
+  margin-left: auto; padding: 4px 12px; border-radius: 50px;
+  font-size: 11px; font-weight: 800; flex-shrink: 0;
+}
+.blur-tip-badge.kiralik { background: rgba(46,204,113,0.15); color: var(--green); }
+.blur-tip-badge.satilik { background: rgba(232,96,58,0.12); color: var(--rust); }
+.blur-detay {
+  display: flex; gap: 8px; padding: 0 16px 14px; flex-wrap: wrap;
+}
+.blur-detay-item {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 50px; padding: 5px 12px;
+  font-size: 12px; font-weight: 700; color: var(--text2);
+}
+.blur-kilit-kat {
+  background: var(--card2); border-top: 1px solid var(--border);
+  padding: 16px; text-align: center;
+}
+.blur-kilit-kat.acik { background: rgba(46,204,113,0.05); border-color: rgba(46,204,113,0.2); }
+.blur-kilit-icon { font-size: 28px; margin-bottom: 6px; }
+.blur-kilit-aciklama { font-size: 13px; color: var(--text2); font-weight: 700; margin-bottom: 12px; line-height: 1.5; }
+.blur-ac-btn {
+  width: 100%; padding: 13px; border-radius: 50px;
+  background: var(--gold); color: #1a1a1a;
+  border: none; font-family: Nunito, sans-serif;
+  font-size: 14px; font-weight: 900; cursor: pointer;
+  transition: opacity .2s;
+}
+.blur-ac-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.blur-ac-btn.acik-btn { background: var(--green); color: white; }
+.blur-iletisim { padding: 16px; display: none; }
+.blur-kart.acik .blur-iletisim { display: block; }
+.blur-iletisim-satir {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-top: 1px solid var(--border);
+}
+.blur-iletisim-satir:first-child { border-top: none; }
+
+/* ══ AKSİYON ══ */
+.action-btns { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 24px; }
+.action-btn { border: none; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; transition: transform .15s; }
+.action-btn:active { transform: scale(0.88); }
+.btn-nope  { width: 60px; height: 60px; background: rgba(232,96,58,0.15); }
+.btn-like  { width: 70px; height: 70px; background: rgba(46,204,113,0.15); }
+.btn-super { width: 52px; height: 52px; background: rgba(74,144,217,0.15); }
+.btn-rewind{ width: 44px; height: 44px; background: rgba(255,255,255,0.05); font-size: 20px; }
+
+/* ══ EŞLEŞMELERİM ══ */
+.eslesen-item { display: flex; gap: 12px; align-items: center; background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; color: var(--text); transition: border-color .2s; text-decoration: none; }
+.eslesen-item:active { border-color: var(--gold); }
+.eslesen-thumb { width: 62px; height: 62px; border-radius: 12px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; overflow: hidden; }
+.eslesen-thumb img { width:100%; height:100%; object-fit:cover; }
+.pct-pill { display: inline-block; padding: 2px 10px; border-radius: 50px; font-size: 11px; font-weight: 800; margin-bottom: 4px; }
+.pct-high { background: rgba(46,204,113,0.15); color: var(--green); }
+.pct-mid  { background: rgba(245,200,66,0.15); color: var(--gold); }
+.pct-low  { background: rgba(232,96,58,0.12); color: var(--rust); }
+.eslesen-why { font-size: 11px; color: var(--green); margin-top: 3px; line-height: 1.4; }
+.sil-btn { background: rgba(232,96,58,0.15); border: none; border-radius: 8px; color: var(--rust); font-size: 18px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+
+/* ══ HİZMET KARTI ══ */
+.hizmet-swipe-card {
+  position: absolute; width: 100%;
+  border-radius: 24px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  background: var(--card); cursor: grab; user-select: none; touch-action: none;
+}
+.hizmet-kart-ust {
+  padding: 20px 16px 16px; display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(135deg,#1a2340,#2a3560);
+}
+.hizmet-kart-ikon { font-size: 44px; }
+.hizmet-kart-bilgi { flex: 1; }
+.hizmet-kart-adi { font-size: 17px; font-weight: 900; color: white; }
+.hizmet-kart-kategori { font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 700; margin-top: 3px; }
+.hizmet-kart-puan { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--gold); font-weight: 800; }
+.hizmet-kart-body { padding: 14px 16px; background: var(--card2); }
+.hizmet-fiyat-bant { font-size: 15px; font-weight: 900; color: var(--gold); margin-bottom: 6px; }
+.hizmet-aciklama { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
+.hizmet-bolge-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 50px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: var(--text2);
+}
+
+/* ══ BOŞ DURUM ══ */
+.bos-yon { text-align: center; padding: 40px 20px; }
+.bos-yon .bos-icon { font-size: 60px; margin-bottom: 12px; }
+.bos-yon .bos-baslik { font-size: 18px; font-weight: 900; margin-bottom: 8px; }
+.bos-yon .bos-aciklama { font-size: 13px; color: var(--text3); margin-bottom: 20px; }
+
+/* ══ TOAST ══ */
+#eslesme-toast {
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+  z-index: 999; display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none; width: calc(100% - 32px); max-width: 380px;
+}
+.toast-mesaj {
+  background: var(--card2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 12px 16px; font-size: 13px; font-weight: 700; color: var(--text);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3); pointer-events: auto;
+  animation: toastGir .3s ease;
+}
+.toast-mesaj.basari { background: rgba(46,204,113,0.15); border-color: rgba(46,204,113,0.3); color: var(--green); }
+.toast-mesaj.hata { background: rgba(232,96,58,0.12); border-color: rgba(232,96,58,0.3); color: var(--rust); }
+@keyframes toastGir { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -96,40 +252,138 @@
 </head>
 <body>
 
+<script>
+(function() {
+  if (localStorage.getItem('gotapu_tema') === 'light') document.body.classList.add('light');
+  function temaButonuOlustur() {
+    if (document.getElementById('themeToggleBtn')) return;
+    var btn = document.createElement('button');
+    btn.id = 'themeToggleBtn'; btn.className = 'theme-toggle-btn nav-icon-btn';
+    btn.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
+    btn.addEventListener('click', function() {
+      var a = document.body.classList.toggle('light');
+      localStorage.setItem('gotapu_tema', a ? 'light' : 'dark');
+      btn.textContent = a ? '🌙' : '☀️';
+      btn.style.transform = 'scale(0.8) rotate(20deg)';
+      setTimeout(function() { btn.style.transform = ''; }, 200);
+    });
+    var nav = document.querySelector('.nav-actions');
+    if (nav) nav.insertBefore(btn, nav.firstChild);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', temaButonuOlustur);
+  else temaButonuOlustur();
+})();
+</script>
+
 <nav class="top-nav">
   <a href="index.html" class="nav-logo"><div class="logo-icon">🏠</div>GoTapu</a>
   <div class="nav-actions">
+    <!-- Kredi widget — JS ile doldurulur -->
+    <a href="odeme.html" id="krediNavWidget" style="display:none;align-items:center;gap:5px;background:linear-gradient(135deg,#1a1a2e,#0f3460);border:1px solid rgba(245,200,66,0.3);border-radius:50px;padding:6px 12px;text-decoration:none">
+      <span>💎</span>
+      <div>
+        <div id="krediNavSayi" style="font-size:13px;font-weight:900;color:#f5c518;line-height:1">—</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700">kredi</div>
+      </div>
+    </a>
     <a href="profil.html" class="nav-icon-btn">👤</a>
   </div>
 </nav>
 
 <div class="page fade-up">
-  <div class="section-head">
-    <div class="section-title">✨ Sana Uygun İlanlar</div>
-    <span style="font-size:13px;color:var(--text3)" id="kalanYazi"></span>
+
+  <!-- 3'LÜ SEKME -->
+  <div class="sekme-bar">
+    <button class="sekme-btn aktif" id="sekme-emlak"    onclick="sekmeDegis('emlak')">🏠 Emlak</button>
+    <button class="sekme-btn"       id="sekme-hizmet"   onclick="sekmeDegis('hizmet')">🔧 Hizmetler</button>
+    <button class="sekme-btn"       id="sekme-eslesmen" onclick="sekmeDegis('eslesmen')">✨ Eşleşmelerim</button>
   </div>
 
-  <div class="swipe-area" id="swipeArea">
-    <div class="empty" id="bosEkran" style="display:none">
-      <div class="empty-icon">🏠</div>
-      <div class="empty-title">Hepsi görüldü!</div>
-      <div class="empty-desc">Yeni ilanlar eklenince burada görünecek</div>
+  <!-- ════ EMLAK SEKMESİ ════ -->
+  <div id="pane-emlak">
+    <!-- İlan seçici (birden fazla ilan varsa) -->
+    <div class="ilan-secici" id="ilanSecici" style="display:none"></div>
+
+    <!-- Rol banner -->
+    <div class="rol-banner" id="rolBanner" style="display:none">
+      <span id="rolBannerIkon" style="font-size:20px">👤</span>
+      <div class="rol-banner-text" id="rolBannerText"></div>
+      <a href="odeme.html" class="kredi-hap" id="rolKrediHap" style="display:none">
+        <span>💎</span>
+        <div>
+          <div class="kredi-hap-sayi" id="rolKrediSayi">—</div>
+          <div class="kredi-hap-label">kredi</div>
+        </div>
+      </a>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div class="section-title">✨ Eşleşmeler</div>
+      <span style="font-size:13px;color:var(--text3)" id="kalanYazi"></span>
+    </div>
+
+    <div class="swipe-area" id="swipeArea">
+      <div class="empty" id="bosEkran" style="display:none">
+        <div class="empty-icon">🏠</div>
+        <div class="empty-title">Hepsi görüldü!</div>
+        <div class="empty-desc">Yeni ilanlar/profiller eklenince burada görünecek</div>
+      </div>
+    </div>
+
+    <div class="action-btns" id="actionBtns">
+      <button class="action-btn btn-rewind" onclick="geriAl()" title="Geri Al">↩️</button>
+      <button class="action-btn btn-nope"   onclick="swipe('left')"  title="Beğenmiyorum">❌</button>
+      <button class="action-btn btn-like"   onclick="swipe('right')" title="Beğendim">✅</button>
+      <button class="action-btn btn-super"  onclick="swipe('up')"    title="Süper Beğeni">⭐</button>
     </div>
   </div>
 
-  <div class="action-btns" id="actionBtns">
-    <button class="action-btn btn-rewind" onclick="geriAl()" title="Geri Al">↩️</button>
-    <button class="action-btn btn-nope"   onclick="swipe('left')"  title="Beğenmiyorum">❌</button>
-    <button class="action-btn btn-like"   onclick="swipe('right')" title="Beğendim">✅</button>
-    <button class="action-btn btn-super"  onclick="swipe('up')"    title="Süper Beğeni">⭐</button>
+  <!-- ════ HİZMET SEKMESİ ════ -->
+  <div id="pane-hizmet" style="display:none">
+    <div class="ilan-secici" id="hizmetIlanSecici" style="display:none"></div>
+    <div class="rol-banner" id="hizmetRolBanner" style="display:none">
+      <span id="hizmetRolIkon" style="font-size:20px">🔧</span>
+      <div class="rol-banner-text" id="hizmetRolText"></div>
+      <a href="odeme.html" class="kredi-hap" id="hizmetKrediHap" style="display:none">
+        <span>💎</span>
+        <div>
+          <div class="kredi-hap-sayi" id="hizmetKrediSayi">—</div>
+          <div class="kredi-hap-label">kredi</div>
+        </div>
+      </a>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div class="section-title">🔧 Hizmet Eşleşmeleri</div>
+      <span style="font-size:13px;color:var(--text3)" id="hizmetKalanYazi"></span>
+    </div>
+    <div class="swipe-area" id="hizmetSwipeArea">
+      <div class="empty" id="hizmetBosEkran" style="display:none">
+        <div class="empty-icon">🔧</div>
+        <div class="empty-title">Hizmet talebi yok</div>
+        <div class="empty-desc">Hizmet talebinizi oluşturun veya hizmet sağlayıcı olun</div>
+        <a href="ilan-ver.html" class="btn btn-gold btn-lg" style="max-width:220px;display:inline-block;margin-top:12px">+ Hizmet Talebi</a>
+      </div>
+    </div>
+    <div class="action-btns" id="hizmetActionBtns">
+      <button class="action-btn btn-rewind" onclick="hizmetGeriAl()" title="Geri Al">↩️</button>
+      <button class="action-btn btn-nope"   onclick="hizmetSwipe('left')"  title="Hayır">❌</button>
+      <button class="action-btn btn-like"   onclick="hizmetSwipe('right')" title="İletişime Geç">✅</button>
+      <button class="action-btn btn-super"  onclick="hizmetSwipe('up')"    title="Öncelikli">⭐</button>
+    </div>
   </div>
 
-  <div class="section-head">
-    <div class="section-title">Eşleşmelerim</div>
-    <span class="tag tag-green" id="eslesmeCount" style="display:none"></span>
+  <!-- ════ EŞLEŞMELERİM SEKMESİ ════ -->
+  <div id="pane-eslesmen" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="section-title">Eşleşmelerim</div>
+      <span class="tag tag-green" id="eslesmeCount" style="display:none"></span>
+    </div>
+    <div id="eslesenList"><div class="spinner"></div></div>
   </div>
-  <div id="eslesenList"><div class="spinner"></div></div>
+
 </div>
+
+<div id="eslesme-toast"></div>
 
 <nav class="bottom-nav">
   <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
@@ -145,253 +399,198 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 const EMOJI = { satilik:'🏙️', kiralik:'🏘️' };
-let gorülenler = new Set();
+
+// ── Global state
 let currentUser = null;
+let profil = null;         // profiles row
+let kredi = null;          // agent_credits row
+let aktifSekme = 'emlak';
+
+// Emlak state
+let gorülenler = new Set();
 let tercihler = {};
 let ilanlar = [], kartIndex = 0, geriStack = [];
+let aktifIlanId = null;    // ilan seçici için
+let kullaniciIlanlari = []; // kendi ilanları (satıcı/kiracı tarafı)
+let rolTip = null;         // 'alici' | 'satici' | 'her_ikisi'
 
-function ilanElemeKontrol(ilan, pref) {
-  const k = ilan.kriterler || {};
-  const prefTip = (pref.tip || '').toLowerCase();
-  const ilanTip = (ilan.tip || '').toLowerCase();
-  if (prefTip && ilanTip && prefTip !== ilanTip) return false;
-  const prefIl   = (pref.kriterler?.sehir || pref.sehir || '').toLowerCase().trim();
-  const prefIlce = (pref.kriterler?.ilce  || '').toLowerCase().trim();
-  const konum    = (ilan.konum || '').toLowerCase();
-  if (prefIl) {
-    const ilUyustu   = konum.includes(prefIl);
-    const ilceUyustu = prefIlce ? konum.includes(prefIlce) : false;
-    if (!ilUyustu && !ilceUyustu) return false;
-  }
-  const f  = Number(ilan.fiyat);
-  const mn = pref.fiyat_min ? Number(pref.fiyat_min) : null;
-  const mx = pref.fiyat_max ? Number(pref.fiyat_max) : null;
-  if (mn && mx && f > 0) {
-    if (f < mn * 0.8 || f > mx * 1.2) return false;
-  } else if (mn && f > 0 && f < mn * 0.8) return false;
-  else if (mx && f > 0 && f > mx * 1.2) return false;
-  return true;
+// Hizmet state
+let hizmetGorülenler = new Set();
+let hizmetler = [], hizmetKartIndex = 0, hizmetGeriStack = [];
+
+// ── Toast
+function toast(mesaj, tip = 'bilgi') {
+  const kutu = document.getElementById('eslesme-toast');
+  const el = document.createElement('div');
+  el.className = 'toast-mesaj ' + tip;
+  el.innerHTML = mesaj;
+  kutu.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
 }
 
-function emlakGrubunuBul(ilan) {
-  const tip = (ilan.kriterler?.emlak_tipi || '').toLowerCase();
-  if (tip.includes('arsa') || tip.includes('tarla') || tip.includes('bağ') || tip.includes('bahçe')) return 'arsa';
-  if (tip.includes('işyeri') || tip.includes('ofis') || tip.includes('depo') || tip.includes('fabrika')) return 'isyeri';
-  return 'konut';
+// ── Sekme değiştir
+function sekmeDegis(sekme) {
+  aktifSekme = sekme;
+  ['emlak','hizmet','eslesmen'].forEach(s => {
+    document.getElementById('sekme-'+s).classList.toggle('aktif', s===sekme);
+    document.getElementById('pane-'+s).style.display = s===sekme ? 'block' : 'none';
+  });
 }
 
-function eslesPuani(ilan, pref) {
-  const grup = emlakGrubunuBul(ilan);
-  if (grup === 'arsa')   return eslesPuaniArsa(ilan, pref);
-  if (grup === 'isyeri') return eslesPuaniIsyeri(ilan, pref);
-  return eslesPuaniKonut(ilan, pref);
-}
-
-function eslesPuaniKonut(ilan, pref) {
-  let puan = 0;
-  const sebepler = [];
-  const k = ilan.kriterler || {};
-  const f  = Number(ilan.fiyat);
-  const mn = pref.fiyat_min ? Number(pref.fiyat_min) : null;
-  const mx = pref.fiyat_max ? Number(pref.fiyat_max) : null;
-  if (!mn && !mx) { puan += 10; }
-  else if (mn && mx) {
-    if (f >= mn && f <= mx)               { puan += 20; sebepler.push('Fiyat uygun'); }
-    else if (f >= mn*0.9 && f <= mx*1.1)    puan += 10;
-  } else if (mn && f >= mn) { puan += 20; }
-  else if (mx && f <= mx)   { puan += 20; }
-  const konum    = (ilan.konum || '').toLowerCase();
-  const prefIl   = (pref.kriterler?.sehir || pref.sehir || '').toLowerCase();
-  const prefIlce = (pref.kriterler?.ilce  || '').toLowerCase();
-  if (!prefIl) { puan += 8; }
-  else if (prefIlce && konum.includes(prefIlce)) { puan += 20; sebepler.push('Konum tam uyuştu'); }
-  else if (konum.includes(prefIl)) { puan += 12; sebepler.push('Şehir uyuştu'); }
-  const ilanOda = (ilan.oda_sayisi || k.oda_sayisi || '').toLowerCase();
-  const prefOda = pref.kriterler?.oda || [];
-  if (!prefOda.length) { puan += 7; }
-  else if (prefOda.some(o => ilanOda.includes(o.toLowerCase()))) { puan += 15; sebepler.push(`${ilan.oda_sayisi} oda uyuştu`); }
-  const ilanEmlak = (k.emlak_tipi || '').toLowerCase();
-  const prefEmlak = pref.kriterler?.emlak || [];
-  if (!prefEmlak.length) { puan += 5; }
-  else if (prefEmlak.some(e => ilanEmlak.includes(e.replace(/[🏢🏡🏠🏘️]/g,'').trim().toLowerCase()))) { puan += 10; sebepler.push('Emlak tipi uyuştu'); }
-  const m2   = Number(ilan.metrekare || k.m2net || 0);
-  const mnM2 = pref.kriterler?.minM2 ? Number(pref.kriterler.minM2) : null;
-  const mxM2 = pref.kriterler?.maxM2 ? Number(pref.kriterler.maxM2) : null;
-  if (!mnM2 && !mxM2) { puan += 4; }
-  else if (m2 && mnM2 && mxM2 && m2 >= mnM2 && m2 <= mxM2) { puan += 8; sebepler.push(`${m2}m² uygun`); }
-  else if (m2 && mnM2 && !mxM2 && m2 >= mnM2) puan += 8;
-  else if (m2 && !mnM2 && mxM2 && m2 <= mxM2) puan += 8;
-  else if (!m2) puan += 4;
-  const ilanBina = (k.bina_yasi || '').toLowerCase();
-  const prefBina = pref.kriterler?.bina || [];
-  if (!prefBina.length) { puan += 3; }
-  else if (prefBina.some(b => ilanBina.includes(b.split(' ')[0].toLowerCase()))) { puan += 6; sebepler.push('Bina yaşı uyuştu'); }
-  else if (!ilanBina) puan += 2;
-  const ilanIsitma = (k.isitma || '').toLowerCase();
-  const prefIsitma = pref.kriterler?.isitma || [];
-  if (!prefIsitma.length) { puan += 2; }
-  else if (prefIsitma.some(i => ilanIsitma.includes(i.replace(/[🔥🏢🌡️❄️]/g,'').trim().toLowerCase()))) { puan += 5; sebepler.push('Isıtma uyuştu'); }
-  else if (!ilanIsitma) puan += 1;
-  const ilanTapu = (k.tapu_durumu || '').toLowerCase();
-  const prefTapu = pref.kriterler?.tapu || [];
-  if (!prefTapu.length) { puan += 2; }
-  else if (prefTapu.some(t => ilanTapu.includes(t.replace(/[✅📋🤝🌍]/g,'').trim().toLowerCase()))) { puan += 5; sebepler.push('Tapu uyuştu'); }
-  else if (!ilanTapu) puan += 1;
-  const ilanEsya = (k.esya_durumu || '').toLowerCase();
-  const prefEsya = pref.kriterler?.esya || null;
-  if (!prefEsya) { puan += 2; }
-  else if (ilanEsya.includes(prefEsya.replace(/[🪑📦🏠]/g,'').trim().toLowerCase())) { puan += 4; sebepler.push('Eşya durumu uyuştu'); }
-  else if (!ilanEsya) puan += 1;
-  const ilanIc = k.ic_ozellikler || [];
-  const prefIc = pref.kriterler?.konutoz || [];
-  if (!prefIc.length) { puan += 2; }
-  else {
-    const eslesen = prefIc.filter(p => ilanIc.some(i => i.toLowerCase().includes(p.replace(/[🪟🛗🅿️👮🏊🚿🍽️🌡️]/g,'').trim().toLowerCase())));
-    puan += Math.round(4 * eslesen.length / prefIc.length);
-    if (eslesen.length > 0) sebepler.push(`${eslesen.length} özellik uyuştu`);
-  }
-  const ilanDis = k.dis_ozellikler || [];
-  const prefDis = pref.kriterler?.konutoz || [];
-  if (!prefDis.length) { puan += 1; }
-  else {
-    const eslesen = prefDis.filter(p => ilanDis.some(i => i.toLowerCase().includes(p.replace(/[🪟🛗🅿️👮🏊🚿🍽️🌡️]/g,'').trim().toLowerCase())));
-    puan += Math.round(3 * eslesen.length / prefDis.length);
-  }
-  return { puan: Math.min(100, Math.max(1, puan)), sebepler };
-}
-
-function eslesPuaniArsa(ilan, pref) {
-  let puan = 0;
-  const sebepler = [];
-  const k = ilan.kriterler || {};
-  const f  = Number(ilan.fiyat);
-  const mn = pref.fiyat_min ? Number(pref.fiyat_min) : null;
-  const mx = pref.fiyat_max ? Number(pref.fiyat_max) : null;
-  if (!mn && !mx) { puan += 12; }
-  else if (mn && mx) {
-    if (f >= mn && f <= mx)               { puan += 25; sebepler.push('Fiyat uygun'); }
-    else if (f >= mn*0.9 && f <= mx*1.1)    puan += 12;
-  } else if (mn && f >= mn) puan += 25;
-  else if (mx && f <= mx)   puan += 25;
-  const konum    = (ilan.konum || '').toLowerCase();
-  const prefIl   = (pref.kriterler?.sehir || pref.sehir || '').toLowerCase();
-  const prefIlce = (pref.kriterler?.ilce  || '').toLowerCase();
-  if (!prefIl) { puan += 10; }
-  else if (prefIlce && konum.includes(prefIlce)) { puan += 25; sebepler.push('Konum tam uyuştu'); }
-  else if (konum.includes(prefIl))               { puan += 15; sebepler.push('Şehir uyuştu'); }
-  const m2   = Number(ilan.metrekare || k.arsa_m2 || 0);
-  const mnM2 = pref.kriterler?.minArsaM2 ? Number(pref.kriterler.minArsaM2) : null;
-  const mxM2 = pref.kriterler?.maxArsaM2 ? Number(pref.kriterler.maxArsaM2) : null;
-  if (!mnM2 && !mxM2) { puan += 7; }
-  else if (m2 && mnM2 && mxM2 && m2 >= mnM2 && m2 <= mxM2) { puan += 15; sebepler.push(`${m2}m² uygun`); }
-  else if (m2 && mnM2 && !mxM2 && m2 >= mnM2) puan += 15;
-  else if (m2 && !mnM2 && mxM2 && m2 <= mxM2) puan += 15;
-  else if (!m2) puan += 5;
-  const ilanImar = (k.imar_durumu || '').toLowerCase();
-  const prefImar = pref.kriterler?.imar || [];
-  if (!prefImar.length) { puan += 8; }
-  else if (prefImar.some(i => ilanImar.includes(i.replace(/[✅❌🏗️🏭🌿]/g,'').trim().toLowerCase()))) { puan += 20; sebepler.push('İmar durumu uyuştu'); }
-  else if (!ilanImar) puan += 5;
-  const ilanTapu = (k.tapu_turu || '').toLowerCase();
-  const prefTapu = pref.kriterler?.tapuarsa || [];
-  if (!prefTapu.length) { puan += 4; }
-  else if (prefTapu.some(t => ilanTapu.includes(t.replace(/[✅🤝🌍📜]/g,'').trim().toLowerCase()))) { puan += 10; sebepler.push('Tapu türü uyuştu'); }
-  else if (!ilanTapu) puan += 3;
-  const ilanOz = k.arsa_ozellikler || [];
-  const prefOz = pref.kriterler?.arsaoz || [];
-  if (!prefOz.length) { puan += 2; }
-  else {
-    const eslesen = prefOz.filter(p => ilanOz.some(i => i.toLowerCase().includes(p.replace(/[🛣️⚡💧🔲🏔️🌊]/g,'').trim().toLowerCase())));
-    puan += Math.round(5 * eslesen.length / prefOz.length);
-    if (eslesen.length > 0) sebepler.push(`${eslesen.length} özellik uyuştu`);
-  }
-  return { puan: Math.min(100, Math.max(1, puan)), sebepler };
-}
-
-function eslesPuaniIsyeri(ilan, pref) {
-  let puan = 0;
-  const sebepler = [];
-  const k = ilan.kriterler || {};
-  const f  = Number(ilan.fiyat);
-  const mn = pref.fiyat_min ? Number(pref.fiyat_min) : null;
-  const mx = pref.fiyat_max ? Number(pref.fiyat_max) : null;
-  if (!mn && !mx) { puan += 8; }
-  else if (mn && mx) {
-    if (f >= mn && f <= mx)               { puan += 20; sebepler.push('Fiyat uygun'); }
-    else if (f >= mn*0.9 && f <= mx*1.1)    puan += 10;
-  } else if (mn && f >= mn) puan += 20;
-  else if (mx && f <= mx)   puan += 20;
-  const konum    = (ilan.konum || '').toLowerCase();
-  const prefIl   = (pref.kriterler?.sehir || pref.sehir || '').toLowerCase();
-  const prefIlce = (pref.kriterler?.ilce  || '').toLowerCase();
-  if (!prefIl) { puan += 8; }
-  else if (prefIlce && konum.includes(prefIlce)) { puan += 20; sebepler.push('Konum tam uyuştu'); }
-  else if (konum.includes(prefIl))               { puan += 12; sebepler.push('Şehir uyuştu'); }
-  const ilanTur = (k.isyeri_turu || '').toLowerCase();
-  const prefTur = pref.kriterler?.isyerikullanim || [];
-  if (!prefTur.length) { puan += 6; }
-  else if (prefTur.some(t => ilanTur.includes(t.replace(/[🏪💼🏭🍽️🏥🎓]/g,'').trim().toLowerCase()))) { puan += 15; sebepler.push('İşyeri türü uyuştu'); }
-  else if (!ilanTur) puan += 4;
-  const m2   = Number(ilan.metrekare || k.isyeri_m2_net || 0);
-  const mnM2 = pref.kriterler?.minIsyeriM2 ? Number(pref.kriterler.minIsyeriM2) : null;
-  const mxM2 = pref.kriterler?.maxIsyeriM2 ? Number(pref.kriterler.maxIsyeriM2) : null;
-  if (!mnM2 && !mxM2) { puan += 6; }
-  else if (m2 && mnM2 && mxM2 && m2 >= mnM2 && m2 <= mxM2) { puan += 15; sebepler.push(`${m2}m² uygun`); }
-  else if (m2 && mnM2 && !mxM2 && m2 >= mnM2) puan += 15;
-  else if (m2 && !mnM2 && mxM2 && m2 <= mxM2) puan += 15;
-  else if (!m2) puan += 5;
-  const ilanKat = (k.isyeri_kat || '').toLowerCase();
-  const prefKat = pref.kriterler?.isyerikat || [];
-  if (!prefKat.length) { puan += 4; }
-  else if (prefKat.some(k2 => ilanKat.includes(k2.toLowerCase()))) { puan += 10; sebepler.push('Kat tercihi uyuştu'); }
-  else if (!ilanKat) puan += 3;
-  const ilanIsitma = (k.isitma || '').toLowerCase();
-  const prefIsitma = pref.kriterler?.isitma || [];
-  if (!prefIsitma.length) { puan += 2; }
-  else if (prefIsitma.some(i => ilanIsitma.includes(i.replace(/[🔥🏢🌡️❄️]/g,'').trim().toLowerCase()))) { puan += 5; sebepler.push('Isıtma uyuştu'); }
-  else if (!ilanIsitma) puan += 1;
-  const ilanTapu = (k.tapu_durumu || '').toLowerCase();
-  const prefTapu = pref.kriterler?.tapu || [];
-  if (!prefTapu.length) { puan += 2; }
-  else if (prefTapu.some(t => ilanTapu.includes(t.replace(/[✅📋🤝🌍]/g,'').trim().toLowerCase()))) { puan += 5; sebepler.push('Tapu uyuştu'); }
-  else if (!ilanTapu) puan += 1;
-  const ilanOz = k.isyeri_ozellikler || [];
-  const prefOz = pref.kriterler?.isyerioz || [];
-  if (!prefOz.length) { puan += 4; }
-  else {
-    const eslesen = prefOz.filter(p => ilanOz.some(i => i.toLowerCase().includes(p.replace(/[🛣️🛗🅿️🚻📦🚛]/g,'').trim().toLowerCase())));
-    puan += Math.round(10 * eslesen.length / prefOz.length);
-    if (eslesen.length > 0) sebepler.push(`${eslesen.length} özellik uyuştu`);
-  }
-  return { puan: Math.min(100, Math.max(1, puan)), sebepler };
-}
-
+// ══════════════════════════════════════════════
+// BAŞLANGIÇ
+// ══════════════════════════════════════════════
 sb.auth.getSession().then(async ({ data }) => {
   if (!data.session) { window.location.href = 'auth.html'; return; }
   currentUser = data.session.user;
+
+  // Profil çek
+  const { data: p } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  profil = p || {};
+
+  // Kredi bakiyesi (herkese — satıcı veya hizmet sağlayıcı olabilir)
+  const { data: kr } = await sb.from('agent_credits').select('*').eq('agent_id', currentUser.id).single();
+  kredi = kr;
+
+  // Kredi widget nav bar
+  if (kredi) {
+    const w = document.getElementById('krediNavWidget');
+    w.style.display = 'flex';
+    document.getElementById('krediNavSayi').textContent = kredi.bakiye;
+  }
+
+  // Görülenler
+  const { data: gd } = await sb.from('gorülen_ilanlar').select('ilan_id').eq('user_id', currentUser.id);
+  if (gd) gd.forEach(g => gorülenler.add(g.ilan_id));
+
+  // Kendi ilanları (satıcı/kiraya veren)
+  const { data: ki } = await sb.from('ilanlar').select('id,baslik,tip,konum').eq('user_id', currentUser.id).eq('onay_durumu','onaylandi').order('created_at',{ascending:false});
+  kullaniciIlanlari = ki || [];
+
+  // Alıcı tercihleri
   const { data: pref } = await sb.from('arayan_ilanlar').select('*').eq('user_id', currentUser.id).single();
   tercihler = pref || {};
-  const tercihVar = tercihler.konum || tercihler.fiyat_min || tercihler.fiyat_max || tercihler.emlak_tipi || tercihler.tip;
-  if (!tercihVar) {
-    document.getElementById('swipeArea').innerHTML = `
-      <div class="bos-yon">
-        <div class="bos-icon">🔍</div>
-        <div class="bos-baslik">Henüz Tercih Yok</div>
-        <div class="bos-aciklama">Sana uygun ilanları görmek için tercihlerini belirt</div>
-        <a href="ilan-ver.html" class="btn btn-gold btn-lg" style="max-width:240px;display:inline-block">➡️ Tercih Oluştur</a>
-      </div>`;
-    document.getElementById('actionBtns').style.display = 'none';
-    favorileriYukle();
-    return;
-  }
-  const { data: gorulenData } = await sb.from('gorülen_ilanlar').select('ilan_id').eq('user_id', currentUser.id);
-  if (gorulenData) gorulenData.forEach(g => gorülenler.add(g.ilan_id));
-  const savedIndex = sessionStorage.getItem('swipe_kartIndex');
-  if (savedIndex !== null) { kartIndex = parseInt(savedIndex); sessionStorage.removeItem('swipe_kartIndex'); }
-  ilanlarYukle();
+
+  // Rol belirle
+  const varAlici = !!(tercihler.konum || tercihler.fiyat_min || tercihler.fiyat_max || tercihler.tip);
+  const varSatici = kullaniciIlanlari.length > 0;
+  if (varAlici && varSatici) rolTip = 'her_ikisi';
+  else if (varSatici) rolTip = 'satici';
+  else rolTip = 'alici';
+
+  // İlan seçici
+  ilanSeciciOlustur();
+
+  // Rol banner
+  rolBannerGoster();
+
+  // Emlak swipe başlat
+  emlakSwipeBaslat();
+
+  // Eşleşmeler yükle
   favorileriYukle();
+
+  // Hizmet sekmesi
+  hizmetSekmesiniHazirla();
 });
 
+// ══════════════════════════════════════════════
+// ROL BANNER
+// ══════════════════════════════════════════════
+function rolBannerGoster() {
+  const banner = document.getElementById('rolBanner');
+  const text   = document.getElementById('rolBannerText');
+  const ikon   = document.getElementById('rolBannerIkon');
+  const hapEl  = document.getElementById('rolKrediHap');
+  const sayi   = document.getElementById('rolKrediSayi');
+  banner.style.display = 'flex';
+
+  if (rolTip === 'alici') {
+    ikon.textContent = '🔍';
+    text.innerHTML = '<b>Alıcı / Kiracı olarak</b> swipe yapıyorsunuz. Ücretsiz!';
+    hapEl.style.display = 'none';
+  } else if (rolTip === 'satici') {
+    ikon.textContent = '🏢';
+    text.innerHTML = '<b>Satıcı olarak</b> alıcı profillerini görüyorsunuz.<br>Açmak için kredi gerekli.';
+    hapEl.style.display = 'flex';
+    sayi.textContent = kredi ? kredi.bakiye : '0';
+  } else {
+    ikon.textContent = '🔄';
+    text.innerHTML = 'Hem alıcı hem satıcı rolünüz var.';
+    if (kredi) { hapEl.style.display = 'flex'; sayi.textContent = kredi.bakiye; }
+  }
+}
+
+// ══════════════════════════════════════════════
+// İLAN SEÇİCİ
+// ══════════════════════════════════════════════
+function ilanSeciciOlustur() {
+  const secici = document.getElementById('ilanSecici');
+  if (!kullaniciIlanlari.length) { secici.style.display = 'none'; return; }
+  secici.style.display = 'flex';
+  secici.innerHTML = '';
+
+  // Alıcı modu butonu
+  if (tercihler.konum || tercihler.fiyat_min || tercihler.tip) {
+    const btn = document.createElement('button');
+    btn.className = 'ilan-sec-btn' + (aktifIlanId === null ? ' aktif' : '');
+    btn.textContent = '🔍 Alıcı Modunda';
+    btn.onclick = () => { aktifIlanId = null; ilanSecBtnsGuncelle(); emlakSwipeBaslat(); };
+    secici.appendChild(btn);
+  }
+
+  // Her ilan için buton
+  kullaniciIlanlari.forEach(ilan => {
+    const btn = document.createElement('button');
+    btn.className = 'ilan-sec-btn' + (aktifIlanId === ilan.id ? ' aktif' : '');
+    const tipEm = { satilik:'💰', kiralik:'🔑' }[ilan.tip] || '🏠';
+    btn.textContent = tipEm + ' ' + (ilan.baslik.length > 20 ? ilan.baslik.slice(0,20)+'…' : ilan.baslik);
+    btn.onclick = () => { aktifIlanId = ilan.id; ilanSecBtnsGuncelle(); emlakSwipeBaslat(); };
+    secici.appendChild(btn);
+  });
+
+  // Yeni ilan butonu
+  const yeniBtn = document.createElement('button');
+  yeniBtn.className = 'ilan-sec-btn yeni-ilan';
+  yeniBtn.textContent = '+ İlan Ver';
+  yeniBtn.onclick = () => { window.location.href = 'ilan-ver.html'; };
+  secici.appendChild(yeniBtn);
+}
+
+function ilanSecBtnsGuncelle() {
+  document.querySelectorAll('#ilanSecici .ilan-sec-btn:not(.yeni-ilan)').forEach((btn, i) => {
+    const isAlici = i === 0 && (tercihler.konum || tercihler.fiyat_min || tercihler.tip);
+    if (isAlici) btn.classList.toggle('aktif', aktifIlanId === null);
+    else {
+      const idx = (tercihler.konum || tercihler.fiyat_min || tercihler.tip) ? i - 1 : i;
+      if (kullaniciIlanlari[idx]) btn.classList.toggle('aktif', aktifIlanId === kullaniciIlanlari[idx].id);
+    }
+  });
+}
+
+// ══════════════════════════════════════════════
+// EMLAK SWIPE BAŞLAT
+// Mod A: Alıcı → ilanları swipe
+// Mod B: Satıcı → alıcı profillerini swipe (blur + kredi)
+// ══════════════════════════════════════════════
+async function emlakSwipeBaslat() {
+  document.getElementById('bosEkran').style.display = 'none';
+  document.getElementById('actionBtns').style.display = 'flex';
+  ilanlar = []; kartIndex = 0; geriStack = [];
+  document.querySelectorAll('#swipeArea .swipe-card, #swipeArea .blur-kart').forEach(c => c.remove());
+
+  if (aktifIlanId) {
+    // Satıcı modu: alıcı profillerini göster
+    await aliciProfilleriniYukle();
+  } else {
+    // Alıcı modu: ilanları swipe
+    await ilanlarYukle();
+  }
+}
+
+// ══════════════════════════════════════════════
+// ALICI MODU — İLANLARI SWIPE
+// ══════════════════════════════════════════════
 async function ilanlarYukle() {
   const { data } = await sb.from('ilanlar').select('*')
     .eq('onay_durumu', 'onaylandi')
@@ -405,14 +604,25 @@ async function ilanlarYukle() {
   ilanlar.sort((a, b) => b._esleme.puan - a._esleme.puan);
   document.getElementById('kalanYazi').textContent = `${ilanlar.length} ilan`;
   if (!ilanlar.length) {
-    document.getElementById('bosEkran').style.display = 'block';
-    document.getElementById('actionBtns').style.display = 'none';
+    if (!tercihler.konum && !tercihler.fiyat_min && !tercihler.tip) {
+      document.getElementById('swipeArea').innerHTML = `
+        <div class="bos-yon">
+          <div class="bos-icon">🔍</div>
+          <div class="bos-baslik">Tercih Yok</div>
+          <div class="bos-aciklama">Sana uygun ilanları görmek için tercih oluştur</div>
+          <a href="ilan-ver.html" class="btn btn-gold btn-lg" style="max-width:240px;display:inline-block">➡️ Tercih Oluştur</a>
+        </div>`;
+      document.getElementById('actionBtns').style.display = 'none';
+    } else {
+      document.getElementById('bosEkran').style.display = 'block';
+      document.getElementById('actionBtns').style.display = 'none';
+    }
     return;
   }
-  kartlariOlustur();
+  ilanKartlariniOlustur();
 }
 
-function kartlariOlustur() {
+function ilanKartlariniOlustur() {
   const area = document.getElementById('swipeArea');
   area.querySelectorAll('.swipe-card').forEach(c => c.remove());
   const gorunecekler = ilanlar.slice(kartIndex, kartIndex + 3);
@@ -428,6 +638,7 @@ function kartlariOlustur() {
     div.className = 'swipe-card';
     div.dataset.id = ilan.id;
     div.dataset.index = kartIndex + i;
+    div.dataset.mod = 'alici';
     if      (i===0) { div.style.zIndex='10'; div.style.transform='scale(1) translateY(0)'; }
     else if (i===1) { div.style.zIndex='9';  div.style.transform='scale(0.95) translateY(14px)'; }
     else            { div.style.zIndex='8';  div.style.transform='scale(0.90) translateY(28px)'; }
@@ -453,96 +664,236 @@ function kartlariOlustur() {
           ${ilan.metrekare?`<span class="card-spec">📐 ${ilan.metrekare}m²</span>`:''}
         </div>
         ${sebepler.length?`<div class="match-reasons">${sebepler.slice(0,3).map(r=>`<span class="reason-chip">✓ ${r}</span>`).join('')}</div>`:''}
-        <button class="card-detay-btn" onclick="ilanDetayAc('${ilan.id}',${kartIndex + i})">İlanı Görüntüle →</button>
+        <button class="card-detay-btn" onclick="ilanDetayAc('${ilan.id}',${kartIndex+i})">İlanı Görüntüle →</button>
       </div>`;
     area.appendChild(div);
   });
-  dinleyiciEkle();
+  dinleyiciEkle('swipeArea', 'alici');
 }
 
-function ilanDetayAc(ilanId, index) {
-  sessionStorage.setItem('swipe_kartIndex', index);
-  window.location.href = `ilan-detay.html?id=${ilanId}`;
+// ══════════════════════════════════════════════
+// SATICI MODU — ALICI PROFİLLERİ (BLUR + KREDİ)
+// ══════════════════════════════════════════════
+async function aliciProfilleriniYukle() {
+  // Seçili ilana ait alıcı profillerini çek
+  const seciliIlan = kullaniciIlanlari.find(i => i.id === aktifIlanId);
+  if (!seciliIlan) return;
+
+  // Alıcıları çek: aynı tip tercihi olan, konumu uyuşan
+  const { data } = await sb.from('arayan_ilanlar')
+    .select('*, profiles!user_id(id, full_name, phone, sehir, avatar_url)')
+    .neq('user_id', currentUser.id)
+    .limit(100);
+
+  // Daha önce açılanları kontrol et
+  const { data: aciklar } = await sb.from('profil_acmalar')
+    .select('buyer_id').eq('agent_id', currentUser.id);
+  const acikSet = new Set((aciklar || []).map(x => x.buyer_id));
+
+  ilanlar = (data || []).filter(a => {
+    if (!a.profiles) return false;
+    const tip = (a.tip || '').toLowerCase();
+    const silanTip = (seciliIlan.tip || '').toLowerCase();
+    if (tip && silanTip && tip !== silanTip) return false;
+    return true;
+  }).map(a => ({
+    ...a,
+    _alici: true,
+    _acik: acikSet.has(a.profiles?.id),
+    _buyer_id: a.profiles?.id
+  }));
+
+  document.getElementById('kalanYazi').textContent = `${ilanlar.length} profil`;
+
+  if (!ilanlar.length) {
+    document.getElementById('bosEkran').style.display = 'block';
+    document.getElementById('bosEkran').innerHTML = `
+      <div class="empty-icon">👥</div>
+      <div class="empty-title">Henüz alıcı profili yok</div>
+      <div class="empty-desc">Bu ilan için henüz eşleşecek alıcı profili bulunmuyor</div>`;
+    document.getElementById('actionBtns').style.display = 'none';
+    return;
+  }
+  blurKartlariniOlustur();
 }
 
-function getTopCard() {
+function blurKartlariniOlustur() {
+  const area = document.getElementById('swipeArea');
+  area.querySelectorAll('.blur-kart').forEach(c => c.remove());
+  const gorunecekler = ilanlar.slice(kartIndex, kartIndex + 3);
+  if (!gorunecekler.length) {
+    document.getElementById('bosEkran').style.display = 'block';
+    document.getElementById('actionBtns').style.display = 'none';
+    return;
+  }
+  document.getElementById('kalanYazi').textContent = `${ilanlar.length - kartIndex} profil`;
+
+  gorunecekler.forEach((a, i) => {
+    const div = document.createElement('div');
+    div.className = 'blur-kart' + (a._acik ? ' acik' : '');
+    div.dataset.id = a.profiles?.id;
+    div.dataset.index = kartIndex + i;
+    div.dataset.mod = 'satici';
+    div.dataset.ilanTipi = a.tip || 'kiralik';
+    if      (i===0) { div.style.zIndex='10'; }
+    else if (i===1) { div.style.zIndex='9';  div.style.transform='scale(0.95) translateY(14px)'; }
+    else            { div.style.zIndex='8';  div.style.transform='scale(0.90) translateY(28px)'; }
+
+    const profil = a.profiles || {};
+    const krediGereken = (a.tip === 'satilik') ? 2 : 1;
+    const tipLabel = (a.tip === 'satilik') ? 'Satılık Arıyor' : 'Kiralık Arıyor';
+
+    div.innerHTML = `
+      <div class="blur-kart-ust">
+        <div class="blur-avatar">👤</div>
+        <div style="flex:1">
+          <div class="blur-isim">${a._acik ? (profil.full_name||'Kullanıcı') : '●●● ●●●●●'}</div>
+          <div class="blur-konum">📍 ${profil.sehir || a.konum || '—'}</div>
+        </div>
+        <div class="blur-tip-badge ${a.tip||'kiralik'}">${tipLabel}</div>
+      </div>
+      <div class="blur-detay">
+        <div class="blur-detay-item">💰 ${a.fiyat_min?Number(a.fiyat_min).toLocaleString('tr-TR')+'₺':'—'} – ${a.fiyat_max?Number(a.fiyat_max).toLocaleString('tr-TR')+'₺':'—'}</div>
+        ${a.emlak_tipi?`<div class="blur-detay-item">🏠 ${a.emlak_tipi}</div>`:''}
+      </div>
+      <div class="blur-kilit-kat${a._acik?' acik':''}" id="kilit_${profil.id}">
+        ${a._acik ? `
+          <div class="blur-kilit-icon">🔓</div>
+          <div class="blur-kilit-aciklama">Profil açık — iletişim bilgileri görünüyor</div>
+          <button class="blur-ac-btn acik-btn" onclick="mesajGonderAlici('${profil.id}','${a.id}')">💬 Mesaj Gönder</button>
+        ` : `
+          <div class="blur-kilit-icon">🔒</div>
+          <div class="blur-kilit-aciklama">İletişim bilgileri gizli<br><b>${krediGereken} kredi</b> harcayarak açabilirsiniz</div>
+          <button class="blur-ac-btn" id="acBtn_${profil.id}" onclick="profilAc(this,'${profil.id}','${a.tip||'kiralik'}','${a.id}')">
+            💎 ${krediGereken} Kredi Harca → Aç
+          </button>
+        `}
+      </div>
+      ${a._acik && profil.phone ? `
+        <div class="blur-iletisim">
+          <div class="blur-iletisim-satir">
+            <span style="font-size:20px">📞</span>
+            <div>
+              <div style="font-size:13px;font-weight:800">${profil.full_name||'Kullanıcı'}</div>
+              <a href="tel:${profil.phone}" style="font-size:14px;color:var(--gold);font-weight:900;text-decoration:none">${profil.phone}</a>
+            </div>
+          </div>
+        </div>
+      ` : ''}
+    `;
+    area.appendChild(div);
+  });
+  dinleyiciEkle('swipeArea', 'satici');
+}
+
+// ══════════════════════════════════════════════
+// KREDİ İLE PROFİL AÇ
+// ══════════════════════════════════════════════
+async function profilAc(btn, buyerId, ilanTipi, arayanIlanId) {
+  const krediGereken = ilanTipi === 'satilik' ? 2 : 1;
+
+  // Bakiye kontrolü
+  const mevcutBakiye = kredi ? kredi.bakiye : 0;
+  if (mevcutBakiye < krediGereken) {
+    toast(`❌ Yetersiz kredi! Gereken: ${krediGereken}, Mevcut: ${mevcutBakiye}`, 'hata');
+    setTimeout(() => { window.location.href = 'odeme.html'; }, 1800);
+    return;
+  }
+
+  // Günlük limit
+  const bugun = new Date().toISOString().split('T')[0];
+  const { count } = await sb.from('profil_acmalar').select('id',{count:'exact',head:true})
+    .eq('agent_id', currentUser.id).gte('tarih', bugun+'T00:00:00');
+  if ((count||0) >= 3) {
+    toast('⏰ Günlük 3 profil açma limitine ulaştınız. Yarın tekrar deneyin.', 'hata');
+    return;
+  }
+
+  if (!confirm(`Bu profili açmak ${krediGereken} kredi harcayacak.\nMevcut: ${mevcutBakiye} kredi\n\nDevam etmek istiyor musunuz?`)) return;
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Açılıyor...';
+
+  const { data: sonuc, error } = await sb.rpc('kredi_harca', {
+    p_agent_id: currentUser.id,
+    p_buyer_id: buyerId,
+    p_ilan_tipi: ilanTipi,
+    p_ilan_id: aktifIlanId
+  });
+
+  if (error || !sonuc?.basarili) {
+    btn.disabled = false;
+    btn.textContent = `💎 ${krediGereken} Kredi Harca → Aç`;
+    toast('❌ ' + (sonuc?.mesaj || error?.message || 'Bir hata oluştu'), 'hata');
+    return;
+  }
+
+  // Bakiyeyi güncelle
+  kredi = { ...(kredi||{}), bakiye: sonuc.kalan_bakiye };
+  document.getElementById('krediNavSayi').textContent = sonuc.kalan_bakiye;
+  document.getElementById('rolKrediSayi').textContent = sonuc.kalan_bakiye;
+
+  toast(`✅ Profil açıldı! Kalan kredi: ${sonuc.kalan_bakiye}`, 'basari');
+
+  // Kartı güncelle — açık hale getir
+  const kart = btn.closest('.blur-kart');
+  if (kart) {
+    kart.classList.add('acik');
+    // Profil bilgisini çek
+    const { data: aliciProfil } = await sb.from('profiles').select('*').eq('id', buyerId).single();
+    if (aliciProfil) {
+      const kilitKat = document.getElementById('kilit_' + buyerId);
+      if (kilitKat) {
+        kilitKat.classList.add('acik');
+        kilitKat.innerHTML = `
+          <div class="blur-kilit-icon">🔓</div>
+          <div class="blur-kilit-aciklama">Profil açıldı!</div>
+          <button class="blur-ac-btn acik-btn" onclick="mesajGonderAlici('${buyerId}','${arayanIlanId}')">💬 Mesaj Gönder</button>`;
+        // Telefon
+        const blur_ust = kart.querySelector('.blur-isim');
+        if (blur_ust) blur_ust.textContent = aliciProfil.full_name || 'Kullanıcı';
+        kart.querySelector('.blur-avatar').style.filter = 'none';
+        if (aliciProfil.phone) {
+          const iletisimDiv = kart.querySelector('.blur-iletisim');
+          if (iletisimDiv) {
+            iletisimDiv.style.display = 'block';
+            iletisimDiv.innerHTML = `
+              <div class="blur-iletisim-satir">
+                <span style="font-size:20px">📞</span>
+                <div>
+                  <div style="font-size:13px;font-weight:800">${aliciProfil.full_name}</div>
+                  <a href="tel:${aliciProfil.phone}" style="font-size:14px;color:var(--gold);font-weight:900;text-decoration:none">${aliciProfil.phone}</a>
+                </div>
+              </div>`;
+          }
+        }
+      }
+    }
+  }
+}
+
+function mesajGonderAlici(buyerId, arayanIlanId) {
+  window.location.href = `mesajlar.html?karsi_id=${buyerId}`;
+}
+
+// ══════════════════════════════════════════════
+// SWIPE MANTIĞI
+// ══════════════════════════════════════════════
+function getTopCard(areaId) {
   let top = null, maxZ = -1;
-  document.querySelectorAll('.swipe-card').forEach(c => {
+  document.querySelectorAll('#'+areaId+' .swipe-card, #'+areaId+' .blur-kart, #'+areaId+' .hizmet-swipe-card').forEach(c => {
     const z = parseInt(c.style.zIndex||0);
     if (z > maxZ) { maxZ = z; top = c; }
   });
   return top;
 }
 
-async function swipe(dir) {
-  const card = getTopCard();
-  if (!card) return;
-  geriStack.push(kartIndex);
-  card.style.transition = 'transform .45s ease, opacity .35s';
-  const id = card.dataset.id;
-  gorülenler.add(id);
-  await sb.from('gorülen_ilanlar').upsert({
-    user_id: currentUser.id,
-    ilan_id: id,
-    aksiyon: dir === 'right' ? 'like' : dir === 'up' ? 'super' : 'nope'
-  }, { onConflict: 'user_id,ilan_id' });
-  if (dir === 'right' || dir === 'up') {
-    const el = document.getElementById('like_'+id);
-    if (el) el.style.opacity = '1';
-    card.style.transform = dir === 'right' ? 'translateX(160%) rotate(20deg)' : 'translateY(-150%)';
-    await saveFavorite(id);
-    const ilanBilgi = ilanlar.find(x => x.id === id);
-    if (ilanBilgi && ilanBilgi._esleme.puan >= 95) { await otomatikMesajGonder(ilanBilgi); }
-    setTimeout(() => {
-      card.remove(); kartIndex++; kartlariOlustur();
-      if (ilanBilgi && ilanBilgi.user_id) {
-        window.location.href = `mesajlar.html?ilan_id=${ilanBilgi.id}&karsi_id=${ilanBilgi.user_id}`;
-      } else { window.location.href = 'mesajlar.html'; }
-    }, 400);
-  } else {
-    card.style.transform = 'translateX(-160%) rotate(-20deg)';
-    const el = document.getElementById('nope_'+id);
-    if (el) el.style.opacity = '1';
-    setTimeout(() => { card.remove(); kartIndex++; kartlariOlustur(); }, 400);
-  }
-}
-
-async function otomatikMesajGonder(ilan) {
-  if (!ilan || !ilan.user_id) return;
-  const { data: mevcutMesaj } = await sb.from('mesajlar').select('id').eq('gonderen_id', currentUser.id).eq('ilan_id', ilan.id).limit(1);
-  if (mevcutMesaj && mevcutMesaj.length > 0) return;
-  await sb.from('mesajlar').insert({ gonderen_id: currentUser.id, alici_id: ilan.user_id, ilan_id: ilan.id, mesaj: 'Merhaba, ilanınızla ilgileniyorum.' });
-  await sb.from('bildirimler').insert({ user_id: ilan.user_id, tip: 'yeni_mesaj', baslik: 'Yeni Eşleşme! 🎉', icerik: `İlanınız "%${ilan._esleme?.puan}" eşleşmeyle beğenildi ve mesaj aldı.`, ilan_id: ilan.id, okundu: false });
-}
-
-function geriAl() {
-  if (!geriStack.length) return;
-  const eskiIndex = geriStack.pop();
-  const ilanId = ilanlar[eskiIndex]?.id;
-  if (ilanId) {
-    gorülenler.delete(ilanId);
-    sb.from('gorülen_ilanlar').delete().eq('user_id', currentUser.id).eq('ilan_id', ilanId);
-  }
-  kartIndex = eskiIndex;
-  kartlariOlustur();
-}
-
-async function saveFavorite(ilanId) {
-  const { data } = await sb.from('favoriler').select('id').eq('user_id', currentUser.id).eq('ilan_id', ilanId).single();
-  if (!data) { await sb.from('favoriler').insert({ user_id: currentUser.id, ilan_id: ilanId }); }
-  favorileriYukle();
-  const ilanBilgi = ilanlar.find(x => x.id === ilanId);
-  if (ilanBilgi && ilanBilgi.user_id) {
-    await sb.from('bildirimler').insert({ user_id: ilanBilgi.user_id, tip: 'begeni', baslik: 'İlanınız beğenildi! ❤️', icerik: `"${ilanBilgi.baslik}" ilanınız birisi tarafından beğenildi.`, ilan_id: ilanId, okundu: false }).select();
-  }
-}
-
-function dinleyiciEkle() {
-  const card = getTopCard();
+function dinleyiciEkle(areaId, mod) {
+  const card = getTopCard(areaId);
   if (!card) return;
   let startX, isDragging = false;
   card.addEventListener('pointerdown', e => {
-    if (e.target.classList.contains('card-detay-btn')) return;
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') return;
     isDragging = true; startX = e.clientX;
     card.setPointerCapture(e.pointerId); card.style.transition = 'none';
   });
@@ -551,10 +902,12 @@ function dinleyiciEkle() {
     const dx = e.clientX - startX;
     card.style.transform = `translateX(${dx}px) rotate(${dx*0.06}deg)`;
     const id = card.dataset.id;
-    const le = document.getElementById('like_'+id);
-    const ne = document.getElementById('nope_'+id);
-    if (le) le.style.opacity = dx > 40 ? Math.min((dx-40)/60,1) : 0;
-    if (ne) ne.style.opacity = dx < -40 ? Math.min((-dx-40)/60,1) : 0;
+    if (mod === 'alici') {
+      const le = document.getElementById('like_'+id);
+      const ne = document.getElementById('nope_'+id);
+      if (le) le.style.opacity = dx > 40 ? Math.min((dx-40)/60,1) : 0;
+      if (ne) ne.style.opacity = dx < -40 ? Math.min((-dx-40)/60,1) : 0;
+    }
   });
   card.addEventListener('pointerup', e => {
     if (!isDragging) return;
@@ -574,6 +927,308 @@ function dinleyiciEkle() {
   });
 }
 
+async function swipe(dir) {
+  const card = getTopCard('swipeArea');
+  if (!card) return;
+  geriStack.push(kartIndex);
+  card.style.transition = 'transform .45s ease, opacity .35s';
+  const id = card.dataset.id;
+  const mod = card.dataset.mod || 'alici';
+
+  if (mod === 'alici') {
+    gorülenler.add(id);
+    await sb.from('gorülen_ilanlar').upsert({
+      user_id: currentUser.id, ilan_id: id,
+      aksiyon: dir === 'right' ? 'like' : dir === 'up' ? 'super' : 'nope'
+    }, { onConflict: 'user_id,ilan_id' });
+    if (dir === 'right' || dir === 'up') {
+      const el = document.getElementById('like_'+id);
+      if (el) el.style.opacity = '1';
+      card.style.transform = dir === 'right' ? 'translateX(160%) rotate(20deg)' : 'translateY(-150%)';
+      await saveFavorite(id);
+      const ilanBilgi = ilanlar.find(x => x.id === id);
+      setTimeout(() => {
+        card.remove(); kartIndex++; ilanKartlariniOlustur();
+        if (ilanBilgi?.user_id) window.location.href = `mesajlar.html?ilan_id=${ilanBilgi.id}&karsi_id=${ilanBilgi.user_id}`;
+        else window.location.href = 'mesajlar.html';
+      }, 400);
+    } else {
+      card.style.transform = 'translateX(-160%) rotate(-20deg)';
+      const el = document.getElementById('nope_'+id);
+      if (el) el.style.opacity = '1';
+      setTimeout(() => { card.remove(); kartIndex++; ilanKartlariniOlustur(); }, 400);
+    }
+  } else {
+    // Satıcı modu — blur kartı sadece geç (açma olmadan)
+    if (dir === 'right' || dir === 'up') {
+      card.style.transform = 'translateX(160%) rotate(20deg)';
+    } else {
+      card.style.transform = 'translateX(-160%) rotate(-20deg)';
+    }
+    setTimeout(() => { card.remove(); kartIndex++; blurKartlariniOlustur(); }, 400);
+  }
+}
+
+function geriAl() {
+  if (!geriStack.length) return;
+  const eskiIndex = geriStack.pop();
+  if (aktifIlanId === null) {
+    const ilanId2 = ilanlar[eskiIndex]?.id;
+    if (ilanId2) { gorülenler.delete(ilanId2); sb.from('gorülen_ilanlar').delete().eq('user_id', currentUser.id).eq('ilan_id', ilanId2); }
+    kartIndex = eskiIndex;
+    ilanKartlariniOlustur();
+  } else {
+    kartIndex = eskiIndex;
+    blurKartlariniOlustur();
+  }
+}
+
+// ══════════════════════════════════════════════
+// HİZMET SEKMESİ
+// ══════════════════════════════════════════════
+async function hizmetSekmesiniHazirla() {
+  const hizmetTip = profil?.kullanici_tipi;
+
+  // Hizmet talepleri çek (talep eden: alıcı taraf — ücretsiz swipe)
+  // Hizmet sağlayıcı: talep eden müşteri profillerini görecek (kredi gerekli)
+
+  // Banner
+  const banner = document.getElementById('hizmetRolBanner');
+  const text   = document.getElementById('hizmetRolText');
+  const ikon   = document.getElementById('hizmetRolIkon');
+  const hapEl  = document.getElementById('hizmetKrediHap');
+  const sayi   = document.getElementById('hizmetKrediSayi');
+  banner.style.display = 'flex';
+
+  // Hizmet talepleri
+  const { data: talepIlanlar } = await sb.from('arayan_ilanlar')
+    .select('*').eq('user_id', currentUser.id).not('hizmet_kategorisi', 'is', null).limit(20);
+
+  if (hizmetTip === 'hizmet_saglayici') {
+    // Müşteri taleplerini göster (kredi gerekli)
+    ikon.textContent = '🔧';
+    text.innerHTML = '<b>Hizmet Sağlayıcı</b> olarak müşteri taleplerini görüyorsunuz.';
+    hapEl.style.display = 'flex';
+    sayi.textContent = kredi ? kredi.bakiye : '0';
+    hizmetMusteriYukle();
+  } else {
+    // Talep eden: hizmet sağlayıcıları swipe et (ücretsiz)
+    ikon.textContent = '🔍';
+    text.innerHTML = '<b>Hizmet Talep Eden</b> olarak hizmetçileri görüyorsunuz. <b>Ücretsiz!</b>';
+    hapEl.style.display = 'none';
+    // Hizmet ilanı seçici
+    if (talepIlanlar && talepIlanlar.length > 0) {
+      hizmetIlanSeciciOlustur(talepIlanlar);
+    }
+    hizmetSaglayicilariYukle();
+  }
+}
+
+function hizmetIlanSeciciOlustur(talepIlanlar) {
+  const secici = document.getElementById('hizmetIlanSecici');
+  secici.style.display = 'flex';
+  secici.innerHTML = '';
+  const kategorilerEmoji = { temizlik:'🧹', tadilat:'🔧', boya:'🖌️', nakliye:'🚚', cilingir:'🔑', teknik:'📱', dekorasyon:'🛋️', haliyikama:'🪞', ilacalama:'🦟', petek:'♨️' };
+  talepIlanlar.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'ilan-sec-btn' + (i===0?' aktif':'');
+    const em = kategorilerEmoji[t.hizmet_kategorisi] || '🔧';
+    btn.textContent = em + ' ' + (t.hizmet_kategorisi || 'Hizmet');
+    secici.appendChild(btn);
+  });
+  const yeniBtn = document.createElement('button');
+  yeniBtn.className = 'ilan-sec-btn yeni-ilan';
+  yeniBtn.textContent = '+ Talep Ekle';
+  yeniBtn.onclick = () => { window.location.href = 'hizmetler.html'; };
+  secici.appendChild(yeniBtn);
+}
+
+async function hizmetSaglayicilariYukle() {
+  const { data } = await sb.from('services').select('*').eq('aktif', true).limit(100);
+  hizmetler = data || [];
+  document.getElementById('hizmetKalanYazi').textContent = `${hizmetler.length} sağlayıcı`;
+  if (!hizmetler.length) {
+    document.getElementById('hizmetBosEkran').style.display = 'block';
+    document.getElementById('hizmetActionBtns').style.display = 'none';
+    return;
+  }
+  hizmetKartlariniOlustur();
+}
+
+async function hizmetMusteriYukle() {
+  // Hizmet talepleri — müşteri profilleri
+  const { data } = await sb.from('arayan_ilanlar')
+    .select('*, profiles!user_id(id,full_name,phone,sehir)')
+    .not('hizmet_kategorisi','is',null)
+    .neq('user_id', currentUser.id)
+    .limit(100);
+  hizmetler = data || [];
+  document.getElementById('hizmetKalanYazi').textContent = `${hizmetler.length} talep`;
+  if (!hizmetler.length) {
+    document.getElementById('hizmetBosEkran').style.display = 'block';
+    document.getElementById('hizmetActionBtns').style.display = 'none';
+    return;
+  }
+  hizmetKartlariniOlustur();
+}
+
+const hizmetEmojiler = { temizlik:'🧹', tadilat:'🔧', boya:'🖌️', nakliye:'🚚', cilingir:'🔑', teknik:'📱', dekorasyon:'🛋️', haliyikama:'🪞', ilacalama:'🦟', petek:'♨️' };
+
+function hizmetKartlariniOlustur() {
+  const area = document.getElementById('hizmetSwipeArea');
+  area.querySelectorAll('.hizmet-swipe-card, .blur-kart').forEach(c => c.remove());
+  const gorunecekler = hizmetler.slice(hizmetKartIndex, hizmetKartIndex + 3);
+  if (!gorunecekler.length) {
+    document.getElementById('hizmetBosEkran').style.display = 'block';
+    document.getElementById('hizmetActionBtns').style.display = 'none';
+    return;
+  }
+  document.getElementById('hizmetKalanYazi').textContent = `${hizmetler.length - hizmetKartIndex} kalan`;
+
+  gorunecekler.forEach((h, i) => {
+    const div = document.createElement('div');
+    const isMusteri = !!h.profiles; // hizmet sağlayıcı müşteri kartı mı?
+
+    if (isMusteri) {
+      // Müşteri profili (blur kart)
+      div.className = 'blur-kart';
+      div.dataset.id = h.profiles?.id;
+      div.dataset.mod = 'hizmet_musteri';
+      if      (i===0) { div.style.zIndex='10'; }
+      else if (i===1) { div.style.zIndex='9'; div.style.transform='scale(0.95) translateY(14px)'; }
+      else            { div.style.zIndex='8'; div.style.transform='scale(0.90) translateY(28px)'; }
+      const profil2 = h.profiles || {};
+      const em = hizmetEmojiler[h.hizmet_kategorisi] || '🔧';
+      div.innerHTML = `
+        <div class="blur-kart-ust">
+          <div class="blur-avatar" style="filter:blur(5px)">👤</div>
+          <div style="flex:1">
+            <div class="blur-isim">●●● ●●●●●</div>
+            <div class="blur-konum">📍 ${profil2.sehir || '—'} · ${em} ${h.hizmet_kategorisi||''}</div>
+          </div>
+        </div>
+        <div class="blur-kilit-kat">
+          <div class="blur-kilit-icon">🔒</div>
+          <div class="blur-kilit-aciklama">Müşteri bilgileri gizli<br><b>1 kredi</b> ile açabilirsiniz</div>
+          <button class="blur-ac-btn" onclick="hizmetMusteriAc(this,'${profil2.id}')">💎 1 Kredi Harca → Aç</button>
+        </div>`;
+    } else {
+      // Hizmet sağlayıcı kartı (ücretsiz görünüm)
+      div.className = 'hizmet-swipe-card';
+      div.dataset.id = h.id;
+      div.dataset.mod = 'hizmet';
+      if      (i===0) { div.style.zIndex='10'; div.style.transform='scale(1) translateY(0)'; }
+      else if (i===1) { div.style.zIndex='9';  div.style.transform='scale(0.95) translateY(14px)'; }
+      else            { div.style.zIndex='8';  div.style.transform='scale(0.90) translateY(28px)'; }
+      const em = hizmetEmojiler[h.kategori] || '🔧';
+      const yildiz = '⭐'.repeat(Math.round(h.puan_ortalama||0));
+      div.innerHTML = `
+        <div class="hizmet-kart-ust">
+          <div class="hizmet-kart-ikon">${em}</div>
+          <div class="hizmet-kart-bilgi">
+            <div class="hizmet-kart-adi">${h.ad || h.baslik || 'Hizmet Sağlayıcı'}</div>
+            <div class="hizmet-kart-kategori">${h.kategori || ''}</div>
+            ${h.puan_ortalama?`<div class="hizmet-kart-puan">${yildiz} <span>${Number(h.puan_ortalama).toFixed(1)}</span> <span style="color:var(--text3)">(${h.puan_sayisi||0})</span></div>`:''}
+          </div>
+        </div>
+        <div class="hizmet-kart-body">
+          <div class="hizmet-fiyat-bant">${h.fiyat_aralik || 'Teklif İste'}</div>
+          <div class="hizmet-aciklama">${(h.aciklama||'').slice(0,100)}${(h.aciklama||'').length>100?'…':''}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            ${(h.hizmet_bolgeleri||[]).slice(0,2).map(b=>`<span class="hizmet-bolge-chip">📍 ${b}</span>`).join('')}
+          </div>
+          <button class="card-detay-btn" onclick="hizmetDetay('${h.id}')">Sağlayıcı Profilini Gör →</button>
+        </div>`;
+    }
+    area.appendChild(div);
+  });
+  dinleyiciEkleHizmet();
+}
+
+async function hizmetMusteriAc(btn, buyerId) {
+  const mevcutBakiye = kredi ? kredi.bakiye : 0;
+  if (mevcutBakiye < 1) {
+    toast('❌ Yetersiz kredi! 1 kredi gerekli.', 'hata');
+    setTimeout(() => { window.location.href = 'odeme.html'; }, 1800);
+    return;
+  }
+  if (!confirm('Müşteri profilini açmak 1 kredi harcayacak. Devam?')) return;
+  btn.disabled = true; btn.textContent = '⏳ Açılıyor...';
+  const { data: sonuc, error } = await sb.rpc('kredi_harca', {
+    p_agent_id: currentUser.id, p_buyer_id: buyerId, p_ilan_tipi: 'kiralik'
+  });
+  if (error || !sonuc?.basarili) {
+    btn.disabled = false; btn.textContent = '💎 1 Kredi Harca → Aç';
+    toast('❌ ' + (sonuc?.mesaj || 'Hata'), 'hata');
+    return;
+  }
+  kredi = { ...(kredi||{}), bakiye: sonuc.kalan_bakiye };
+  document.getElementById('krediNavSayi').textContent = sonuc.kalan_bakiye;
+  toast('✅ Profil açıldı! Kalan: ' + sonuc.kalan_bakiye + ' kredi', 'basari');
+  const { data: p2 } = await sb.from('profiles').select('*').eq('id', buyerId).single();
+  if (p2) {
+    const kart = btn.closest('.blur-kart');
+    kart.classList.add('acik');
+    kart.querySelector('.blur-isim').textContent = p2.full_name || 'Müşteri';
+    kart.querySelector('.blur-avatar').style.filter = 'none';
+    kart.querySelector('.blur-kilit-kat').innerHTML = `
+      <div class="blur-kilit-icon">🔓</div>
+      <div class="blur-kilit-aciklama">${p2.full_name || 'Müşteri'}</div>
+      ${p2.phone?`<a href="tel:${p2.phone}" style="display:block;padding:12px;background:var(--gold);color:#1a1a1a;border-radius:50px;text-align:center;font-weight:900;text-decoration:none;font-family:Nunito">📞 ${p2.phone}</a>`:'<button class="blur-ac-btn acik-btn" onclick="window.location.href=\'mesajlar.html?karsi_id=${p2.id}\'">💬 Mesaj Gönder</button>'}`;
+  }
+}
+
+function dinleyiciEkleHizmet() {
+  const card = getTopCard('hizmetSwipeArea');
+  if (!card) return;
+  let startX, isDragging = false;
+  card.addEventListener('pointerdown', e => {
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') return;
+    isDragging = true; startX = e.clientX;
+    card.setPointerCapture(e.pointerId); card.style.transition = 'none';
+  });
+  card.addEventListener('pointermove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    card.style.transform = `translateX(${dx}px) rotate(${dx*0.06}deg)`;
+  });
+  card.addEventListener('pointerup', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    const dx = e.clientX - startX;
+    if (dx > 80) hizmetSwipe('right');
+    else if (dx < -80) hizmetSwipe('left');
+    else { card.style.transition = 'transform .3s'; card.style.transform = 'scale(1) translateY(0)'; }
+  });
+}
+
+async function hizmetSwipe(dir) {
+  const card = getTopCard('hizmetSwipeArea');
+  if (!card) return;
+  hizmetGeriStack.push(hizmetKartIndex);
+  card.style.transition = 'transform .45s ease, opacity .35s';
+  card.style.transform = dir === 'right' || dir === 'up' ? 'translateX(160%) rotate(20deg)' : 'translateX(-160%) rotate(-20deg)';
+  if (dir === 'right' || dir === 'up') {
+    const h = hizmetler[hizmetKartIndex];
+    if (h && !h.profiles) { // Sadece hizmet sağlayıcı kartında
+      window.location.href = `hizmetler.html?id=${h.id}`;
+      return;
+    }
+  }
+  setTimeout(() => { card.remove(); hizmetKartIndex++; hizmetKartlariniOlustur(); }, 400);
+}
+
+function hizmetGeriAl() {
+  if (!hizmetGeriStack.length) return;
+  hizmetKartIndex = hizmetGeriStack.pop();
+  hizmetKartlariniOlustur();
+}
+
+function hizmetDetay(hizmetId) { window.location.href = 'hizmetler.html?id=' + hizmetId; }
+
+// ══════════════════════════════════════════════
+// FAVORİLER (Eşleşmelerim sekmesi)
+// ══════════════════════════════════════════════
 async function favorileriYukle() {
   const { data } = await sb.from('favoriler').select('*, ilan:ilan_id(*)').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   const el = document.getElementById('eslesenList');
@@ -601,7 +1256,7 @@ async function favorileriYukle() {
           </div>
           <div style="font-size:22px;color:var(--gold)">›</div>
         </a>
-        <button class="sil-btn" onclick="eslesmeSil('${f.id}')" title="Listeden çıkar">🗑️</button>
+        <button class="sil-btn" onclick="eslesmeSil('${f.id}')">🗑️</button>
       </div>`;
   }).join('');
 }
@@ -611,38 +1266,54 @@ async function eslesmeSil(favoriId) {
   await sb.from('favoriler').delete().eq('id', favoriId);
   favorileriYukle();
 }
-</script>
 
-<!-- TEMA GEÇİŞ -->
-<script>
-(function() {
-  if (localStorage.getItem('gotapu_tema') === 'light') document.body.classList.add('light');
-  function temaButonuOlustur() {
-    if (document.getElementById('themeToggleBtn')) return;
-    var btn = document.createElement('button');
-    btn.id = 'themeToggleBtn';
-    btn.className = 'theme-toggle-btn nav-icon-btn';
-    btn.title = 'Temayı Değiştir';
-    btn.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
-    btn.addEventListener('click', function() {
-      var acik = document.body.classList.toggle('light');
-      localStorage.setItem('gotapu_tema', acik ? 'light' : 'dark');
-      btn.textContent = acik ? '🌙' : '☀️';
-      btn.style.transform = 'scale(0.8) rotate(20deg)';
-      setTimeout(function() { btn.style.transform = ''; }, 200);
-    });
-    var nav = document.querySelector('.nav-actions');
-    if (nav) nav.insertBefore(btn, nav.firstChild);
+async function saveFavorite(ilanId2) {
+  const { data } = await sb.from('favoriler').select('id').eq('user_id', currentUser.id).eq('ilan_id', ilanId2).single();
+  if (!data) { await sb.from('favoriler').insert({ user_id: currentUser.id, ilan_id: ilanId2 }); }
+  const ilanBilgi = ilanlar.find(x => x.id === ilanId2);
+  if (ilanBilgi?.user_id) {
+    await sb.from('bildirimler').insert({ user_id: ilanBilgi.user_id, tip: 'begeni', baslik: 'İlanınız beğenildi! ❤️', icerik: `"${ilanBilgi.baslik}" ilanınız beğenildi.`, ilan_id: ilanId2, okundu: false });
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', temaButonuOlustur);
-  else temaButonuOlustur();
-})();
-</script>
+}
 
+// ══════════════════════════════════════════════
+// EŞLEŞME PUANLAMA (değişmedi)
+// ══════════════════════════════════════════════
+function ilanElemeKontrol(ilan, pref) {
+  const prefTip  = (pref.tip||'').toLowerCase();
+  const ilanTip  = (ilan.tip||'').toLowerCase();
+  if (prefTip && ilanTip && prefTip !== ilanTip) return false;
+  const prefIl   = (pref.kriterler?.sehir||pref.sehir||'').toLowerCase().trim();
+  const prefIlce = (pref.kriterler?.ilce||'').toLowerCase().trim();
+  const konum    = (ilan.konum||'').toLowerCase();
+  if (prefIl) { if (!konum.includes(prefIl) && !(prefIlce&&konum.includes(prefIlce))) return false; }
+  const f=Number(ilan.fiyat),mn=pref.fiyat_min?Number(pref.fiyat_min):null,mx=pref.fiyat_max?Number(pref.fiyat_max):null;
+  if (mn&&mx&&f>0&&(f<mn*0.8||f>mx*1.2)) return false;
+  else if (mn&&f>0&&f<mn*0.8) return false;
+  else if (mx&&f>0&&f>mx*1.2) return false;
+  return true;
+}
+
+function eslesPuani(ilan, pref) {
+  const k=ilan.kriterler||{};
+  const tip=(k.emlak_tipi||'').toLowerCase();
+  if (tip.includes('arsa')||tip.includes('tarla')) return eslesPuaniArsa(ilan,pref);
+  if (tip.includes('işyeri')||tip.includes('ofis')||tip.includes('depo')) return eslesPuaniIsyeri(ilan,pref);
+  return eslesPuaniKonut(ilan,pref);
+}
+
+function eslesPuaniKonut(ilan,pref){let p=0,s=[];const k=ilan.kriterler||{};const f=Number(ilan.fiyat),mn=pref.fiyat_min?Number(pref.fiyat_min):null,mx=pref.fiyat_max?Number(pref.fiyat_max):null;if(!mn&&!mx)p+=10;else if(mn&&mx){if(f>=mn&&f<=mx){p+=20;s.push('Fiyat uygun');}else if(f>=mn*.9&&f<=mx*1.1)p+=10;}else if(mn&&f>=mn)p+=20;else if(mx&&f<=mx)p+=20;const konum=(ilan.konum||'').toLowerCase(),prefIl=(pref.kriterler?.sehir||pref.sehir||'').toLowerCase(),prefIlce=(pref.kriterler?.ilce||'').toLowerCase();if(!prefIl)p+=8;else if(prefIlce&&konum.includes(prefIlce)){p+=20;s.push('Konum tam uyuştu');}else if(konum.includes(prefIl)){p+=12;s.push('Şehir uyuştu');}const ilanOda=(ilan.oda_sayisi||k.oda_sayisi||'').toLowerCase(),prefOda=pref.kriterler?.oda||[];if(!prefOda.length)p+=7;else if(prefOda.some(o=>ilanOda.includes(o.toLowerCase()))){p+=15;s.push(`${ilan.oda_sayisi} oda uyuştu`);}const m2=Number(ilan.metrekare||0),mnM2=pref.kriterler?.minM2?Number(pref.kriterler.minM2):null,mxM2=pref.kriterler?.maxM2?Number(pref.kriterler.maxM2):null;if(!mnM2&&!mxM2)p+=4;else if(m2&&mnM2&&mxM2&&m2>=mnM2&&m2<=mxM2){p+=8;s.push(`${m2}m² uygun`);}return{puan:Math.min(100,Math.max(1,p)),sebepler:s};}
+function eslesPuaniArsa(ilan,pref){let p=0,s=[];const f=Number(ilan.fiyat),mn=pref.fiyat_min?Number(pref.fiyat_min):null,mx=pref.fiyat_max?Number(pref.fiyat_max):null;if(!mn&&!mx)p+=12;else if(mn&&mx&&f>=mn&&f<=mx){p+=25;s.push('Fiyat uygun');}const konum=(ilan.konum||'').toLowerCase(),prefIl=(pref.kriterler?.sehir||pref.sehir||'').toLowerCase();if(!prefIl)p+=10;else if(konum.includes(prefIl)){p+=20;s.push('Şehir uyuştu');}return{puan:Math.min(100,Math.max(1,p)),sebepler:s};}
+function eslesPuaniIsyeri(ilan,pref){let p=0,s=[];const f=Number(ilan.fiyat),mn=pref.fiyat_min?Number(pref.fiyat_min):null,mx=pref.fiyat_max?Number(pref.fiyat_max):null;if(!mn&&!mx)p+=8;else if(mn&&mx&&f>=mn&&f<=mx){p+=20;s.push('Fiyat uygun');}const konum=(ilan.konum||'').toLowerCase(),prefIl=(pref.kriterler?.sehir||pref.sehir||'').toLowerCase();if(!prefIl)p+=8;else if(konum.includes(prefIl)){p+=15;s.push('Şehir uyuştu');}return{puan:Math.min(100,Math.max(1,p)),sebepler:s};}
+
+function ilanDetayAc(ilanId, index) {
+  sessionStorage.setItem('swipe_kartIndex', index);
+  window.location.href = `ilan-detay.html?id=${ilanId}`;
+}
+</script>
 <script>
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/XxxGotapu/sw.js", { scope: "/XxxGotapu/" })
-      .catch(e => console.log("SW error:", e));
+    navigator.serviceWorker.register("/XxxGotapu/sw.js", { scope: "/XxxGotapu/" }).catch(e => console.log("SW error:", e));
   }
 </script>
 </body>
