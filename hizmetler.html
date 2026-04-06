@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   /* ═══════════════════════════════════════════════════
-     KATEGORİ ACCORDION LİSTE
+     ANA KATEGORİ ACCORDION
   ═══════════════════════════════════════════════════ */
   .kategori-liste {
     display: flex;
@@ -18,10 +18,7 @@
     overflow: hidden;
     margin-bottom: 20px;
   }
-
-  .kategori-satir {
-    border-bottom: 1px solid var(--border);
-  }
+  .kategori-satir { border-bottom: 1px solid var(--border); }
   .kategori-satir:last-child { border-bottom: none; }
 
   .kategori-baslik {
@@ -39,59 +36,80 @@
     background: rgba(245,200,66,0.08);
     border-bottom: 1px solid rgba(245,200,66,0.25);
   }
-
   .kategori-baslik-ikon {
-    width: 40px;
-    height: 40px;
+    width: 40px; height: 40px;
     border-radius: 50%;
     background: rgba(245,200,66,0.1);
     border: 1px solid rgba(245,200,66,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
   }
   .kategori-baslik.acik .kategori-baslik-ikon {
     background: rgba(245,200,66,0.2);
     border-color: var(--gold);
   }
-
   .kategori-baslik-metin { flex: 1; }
-  .kategori-baslik-ad {
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--text);
-  }
+  .kategori-baslik-ad { font-size: 14px; font-weight: 800; color: var(--text); }
   .kategori-baslik.acik .kategori-baslik-ad { color: var(--gold); }
-  .kategori-baslik-altad {
-    font-size: 11px;
-    color: var(--text3);
-    margin-top: 1px;
-  }
+  .kategori-baslik-altad { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .kategori-ok { font-size: 18px; color: var(--text3); transition: transform .25s; flex-shrink: 0; }
+  .kategori-baslik.acik .kategori-ok { transform: rotate(180deg); color: var(--gold); }
 
-  .kategori-ok {
-    font-size: 18px;
-    color: var(--text3);
-    transition: transform .25s;
+  /* Body */
+  .kategori-body { display: none; background: var(--bg); border-bottom: 2px solid var(--gold); }
+  .kategori-body.acik { display: block; }
+
+  /* ═══════════════════════════════════════════════════
+     ALT KATEGORİ TAB BAR
+  ═══════════════════════════════════════════════════ */
+  .alt-kat-bar {
+    display: flex;
+    gap: 6px;
+    padding: 12px 14px 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .alt-kat-bar::-webkit-scrollbar { display: none; }
+  .alt-kat-btn {
+    padding: 7px 12px;
+    border-radius: 50px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    color: var(--text2);
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .2s;
     flex-shrink: 0;
   }
-  .kategori-baslik.acik .kategori-ok {
-    transform: rotate(180deg);
+  .alt-kat-btn.secili {
+    background: rgba(245,200,66,0.12);
+    border-color: var(--gold);
     color: var(--gold);
   }
 
-  /* Accordion body — form alanları */
-  .kategori-body {
-    display: none;
-    background: var(--bg);
-    padding: 16px;
-    border-bottom: 2px solid var(--gold);
-  }
-  .kategori-body.acik { display: block; }
+  /* ═══════════════════════════════════════════════════
+     FORM ALANI
+  ═══════════════════════════════════════════════════ */
+  .form-alan { padding: 14px; }
 
-  /* Form alanları */
-  .form-group { margin-bottom: 16px; }
+  /* Soru bloğu — progressive reveal */
+  .soru-blok {
+    margin-bottom: 0;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.3s ease, margin-bottom 0.3s ease;
+  }
+  .soru-blok.gorunen {
+    max-height: 300px;
+    opacity: 1;
+    margin-bottom: 16px;
+  }
+
   .form-label { font-size: 13px; font-weight: 800; color: var(--text2); margin-bottom: 8px; display: block; }
   .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
   .radio-btn {
@@ -117,7 +135,7 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 12px 14px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -142,30 +160,13 @@
   .foto-thumb { position: relative; width: 68px; height: 68px; }
   .foto-thumb img { width: 68px; height: 68px; border-radius: 8px; object-fit: cover; }
   .foto-remove {
-    position: absolute;
-    top: -6px; right: -6px;
+    position: absolute; top: -6px; right: -6px;
     width: 18px; height: 18px;
     border-radius: 50%;
-    background: var(--rust);
-    color: white;
-    border: none;
-    font-size: 10px;
-    cursor: pointer;
+    background: var(--rust); color: white; border: none;
+    font-size: 10px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
   }
-
-  .success-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.9);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    z-index: 999;
-    padding: 24px;
-    text-align: center;
-  }
-  .success-overlay.show { display: flex; }
 
   .gonder-btn {
     width: 100%;
@@ -182,6 +183,30 @@
     margin-top: 4px;
   }
   .gonder-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+  .success-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    align-items: center; justify-content: center; flex-direction: column;
+    z-index: 999; padding: 24px; text-align: center;
+  }
+  .success-overlay.show { display: flex; }
+
+  /* İlerleme göstergesi */
+  .ilerleme-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .ilerleme-dolu {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
 </style>
 <link rel="icon" href="ikon-192.png" type="image/png">
 <link rel="manifest" href="manifest.json">
@@ -241,14 +266,10 @@
 </div>
 
 <div class="page fade-up">
-
   <p style="font-size:12px;color:var(--text3);font-weight:700;margin-bottom:12px">
     Hizmet seçin, formu doldurun, teklif isteyin.
   </p>
-
-  <!-- KATEGORİ LİSTESİ -->
   <div class="kategori-liste" id="kategoriListe"></div>
-
 </div>
 
 <nav class="bottom-nav">
@@ -265,116 +286,535 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+/* ═══════════════════════════════════════════════════════════════
+   KATEGORİ VERİSİ
+   Her ana kategori → alt kategoriler → her alt kategoride sorular
+═══════════════════════════════════════════════════════════════ */
 const kategoriler = {
-  temizlik: { em: '🧹', ad: 'Temizlik', desc: 'Ev, ofis ve işyeri temizlik hizmetleri', alanlar: [
-    { id: 'tip', label: 'Temizlik Tipi', secenekler: ['Düzenli Temizlik', 'Tek Seferlik', 'Derin Temizlik', 'İnşaat/Tadilat Sonrası', 'Taşınma Öncesi/Sonrası', 'Boş Ev Temizliği'] },
-    { id: 'oda', label: 'Ev Büyüklüğü', secenekler: ['Stüdyo/1+0', '1+1', '2+1', '3+1', '4+1', '5+1 ve üzeri'] },
-    { id: 'durum', label: 'Eşya Durumu', secenekler: ['Eşyalı (Normal)', 'Eşyalı (Dolu)', 'Boş Ev'] },
-    { id: 'evcil', label: 'Evcil Hayvan Var mı?', secenekler: ['Hayır', 'Kedi', 'Köpek', 'Diğer'] },
-    { id: 'malzeme', label: 'Temizlik Malzemesi', secenekler: ['Temizlikçi Getirsin', 'Ben Sağlarım'] },
-    { id: 'ekstra', label: 'Ekstra Hizmetler (çoklu seçilebilir)', secenekler: ['Ütü', 'Buzdolabı İçi', 'Fırın İçi', 'Cam Silme', 'Balkon Yıkama', 'Dolap İçi', 'Yok'], coklu: true },
-    { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bugün veya Yarın', 'Bu Hafta', 'Önümüzdeki Hafta', 'Tarih Belirlemedim'] },
-  ]},
-  boya: { em: '🪣', ad: 'Boya & Badana', desc: 'İç ve dış cephe boyama hizmetleri', alanlar: [
-    { id: 'alan', label: 'Boya Alanı', secenekler: ['Sadece İç Cephe', 'Sadece Dış Cephe', 'İç + Dış Cephe', 'Tek Oda', 'Tavan'] },
-    { id: 'metrekare', label: 'Yaklaşık Metrekare', secenekler: ['50m² altı', '50-100m²', '100-150m²', '150-200m²', '200m² üzeri'] },
-    { id: 'durum', label: 'Eşya Durumu', secenekler: ['Ev Boş', 'Eşyalar Var (Örtülür)', 'Taşınırken'] },
-    { id: 'boya_tipi', label: 'Boya Tipi Tercihi', secenekler: ['Standart Silikonlu', 'Su Bazlı', 'İpek Mat', 'Fark Etmez'] },
-    { id: 'malzeme', label: 'Boya Malzemesi', secenekler: ['Ustadan Temin', 'Ben Sağlarım', 'Birlikte Karar Verelim'] },
-    { id: 'ek', label: 'Ek İşler Var mı?', secenekler: ['Sadece Boya', 'Alçı/Sıva Tamiri de Var', 'Kapı/Pencere Boyası da', 'Hepsi'] },
-    { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bu Hafta', 'Önümüzdeki Hafta', 'Bu Ay', 'Tarih Belirlemedim'] },
-  ]},
-  nakliye: { em: '🚚', ad: 'Nakliye & Taşımacılık', desc: 'Ev ve ofis taşımacılık hizmetleri', alanlar: [
-    { id: 'tip', label: 'Taşıma Tipi', secenekler: ['Komple Ev Taşıma', 'Ofis Taşıma', 'Parça Eşya', 'Depolama'] },
-    { id: 'oda', label: 'Ev Büyüklüğü', secenekler: ['1+1', '2+1', '3+1', '4+1', '5+1 ve üzeri'] },
-    { id: 'cikis_kat', label: 'Çıkış Katı', secenekler: ['Giriş/Bodrum', '1-3. Kat', '4-7. Kat', '8+ Kat'] },
-    { id: 'varis_kat', label: 'Varış Katı', secenekler: ['Giriş/Bodrum', '1-3. Kat', '4-7. Kat', '8+ Kat'] },
-    { id: 'asansor', label: 'Asansör Durumu', secenekler: ['Her İki Binada Var', 'Sadece Birinde Var', 'Her İkisinde de Yok'] },
-    { id: 'ozel_esya', label: 'Özel/Ağır Eşya Var mı?', secenekler: ['Yok', 'Piyano', 'Kasa', 'Ağır Beyaz Eşya', 'Birden Fazla'] },
-    { id: 'ambalaj', label: 'Ambalajlama Hizmeti?', secenekler: ['Evet, Nakliyeci Paketlesin', 'Hayır, Ben Paketlerim', 'Sadece Kırılacaklar İçin'] },
-    { id: 'mesafe', label: 'Taşıma Mesafesi', secenekler: ['Aynı İlçe', 'Aynı Şehir', 'Şehirlerarası'] },
-    { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bu Hafta', 'Önümüzdeki Hafta', 'Bu Ay', 'Tarih Belirlemedim'] },
-  ]},
-  cilingir: { em: '🔑', ad: 'Çilingir', desc: 'Kapı açma, kilit değiştirme hizmetleri', alanlar: [
-    { id: 'tip', label: 'Hizmet Tipi', secenekler: ['Kapı Açma (Acil)', 'Kilit Değiştirme', 'Çelik Kapı Kilidi', 'Anahtar Kopyalama', 'Kasa Açma', 'Araç Kapısı Açma'] },
-    { id: 'kapi_tipi', label: 'Kapı Tipi', secenekler: ['Çelik Kapı', 'Ahşap Kapı', 'Demir Kapı', 'Araç Kapısı', 'Diğer'] },
-    { id: 'acil', label: 'Aciliyet', secenekler: ['Şu An İçeride Kaldım!', 'Bugün İçinde', 'Randevu Alayım'] },
-  ]},
-  tadilat: { em: '🔧', ad: 'Tadilat & Tamirat', desc: 'Her türlü tadilat ve tamirat hizmetleri', alanlar: [
-    { id: 'tip', label: 'Tadilat Tipi', secenekler: ['Komple Tadilat', 'Banyo Yenileme', 'Mutfak Yenileme', 'Elektrik Tesisatı', 'Su Tesisatı', 'Zemin/Döşeme', 'Alçıpan/Asma Tavan', 'Fayans/Seramik'] },
-    { id: 'metrekare', label: 'Tadilat Alanı', secenekler: ['Tek Oda/Banyo', '50m² altı', '50-100m²', '100-150m²', '150m² üzeri'] },
-    { id: 'durum', label: 'Eşya Durumu', secenekler: ['Ev Boş', 'Ev Dolu (Eşyalar Var)'] },
-    { id: 'malzeme', label: 'Malzeme Temini', secenekler: ['Usta Temin Etsin', 'Ben Temin Ederim', 'Birlikte Karar Verelim'] },
-    { id: 'zemin', label: 'Zemin Tercihi (varsa)', secenekler: ['Parke', 'Laminat', 'Seramik', 'Mermer', 'Fark Etmez', 'Gerekmiyor'] },
-    { id: 'zaman', label: 'Ne Zaman Başlanacak?', secenekler: ['Hemen Başlayalım', '1 Ay İçinde', '3 Ay İçinde', 'Sadece Fiyat Alıyorum'] },
-  ]},
-  sigorta: { em: '🛡️', ad: 'Konut Sigortası', desc: 'Ev ve eşya sigortası hizmetleri', alanlar: [
-    { id: 'tip', label: 'Sigorta Tipi', secenekler: ['Konut Sigortası', 'Deprem Sigortası (DASK)', 'Eşya Sigortası', 'Tüm Paket'] },
-    { id: 'konut', label: 'Konut Tipi', secenekler: ['Kiracı (Kiralık)', 'Ev Sahibi', 'İşyeri/Ofis', 'Yazlık'] },
-    { id: 'yapi', label: 'Yapı Tipi', secenekler: ['Daire', 'Müstakil Ev', 'Villa', 'Dubleks'] },
-    { id: 'metrekare', label: 'Yaklaşık Metrekare', secenekler: ['50m² altı', '50-100m²', '100-150m²', '150m² üzeri'] },
-    { id: 'esya', label: 'Eşya Değeri (yaklaşık)', secenekler: ['50.000₺ altı', '50-150K₺', '150-300K₺', '300K₺ üzeri', 'Bilmiyorum'] },
-  ]},
-  teknik: { em: '🖥️', ad: 'Teknik Servis', desc: 'Elektronik cihaz tamir ve bakım hizmetleri', alanlar: [
-    { id: 'cihaz', label: 'Cihaz Türü', secenekler: ['Telefon', 'Laptop/Notebook', 'Masaüstü PC', 'Tablet', 'TV/Monitör', 'Beyaz Eşya', 'Küçük Ev Aleti', 'Diğer'] },
-    { id: 'marka', label: 'Cihaz Markası', secenekler: ['Samsung', 'Apple', 'Huawei', 'Arçelik/Beko', 'Vestel', 'Bosch', 'Diğer'] },
-    { id: 'sorun', label: 'Sorun Tipi', secenekler: ['Ekran Kırık/Çatlak', 'Açılmıyor/Kapanıyor', 'Batarya Sorunu', 'Yazılım/Virüs', 'Su Hasarı', 'Ses/Mikrofon Sorunu', 'Şarj Sorunu', 'Diğer'] },
-    { id: 'servis', label: 'Servis Şekli', secenekler: ['Evime Gelsin (Yerinde)', 'Getirip Bırakayım', 'Kargo ile Göndereceğim'] },
-  ]},
-  dekorasyon: { em: '🪴', ad: 'Dekorasyon & Tasarım', desc: 'İç mimari ve dekorasyon hizmetleri', alanlar: [
-    { id: 'tip', label: 'Hizmet Tipi', secenekler: ['Komple Dekorasyon', 'İç Mimari Danışmanlık', 'Mobilya Seçimi/Yerleşimi', 'Aydınlatma Tasarımı', 'Renk/Kumaş Danışmanlığı'] },
-    { id: 'alan', label: 'Hangi Alan?', secenekler: ['Tüm Ev', 'Salon', 'Yatak Odası', 'Çocuk Odası', 'Mutfak', 'Banyo', 'Çalışma Odası'] },
-    { id: 'oda', label: 'Ev Büyüklüğü', secenekler: ['1+1', '2+1', '3+1', '4+1 ve üzeri'] },
-    { id: 'tarzi', label: 'Stil Tercihi', secenekler: ['Modern/Minimalist', 'Klasik/Rustik', 'Endüstriyel', 'Bohem', 'Skandinav', 'Fark Etmez'] },
-    { id: 'butce', label: 'Bütçe Aralığı', secenekler: ['10.000₺ altı', '10-30K₺', '30-75K₺', '75-150K₺', '150K₺ üzeri'] },
-  ]},
-  aracyikama: { em: '🚗', ad: 'Yerinde Araç Yıkama', desc: 'Kapınıza gelen yerinde araç yıkama hizmetleri', alanlar: [
-    { id: 'tip', label: 'Yıkama Tipi', secenekler: ['Sadece Dış Yıkama', 'Sadece İç Temizlik', 'İç + Dış Yıkama'] },
-    { id: 'arac', label: 'Araç Tipi', secenekler: ['Binek Araç', 'SUV/Arazi', 'Minivan/Panelvan', 'Kamyonet', 'Motosiklet'] },
-    { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bugün', 'Yarın', 'Bu Hafta', 'Hafta Sonu', 'Tarih Belirlemedim'] },
-  ]},
-  ilacalama: { em: '🐛', ad: 'İlaçlama & Haşere', desc: 'Böcek, haşere ve fare ilaçlama hizmetleri', alanlar: [
-    { id: 'tip', label: 'İlaçlama Tipi', secenekler: ['Hamam Böceği', 'Pire/Bit', 'Karınca', 'Fare/Sıçan', 'Tahtakurusu', 'Genel İlaçlama (Hepsi)'] },
-    { id: 'mekan', label: 'Mekan Tipi', secenekler: ['Ev/Daire', 'İşyeri/Ofis', 'Depo/Bodrum', 'Bahçe/Dış Alan'] },
-    { id: 'metrekare', label: 'Yaklaşık Metrekare', secenekler: ['50m² altı', '50-100m²', '100-200m²', '200m² üzeri'] },
-    { id: 'acil', label: 'Aciliyet', secenekler: ['Acil (1-2 Gün İçinde)', 'Bu Hafta', 'Bu Ay', 'Fiyat Alıyorum'] },
-  ]},
-  petek: { em: '🔥', ad: 'Petek & Kombi', desc: 'Petek temizleme ve kombi bakım hizmetleri', alanlar: [
-    { id: 'tip', label: 'Hizmet Tipi', secenekler: ['Petek Temizleme', 'Kombi Bakımı', 'Petek + Kombi Birlikte', 'Petek Sızdırmazlık', 'Kombi Arızası'] },
-    { id: 'petek_adet', label: 'Petek Adedi (yaklaşık)', secenekler: ['1-3 Petek', '4-6 Petek', '7-10 Petek', '10+ Petek'] },
-    { id: 'kombi', label: 'Kombi Markası', secenekler: ['Baymak', 'Demirdöküm', 'Vaillant', 'Bosch', 'Ariston', 'Diğer', 'Petek Yok'] },
-    { id: 'sorun', label: 'Mevcut Sorun Var mı?', secenekler: ['Hayır, Rutin Bakım', 'Isınmıyor/Az Isıtıyor', 'Su Kaçırıyor', 'Gürültü Yapıyor', 'Kombi Arızası'] },
-    { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Acil', 'Bu Hafta', 'Bu Ay', 'Kış Öncesi Hazırlık'] },
-  ]},
-  koltukyikama: { em: '🛋️', ad: 'Koltuk Yıkama', desc: 'Koltuk, kanepe ve döşeme yıkama hizmetleri', alanlar: [
-    { id: 'tip', label: 'Ürün Tipi', secenekler: ['L Koltuk Takımı', '3lü Koltuk Takımı', 'Tekli Koltuk', 'Kanepe/Chester', 'Sandalye', 'Yatak Başlığı', 'Araba Koltuğu'] },
-    { id: 'malzeme', label: 'Koltuk Malzemesi', secenekler: ['Kumaş/Boucle', 'Deri/Suni Deri', 'Kadife', 'Bilmiyorum'] },
-    { id: 'adet', label: 'Yaklaşık Koltuk Adedi', secenekler: ['1-2 Koltuk', '3-5 Koltuk', '6-10 Koltuk', '10+ Koltuk'] },
-    { id: 'leke', label: 'Leke/Koku Durumu', secenekler: ['Normal Kirlilik', 'Ağır Leke Var', 'Koku Sorunu Var', 'Evcil Hayvan Lekesi'] },
-    { id: 'servis', label: 'Servis Şekli', secenekler: ['Evime Gelsin (Yerinde)', 'Götürüp Getirsinler'] },
-    { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bu Hafta', 'Önümüzdeki Hafta', 'Bu Ay', 'Tarih Belirlemedim'] },
-  ]},
-  haliyikama: { em: '🧼', ad: 'Halı Yıkama', desc: 'Halı, kilim ve yolluk yıkama hizmetleri', alanlar: [
-    { id: 'tip', label: 'Ürün Tipi', secenekler: ['Makine Halısı', 'El Dokuma Kilim', 'Yolluk', 'Paspas', 'İpek Halı', 'Karma (Birden Fazla)'] },
-    { id: 'boyut', label: 'En Büyük Halı Boyutu', secenekler: ['2x3m altı', '2x3m', '3x4m', '4x5m', '5m² üzeri'] },
-    { id: 'adet', label: 'Toplam Adet', secenekler: ['1-2 Adet', '3-5 Adet', '6-10 Adet', '10+ Adet'] },
-    { id: 'durum', label: 'Kirlilik Durumu', secenekler: ['Normal Kirlilik', 'Ağır Leke Var', 'Koku Sorunu Var', 'Evcil Hayvan Lekesi', 'Su/Nem Hasarı'] },
-    { id: 'servis', label: 'Servis Şekli', secenekler: ['Evden Alıp Getirsinler', 'Yerinde Yıkama', 'Ben Getireceğim'] },
-    { id: 'zaman', label: 'Ne Zaman?', secenekler: ['Bu Hafta', 'Önümüzdeki Hafta', 'Bu Ay', 'Tarih Belirlemedim'] },
-  ]}
+
+  temizlik: {
+    em: '🧹', ad: 'Temizlik', desc: 'Ev, ofis ve bina temizlik hizmetleri',
+    altKategoriler: {
+      ev: {
+        ad: 'Ev Temizliği',
+        sorular: [
+          { id: 'oda',    label: 'Eviniz kaç oda + salon?',        secenekler: ['1+1','2+1','3+1','4+1','5+1 ve üzeri'] },
+          { id: 'banyo',  label: 'Kaç banyonuz var?',              secenekler: ['1','2','3 ve üzeri'] },
+          { id: 'siklik', label: 'Temizlik ne sıklıkta yapılsın?', secenekler: ['Tek seferlik','Haftada 1','2 haftada 1','Ayda 1'] },
+          { id: 'zaman',  label: 'Temizlik ne zaman?',             secenekler: ['En kısa sürede','Bu hafta içinde','Tarih belirleyeceğim'] },
+          { id: 'ekstra', label: 'Ekstra temizlik talepleri?',     secenekler: ['Cam silme','Fırın içi','Buzdolabı içi','Dolap içleri','Ütü yapma','Balkon yıkama','Buharlı temizlik','Yok / Standart'], coklu: true },
+          { id: 'evde',   label: 'Temizlik sırasında evde olacak mısınız?', secenekler: ['Evet','Hayır','Belirsiz'] },
+          { id: 'evcil',  label: 'Evcil hayvanınız var mı?',       secenekler: ['Evet','Hayır'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',              secenekler: ['500-1.000 TL','1.000-2.000 TL','2.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      bos_ev: {
+        ad: 'Boş Ev Temizliği',
+        sorular: [
+          { id: 'oda',    label: 'Eviniz kaç oda + salon?',   secenekler: ['1+1','2+1','3+1','4+1','5+1 ve üzeri'] },
+          { id: 'metrekare', label: 'Evin metrekaresi?',       secenekler: ['50m² altı','50-100m²','100-150m²','150-200m²','200m² üzeri'] },
+          { id: 'amac',   label: 'Temizlik amacı?',           secenekler: ['Taşınma öncesi','Kiracı çıkışı sonrası','Satış öncesi','Diğer'] },
+          { id: 'cam_balkon', label: 'Cam balkon var mı?',    secenekler: ['Evet','Hayır'] },
+          { id: 'banyo',  label: 'Kaç banyo/wc var?',         secenekler: ['1','2','3 ve üzeri'] },
+          { id: 'ozel',   label: 'Özel temizlik ihtiyacı?',   secenekler: ['Dolap içleri','Fırın ve ankastre','Tüm camlar','Petek ve radyatör','Tüm yüzeyler dahil'], coklu: true },
+          { id: 'zaman',  label: 'Temizlik ne zaman?',        secenekler: ['En kısa sürede','Bu hafta','Tarih belirleyeceğim'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',         secenekler: ['2.000-5.000 TL','5.000-10.000 TL','10.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      ofis: {
+        ad: 'Ofis / İş Yeri',
+        sorular: [
+          { id: 'tur',    label: 'İş yeri türü?',             secenekler: ['Ofis','Mağaza','Klinik / muayenehane','Depo','Diğer'] },
+          { id: 'metrekare', label: 'Kaç metrekare?',         secenekler: ['50m² altı','50-150m²','150-300m²','300m² üzeri'] },
+          { id: 'calisan', label: 'Kaç kişi çalışıyor?',     secenekler: ['1-5','6-20','20 üzeri'] },
+          { id: 'siklik', label: 'Temizlik sıklığı?',         secenekler: ['Tek seferlik','Haftada 1','Haftada 2-3','Her gün'] },
+          { id: 'saat',   label: 'Temizlik saati?',           secenekler: ['Mesai öncesi (sabah erken)','Mesai sonrası (akşam)','Hafta sonu','Mesai saatinde'] },
+          { id: 'ekstra', label: 'Ekstra ihtiyaçlar?',        secenekler: ['Cam silme','Mutfak temizliği','Tuvalet/banyo','Halı yıkama','Çöp toplama'], coklu: true },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',         secenekler: ['500-2.000 TL','2.000-5.000 TL','5.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      insaat: {
+        ad: 'İnşaat Sonrası',
+        sorular: [
+          { id: 'mekan',  label: 'Mekan türü?',               secenekler: ['Konut','Ofis / iş yeri','Dükkan','Diğer'] },
+          { id: 'metrekare', label: 'Kaç metrekare?',         secenekler: ['50m² altı','50-100m²','100-200m²','200m² üzeri'] },
+          { id: 'tadilat', label: 'Tadilat türü neydi?',      secenekler: ['Boya / badana','Fayans döşeme','Komple tadilat','Alçı / asma tavan','İnşaat kaba iş'] },
+          { id: 'kirlilik', label: 'Kirlilik seviyesi?',       secenekler: ['Hafif (ince toz)','Orta (harç ve toz)','Ağır (yoğun inşaat tozu)'] },
+          { id: 'zaman',  label: 'Temizlik ne zaman?',        secenekler: ['En kısa sürede','Bu hafta','Tarih belirleyeceğim'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',         secenekler: ['1.000-3.000 TL','3.000-7.000 TL','7.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      hali: {
+        ad: 'Halı Yıkama',
+        sorular: [
+          { id: 'adet',   label: 'Kaç adet halı var?',        secenekler: ['1','2-3','4-5','6 ve üzeri'] },
+          { id: 'metrekare', label: 'Tahmini toplam metrekare?', secenekler: ['10m² altı','10-30m²','30-60m²','60m² üzeri'] },
+          { id: 'tur',    label: 'Halı türleri?',             secenekler: ['Makine halısı','El dokuma / yün halı','Kilim','Karışık'] },
+          { id: 'servis', label: 'Hizmet şekli?',             secenekler: ['Evden alıp getirme (fabrikada)','Yerinde yıkama'] },
+          { id: 'leke',   label: 'Özel leke var mı?',         secenekler: ['Evet (belirteceğim)','Hayır'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',         secenekler: ['500-1.500 TL','1.500-3.000 TL','3.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      koltuk: {
+        ad: 'Koltuk Yıkama',
+        sorular: [
+          { id: 'tip',    label: 'Ne yıkanacak?',             secenekler: ["Koltuk takımı (3'lü+2'li+1'li)",'Tekli koltuk','Köşe koltuk','Sandalye','Araba koltuğu','Karışık'] },
+          { id: 'adet',   label: 'Kaç parça?',                secenekler: ['1-2','3-5','6 ve üzeri'] },
+          { id: 'malzeme', label: 'Koltuk malzemesi?',        secenekler: ['Kumaş','Deri / suni deri','Kadife','Karışık'] },
+          { id: 'leke',   label: 'Leke / koku sorunu var mı?', secenekler: ['Evet, ağır leke','Evet, koku problemi','Hafif kirlilik','Hayır, rutin temizlik'] },
+          { id: 'servis', label: 'Hizmet şekli?',             secenekler: ['Yerinde yıkama','Alıp getirme'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',         secenekler: ['300-800 TL','800-2.000 TL','2.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      hasere: {
+        ad: 'Haşere İlaçlama',
+        sorular: [
+          { id: 'hasere', label: 'Hangi haşere problemi var?', secenekler: ['Hamam böceği','Karınca','Fare / sıçan','Tahtakurusu','Pire / bit','Arı / eşek arısı','Güve','Genel ilaçlama'] },
+          { id: 'mekan',  label: 'Mekan türü?',               secenekler: ['Daire','Villa / müstakil ev','Ofis / iş yeri','Restoran / kafe','Depo / fabrika'] },
+          { id: 'metrekare', label: 'Kaç metrekare?',         secenekler: ['100m² altı','100-200m²','200-500m²','500m² üzeri'] },
+          { id: 'siklik', label: 'İlaçlama sıklığı?',         secenekler: ['Tek seferlik','Aylık','3 ayda bir','Düzenli sözleşmeli'] },
+          { id: 'cocuk',  label: 'Çocuk / evcil hayvan var mı?', secenekler: ['Evet (zararsız ilaç tercih ederim)','Hayır'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',         secenekler: ['500-1.500 TL','1.500-3.000 TL','3.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      bina: {
+        ad: 'Apartman / Bina',
+        sorular: [
+          { id: 'tur',    label: 'Bina türü?',                secenekler: ['Apartman (asansörsüz)','Apartman (asansörlü)','Site / rezidans','AVM / ticari bina'] },
+          { id: 'kat',    label: 'Kaç kat?',                  secenekler: ['1-4 kat','5-8 kat','9-14 kat','15 kat ve üzeri'] },
+          { id: 'kapsam', label: 'Temizlik kapsamı?',         secenekler: ['Sadece merdiven ve koridorlar','Ortak alanlar + asansör','Bahçe dahil','Otopark dahil'] },
+          { id: 'siklik', label: 'Temizlik sıklığı?',         secenekler: ['Haftada 1','Haftada 2','Haftada 3','Her gün'] },
+          { id: 'kapici', label: 'Kapıcı var mı?',            secenekler: ['Evet','Hayır, kapıcısız yönetim'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',         secenekler: ['500-2.000 TL/ay','2.000-5.000 TL/ay','5.000 TL üzeri/ay','Teklif bekleyeceğim'] },
+        ]
+      },
+    }
+  },
+
+  tadilat: {
+    em: '🔨', ad: 'Tadilat', desc: 'Boya, fayans, cam balkon ve daha fazlası',
+    altKategoriler: {
+      boya: {
+        ad: 'Boya Badana',
+        sorular: [
+          { id: 'alan',   label: 'Boya yapılacak alan?',       secenekler: ['Tüm ev / daire','Belirli odalar','Sadece tavan','Dış cephe','İş yeri / ofis'] },
+          { id: 'metrekare', label: 'Kaç metrekare?',          secenekler: ['50m² altı','50-100m²','100-200m²','200m² üzeri'] },
+          { id: 'tur',    label: 'Boya türü?',                 secenekler: ['Mat iç cephe','İpek saten','Sedef','Su bazlı dış cephe','Ahşap boyama','Metal boyama'] },
+          { id: 'durum',  label: 'Mevcut durum?',              secenekler: ['Üzerine boya (sıva var)','Çıplak sıva (ilk boya)','Tadilat sonrası','Boya soyulmuş, onarım gerekli'] },
+          { id: 'malzeme', label: 'Boya malzemesi kim temin edecek?', secenekler: ['Usta temin etsin','Ben temin edeceğim'] },
+          { id: 'zaman',  label: 'Ne zaman başlanabilir?',     secenekler: ['En kısa sürede','Bu hafta','Tarih belirleyeceğim'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',          secenekler: ['2.000-5.000 TL','5.000-15.000 TL','15.000-30.000 TL','30.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      banyo: {
+        ad: 'Banyo Tadilat',
+        sorular: [
+          { id: 'kapsam', label: 'Tadilat kapsamı?',           secenekler: ['Komple banyo yenileme','Sadece fayans değişimi','Sıhhi tesisat değişimi','Duşakabin montajı','Klozet / lavabo değişimi'] },
+          { id: 'metrekare', label: 'Banyo metrekaresi?',       secenekler: ['4m² altı','4-8m²','8-15m²','15m² üzeri'] },
+          { id: 'malzeme', label: 'Fayans temin durumu?',       secenekler: ['Malzeme bende var','Ustanın temin etmesini istiyorum','Birlikte karar verelim'] },
+          { id: 'bina_yas', label: 'Bina yaşı?',               secenekler: ['0-5 yıl','5-15 yıl','15-30 yıl','30 yıl üzeri'] },
+          { id: 'zaman',  label: 'Ne zaman başlanabilir?',      secenekler: ['En kısa sürede','Bu hafta','Tarih belirleyeceğim'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['5.000-15.000 TL','15.000-40.000 TL','40.000-80.000 TL','80.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      anahtar_teslim: {
+        ad: 'Anahtar Teslim',
+        sorular: [
+          { id: 'mekan',  label: 'Mekan türü?',                secenekler: ['Daire','Villa','Ofis','Dükkan / mağaza','Diğer'] },
+          { id: 'kapsam', label: 'Tadilat kapsamı?',           secenekler: ['Komple (boya, fayans, elektrik, tesisat)','Kısmi tadilat','Sadece iç mekan','Dış cephe dahil'] },
+          { id: 'metrekare', label: 'Kaç metrekare?',          secenekler: ['50m² altı','50-100m²','100-200m²','200m² üzeri'] },
+          { id: 'proje',  label: 'Mimari proje var mı?',       secenekler: ['Evet, proje hazır','Hayır, fikirler var','Hayır, tamamen serbest'] },
+          { id: 'malzeme', label: 'Malzeme temini?',           secenekler: ['Müteahhit temin etsin','Ben temin edeceğim','Ortak karar'] },
+          { id: 'zaman',  label: 'Ne zaman başlanabilir?',     secenekler: ['En kısa sürede','Bu ay içinde','Tarih belirleyeceğim'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',          secenekler: ['50.000-100.000 TL','100.000-250.000 TL','250.000-500.000 TL','500.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      fayans: {
+        ad: 'Fayans Döşeme',
+        sorular: [
+          { id: 'alan',   label: 'Fayans nereye döşenecek?',   secenekler: ['Banyo','Mutfak','Salon / oda zemini','Balkon','Dış alan / bahçe'] },
+          { id: 'metrekare', label: 'Kaç metrekare?',          secenekler: ['10m² altı','10-30m²','30-60m²','60m² üzeri'] },
+          { id: 'malzeme', label: 'Fayans temin durumu?',      secenekler: ['Fayans bende var','Ustanın temin etmesini istiyorum'] },
+          { id: 'zemin',  label: 'Mevcut zemin durumu?',       secenekler: ['Şap / beton hazır','Eski fayans sökülecek','Ahşap parke üzerine'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',          secenekler: ['3.000-8.000 TL','8.000-20.000 TL','20.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      cam_balkon: {
+        ad: 'Cam Balkon',
+        sorular: [
+          { id: 'metrekare', label: 'Balkon metrekaresi?',     secenekler: ['5m² altı','5-10m²','10-20m²','20m² üzeri'] },
+          { id: 'sekil',  label: 'Balkon şekli?',              secenekler: ['Düz / dikdörtgen','L şekli','U şekli','Özel / düzensiz'] },
+          { id: 'cam_tipi', label: 'Cam tipi tercihi?',        secenekler: ['Temperli cam (standart)','Lamine cam','Isıcam / çift cam','Belirleyeceğim'] },
+          { id: 'kat',    label: 'Kat yüksekliği?',            secenekler: ['1-3. kat','4-7. kat','8+ kat'] },
+          { id: 'yalitim', label: 'Rüzgar / ısı yalıtımı önemli mi?', secenekler: ['Evet, yalıtımlı istiyorum','Hayır, standart yeterli'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',          secenekler: ['5.000-15.000 TL','15.000-30.000 TL','30.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      alcipan: {
+        ad: 'Alçıpan / Asma Tavan',
+        sorular: [
+          { id: 'is',     label: 'Ne yapılacak?',              secenekler: ['Asma tavan','Bölme duvar','Alçıpan kaplama','Kartonpiyer','Spot ışık yuvası'] },
+          { id: 'metrekare', label: 'Kaç metrekare?',          secenekler: ['20m² altı','20-50m²','50-100m²','100m² üzeri'] },
+          { id: 'malzeme', label: 'Malzeme kimin?',            secenekler: ['Usta temin etsin','Ben temin edeceğim'] },
+          { id: 'elektrik', label: 'Elektrik / aydınlatma entegrasyonu?', secenekler: ['Evet, spot veya led','Hayır'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',          secenekler: ['3.000-8.000 TL','8.000-20.000 TL','20.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      ic_mimari: {
+        ad: 'İç Mimarlık',
+        sorular: [
+          { id: 'hizmet', label: 'Hizmet türü?',               secenekler: ['Tasarım danışmanlığı (fikir)','3D çizim ve proje','Uygulama (tadilat dahil)','Mobilya ve aksesuar seçimi'] },
+          { id: 'mekan',  label: 'Mekan türü?',                secenekler: ['Konut','Ofis','Restoran / kafe','Mağaza','Diğer'] },
+          { id: 'metrekare', label: 'Kaç metrekare?',          secenekler: ['50m² altı','50-150m²','150-300m²','300m² üzeri'] },
+          { id: 'stil',   label: 'Stil tercihiniz?',           secenekler: ['Modern / minimalist','Klasik / geleneksel','Endüstriyel','Bohem','Belirsiz, önerilere açığım'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',          secenekler: ['10.000-30.000 TL','30.000-100.000 TL','100.000-300.000 TL','300.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+    }
+  },
+
+  tesisat: {
+    em: '⚡', ad: 'Tamir & Tesisat', desc: 'Elektrik, su, doğalgaz, kombi, klima',
+    altKategoriler: {
+      elektrik: {
+        ad: 'Elektrikçi',
+        sorular: [
+          { id: 'is',     label: 'Ne yapılması gerekiyor?',    secenekler: ['Arıza / kaçak tespiti','Priz / anahtar değişimi','Komple tesisat yenileme','Sigorta / panosuna müdahale','Aydınlatma montajı','Klima / cihaz bağlantısı'] },
+          { id: 'mekan',  label: 'Mekan türü?',                secenekler: ['Daire','Villa','Ofis','Dükkan','Diğer'] },
+          { id: 'acil',   label: 'Aciliyet?',                  secenekler: ['Acil (bugün)','Bu hafta içinde','Randevu belirleyeceğim'] },
+          { id: 'malzeme', label: 'Malzeme gerekiyor mu?',     secenekler: ['Evet, usta temin etsin','Evet, ben temin edeceğim','Hayır, işçilik yeterli'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',          secenekler: ['500-2.000 TL','2.000-8.000 TL','8.000-20.000 TL','20.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      tesisat: {
+        ad: 'Su Tesisatı',
+        sorular: [
+          { id: 'sorun',  label: 'Sorun nedir?',               secenekler: ['Su kaçağı / sızıntı','Tıkanıklık açma','Musluk / batarya değişimi','Sifonlu tuvalet arızası','Komple tesisat değişimi','Klozet / lavabo montajı'] },
+          { id: 'acil',   label: 'Aciliyet?',                  secenekler: ['Acil (su kaçağı devam ediyor)','Bu gün içinde','Bu hafta içinde'] },
+          { id: 'bina_yas', label: 'Kat / bina yaşı?',         secenekler: ['0-10 yıl','10-25 yıl','25 yıl üzeri'] },
+          { id: 'malzeme', label: 'Malzeme gerekiyor mu?',     secenekler: ['Evet, usta temin etsin','Ben temin edeceğim','Sadece işçilik'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',          secenekler: ['500-2.000 TL','2.000-8.000 TL','8.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      dogalgaz: {
+        ad: 'Doğalgaz Tesisat',
+        sorular: [
+          { id: 'is',     label: 'İş türü?',                   secenekler: ['Yeni daire doğalgaz bağlantısı','Proje çizimi','Boru değişimi / yenileme','Kaçak tespiti','Kombi değişimi'] },
+          { id: 'durum',  label: 'Mevcut durum?',              secenekler: ['Doğalgaz var, sorun yaşıyorum','Doğalgaz yok, bağlatmak istiyorum','Taşındım, kontrol ettirmek istiyorum'] },
+          { id: 'bina',   label: 'Bina türü?',                 secenekler: ['Daire','Müstakil ev','İş yeri'] },
+          { id: 'acil',   label: 'Aciliyet?',                  secenekler: ['Acil (gaz kokusu / kaçak var)','Bu hafta','Randevu belirleyeceğim'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',          secenekler: ['1.000-5.000 TL','5.000-15.000 TL','15.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      kombi: {
+        ad: 'Kombi / Kalorifer',
+        sorular: [
+          { id: 'sorun',  label: 'Sorun nedir?',               secenekler: ['Kombi çalışmıyor','Su ısıtmıyor','Radyatörler ısınmıyor','Gaz / su kaçağı','Yıllık bakım','Kombi değişimi'] },
+          { id: 'marka',  label: 'Kombi markası?',             secenekler: ['Demirdöküm','Baymak','Bosch','Vaillant','Buderus','Alarko','Diğer / bilmiyorum'] },
+          { id: 'yas',    label: 'Kombi yaşı?',                secenekler: ['0-5 yıl','5-10 yıl','10 yıl üzeri'] },
+          { id: 'acil',   label: 'Aciliyet?',                  secenekler: ['Acil (hiç ısınma yok)','Bugün içinde','Bu hafta'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',          secenekler: ['500-2.000 TL','2.000-5.000 TL','5.000-15.000 TL','15.000 TL üzeri (değişim)','Teklif bekleyeceğim'] },
+        ]
+      },
+      klima: {
+        ad: 'Klima Montaj / Servis',
+        sorular: [
+          { id: 'hizmet', label: 'Hizmet türü?',               secenekler: ['Yeni klima montajı','Söküm ve başka yere montaj','Arıza / bakım','Gaz dolumu','Temizlik / filtre bakımı'] },
+          { id: 'adet',   label: 'Klima adedi?',               secenekler: ['1','2-3','4 ve üzeri'] },
+          { id: 'marka',  label: 'Klima markası?',             secenekler: ['Daikin','Mitsubishi','Samsung','LG','Arçelik / Beko','Vestel','Diğer / bilmiyorum'] },
+          { id: 'yukseklik', label: 'Montaj yüksekliği?',      secenekler: ['Normal yükseklik','Yüksek tavan (3m+)','Villa / çatı katı'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',          secenekler: ['1.000-3.000 TL','3.000-6.000 TL','6.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      cilingir: {
+        ad: 'Çilingir',
+        sorular: [
+          { id: 'hizmet', label: 'Hizmet türü?',               secenekler: ['Kilitli kapı açma','Kilit değişimi','Çelik kapı montajı','Kasa açma','Otomobil kapısı açma'] },
+          { id: 'kapi',   label: 'Kapı türü?',                 secenekler: ['Ahşap kapı','Çelik kapı','Demir kapı','Araç kapısı'] },
+          { id: 'acil',   label: 'Aciliyet?',                  secenekler: ['Acil (şu an kilitliyim)','Bugün içinde','Randevu alacağım'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',          secenekler: ['500-1.500 TL','1.500-4.000 TL','4.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+    }
+  },
+
+  nakliyat: {
+    em: '🚚', ad: 'Nakliyat', desc: 'Ev, ofis ve parça eşya taşıma',
+    altKategoriler: {
+      evden_eve: {
+        ad: 'Evden Eve',
+        sorular: [
+          { id: 'mesafe', label: 'Nereden nereye taşınılacak?', secenekler: ['Şehir içi','Şehirlerarası','Yurt dışı'] },
+          { id: 'oda',    label: 'Eviniz kaç oda + salon?',     secenekler: ['1+1','2+1','3+1','4+1','5+1 ve üzeri'] },
+          { id: 'asansor', label: 'Asansör durumu?',            secenekler: ['Her iki binada asansör var','Sadece birinde asansör var','Hiçbirinde asansör yok'] },
+          { id: 'hizmetler', label: 'Hangi hizmetler gerekiyor?', secenekler: ['Sadece taşıma','Taşıma + ambalajlama','Taşıma + ambalaj + söküm/montaj','Sigortalı taşıma istiyorum'] },
+          { id: 'tarih',  label: 'Taşınma tarihi?',             secenekler: ['En kısa sürede (1-3 gün)','Bu hafta içinde','Tarih belirleyeceğim'] },
+          { id: 'ozel',   label: 'Özel eşya var mı?',           secenekler: ['Piyano','Kasa / değerli eşya','Antika / sanat eseri','Beyaz eşya çok sayıda','Hayır, standart eşyalar'], coklu: true },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['5.000-15.000 TL','15.000-30.000 TL','30.000-60.000 TL','60.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      sehirlerarasi: {
+        ad: 'Şehirlerarası',
+        sorular: [
+          { id: 'guzergah', label: 'Nereden nereye?',           secenekler: ['İstanbul → Ankara','İstanbul → İzmir','Diğer şehirler arası','Belirteceğim'] },
+          { id: 'mesafe', label: 'Mesafe tahmini?',             secenekler: ['100 km altı','100-300 km','300-600 km','600 km üzeri'] },
+          { id: 'esya',   label: 'Eşya miktarı?',              secenekler: ['1+1 daire eşyası','2+1 daire eşyası','3+1 ve üzeri','Parça eşya (az miktarda)'] },
+          { id: 'ambalaj', label: 'Ambalajlama?',               secenekler: ['Firmanın yapmasını istiyorum','Kendim paketleyeceğim'] },
+          { id: 'sigorta', label: 'Sigorta?',                   secenekler: ['Evet, sigortalı taşıma','Hayır, sigortasız yeterli'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['10.000-25.000 TL','25.000-50.000 TL','50.000-100.000 TL','100.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      parca: {
+        ad: 'Parça Eşya',
+        sorular: [
+          { id: 'esya',   label: 'Ne taşınacak?',               secenekler: ['Koltuk / kanepe','Buzdolabı / beyaz eşya','Yatak / baza','Masa / dolap','Bisiklet / motosiklet','Paket / koli','Diğer'] },
+          { id: 'adet',   label: 'Kaç parça?',                  secenekler: ['1','2-3','4-6','7 ve üzeri'] },
+          { id: 'mesafe', label: 'Mesafe?',                     secenekler: ['Aynı bina / site içi','Aynı ilçe','Şehir içi','Şehirlerarası'] },
+          { id: 'kat',    label: 'Kat durumu?',                 secenekler: ['Her iki tarafta asansör var','Asansör yok (yardımcı lazım)'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['500-1.500 TL','1.500-4.000 TL','4.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      ofis: {
+        ad: 'Ofis Taşıma',
+        sorular: [
+          { id: 'boyut',  label: 'Ofis büyüklüğü?',             secenekler: ['Küçük ofis (1-5 çalışan)','Orta ofis (6-20 çalışan)','Büyük ofis (20+ çalışan)'] },
+          { id: 'teknik', label: 'Bilgisayar ve teknik ekipman var mı?', secenekler: ['Evet, özel paketleme gerekiyor','Az miktarda','Hayır'] },
+          { id: 'saat',   label: 'Çalışma saatleri dışında mı taşınılsın?', secenekler: ['Evet, akşam / hafta sonu','Mesai saatinde olabilir','Farketmez'] },
+          { id: 'mesafe', label: 'Mesafe?',                     secenekler: ['Şehir içi','Şehirlerarası'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['5.000-15.000 TL','15.000-50.000 TL','50.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+    }
+  },
+
+  mobilya: {
+    em: '🪑', ad: 'Mobilya & Dekorasyon', desc: 'Mutfak dolabı, marangoz, mobilya montajı',
+    altKategoriler: {
+      mutfak: {
+        ad: 'Mutfak Dolabı',
+        sorular: [
+          { id: 'hizmet', label: 'Hizmet türü?',               secenekler: ['Sıfırdan imalat (marangoz)','Hazır dolap montajı (IKEA vb.)','Mevcut dolap tamir / yenileme'] },
+          { id: 'boy',    label: 'Mutfak boyu (yaklaşık)?',     secenekler: ['3m altı','3-5m','5-7m','7m üzeri','L / U şekli'] },
+          { id: 'malzeme', label: 'Malzeme tercihi?',           secenekler: ['MDF boyalı','Laminat','Ahşap masif','Akrilik / lake','Belirleyeceğim'] },
+          { id: 'tezgah', label: 'Tezgah dahil mi?',            secenekler: ['Evet, tezgah da yapılsın','Hayır, sadece dolap'] },
+          { id: 'ankastre', label: 'Ankastre cihaz montajı?',   secenekler: ['Evet (fırın, davlumbaz vb.)','Hayır'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['15.000-40.000 TL','40.000-80.000 TL','80.000-150.000 TL','150.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      marangoz: {
+        ad: 'Marangoz',
+        sorular: [
+          { id: 'is',     label: 'Ne yapılacak?',               secenekler: ['Kapı değişimi / tamiri','Pencere / doğrama','Raf / dolap yapımı','Parke döşeme','Ahşap merdiven','Genel tamir'] },
+          { id: 'malzeme', label: 'Malzeme kimin?',             secenekler: ['Usta temin etsin','Ben temin edeceğim'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['2.000-7.000 TL','7.000-20.000 TL','20.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      montaj: {
+        ad: 'Mobilya Montajı',
+        sorular: [
+          { id: 'ne',     label: 'Ne monte edilecek?',          secenekler: ['IKEA mobilya','Yatak / baza','Gardırop / dolap','Masa / sandalye','TV ünitesi','Diğer hazır mobilya'] },
+          { id: 'adet',   label: 'Kaç parça?',                  secenekler: ['1-2','3-5','6 ve üzeri'] },
+          { id: 'soküm',  label: 'Eski mobilya sökülecek mi?',  secenekler: ['Evet','Hayır'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['500-1.500 TL','1.500-3.000 TL','3.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+    }
+  },
+
+  ozel_ders: {
+    em: '📚', ad: 'Özel Ders', desc: 'İngilizce, matematik, direksiyon, müzik',
+    altKategoriler: {
+      ingilizce: {
+        ad: 'İngilizce',
+        sorular: [
+          { id: 'kimin',  label: 'Ders kimin için?',            secenekler: ['İlkokul öğrencisi','Ortaokul öğrencisi','Lise öğrencisi','Üniversite öğrencisi','Yetişkin / profesyonel'] },
+          { id: 'seviye', label: 'Seviye?',                     secenekler: ['Başlangıç (A1-A2)','Orta (B1-B2)','İleri (C1-C2)','Belirsiz, seviye testi yapılsın'] },
+          { id: 'amac',   label: 'Amaç?',                       secenekler: ['Genel İngilizce','Sınav hazırlığı (YDS, IELTS, TOEFL)','İş İngilizcesi','Konuşma pratiği'] },
+          { id: 'sekil',  label: 'Ders şekli?',                 secenekler: ['Yüz yüze (evime gelsin)','Online','Farketmez'] },
+          { id: 'saat',   label: 'Haftalık ders saati?',        secenekler: ['Haftada 1 saat','Haftada 2 saat','Haftada 3+ saat'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz? (saat başı)', secenekler: ['200-400 TL/saat','400-700 TL/saat','700 TL üzeri/saat','Teklif bekleyeceğim'] },
+        ]
+      },
+      matematik: {
+        ad: 'Matematik',
+        sorular: [
+          { id: 'seviye', label: 'Hangi seviye?',               secenekler: ['İlkokul','Ortaokul','Lise (9-12. sınıf)','YKS / TYT / AYT hazırlık','Üniversite matematiği'] },
+          { id: 'konu',   label: 'Konu odağı?',                 secenekler: ['Genel matematik','Geometri','Türev / integral','İstatistik','Cebir','Sınav konuları'] },
+          { id: 'sekil',  label: 'Ders şekli?',                 secenekler: ['Yüz yüze','Online','Farketmez'] },
+          { id: 'siklik', label: 'Haftalık sıklık?',            secenekler: ['Haftada 1','Haftada 2','Haftada 3+'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz? (saat başı)', secenekler: ['200-400 TL/saat','400-700 TL/saat','700 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      direksiyon: {
+        ad: 'Direksiyon Dersi',
+        sorular: [
+          { id: 'amac',   label: 'Amaç?',                       secenekler: ['Ehliyet öncesi pratik','Uzun süre sürmedim, alıştırma','Otoban / şehir içi trafik','Park manevraları'] },
+          { id: 'arac',   label: 'Araç kimin?',                 secenekler: ['Öğretmenin aracı','Benim arabam'] },
+          { id: 'vites',  label: 'Vites tercihi?',              secenekler: ['Manuel','Otomatik','Farketmez'] },
+          { id: 'saat',   label: 'Kaç saat ders?',              secenekler: ['2-4 saat','5-10 saat','10+ saat'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz? (saat başı)', secenekler: ['300-500 TL/saat','500-800 TL/saat','Teklif bekleyeceğim'] },
+        ]
+      },
+      muzik: {
+        ad: 'Müzik Dersi',
+        sorular: [
+          { id: 'enstruman', label: 'Hangi enstrüman?',         secenekler: ['Gitar (akustik)','Gitar (elektro)','Piyano / org','Keman','Bağlama / saz','Davul','Diğer'] },
+          { id: 'seviye', label: 'Seviye?',                     secenekler: ['Hiç bilmiyorum (başlangıç)','Biraz biliyorum (orta)','İleri seviye'] },
+          { id: 'yas',    label: 'Yaş grubu?',                  secenekler: ['Çocuk (5-12)','Genç (13-17)','Yetişkin'] },
+          { id: 'sekil',  label: 'Ders şekli?',                 secenekler: ['Yüz yüze (evime gelsin)','Online','Farketmez'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz? (saat başı)', secenekler: ['200-400 TL/saat','400-700 TL/saat','700 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+    }
+  },
+
+  organizasyon: {
+    em: '🎉', ad: 'Organizasyon', desc: 'Düğün, fotoğrafçı, müzisyen kiralama',
+    altKategoriler: {
+      dugun: {
+        ad: 'Düğün / Nişan',
+        sorular: [
+          { id: 'etkinlik', label: 'Etkinlik türü?',            secenekler: ['Düğün','Nişan','Kına gecesi','Doğum günü (büyük etkinlik)','Şirket etkinliği'] },
+          { id: 'kisi',   label: 'Kişi sayısı?',               secenekler: ['50 kişi altı','50-150 kişi','150-300 kişi','300 kişi üzeri'] },
+          { id: 'mekan',  label: 'Mekan belirli mi?',           secenekler: ['Evet, mekan seçildi','Hayır, mekan önerisi de istiyorum'] },
+          { id: 'hizmetler', label: 'Hangi hizmetler gerekiyor?', secenekler: ['Dekorasyon','Catering / yemek','Müzik / ses sistemi','Fotoğraf / video','Davetiye','Hepsini organize edin'], coklu: true },
+          { id: 'tarih',  label: 'Tarih?',                     secenekler: ['1 ay içinde','1-3 ay içinde','3-6 ay içinde','6 ay üzeri'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['50.000-100.000 TL','100.000-250.000 TL','250.000-500.000 TL','500.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      fotograf: {
+        ad: 'Fotoğrafçı / Kameraman',
+        sorular: [
+          { id: 'cekim',  label: 'Çekim türü?',                 secenekler: ['Düğün / nişan','Doğum günü / özel gün','Ürün / reklam çekimi','Kurumsal / basın','Aile / portre'] },
+          { id: 'hizmet', label: 'Hizmet türü?',                secenekler: ['Sadece fotoğraf','Sadece video','Fotoğraf + video'] },
+          { id: 'sure',   label: 'Çekim süresi?',               secenekler: ['2-4 saat','4-8 saat','Tam gün (8+ saat)'] },
+          { id: 'tarih',  label: 'Etkinlik tarihi?',            secenekler: ['Bu ay','1-3 ay içinde','3+ ay içinde'] },
+          { id: 'drone',  label: 'Drone çekimi?',               secenekler: ['Evet istiyorum','Hayır gerekli değil'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['3.000-8.000 TL','8.000-20.000 TL','20.000-50.000 TL','50.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      muzisyen: {
+        ad: 'Müzisyen Kiralama',
+        sorular: [
+          { id: 'etkinlik', label: 'Etkinlik türü?',            secenekler: ['Düğün','Kına','Sünnet','Doğum günü','Diğer'] },
+          { id: 'muzik',  label: 'Müzik türü?',                 secenekler: ['Davul zurna','Türk halk müziği (bağlama vb.)','Pop / pop Türkçe','Karma (DJ + canlı)'] },
+          { id: 'sure',   label: 'Süre?',                       secenekler: ['2-3 saat','4-5 saat','Tam gece'] },
+          { id: 'yer',    label: 'Etkinlik yeri?',              secenekler: ['Kapalı salon','Açık alan','Ev / bahçe'] },
+          { id: 'kisi',   label: 'Kişi sayısı?',               secenekler: ['50 altı','50-150','150 üzeri'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['3.000-8.000 TL','8.000-20.000 TL','20.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+    }
+  },
+
+  saglik: {
+    em: '🩺', ad: 'Sağlık & Yaşam', desc: 'Psikolog, masaj ve fizyoterapi',
+    altKategoriler: {
+      psikolog: {
+        ad: 'Psikolog',
+        sorular: [
+          { id: 'kimin',  label: 'Destek kimin için?',          secenekler: ['Kendim için','Çocuğum için','Çift terapisi','Aile terapisi'] },
+          { id: 'sekil',  label: 'Görüşme şekli?',              secenekler: ['Yüz yüze','Online','Farketmez'] },
+          { id: 'konu',   label: 'Konu / alan?',                secenekler: ['Kaygı / panik bozukluğu','Depresyon','İlişki sorunları','Travma / yas','Kişisel gelişim','Belirtmek istemiyorum'] },
+          { id: 'siklik', label: 'Seans sıklığı?',              secenekler: ['Haftada 1','2 haftada 1','Ayda 1','Belirsiz'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz? (seans başı)', secenekler: ['500-1.000 TL','1.000-1.500 TL','1.500 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      masaj: {
+        ad: 'Masaj / Fizyoterapi',
+        sorular: [
+          { id: 'tur',    label: 'Masaj türü?',                 secenekler: ['Klasik / rahatlama','Spor masajı','Refleksoloji','Gebelik masajı','Çift masajı'] },
+          { id: 'konum',  label: 'Konum?',                      secenekler: ['Evime gelsin','Stüdyoya / salona gideceğim'] },
+          { id: 'sure',   label: 'Süre?',                       secenekler: ['30 dakika','60 dakika','90 dakika','120 dakika'] },
+          { id: 'cinsiyet', label: 'Terapist cinsiyeti?',       secenekler: ['Kadın','Erkek','Farketmez'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['500-1.000 TL','1.000-2.000 TL','2.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+    }
+  },
+
+  diger: {
+    em: '🔧', ad: 'Diğer Hizmetler', desc: 'Çevirmen, bahçıvan, sineklik montajı ve daha fazlası',
+    altKategoriler: {
+      cevirmen: {
+        ad: 'Çevirmen',
+        sorular: [
+          { id: 'tur',    label: 'Çeviri türü?',                secenekler: ['Yazılı belge çevirisi','Sözlü / simultane çeviri','Yeminli tercüme','Altyazı / transkript'] },
+          { id: 'dil',    label: 'Dil çifti?',                  secenekler: ['Türkçe ↔ İngilizce','Türkçe ↔ Almanca','Türkçe ↔ Arapça','Türkçe ↔ Fransızca','Diğer'] },
+          { id: 'belge',  label: 'Belge türü?',                 secenekler: ['Hukuki / noter','Tıbbi','Teknik / mühendislik','Edebi / genel','İş / ticari'] },
+          { id: 'acil',   label: 'Aciliyet?',                   secenekler: ['Acil (bugün - yarın)','3-5 gün','1 hafta+'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['500-2.000 TL','2.000-5.000 TL','5.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      bahcivan: {
+        ad: 'Bahçıvan',
+        sorular: [
+          { id: 'hizmet', label: 'Hizmet türü?',                secenekler: ['Çim biçme','Budama','Dikim / peyzaj tasarımı','Sulama sistemi kurulumu','Bahçe temizliği','Düzenli bakım'] },
+          { id: 'alan',   label: 'Bahçe alanı?',                secenekler: ['50m² altı','50-200m²','200-500m²','500m² üzeri'] },
+          { id: 'siklik', label: 'Sıklık?',                     secenekler: ['Tek seferlik','Haftada 1','2 haftada 1','Aylık'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['500-2.000 TL','2.000-6.000 TL','6.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      sineklik: {
+        ad: 'Sineklik / Perde Montajı',
+        sorular: [
+          { id: 'ne',     label: 'Ne monte edilecek?',          secenekler: ['Sineklik (sabit)','Sineklik (rulo / pliseli)','Perde ray / korniş','Stor perde','Karartma perde'] },
+          { id: 'adet',   label: 'Kaç adet?',                   secenekler: ['1-2','3-5','6 ve üzeri'] },
+          { id: 'malzeme', label: 'Malzeme kimin?',             secenekler: ['Usta temin etsin','Ben temin edeceğim'] },
+          { id: 'butce',  label: 'Tahmini bütçeniz?',           secenekler: ['500-2.000 TL','2.000-5.000 TL','5.000 TL üzeri','Teklif bekleyeceğim'] },
+        ]
+      },
+      // Mevcut koddan korunan ekstra kategoriler
+      sigorta: {
+        ad: 'Konut Sigortası',
+        sorular: [
+          { id: 'tip',    label: 'Sigorta tipi?',               secenekler: ['Konut Sigortası','Deprem Sigortası (DASK)','Eşya Sigortası','Tüm Paket'] },
+          { id: 'konut',  label: 'Konut tipi?',                 secenekler: ['Kiracı (Kiralık)','Ev Sahibi','İşyeri / Ofis','Yazlık'] },
+          { id: 'yapi',   label: 'Yapı tipi?',                  secenekler: ['Daire','Müstakil Ev','Villa','Dubleks'] },
+          { id: 'metrekare', label: 'Yaklaşık metrekare?',      secenekler: ['50m² altı','50-100m²','100-150m²','150m² üzeri'] },
+          { id: 'esya',   label: 'Eşya değeri (yaklaşık)?',     secenekler: ['50.000₺ altı','50-150K₺','150-300K₺','300K₺ üzeri','Bilmiyorum'] },
+        ]
+      },
+      teknik: {
+        ad: 'Teknik Servis',
+        sorular: [
+          { id: 'cihaz',  label: 'Cihaz türü?',                 secenekler: ['Telefon','Laptop / Notebook','Masaüstü PC','Tablet','TV / Monitör','Beyaz Eşya','Küçük Ev Aleti','Diğer'] },
+          { id: 'marka',  label: 'Cihaz markası?',              secenekler: ['Samsung','Apple','Huawei','Arçelik / Beko','Vestel','Bosch','Diğer'] },
+          { id: 'sorun',  label: 'Sorun tipi?',                 secenekler: ['Ekran Kırık / Çatlak','Açılmıyor / Kapanıyor','Batarya Sorunu','Yazılım / Virüs','Su Hasarı','Ses / Mikrofon Sorunu','Şarj Sorunu','Diğer'] },
+          { id: 'servis', label: 'Servis şekli?',               secenekler: ['Evime Gelsin (Yerinde)','Getirip Bırakayım','Kargo ile Göndereceğim'] },
+        ]
+      },
+      aracyikama: {
+        ad: 'Yerinde Araç Yıkama',
+        sorular: [
+          { id: 'tip',    label: 'Yıkama tipi?',                secenekler: ['Sadece Dış Yıkama','Sadece İç Temizlik','İç + Dış Yıkama'] },
+          { id: 'arac',   label: 'Araç tipi?',                  secenekler: ['Binek Araç','SUV / Arazi','Minivan / Panelvan','Kamyonet','Motosiklet'] },
+          { id: 'zaman',  label: 'Ne zaman?',                   secenekler: ['Bugün','Yarın','Bu Hafta','Hafta Sonu','Tarih Belirlemedim'] },
+        ]
+      },
+    }
+  },
+
 };
 
-// Her kategori için ayrı state
+/* ═══════════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════════ */
+// state[anaKatKey][altKatKey] = { secimler: {}, fotoFiles: [], aciklama: '' }
 const state = {};
 Object.keys(kategoriler).forEach(k => {
-  state[k] = { secimler: {}, fotoFiles: [], aciklama: '' };
+  state[k] = {};
+  Object.keys(kategoriler[k].altKategoriler).forEach(ak => {
+    state[k][ak] = { secimler: {}, fotoFiles: [] };
+  });
 });
 
 let currentUser = null;
 let currentProfil = null;
 let acikKategori = null;
+// Her ana kategoride hangi alt kategori seçili
+const seciliAlt = {};
 
-// URL parametresinden kategori al
 const params = new URLSearchParams(window.location.search);
 const urlKategori = params.get('kategori');
 
@@ -392,9 +832,15 @@ async function profilYukle() {
   sayfaOlustur();
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   SAYFA OLUŞTUR
+═══════════════════════════════════════════════════════════════ */
 function sayfaOlustur() {
   const liste = document.getElementById('kategoriListe');
-  liste.innerHTML = Object.entries(kategoriler).map(([key, kat]) => `
+  liste.innerHTML = Object.entries(kategoriler).map(([key, kat]) => {
+    const ilkAlt = Object.keys(kat.altKategoriler)[0];
+    seciliAlt[key] = ilkAlt;
+    return `
     <div class="kategori-satir" id="satir_${key}">
       <div class="kategori-baslik" id="baslik_${key}" onclick="kategoriToggle('${key}')">
         <div class="kategori-baslik-ikon">${kat.em}</div>
@@ -405,21 +851,63 @@ function sayfaOlustur() {
         <span class="kategori-ok">▼</span>
       </div>
       <div class="kategori-body" id="body_${key}">
-        ${formHtmlOlustur(key)}
+        ${altKatBarHtml(key)}
+        <div class="form-alan" id="formAlan_${key}">
+          ${formHtmlOlustur(key, ilkAlt)}
+        </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 
-  // URL'den gelen kategoriyi aç
   if (urlKategori && kategoriler[urlKategori]) {
     setTimeout(() => kategoriToggle(urlKategori), 100);
   }
 }
 
-function formHtmlOlustur(key) {
+function altKatBarHtml(key) {
   const kat = kategoriler[key];
+  if (Object.keys(kat.altKategoriler).length <= 1) return '';
+  return `<div class="alt-kat-bar" id="altKatBar_${key}">
+    ${Object.entries(kat.altKategoriler).map(([ak, altKat]) =>
+      `<button class="alt-kat-btn${ak === seciliAlt[key] ? ' secili' : ''}"
+        onclick="altKatSec('${key}','${ak}')">${altKat.ad}</button>`
+    ).join('')}
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FORM HTML — Progressive Reveal
+═══════════════════════════════════════════════════════════════ */
+function formHtmlOlustur(key, altKey) {
+  const altKat = kategoriler[key].altKategoriler[altKey];
   const kullaniciAd = currentProfil?.full_name || currentUser?.email || '';
   const kullaniciTel = currentProfil?.phone || '';
+  const st = state[key][altKey];
+  const toplamSoru = altKat.sorular.length;
+
+  const sorularHtml = altKat.sorular.map((soru, idx) => {
+    const gorunenMi = idx === 0 || st.secimler[altKat.sorular[idx-1].id] !== undefined;
+    const fn = soru.coklu
+      ? `cokluSec('${key}','${altKey}','${soru.id}',this,${idx})`
+      : `tekSec('${key}','${altKey}','${soru.id}',this,${idx})`;
+
+    const seceneklerHtml = soru.secenekler.map(s => {
+      const secildi = soru.coklu
+        ? (st.secimler[soru.id] || '').split(', ').includes(s)
+        : st.secimler[soru.id] === s;
+      return `<button class="radio-btn${secildi ? ' selected' : ''}" onclick="${fn}">${s}</button>`;
+    }).join('');
+
+    return `
+    <div class="soru-blok${gorunenMi ? ' gorunen' : ''}" id="soru_${key}_${altKey}_${idx}">
+      <label class="form-label">${soru.label}</label>
+      <div class="radio-group" id="grp_${key}_${altKey}_${soru.id}">${seceneklerHtml}</div>
+    </div>`;
+  }).join('');
+
+  // İlerleme hesapla
+  const dolu = Object.keys(st.secimler).length;
+  const yuzde = toplamSoru > 0 ? Math.round((dolu / toplamSoru) * 100) : 0;
 
   return `
     <div class="kullanici-bilgi">
@@ -430,48 +918,43 @@ function formHtmlOlustur(key) {
       </div>
     </div>
 
-    <div id="formAlanlari_${key}">
-      ${kat.alanlar.map(alan => {
-        const fn = alan.coklu ? `cokluSec('${key}','${alan.id}',this)` : `tekSec('${key}','${alan.id}',this)`;
-        return `
-        <div class="form-group">
-          <label class="form-label">${alan.label}</label>
-          <div class="radio-group" id="grp_${key}_${alan.id}">
-            ${alan.secenekler.map(s => `<button class="radio-btn" onclick="${fn}">${s}</button>`).join('')}
-          </div>
-        </div>`;
-      }).join('')}
+    <div class="ilerleme-bar">
+      <div class="ilerleme-dolu" id="ilerleme_${key}_${altKey}" style="width:${yuzde}%"></div>
     </div>
 
-    <div class="form-group">
+    <div id="sorular_${key}_${altKey}">${sorularHtml}</div>
+
+    <div class="soru-blok${dolu >= 1 ? ' gorunen' : ''}" id="foto_${key}_${altKey}" style="max-height:200px">
       <label class="form-label">📸 Fotoğraf Ekle (isteğe bağlı)</label>
-      <div class="foto-ekle-btn" onclick="document.getElementById('fotoInput').setAttribute('data-key','${key}');document.getElementById('fotoInput').click()">
+      <div class="foto-ekle-btn" onclick="document.getElementById('fotoInput').setAttribute('data-key','${key}');document.getElementById('fotoInput').setAttribute('data-altkey','${altKey}');document.getElementById('fotoInput').click()">
         <span style="font-size:24px">📷</span> Fotoğraf Seç
       </div>
-      <div class="foto-preview" id="fotoPreview_${key}"></div>
+      <div class="foto-preview" id="fotoPreview_${key}_${altKey}"></div>
     </div>
 
-    <div class="form-group">
+    <div class="soru-blok${dolu >= 1 ? ' gorunen' : ''}" id="aciklama_${key}_${altKey}_blok" style="max-height:200px">
       <label class="form-label">📝 Ek Açıklama (isteğe bağlı)</label>
-      <textarea class="input" id="aciklama_${key}" rows="3" placeholder="Eklemek istediğiniz detaylar..." style="resize:none"></textarea>
+      <textarea class="input" id="aciklama_${key}_${altKey}" rows="3" placeholder="Eklemek istediğiniz detaylar..." style="resize:none"></textarea>
     </div>
 
-    <div id="formError_${key}" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:13px;font-weight:700;display:none;margin-bottom:12px"></div>
+    <div id="formError_${key}_${altKey}" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:13px;font-weight:700;display:none;margin-bottom:12px"></div>
 
-    <button class="gonder-btn" id="gonderBtn_${key}" onclick="teklifGonder('${key}')">
-      📩 Teklif İste — ${kat.ad}
+    <button class="gonder-btn" id="gonderBtn_${key}_${altKey}" onclick="teklifGonder('${key}','${altKey}')">
+      📩 Teklif İste — ${altKat.ad}
     </button>
   `;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   TOGGLE & SEKME
+═══════════════════════════════════════════════════════════════ */
 function kategoriToggle(key) {
   const baslik = document.getElementById('baslik_' + key);
-  const body   = document.getElementById('body_' + key);
+  const body   = document.getElementById('body_'   + key);
 
   if (acikKategori && acikKategori !== key) {
-    // Diğerini kapat
     document.getElementById('baslik_' + acikKategori).classList.remove('acik');
-    document.getElementById('body_' + acikKategori).classList.remove('acik');
+    document.getElementById('body_'   + acikKategori).classList.remove('acik');
   }
 
   const yeniDurum = body.classList.toggle('acik');
@@ -479,53 +962,112 @@ function kategoriToggle(key) {
   acikKategori = yeniDurum ? key : null;
 
   if (yeniDurum) {
-    // Sayfayı o satıra kaydır
     setTimeout(() => {
       document.getElementById('satir_' + key).scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 150);
   }
 }
 
-function tekSec(key, alanId, el) {
-  state[key].secimler[alanId] = el.textContent.trim();
-  document.querySelectorAll(`#grp_${key}_${alanId} .radio-btn`).forEach(b => b.classList.remove('selected'));
+function altKatSec(key, altKey) {
+  seciliAlt[key] = altKey;
+  // Tab butonlarını güncelle
+  const bar = document.getElementById('altKatBar_' + key);
+  if (bar) {
+    bar.querySelectorAll('.alt-kat-btn').forEach(btn => btn.classList.remove('secili'));
+    const idx = Object.keys(kategoriler[key].altKategoriler).indexOf(altKey);
+    if (bar.children[idx]) bar.children[idx].classList.add('secili');
+  }
+  // Formu yeniden çiz
+  document.getElementById('formAlan_' + key).innerHTML = formHtmlOlustur(key, altKey);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SEÇİM & PROGRESSİVE REVEAL
+═══════════════════════════════════════════════════════════════ */
+function soruAc(key, altKey, soruIdx) {
+  const altKat = kategoriler[key].altKategoriler[altKey];
+  const sonrakiIdx = soruIdx + 1;
+  if (sonrakiIdx < altKat.sorular.length) {
+    const sonrakiEl = document.getElementById(`soru_${key}_${altKey}_${sonrakiIdx}`);
+    if (sonrakiEl && !sonrakiEl.classList.contains('gorunen')) {
+      setTimeout(() => {
+        sonrakiEl.classList.add('gorunen');
+        sonrakiEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 200);
+    }
+  }
+  // Fotoğraf ve açıklama bloklarını da aç (1. sorudan sonra)
+  if (soruIdx >= 0) {
+    const fotoEl = document.getElementById(`foto_${key}_${altKey}`);
+    const acikEl = document.getElementById(`aciklama_${key}_${altKey}_blok`);
+    if (fotoEl) fotoEl.classList.add('gorunen');
+    if (acikEl) acikEl.classList.add('gorunen');
+  }
+
+  // İlerleme güncelle
+  const st = state[key][altKey];
+  const toplamSoru = altKat.sorular.length;
+  const dolu = Object.keys(st.secimler).length;
+  const yuzde = Math.round((dolu / toplamSoru) * 100);
+  const ilerlemeEl = document.getElementById(`ilerleme_${key}_${altKey}`);
+  if (ilerlemeEl) ilerlemeEl.style.width = yuzde + '%';
+}
+
+function tekSec(key, altKey, alanId, el, soruIdx) {
+  state[key][altKey].secimler[alanId] = el.textContent.trim();
+  document.querySelectorAll(`#grp_${key}_${altKey}_${alanId} .radio-btn`).forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
+  soruAc(key, altKey, soruIdx);
 }
 
-function cokluSec(key, alanId, el) {
+function cokluSec(key, altKey, alanId, el, soruIdx) {
   el.classList.toggle('selected');
-  const secili = [...document.querySelectorAll(`#grp_${key}_${alanId} .radio-btn.selected`)].map(b => b.textContent.trim());
-  state[key].secimler[alanId] = secili.join(', ');
+  const secili = [...document.querySelectorAll(`#grp_${key}_${altKey}_${alanId} .radio-btn.selected`)].map(b => b.textContent.trim());
+  if (secili.length > 0) {
+    state[key][altKey].secimler[alanId] = secili.join(', ');
+  } else {
+    delete state[key][altKey].secimler[alanId];
+  }
+  soruAc(key, altKey, soruIdx);
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   FOTOĞRAF
+═══════════════════════════════════════════════════════════════ */
 function fotoSec(input) {
-  const key = input.getAttribute('data-key');
-  if (!key) return;
+  const key    = input.getAttribute('data-key');
+  const altKey = input.getAttribute('data-altkey');
+  if (!key || !altKey) return;
   Array.from(input.files).forEach(f => {
-    if (state[key].fotoFiles.length < 5) state[key].fotoFiles.push(f);
+    if (state[key][altKey].fotoFiles.length < 5) state[key][altKey].fotoFiles.push(f);
   });
   input.value = '';
-  fotoPreviewGuncelle(key);
+  fotoPreviewGuncelle(key, altKey);
 }
 
-function fotoPreviewGuncelle(key) {
-  document.getElementById('fotoPreview_' + key).innerHTML =
-    state[key].fotoFiles.map((f, i) => {
-      const url = URL.createObjectURL(f);
-      return `<div class="foto-thumb"><img src="${url}"><button class="foto-remove" onclick="fotoSil('${key}',${i})">✕</button></div>`;
-    }).join('');
+function fotoPreviewGuncelle(key, altKey) {
+  const el = document.getElementById(`fotoPreview_${key}_${altKey}`);
+  if (!el) return;
+  el.innerHTML = state[key][altKey].fotoFiles.map((f, i) => {
+    const url = URL.createObjectURL(f);
+    return `<div class="foto-thumb"><img src="${url}"><button class="foto-remove" onclick="fotoSil('${key}','${altKey}',${i})">✕</button></div>`;
+  }).join('');
 }
 
-function fotoSil(key, i) {
-  state[key].fotoFiles.splice(i, 1);
-  fotoPreviewGuncelle(key);
+function fotoSil(key, altKey, i) {
+  state[key][altKey].fotoFiles.splice(i, 1);
+  fotoPreviewGuncelle(key, altKey);
 }
 
-async function teklifGonder(key) {
-  const kat = kategoriler[key];
-  const zorunlu = kat.alanlar.filter(a => !a.coklu);
-  const eksik = zorunlu.find(a => !state[key].secimler[a.id]);
-  const errEl = document.getElementById('formError_' + key);
+/* ═══════════════════════════════════════════════════════════════
+   GÖNDER
+═══════════════════════════════════════════════════════════════ */
+async function teklifGonder(key, altKey) {
+  const altKat = kategoriler[key].altKategoriler[altKey];
+  const st = state[key][altKey];
+  const zorunlu = altKat.sorular.filter(a => !a.coklu);
+  const eksik = zorunlu.find(a => !st.secimler[a.id]);
+  const errEl = document.getElementById(`formError_${key}_${altKey}`);
 
   if (eksik) {
     errEl.textContent = `⚠️ Lütfen "${eksik.label}" seçin!`;
@@ -534,11 +1076,11 @@ async function teklifGonder(key) {
   }
   errEl.style.display = 'none';
 
-  const btn = document.getElementById('gonderBtn_' + key);
+  const btn = document.getElementById(`gonderBtn_${key}_${altKey}`);
   btn.textContent = '⏳ Gönderiliyor...';
   btn.disabled = true;
 
-  const fotoFiles = state[key].fotoFiles;
+  const fotoFiles = st.fotoFiles;
   let foto_urls = [];
   for (let i = 0; i < fotoFiles.length; i++) {
     const file = fotoFiles[i];
@@ -551,20 +1093,22 @@ async function teklifGonder(key) {
     }
   }
 
-  const aciklama = document.getElementById('aciklama_' + key).value.trim();
+  const aciklamaEl = document.getElementById(`aciklama_${key}_${altKey}`);
+  const aciklama = aciklamaEl ? aciklamaEl.value.trim() : '';
+
   const { error } = await sb.from('teklifler').insert({
-    user_id: currentUser.id,
+    user_id:  currentUser.id,
     ad_soyad: currentProfil?.full_name || '',
-    telefon: currentProfil?.phone || '',
-    kategori: key,
-    detaylar: { ...state[key].secimler, aciklama, foto_urls },
-    durum: 'bekliyor'
+    telefon:  currentProfil?.phone || '',
+    kategori: key + '_' + altKey,
+    detaylar: { ...st.secimler, aciklama, foto_urls },
+    durum:    'bekliyor'
   });
 
   if (error) {
     errEl.textContent = 'Hata: ' + error.message;
     errEl.style.display = 'block';
-    btn.textContent = `📩 Teklif İste — ${kat.ad}`;
+    btn.textContent = `📩 Teklif İste — ${altKat.ad}`;
     btn.disabled = false;
     return;
   }
