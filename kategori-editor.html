@@ -34,7 +34,6 @@
     overflow-x: hidden;
   }
 
-  /* HEADER */
   header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -47,17 +46,10 @@
     z-index: 100;
     flex-wrap: wrap;
   }
-  .logo {
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--accent);
-    letter-spacing: -0.5px;
-    white-space: nowrap;
-  }
+  .logo { font-size: 18px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; white-space: nowrap; }
   .logo span { color: var(--text2); font-weight: 400; font-size: 12px; margin-left: 6px; }
   header .actions { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
 
-  /* BUTTONS */
   .btn {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
@@ -82,7 +74,6 @@
   .btn.small { padding: 5px 9px; font-size: 11px; }
   .btn.icon-btn { padding: 7px 10px; }
 
-  /* MOBILE TAB BAR */
   .mobile-tabs {
     display: none;
     background: var(--surface);
@@ -105,12 +96,8 @@
     transition: all 0.15s;
     -webkit-tap-highlight-color: transparent;
   }
-  .mobile-tabs button.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
+  .mobile-tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-  /* MAIN LAYOUT */
   .main {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -119,7 +106,6 @@
     overflow: hidden;
   }
 
-  /* LEFT PANEL — TREE */
   .tree-panel {
     background: var(--surface);
     border-right: 1px solid var(--border);
@@ -147,12 +133,7 @@
   .tree-scroll::-webkit-scrollbar-track { background: transparent; }
   .tree-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  /* SEARCH */
-  .tree-search {
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
+  .tree-search { padding: 8px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
   .tree-search input {
     width: 100%;
     background: var(--bg);
@@ -166,7 +147,6 @@
   }
   .tree-search input:focus { border-color: var(--accent); }
 
-  /* TREE NODES */
   .tree-node { user-select: none; }
   .node-row {
     display: flex;
@@ -183,11 +163,8 @@
   .node-row.selected .node-label { color: var(--accent); }
 
   .node-toggle {
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 18px; height: 18px;
+    display: flex; align-items: center; justify-content: center;
     color: var(--text3);
     font-size: 10px;
     flex-shrink: 0;
@@ -196,14 +173,7 @@
   .node-toggle.open { transform: rotate(90deg); }
   .node-toggle.leaf { opacity: 0; pointer-events: none; }
 
-  .node-label {
-    font-size: 12px;
-    color: var(--text);
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  .node-label { font-size: 12px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .node-label.level-0 { font-weight: 800; font-size: 13px; color: var(--accent2); }
   .node-label.level-1 { font-weight: 700; color: var(--text); }
   .node-label.level-2 { font-weight: 600; color: var(--text2); }
@@ -221,11 +191,7 @@
     margin-right: 4px;
   }
   .node-row:hover .node-actions, .node-row.selected .node-actions { display: flex; }
-  .node-actions {
-    display: none;
-    gap: 3px;
-    flex-shrink: 0;
-  }
+  .node-actions { display: none; gap: 3px; flex-shrink: 0; }
   .node-action-btn {
     width: 22px; height: 22px;
     background: transparent;
@@ -243,48 +209,22 @@
 
   .tree-children { display: none; }
   .tree-children.open { display: block; }
-
   .highlight { background: #2a2a00; }
 
-  /* RIGHT PANEL — EDITOR */
-  .editor-panel {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  .editor-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    -webkit-overflow-scrolling: touch;
-  }
+  .editor-panel { display: flex; flex-direction: column; overflow: hidden; }
+  .editor-scroll { flex: 1; overflow-y: auto; padding: 20px; -webkit-overflow-scrolling: touch; }
   .editor-scroll::-webkit-scrollbar { width: 3px; }
   .editor-scroll::-webkit-scrollbar-track { background: transparent; }
   .editor-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
   .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: var(--text3);
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    gap: 8px;
-    text-align: center;
-    padding: 20px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; color: var(--text3); font-family: 'DM Mono', monospace; font-size: 12px;
+    gap: 8px; text-align: center; padding: 20px;
   }
   .empty-state .big { font-size: 44px; }
 
-  /* EDITOR SECTIONS */
-  .ed-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 14px;
-    overflow: hidden;
-  }
+  .ed-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 14px; overflow: hidden; }
   .ed-section-title {
     padding: 9px 14px;
     background: var(--surface2);
@@ -294,82 +234,35 @@
     color: var(--text2);
     text-transform: uppercase;
     letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   }
   .ed-section-body { padding: 14px; }
 
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
   .form-row.full { grid-template-columns: 1fr; }
-
   .form-group { display: flex; flex-direction: column; gap: 4px; }
-  .form-group label {
-    font-size: 10px;
-    font-family: 'DM Mono', monospace;
-    color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  .form-group label { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-group input, .form-group select, .form-group textarea {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+    color: var(--text); font-family: 'Syne', sans-serif; font-size: 13px;
+    padding: 8px 10px; transition: border-color 0.15s; outline: none; -webkit-appearance: none;
   }
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    padding: 8px 10px;
-    transition: border-color 0.15s;
-    outline: none;
-    -webkit-appearance: none;
-  }
-  .form-group input:focus,
-  .form-group select:focus,
-  .form-group textarea:focus { border-color: var(--accent); }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
   .form-group select option { background: var(--surface); }
 
-  /* FIELDS EDITOR */
   .fields-list { display: flex; flex-direction: column; gap: 5px; }
   .field-item {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 8px 10px;
-    transition: border-color 0.15s;
+    display: flex; align-items: center; gap: 7px;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 10px; transition: border-color 0.15s;
   }
   .field-item:hover { border-color: var(--text3); }
   .field-drag { cursor: grab; color: var(--text3); font-size: 13px; flex-shrink: 0; touch-action: none; }
-  .field-item input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 12px;
-    outline: none;
-    min-width: 0;
-  }
+  .field-item input { flex: 1; background: transparent; border: none; color: var(--text); font-family: 'Syne', sans-serif; font-size: 12px; outline: none; min-width: 0; }
   .field-item input::placeholder { color: var(--text3); }
   .field-type-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    padding: 2px 6px;
-    border-radius: 3px;
-    border: 1px solid;
-    flex-shrink: 0;
-    cursor: pointer;
-    white-space: nowrap;
+    font-family: 'DM Mono', monospace; font-size: 9px; padding: 2px 6px;
+    border-radius: 3px; border: 1px solid; flex-shrink: 0; cursor: pointer; white-space: nowrap;
     -webkit-tap-highlight-color: transparent;
   }
   .field-type-badge.text { color: var(--blue); border-color: var(--blue); }
@@ -377,200 +270,81 @@
   .field-type-badge.number { color: var(--accent2); border-color: var(--accent2); }
   .field-type-badge.bool { color: var(--green); border-color: var(--green); }
   .field-options-row {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text3);
-    padding: 3px 10px 6px 34px;
-    border-left: 1px solid var(--border);
-    margin-left: 10px;
-    margin-top: -2px;
-    margin-bottom: 2px;
+    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3);
+    padding: 3px 10px 6px 34px; border-left: 1px solid var(--border);
+    margin-left: 10px; margin-top: -2px; margin-bottom: 2px;
   }
   .field-options-row input {
-    background: transparent;
-    border: none;
-    border-bottom: 1px dashed var(--border);
-    color: var(--text2);
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    width: 100%;
-    outline: none;
-    padding: 2px 0;
+    background: transparent; border: none; border-bottom: 1px dashed var(--border);
+    color: var(--text2); font-family: 'DM Mono', monospace; font-size: 11px;
+    width: 100%; outline: none; padding: 2px 0;
   }
 
-  .add-field-row {
-    display: flex;
-    gap: 7px;
-    margin-top: 8px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
+  .add-field-row { display: flex; gap: 7px; margin-top: 8px; align-items: center; flex-wrap: wrap; }
   .add-field-row input {
-    flex: 1;
-    min-width: 120px;
-    background: var(--bg);
-    border: 1px dashed var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 12px;
-    padding: 7px 10px;
-    outline: none;
-    transition: border-color 0.15s;
+    flex: 1; min-width: 120px; background: var(--bg); border: 1px dashed var(--border);
+    border-radius: 6px; color: var(--text); font-family: 'Syne', sans-serif;
+    font-size: 12px; padding: 7px 10px; outline: none; transition: border-color 0.15s;
   }
   .add-field-row input:focus { border-color: var(--accent); border-style: solid; }
   .add-field-row select {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 11px;
-    padding: 7px 8px;
-    outline: none;
-    cursor: pointer;
-    -webkit-appearance: none;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+    color: var(--text); font-family: 'Syne', sans-serif; font-size: 11px;
+    padding: 7px 8px; outline: none; cursor: pointer; -webkit-appearance: none;
   }
 
-  /* BREADCRUMB */
-  .breadcrumb {
-    padding: 10px 20px 0;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    flex-wrap: wrap;
-    flex-shrink: 0;
-  }
-  .breadcrumb span {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--text3);
-  }
-  .breadcrumb span.crumb {
-    color: var(--text2);
-    cursor: pointer;
-  }
+  .breadcrumb { padding: 10px 20px 0; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; flex-shrink: 0; }
+  .breadcrumb span { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); }
+  .breadcrumb span.crumb { color: var(--text2); cursor: pointer; }
   .breadcrumb span.crumb:hover { color: var(--text); }
   .breadcrumb span.sep { color: var(--text3); }
   .breadcrumb span.current { color: var(--accent); font-weight: 500; }
 
-  /* MODAL */
   .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.75);
-    display: none;
-    align-items: flex-end;
-    justify-content: center;
-    z-index: 999;
-    backdrop-filter: blur(4px);
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    display: none; align-items: flex-end; justify-content: center;
+    z-index: 999; backdrop-filter: blur(4px);
   }
   .modal-overlay.open { display: flex; }
   .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px 16px 0 0;
-    padding: 24px 20px;
-    width: 100%;
-    max-width: 480px;
-    animation: slideUp 0.2s ease;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px 16px 0 0; padding: 24px 20px;
+    width: 100%; max-width: 480px; animation: slideUp 0.2s ease;
   }
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
-  .modal-handle {
-    width: 36px; height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    margin: 0 auto 16px;
-  }
-  .modal h3 {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  .modal p {
-    font-size: 11px;
-    color: var(--text2);
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 14px;
-  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
+  .modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .modal p { font-size: 11px; color: var(--text2); font-family: 'DM Mono', monospace; margin-bottom: 14px; }
   .modal input, .modal select {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    padding: 12px 14px;
-    outline: none;
-    margin-bottom: 12px;
-    -webkit-appearance: none;
+    width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text); font-family: 'Syne', sans-serif; font-size: 14px;
+    padding: 12px 14px; outline: none; margin-bottom: 12px; -webkit-appearance: none;
   }
   .modal input:focus, .modal select:focus { border-color: var(--accent); }
   .modal .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
 
-  /* JSON PANEL */
   .json-panel {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: 0;
-    background: var(--surface);
-    border-top: 2px solid var(--accent);
+    position: fixed; bottom: 0; left: 0; right: 0; height: 0;
+    background: var(--surface); border-top: 2px solid var(--accent);
     transition: height 0.25s cubic-bezier(0.4,0,0.2,1);
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    z-index: 200; display: flex; flex-direction: column; overflow: hidden;
   }
   .json-panel.open { height: 60vh; }
-  .json-panel-header {
-    padding: 10px 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .json-panel-title {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--accent);
-    font-weight: 500;
-  }
+  .json-panel-header { padding: 10px 14px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .json-panel-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); font-weight: 500; }
   .json-textarea {
-    flex: 1;
-    background: var(--bg);
-    border: none;
-    color: #7ec8e3;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    padding: 14px;
-    resize: none;
-    outline: none;
-    line-height: 1.6;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    flex: 1; background: var(--bg); border: none; color: #7ec8e3;
+    font-family: 'DM Mono', monospace; font-size: 10px; padding: 14px;
+    resize: none; outline: none; line-height: 1.6; overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
 
-  /* TOAST */
   .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
+    position: fixed; bottom: 24px; left: 50%;
     transform: translateX(-50%) translateY(80px);
-    background: var(--accent);
-    color: #000;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 10px 18px;
-    border-radius: 20px;
-    transition: transform 0.25s;
-    z-index: 9999;
-    pointer-events: none;
-    white-space: nowrap;
+    background: var(--accent); color: #000;
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 10px 18px; border-radius: 20px; transition: transform 0.25s;
+    z-index: 9999; pointer-events: none; white-space: nowrap;
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
@@ -581,79 +355,41 @@
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
   .path-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 2px 6px;
-    color: var(--text3);
-    margin-left: auto;
+    font-family: 'DM Mono', monospace; font-size: 9px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px;
+    color: var(--text3); margin-left: auto;
   }
 
   .required-toggle {
-    width: 28px; height: 14px;
-    background: var(--border);
-    border-radius: 7px;
-    cursor: pointer;
-    position: relative;
-    flex-shrink: 0;
-    transition: background 0.15s;
+    width: 28px; height: 14px; background: var(--border); border-radius: 7px;
+    cursor: pointer; position: relative; flex-shrink: 0; transition: background 0.15s;
     -webkit-tap-highlight-color: transparent;
   }
   .required-toggle.on { background: var(--accent); }
   .required-toggle::after {
-    content: '';
-    position: absolute;
-    left: 2px; top: 2px;
-    width: 10px; height: 10px;
-    background: #fff;
-    border-radius: 50%;
-    transition: left 0.15s;
+    content: ''; position: absolute; left: 2px; top: 2px;
+    width: 10px; height: 10px; background: #fff; border-radius: 50%; transition: left 0.15s;
   }
   .required-toggle.on::after { left: 16px; }
 
-  /* MOBILE RESPONSIVE */
   @media (max-width: 640px) {
     header { padding: 10px 14px; top: 0; }
     .logo { font-size: 16px; }
     .logo span { display: none; }
     header .actions .btn:not(.accent):not(.success) { display: none; }
     header .actions .btn.json-btn { display: flex; }
-
     .mobile-tabs { display: flex; top: 49px; }
-
-    .main {
-      grid-template-columns: 1fr;
-      height: auto;
-      min-height: calc(100vh - 93px);
-      overflow: visible;
-    }
-
-    .tree-panel {
-      height: calc(100vh - 93px);
-      border-right: none;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-    }
+    .main { grid-template-columns: 1fr; height: auto; min-height: calc(100vh - 93px); overflow: visible; }
+    .tree-panel { height: calc(100vh - 93px); border-right: none; border-bottom: 1px solid var(--border); display: flex; }
     .tree-panel.mobile-hidden { display: none; }
-
-    .editor-panel {
-      height: auto;
-      min-height: calc(100vh - 93px);
-    }
+    .editor-panel { height: auto; min-height: calc(100vh - 93px); }
     .editor-panel.mobile-hidden { display: none; }
     .editor-scroll { padding: 14px; overflow: visible; height: auto; }
-
     .breadcrumb { padding: 10px 14px 0; }
-
     .form-row { grid-template-columns: 1fr; }
-
     .json-panel.open { height: 70vh; }
-
     .modal-overlay { align-items: flex-end; }
     .modal { border-radius: 16px 16px 0 0; max-width: 100%; }
-
     .node-actions { display: flex !important; }
   }
 </style>
@@ -676,7 +412,6 @@
 </div>
 
 <div class="main">
-  <!-- LEFT: TREE -->
   <div class="tree-panel" id="treePanel">
     <div class="panel-header">
       Kategori Ağacı
@@ -690,7 +425,6 @@
     <div class="tree-scroll" id="treeRoot"></div>
   </div>
 
-  <!-- RIGHT: EDITOR -->
   <div class="editor-panel mobile-hidden" id="editorPanel">
     <div class="breadcrumb" id="breadcrumb"></div>
     <div class="editor-scroll" id="editorContent">
@@ -703,7 +437,6 @@
   </div>
 </div>
 
-<!-- JSON PANEL -->
 <div class="json-panel" id="jsonPanel">
   <div class="json-panel-header">
     <span class="json-panel-title">JSON ÇIKTI</span>
@@ -713,7 +446,6 @@
   <textarea class="json-textarea" id="jsonTextarea" readonly></textarea>
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -727,420 +459,503 @@
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
-
-<!-- IMPORT INPUT -->
 <input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImport(event)">
 
 <script>
+// ─── FIELD BUILDERS ───────────────────────────────────────────────────────────
+function f(id, name, type, required, options) {
+  const o = { id, name, type: type || 'text', required: !!required };
+  if (options) o.options = options;
+  return o;
+}
+
+// Tüm satılık/iş yeri ilanlarında ZORUNLU olan evrensel alanlar
+function fields_universal_satilik() {
+  return [
+    f('u1', 'İlan Başlığı', 'text', true),
+    f('u2', 'Açıklama', 'text', true),
+    f('u3', 'Fiyat', 'number', true),
+    f('u4', 'm² (Brüt)', 'number', true),
+    f('u5', 'm² (Net)', 'number', true),
+    f('u6', 'Tapu Durumu', 'select', true, ['Kat Mülkiyetli','Kat İrtifaklı','Hisseli Tapu','Müstakil Tapulu','Arsa Tapulu','Kooperatif Hisseli Tapu','Yurt Dışı Tapulu','Tapu Kaydı Yok']),
+    f('u7', 'Taşınmaz Numarası', 'text', true),
+    f('u8', 'Kimden', 'select', true, ['Sahibinden','Emlakçı']),
+    f('u9', 'Takaslı', 'bool', false),
+  ];
+}
+
+// Kiralık ilanlar için evrensel alanlar (tapu yok)
+function fields_universal_kiralik() {
+  return [
+    f('u1', 'İlan Başlığı', 'text', true),
+    f('u2', 'Açıklama', 'text', true),
+    f('u3', 'Fiyat', 'number', true),
+    f('u4', 'm² (Brüt)', 'number', true),
+    f('u5', 'm² (Net)', 'number', true),
+    f('u8', 'Kimden', 'select', true, ['Sahibinden','Emlakçı']),
+  ];
+}
+
+// Konut için ortak ek alanlar (satılık+kiralık ortak)
+function fields_konut_detay() {
+  return [
+    f('ka1', 'Oda Sayısı', 'select', false, ['Stüdyo (1+0)','1+1','2+1','3+1','4+1','5+1','6+1 ve üzeri']),
+    f('ka2', 'Bina Yaşı', 'select', false, ['0 (Sıfır)','1-5','6-10','11-15','16-20','21 ve üzeri']),
+    f('ka3', 'Bulunduğu Kat', 'select', false, ['Bodrum','Zemin','Bahçe Katı','1','2','3','4','5','6','7','8','9','10 ve üzeri']),
+    f('ka4', 'Kat Sayısı', 'number', false),
+    f('ka5', 'Isıtma', 'select', false, ['Doğalgaz (Kombi)','Merkezi','Soba','Yerden Isıtma','Klima','Yok']),
+    f('ka6', 'Banyo Sayısı', 'number', false),
+    f('ka7', 'Mutfak', 'select', false, ['Açık Mutfak','Kapalı Mutfak','Amerikan Mutfak']),
+    f('ka8', 'Balkon', 'bool', false),
+    f('ka9', 'Asansör', 'bool', false),
+    f('ka10', 'Otopark', 'bool', false),
+    f('ka11', 'Eşyalı', 'bool', false),
+    f('ka12', 'Yapının Durumu', 'select', false, ['Sıfır','İkinci El','Boş','Kiracılı']),
+    f('ka13', 'Aidat (TL)', 'number', false),
+    f('ka14', 'Krediye Uygun', 'bool', false),
+  ];
+}
+
+// Satılık konut = evrensel + detay
+function flds_konut_sat() { return [...fields_universal_satilik(), ...fields_konut_detay()]; }
+// Kiralık konut = evrensel_kiralik + detay
+function flds_konut_kir() { return [...fields_universal_kiralik(), ...fields_konut_detay()]; }
+
+// Köşk/Yalı/Çiftlik için ekstra
+function flds_konut_sat_kosk() {
+  return [...flds_konut_sat(),
+    f('kc1', 'Zemin Etüdü', 'bool', false),
+    f('kc2', 'Kullanım Durumu', 'select', false, ['Boş','Kiracılı','Ev Sahibi Kullanıyor']),
+  ];
+}
+function flds_konut_kir_kosk() {
+  return [...flds_konut_kir(),
+    f('kc1', 'Zemin Etüdü', 'bool', false),
+    f('kc2', 'Kullanım Durumu', 'select', false, ['Boş','Kiracılı','Ev Sahibi Kullanıyor']),
+  ];
+}
+
+// Turistik/günlük kiralık
+function flds_turistik() {
+  return [
+    f('u1', 'İlan Başlığı', 'text', true),
+    f('u2', 'Açıklama', 'text', true),
+    f('u3', 'Fiyat (Gecelik)', 'number', true),
+    f('u4', 'm² (Brüt)', 'number', false),
+    f('u5', 'm² (Net)', 'number', false),
+    f('kd1', 'Oda Sayısı', 'select', false, ['Stüdyo','1+1','2+1','3+1','4+1']),
+    f('kd2', 'Bulunduğu Kat', 'select', false, ['Zemin','1','2','3','4','5 ve üzeri']),
+    f('kd3', 'Isıtma', 'select', false, ['Doğalgaz (Kombi)','Merkezi','Klima','Soba','Yok']),
+    f('kd4', 'Banyo Sayısı', 'number', false),
+    f('kd5', 'Mutfak', 'select', false, ['Açık Mutfak','Kapalı Mutfak','Amerikan Mutfak']),
+    f('kd6', 'Kişi Kapasitesi', 'number', false),
+    f('kd7', 'Yatak Sayısı', 'number', false),
+    f('kd8', 'Balkon', 'bool', false),
+    f('kd9', 'Asansör', 'bool', false),
+    f('kd10', 'Otopark', 'bool', false),
+    f('kd11', 'İzin Belge No', 'text', false),
+    f('u8', 'Kimden', 'select', true, ['Sahibinden','Emlakçı']),
+  ];
+}
+
+// Devre mülk
+function flds_devremulk() {
+  return [
+    f('u1', 'İlan Başlığı', 'text', true),
+    f('u2', 'Açıklama', 'text', true),
+    f('u3', 'Fiyat', 'number', true),
+    f('ke1', 'Devre Mülk Adı', 'text', true),
+    f('ke2', 'Dönem', 'text', false),
+    f('ke3', 'Süre', 'text', false),
+    f('u4', 'm² (Brüt)', 'number', false),
+    f('ke4', 'Oda Sayısı', 'select', false, ['1+1','2+1','3+1','4+1']),
+    f('ke5', 'Kişi Kapasitesi', 'number', false),
+    f('ke6', 'Yatak Sayısı', 'number', false),
+    f('ke7', 'Banyo Sayısı', 'number', false),
+    f('ke8', 'İzin Belge No', 'text', false),
+    f('u8', 'Kimden', 'select', true, ['Sahibinden','Emlakçı']),
+  ];
+}
+
+// İş Yeri - ortak evrensel + zorunlu standart alanlar
+function fields_iy_base() {
+  return [
+    ...fields_universal_satilik(),
+    f('iy_durum', 'Yapının Durumu', 'select', false, ['Sıfır','İkinci El','Boş','Kiracılı']),
+    f('iy_kredi', 'Krediye Uygun', 'bool', false),
+    f('iy_aidat', 'Aidat (TL)', 'number', false),
+    f('iy_bina_yasi', 'Bina Yaşı', 'select', false, ['0 (Sıfır)','1-5','6-10','11-15','16-20','21 ve üzeri']),
+    f('iy_isinma', 'Isıtma', 'select', false, ['Doğalgaz (Kombi)','Merkezi','Klima','Soba','Yerden Isıtma','Yok']),
+  ];
+}
+
+// İş Yeri kategorilerine özel ek alanlar
+function flds_iy_ofis() {
+  return [...fields_iy_base(),
+    f('iy_oda', 'Oda Sayısı', 'number', false),
+    f('iy_kat', 'Bulunduğu Kat', 'select', false, ['Bodrum','Zemin','1','2','3','4','5','6','7','8','9','10 ve üzeri']),
+    f('iy_kat_sayisi', 'Kat Sayısı', 'number', false),
+    f('iy_asansor', 'Asansör', 'bool', false),
+    f('iy_otopark', 'Otopark', 'bool', false),
+  ];
+}
+
+function flds_iy_dukkan() {
+  return [...fields_iy_base(),
+    f('iy_kat', 'Bulunduğu Kat', 'select', false, ['Bodrum','Zemin','1','2','3','4','5 ve üzeri']),
+    f('iy_kat_sayisi', 'Kat Sayısı', 'number', false),
+    f('iy_giris_yukseklik', 'Giriş Yüksekliği (m)', 'number', false),
+    f('iy_asansor', 'Asansör', 'bool', false),
+    f('iy_otopark', 'Otopark', 'bool', false),
+  ];
+}
+
+function flds_iy_depo() {
+  return [...fields_iy_base(),
+    f('iy_giris_yukseklik', 'Giriş Yüksekliği (m)', 'number', false),
+    f('iy_acik_alan', 'Açık Alan (m²)', 'number', false),
+    f('iy_kapali_alan', 'Kapalı Alan (m²)', 'number', false),
+    f('iy_otopark', 'Otopark', 'bool', false),
+    f('iy_zemin', 'Zemin Etüdü', 'bool', false),
+  ];
+}
+
+function flds_iy_fabrika() {
+  return [...fields_iy_base(),
+    f('iy_acik_alan', 'Açık Alan (m²)', 'number', false),
+    f('iy_kapali_alan', 'Kapalı Alan (m²)', 'number', false),
+    f('iy_bina_adedi', 'Bina Adedi', 'number', false),
+    f('iy_kat_sayisi', 'Kat Sayısı', 'number', false),
+    f('iy_giris_yukseklik', 'Giriş Yüksekliği (m)', 'number', false),
+    f('iy_zemin', 'Zemin Etüdü', 'bool', false),
+    f('iy_otopark', 'Otopark', 'bool', false),
+  ];
+}
+
+function flds_iy_akaryakit() {
+  return [...fields_iy_base(),
+    f('iy_acik_alan', 'Açık Alan (m²)', 'number', false),
+    f('iy_kapali_alan', 'Kapalı Alan (m²)', 'number', false),
+    f('iy_pompa', 'Pompa Sayısı', 'number', false),
+    f('iy_gunluk_satis', 'Günlük Satış (Litre)', 'number', false),
+  ];
+}
+
+function flds_iy_yiyecek() {
+  return [...fields_iy_base(),
+    f('iy_masa', 'Masa Sayısı', 'number', false),
+    f('iy_kapasite', 'Kişi Kapasitesi', 'number', false),
+    f('iy_kat', 'Bulunduğu Kat', 'select', false, ['Bodrum','Zemin','1','2','3','4','5 ve üzeri']),
+    f('iy_asansor', 'Asansör', 'bool', false),
+    f('iy_otopark', 'Otopark', 'bool', false),
+  ];
+}
+
+function flds_iy_avm_plaza() {
+  return [...fields_iy_base(),
+    f('iy_kat_sayisi', 'Kat Sayısı', 'number', false),
+    f('iy_asansor_sayisi', 'Asansör Sayısı', 'number', false),
+    f('iy_otopark', 'Otopark', 'bool', false),
+    f('iy_otopark_kapasite', 'Otopark Kapasitesi', 'number', false),
+  ];
+}
+
+function flds_iy_komple_bina() {
+  return [...fields_iy_base(),
+    f('iy_kat_sayisi', 'Kat Sayısı', 'number', false),
+    f('iy_daire_sayisi', 'Daire/Birim Sayısı', 'number', false),
+    f('iy_asansor', 'Asansör', 'bool', false),
+    f('iy_otopark', 'Otopark', 'bool', false),
+    f('iy_zemin', 'Zemin Etüdü', 'bool', false),
+  ];
+}
+
+function flds_iy_spor_spa() {
+  return [...fields_iy_base(),
+    f('iy_kapasite', 'Kişi Kapasitesi', 'number', false),
+    f('iy_kat', 'Bulunduğu Kat', 'select', false, ['Bodrum','Zemin','1','2','3','4','5 ve üzeri']),
+    f('iy_asansor', 'Asansör', 'bool', false),
+    f('iy_otopark', 'Otopark', 'bool', false),
+    f('iy_havuz', 'Havuz', 'bool', false),
+  ];
+}
+
+function flds_iy_saglik() {
+  return [...fields_iy_base(),
+    f('iy_oda', 'Muayene/Oda Sayısı', 'number', false),
+    f('iy_kat', 'Bulunduğu Kat', 'select', false, ['Bodrum','Zemin','1','2','3','4','5 ve üzeri']),
+    f('iy_asansor', 'Asansör', 'bool', false),
+    f('iy_otopark', 'Otopark', 'bool', false),
+  ];
+}
+
+function flds_iy_sinema_dugun() {
+  return [...fields_iy_base(),
+    f('iy_kapasite', 'Kişi Kapasitesi', 'number', false),
+    f('iy_masa', 'Masa Sayısı', 'number', false),
+    f('iy_asansor', 'Asansör', 'bool', false),
+    f('iy_otopark', 'Otopark', 'bool', false),
+  ];
+}
+
+function flds_iy_enerji() {
+  return [...fields_iy_base(),
+    f('iy_tip', 'Tesis Tipi', 'select', false, ['Biyokütle & Biyogaz','Güneş Enerjisi','Hidroelektrik','Jeotermal','Rüzgar Enerjisi','Termik']),
+    f('iy_acik_alan', 'Açık Alan (m²)', 'number', false),
+    f('iy_kapali_alan', 'Kapalı Alan (m²)', 'number', false),
+    f('iy_kullanim', 'Kullanım Durumu', 'select', false, ['Aktif','Pasif']),
+  ];
+}
+
+function flds_iy_ciftlik() {
+  return [...fields_iy_base(),
+    f('iy_acik_alan', 'Açık Alan (m²)', 'number', false),
+    f('iy_kapali_alan', 'Kapalı Alan (m²)', 'number', false),
+    f('iy_zemin', 'Zemin Etüdü', 'bool', false),
+    f('iy_otopark', 'Otopark', 'bool', false),
+  ];
+}
+
+function flds_iy_genel() {
+  return [...fields_iy_base(),
+    f('iy_kat', 'Bulunduğu Kat', 'select', false, ['Bodrum','Zemin','1','2','3','4','5 ve üzeri']),
+    f('iy_asansor', 'Asansör', 'bool', false),
+    f('iy_otopark', 'Otopark', 'bool', false),
+  ];
+}
+
+// Devren satılık konut
+function flds_devren_konut() {
+  return [...fields_universal_satilik(),
+    f('kf1', 'Kalan Ödeme Tutarı', 'number', false),
+    f('kf2', 'Kalan Taksit', 'number', false),
+    f('ka1', 'Oda Sayısı', 'select', false, ['Stüdyo','1+1','2+1','3+1','4+1']),
+    f('ka2', 'Bina Yaşı', 'select', false, ['0 (Sıfır)','1-5','6-10','11-15','16-20','21 ve üzeri']),
+    f('ka3', 'Bulunduğu Kat', 'select', false, ['Bodrum','Zemin','Bahçe Katı','1','2','3','4','5','6','7','8','9','10 ve üzeri']),
+    f('ka5', 'Isıtma', 'select', false, ['Doğalgaz (Kombi)','Merkezi','Klima','Soba','Yok']),
+    f('ka6', 'Banyo Sayısı', 'number', false),
+    f('ka7', 'Mutfak', 'select', false, ['Açık Mutfak','Kapalı Mutfak','Amerikan Mutfak']),
+    f('ka9', 'Asansör', 'bool', false),
+    f('ka10', 'Otopark', 'bool', false),
+    f('ka12', 'Yapının Durumu', 'select', false, ['Sıfır','İkinci El','Boş','Kiracılı']),
+    f('ka13', 'Aidat (TL)', 'number', false),
+    f('ka14', 'Krediye Uygun', 'bool', false),
+  ];
+}
+
 // ─── INITIAL DATA ─────────────────────────────────────────────────────────────
 const INITIAL_DATA = {
   categories: [
     {
-      id:"cat_emlak", name:"Emlak", _open:true, children:[
+      id: "cat_emlak", name: "Emlak", _open: true, children: [
         {
-          id:"cat_konut", name:"Konut", _open:true, children:[
+          id: "cat_konut", name: "Konut", _open: true, children: [
             {
-              id:"cat_satilik", name:"Satılık", _open:false, children:[
-                {id:"k_sat_daire", name:"Daire", children:[], fields:fields_KA_with_universal()},
-                {id:"k_sat_rezidans", name:"Rezidans", children:[], fields:fields_KA_with_universal()},
-                {id:"k_sat_mustikel", name:"Müstakil Ev", children:[], fields:fields_KA_with_universal()},
-                {id:"k_sat_villa", name:"Villa", children:[], fields:fields_KA_with_universal()},
-                {id:"k_sat_ciftlik", name:"Çiftlik Evi", children:[], fields:fields_KB_with_universal()},
-                {id:"k_sat_kosk", name:"Köşk & Konak", children:[], fields:fields_KC_with_universal()},
-                {id:"k_sat_yali", name:"Yalı", children:[], fields:fields_KC_with_universal()},
-                {id:"k_sat_yalidaire", name:"Yalı Dairesi", children:[], fields:fields_KC_with_universal()},
-                {id:"k_sat_yazlik", name:"Yazlık", children:[], fields:fields_KA_with_universal()},
-                {id:"k_sat_kooperatif", name:"Kooperatif", children:[], fields:fields_KA_with_universal()},
+              id: "cat_satilik", name: "Satılık", _open: false, children: [
+                { id: "k_sat_daire",      name: "Daire",         children: [], fields: flds_konut_sat() },
+                { id: "k_sat_rezidans",   name: "Rezidans",      children: [], fields: flds_konut_sat() },
+                { id: "k_sat_mustikel",   name: "Müstakil Ev",   children: [], fields: flds_konut_sat() },
+                { id: "k_sat_villa",      name: "Villa",         children: [], fields: flds_konut_sat() },
+                { id: "k_sat_ciftlik",    name: "Çiftlik Evi",   children: [], fields: flds_konut_sat_kosk() },
+                { id: "k_sat_kosk",       name: "Köşk & Konak",  children: [], fields: flds_konut_sat_kosk() },
+                { id: "k_sat_yali",       name: "Yalı",          children: [], fields: flds_konut_sat_kosk() },
+                { id: "k_sat_yalidaire",  name: "Yalı Dairesi",  children: [], fields: flds_konut_sat() },
+                { id: "k_sat_yazlik",     name: "Yazlık",        children: [], fields: flds_konut_sat() },
+                { id: "k_sat_kooperatif", name: "Kooperatif",    children: [], fields: flds_konut_sat() },
               ]
             },
             {
-              id:"cat_kiralik", name:"Kiralık", _open:false, children:[
-                {id:"k_kir_daire", name:"Daire", children:[], fields:fields_KA()},
-                {id:"k_kir_rezidans", name:"Rezidans", children:[], fields:fields_KA()},
-                {id:"k_kir_mustikel", name:"Müstakil Ev", children:[], fields:fields_KA()},
-                {id:"k_kir_villa", name:"Villa", children:[], fields:fields_KA()},
-                {id:"k_kir_ciftlik", name:"Çiftlik Evi", children:[], fields:fields_KB()},
-                {id:"k_kir_kosk", name:"Köşk & Konak", children:[], fields:fields_KC()},
-                {id:"k_kir_yali", name:"Yalı", children:[], fields:fields_KC()},
-                {id:"k_kir_yalidaire", name:"Yalı Dairesi", children:[], fields:fields_KC()},
+              id: "cat_kiralik", name: "Kiralık", _open: false, children: [
+                { id: "k_kir_daire",     name: "Daire",        children: [], fields: flds_konut_kir() },
+                { id: "k_kir_rezidans",  name: "Rezidans",     children: [], fields: flds_konut_kir() },
+                { id: "k_kir_mustikel",  name: "Müstakil Ev",  children: [], fields: flds_konut_kir() },
+                { id: "k_kir_villa",     name: "Villa",        children: [], fields: flds_konut_kir() },
+                { id: "k_kir_ciftlik",   name: "Çiftlik Evi",  children: [], fields: flds_konut_kir_kosk() },
+                { id: "k_kir_kosk",      name: "Köşk & Konak", children: [], fields: flds_konut_kir_kosk() },
+                { id: "k_kir_yali",      name: "Yalı",         children: [], fields: flds_konut_kir_kosk() },
+                { id: "k_kir_yalidaire", name: "Yalı Dairesi", children: [], fields: flds_konut_kir() },
               ]
             },
             {
-              id:"cat_turistik", name:"Turistik Günlük Kiralık", _open:false, children:[
-                {id:"k_tur_daire", name:"Daire", children:[], fields:fields_KD()},
-                {id:"k_tur_rezidans", name:"Rezidans", children:[], fields:fields_KD()},
-                {id:"k_tur_mustikel", name:"Müstakil Ev", children:[], fields:fields_KD()},
-                {id:"k_tur_villa", name:"Villa", children:[], fields:fields_KD()},
-                {id:"k_tur_devremulk", name:"Devre Mülk", children:[], fields:fields_KE()},
-                {id:"k_tur_apart", name:"Apart & Pansiyon", children:[], fields:fields_KD()},
+              id: "cat_turistik", name: "Turistik Günlük Kiralık", _open: false, children: [
+                { id: "k_tur_daire",     name: "Daire",             children: [], fields: flds_turistik() },
+                { id: "k_tur_rezidans",  name: "Rezidans",          children: [], fields: flds_turistik() },
+                { id: "k_tur_mustikel",  name: "Müstakil Ev",       children: [], fields: flds_turistik() },
+                { id: "k_tur_villa",     name: "Villa",             children: [], fields: flds_turistik() },
+                { id: "k_tur_devremulk", name: "Devre Mülk",        children: [], fields: flds_devremulk() },
+                { id: "k_tur_apart",     name: "Apart & Pansiyon",  children: [], fields: flds_turistik() },
               ]
             },
             {
-              id:"cat_devren_konut", name:"Devren Satılık Konut", _open:false, children:[
-                {id:"k_dev_daire", name:"Daire", children:[], fields:fields_KF_with_universal()},
-                {id:"k_dev_villa", name:"Villa", children:[], fields:fields_KG_with_universal()},
+              id: "cat_devren_konut", name: "Devren Satılık Konut", _open: false, children: [
+                { id: "k_dev_daire", name: "Daire", children: [], fields: flds_devren_konut() },
+                { id: "k_dev_villa", name: "Villa", children: [], fields: flds_devren_konut() },
               ]
             }
           ]
         },
         {
-          id:"cat_isyeri", name:"İş Yeri", _open:false, children:[
+          id: "cat_isyeri", name: "İş Yeri", _open: false, children: [
             {
-              id:"cat_iy_satilik", name:"Satılık", _open:false, children:[
-                {id:"iy_akaryakit", name:"Akaryakıt İstasyonu", children:[], fields:fields_IYD_with_universal()},
-                {id:"iy_apart_daire", name:"Apartman Dairesi", children:[], fields:fields_IYA_with_universal()},
-                {id:"iy_atolye", name:"Atölye", children:[], fields:fields_IYB_with_universal()},
-                {id:"iy_avm", name:"AVM", children:[], fields:fields_IYC_with_universal()},
-                {id:"iy_bufe", name:"Büfe", children:[], fields:fields_IYE_with_universal()},
-                {id:"iy_buro", name:"Büro & Ofis", children:[], fields:fields_IYF_with_universal()},
-                {id:"iy_ciftlik", name:"Çiftlik", children:[], fields:fields_IYG_with_universal()},
-                {id:"iy_depo", name:"Depo & Antrepo", children:[], fields:fields_IYH_with_universal()},
-                {id:"iy_dugun", name:"Düğün Salonu", children:[], fields:fields_IYI_with_universal()},
-                {id:"iy_dukkan", name:"Dükkan & Mağaza", children:[], fields:fields_IYJ_with_universal()},
-                {id:"iy_enerji", name:"Enerji Santrali", children:[], fields:fields_IYK_with_universal()},
-                {id:"iy_fabrika", name:"Fabrika & Üretim Tesisi", children:[], fields:fields_IYL_with_universal()},
-                {id:"iy_garaj", name:"Garaj & Park Yeri", children:[], fields:[]},
-                {id:"iy_imalathane", name:"İmalathane", children:[], fields:[]},
-                {id:"iy_ish", name:"İş Hanı Katı & Ofisi", children:[], fields:[]},
-                {id:"iy_kafe", name:"Kafe & Bar", children:[], fields:[]},
-                {id:"iy_kantin", name:"Kantin", children:[], fields:[]},
-                {id:"iy_kir", name:"Kır & Kahvaltı Bahçesi", children:[], fields:[]},
-                {id:"iy_kiraathane", name:"Kıraathane", children:[], fields:[]},
-                {id:"iy_komple", name:"Komple Bina", children:[], fields:[]},
-                {id:"iy_maden", name:"Maden Ocağı", children:[], fields:[]},
-                {id:"iy_otopark", name:"Otopark & Garaj", children:[], fields:[]},
-                {id:"iy_otoyikama", name:"Oto Yıkama & Kuaför", children:[], fields:[]},
-                {id:"iy_pastane", name:"Pastane, Fırın & Tatlıcı", children:[], fields:[]},
-                {id:"iy_pazar", name:"Pazar Yeri", children:[], fields:[]},
-                {id:"iy_plaza", name:"Plaza", children:[], fields:[]},
-                {id:"iy_plaza_kati", name:"Plaza Katı & Ofisi", children:[], fields:[]},
-                {id:"iy_radyo", name:"Radyo İstasyonu & TV Kanalı", children:[], fields:[]},
-                {id:"iy_restoran", name:"Restoran & Lokanta", children:[], fields:[]},
-                {id:"iy_rezidans_kati", name:"Rezidans Katı & Ofisi", children:[], fields:[]},
-                {id:"iy_saglik", name:"Sağlık Merkezi", children:[], fields:[]},
-                {id:"iy_sinema", name:"Sinema & Konferans Salonu", children:[], fields:[]},
-                {id:"iy_spa", name:"SPA, Hamam & Sauna", children:[], fields:[]},
-                {id:"iy_spor", name:"Spor Tesisi", children:[], fields:[]},
-                {id:"iy_villa", name:"Villa", children:[], fields:[]},
-                {id:"iy_yurt", name:"Yurt", children:[], fields:[]},
+              id: "cat_iy_satilik", name: "Satılık", _open: false, children: [
+                { id: "iy_akaryakit",      name: "Akaryakıt İstasyonu",       children: [], fields: flds_iy_akaryakit() },
+                { id: "iy_apart_daire",    name: "Apartman Dairesi",          children: [], fields: flds_iy_ofis() },
+                { id: "iy_atolye",         name: "Atölye",                    children: [], fields: flds_iy_depo() },
+                { id: "iy_avm",            name: "AVM",                       children: [], fields: flds_iy_avm_plaza() },
+                { id: "iy_bufe",           name: "Büfe",                      children: [], fields: flds_iy_yiyecek() },
+                { id: "iy_buro",           name: "Büro & Ofis",               children: [], fields: flds_iy_ofis() },
+                { id: "iy_ciftlik",        name: "Çiftlik",                   children: [], fields: flds_iy_ciftlik() },
+                { id: "iy_depo",           name: "Depo & Antrepo",            children: [], fields: flds_iy_depo() },
+                { id: "iy_dugun",          name: "Düğün Salonu",              children: [], fields: flds_iy_sinema_dugun() },
+                { id: "iy_dukkan",         name: "Dükkan & Mağaza",           children: [], fields: flds_iy_dukkan() },
+                { id: "iy_enerji",         name: "Enerji Santrali",           children: [], fields: flds_iy_enerji() },
+                { id: "iy_fabrika",        name: "Fabrika & Üretim Tesisi",   children: [], fields: flds_iy_fabrika() },
+                { id: "iy_garaj",          name: "Garaj & Park Yeri",         children: [], fields: flds_iy_genel() },
+                { id: "iy_imalathane",     name: "İmalathane",                children: [], fields: flds_iy_depo() },
+                { id: "iy_ish",            name: "İş Hanı Katı & Ofisi",      children: [], fields: flds_iy_ofis() },
+                { id: "iy_kafe",           name: "Kafe & Bar",                children: [], fields: flds_iy_yiyecek() },
+                { id: "iy_kantin",         name: "Kantin",                    children: [], fields: flds_iy_yiyecek() },
+                { id: "iy_kir",            name: "Kır & Kahvaltı Bahçesi",    children: [], fields: flds_iy_yiyecek() },
+                { id: "iy_kiraathane",     name: "Kıraathane",                children: [], fields: flds_iy_yiyecek() },
+                { id: "iy_komple",         name: "Komple Bina",               children: [], fields: flds_iy_komple_bina() },
+                { id: "iy_maden",          name: "Maden Ocağı",               children: [], fields: flds_iy_ciftlik() },
+                { id: "iy_otopark",        name: "Otopark & Garaj",           children: [], fields: flds_iy_genel() },
+                { id: "iy_otoyikama",      name: "Oto Yıkama & Kuaför",       children: [], fields: flds_iy_genel() },
+                { id: "iy_pastane",        name: "Pastane, Fırın & Tatlıcı",  children: [], fields: flds_iy_yiyecek() },
+                { id: "iy_pazar",          name: "Pazar Yeri",                children: [], fields: flds_iy_genel() },
+                { id: "iy_plaza",          name: "Plaza",                     children: [], fields: flds_iy_avm_plaza() },
+                { id: "iy_plaza_kati",     name: "Plaza Katı & Ofisi",        children: [], fields: flds_iy_ofis() },
+                { id: "iy_radyo",          name: "Radyo İstasyonu & TV Kanalı", children: [], fields: flds_iy_genel() },
+                { id: "iy_restoran",       name: "Restoran & Lokanta",        children: [], fields: flds_iy_yiyecek() },
+                { id: "iy_rezidans_kati",  name: "Rezidans Katı & Ofisi",     children: [], fields: flds_iy_ofis() },
+                { id: "iy_saglik",         name: "Sağlık Merkezi",            children: [], fields: flds_iy_saglik() },
+                { id: "iy_sinema",         name: "Sinema & Konferans Salonu", children: [], fields: flds_iy_sinema_dugun() },
+                { id: "iy_spa",            name: "SPA, Hamam & Sauna",        children: [], fields: flds_iy_spor_spa() },
+                { id: "iy_spor",           name: "Spor Tesisi",               children: [], fields: flds_iy_spor_spa() },
+                { id: "iy_villa",          name: "Villa",                     children: [], fields: flds_konut_sat() },
+                { id: "iy_yurt",           name: "Yurt",                      children: [], fields: flds_iy_genel() },
+              ]
+            },
+            {
+              id: "cat_iy_kiralik", name: "Kiralık", _open: false, children: [
+                { id: "iy_kir_akaryakit",     name: "Akaryakıt İstasyonu",       children: [], fields: flds_iy_akaryakit() },
+                { id: "iy_kir_buro",          name: "Büro & Ofis",               children: [], fields: flds_iy_ofis() },
+                { id: "iy_kir_depo",          name: "Depo & Antrepo",            children: [], fields: flds_iy_depo() },
+                { id: "iy_kir_dugun",         name: "Düğün Salonu",              children: [], fields: flds_iy_sinema_dugun() },
+                { id: "iy_kir_dukkan",        name: "Dükkan & Mağaza",           children: [], fields: flds_iy_dukkan() },
+                { id: "iy_kir_fabrika",       name: "Fabrika & Üretim Tesisi",   children: [], fields: flds_iy_fabrika() },
+                { id: "iy_kir_kafe",          name: "Kafe & Bar",                children: [], fields: flds_iy_yiyecek() },
+                { id: "iy_kir_ish",           name: "İş Hanı Katı & Ofisi",      children: [], fields: flds_iy_ofis() },
+                { id: "iy_kir_plaza_kati",    name: "Plaza Katı & Ofisi",        children: [], fields: flds_iy_ofis() },
+                { id: "iy_kir_restoran",      name: "Restoran & Lokanta",        children: [], fields: flds_iy_yiyecek() },
+                { id: "iy_kir_saglik",        name: "Sağlık Merkezi",            children: [], fields: flds_iy_saglik() },
+                { id: "iy_kir_spor",          name: "Spor Tesisi",               children: [], fields: flds_iy_spor_spa() },
+                { id: "iy_kir_depo2",         name: "Soğuk Hava Deposu",         children: [], fields: flds_iy_depo() },
               ]
             },
           ]
         },
-        {id:"cat_arsa", name:"Arsa", _open:false, children:[], fields:[], note:"Henüz eklenmedi"},
-        {id:"cat_bina", name:"Bina", _open:false, children:[], fields:[], note:"Henüz eklenmedi"},
-        {id:"cat_devremulk_ana", name:"Devre Mülk", _open:false, children:[], fields:[], note:"Henüz eklenmedi"},
-        {id:"cat_turistik_tesis", name:"Turistik Tesis", _open:false, children:[], fields:[], note:"Henüz eklenmedi"},
+        {
+          id: "cat_arsa", name: "Arsa", _open: false, children: [
+            {
+              id: "cat_arsa_satilik", name: "Satılık", _open: false, children: [
+                { id: "arsa_konut_imarlı",  name: "Konut İmarlı",        children: [], fields: [
+                  ...fields_universal_satilik(),
+                  f('ar1','İmar Durumu','select',false,['Konut','Ticari','Sanayi','Tarım','Turizm','Orman','Muhtelif']),
+                  f('ar2','Ada No','text',false), f('ar3','Parsel No','text',false),
+                  f('ar4','KAKS (Emsal)','number',false), f('ar5','Gabari','number',false),
+                  f('ar6','Takas','bool',false), f('ar7','Krediye Uygun','bool',false),
+                ]},
+                { id: "arsa_ticari",        name: "Ticari İmarlı",       children: [], fields: [
+                  ...fields_universal_satilik(),
+                  f('ar1','İmar Durumu','select',false,['Ticari','Konut','Sanayi','Tarım','Muhtelif']),
+                  f('ar2','Ada No','text',false), f('ar3','Parsel No','text',false),
+                  f('ar4','KAKS (Emsal)','number',false), f('ar5','Gabari','number',false),
+                  f('ar6','Takas','bool',false), f('ar7','Krediye Uygun','bool',false),
+                ]},
+                { id: "arsa_tarla",         name: "Tarla",               children: [], fields: [
+                  ...fields_universal_satilik(),
+                  f('ar1','İmar Durumu','select',false,['Tarım','Muhtelif','İmarsız']),
+                  f('ar2','Ada No','text',false), f('ar3','Parsel No','text',false),
+                  f('ar8','Sulama İmkânı','bool',false), f('ar7','Krediye Uygun','bool',false),
+                ]},
+                { id: "arsa_bahce",         name: "Bağ & Bahçe",         children: [], fields: [
+                  ...fields_universal_satilik(),
+                  f('ar2','Ada No','text',false), f('ar3','Parsel No','text',false),
+                  f('ar8','Sulama İmkânı','bool',false), f('ar7','Krediye Uygun','bool',false),
+                ]},
+              ]
+            }
+          ]
+        },
+        {
+          id: "cat_bina", name: "Bina", _open: false, children: [
+            {
+              id: "cat_bina_satilik", name: "Satılık", _open: false, children: [
+                { id: "bina_apartman", name: "Apartman", children: [], fields: [
+                  ...fields_universal_satilik(),
+                  f('bn1','Kat Sayısı','number',false), f('bn2','Daire Sayısı','number',false),
+                  f('bn3','Bina Yaşı','select',false,['0 (Sıfır)','1-5','6-10','11-15','16-20','21 ve üzeri']),
+                  f('bn4','Isıtma','select',false,['Doğalgaz (Kombi)','Merkezi','Soba','Yok']),
+                  f('bn5','Asansör','bool',false), f('bn6','Otopark','bool',false),
+                  f('bn7','Yapının Durumu','select',false,['Sıfır','İkinci El','Boş','Kiracılı']),
+                  f('bn8','Krediye Uygun','bool',false),
+                ]},
+                { id: "bina_villa", name: "Villa", children: [], fields: flds_konut_sat() },
+                { id: "bina_is", name: "İş Hanı", children: [], fields: flds_iy_komple_bina() },
+              ]
+            }
+          ]
+        },
+        {
+          id: "cat_devremulk_ana", name: "Devre Mülk", _open: false, children: [
+            { id: "dm_satilik", name: "Satılık", children: [], fields: flds_devremulk() },
+            { id: "dm_kiralik", name: "Kiralık", children: [], fields: flds_devremulk() },
+          ]
+        },
+        {
+          id: "cat_turistik_tesis", name: "Turistik Tesis", _open: false, children: [
+            {
+              id: "cat_tt_satilik", name: "Satılık", _open: false, children: [
+                { id: "tt_otel",    name: "Otel",           children: [], fields: [...fields_universal_satilik(), f('tt1','Yıldız Sayısı','select',false,['1','2','3','4','5']), f('tt2','Oda Sayısı','number',false), f('tt3','Kapasite','number',false), f('tt4','Havuz','bool',false), f('tt5','Krediye Uygun','bool',false)] },
+                { id: "tt_motel",   name: "Motel",          children: [], fields: [...fields_universal_satilik(), f('tt2','Oda Sayısı','number',false), f('tt3','Kapasite','number',false), f('tt5','Krediye Uygun','bool',false)] },
+                { id: "tt_pansiyon",name: "Pansiyon",        children: [], fields: [...fields_universal_satilik(), f('tt2','Oda Sayısı','number',false), f('tt3','Kapasite','number',false), f('tt5','Krediye Uygun','bool',false)] },
+                { id: "tt_tatil",   name: "Tatil Köyü",     children: [], fields: [...fields_universal_satilik(), f('tt2','Oda Sayısı','number',false), f('tt3','Kapasite','number',false), f('tt4','Havuz','bool',false), f('tt5','Krediye Uygun','bool',false)] },
+                { id: "tt_apart",   name: "Apart Otel",     children: [], fields: [...fields_universal_satilik(), f('tt2','Oda Sayısı','number',false), f('tt3','Kapasite','number',false), f('tt5','Krediye Uygun','bool',false)] },
+                { id: "tt_kamp",    name: "Kamp & Karavan", children: [], fields: [...fields_universal_satilik(), f('tt3','Kapasite','number',false), f('tt4','Havuz','bool',false), f('tt5','Krediye Uygun','bool',false)] },
+              ]
+            }
+          ]
+        },
       ]
     },
-    {id:"cat_vasita", name:"Vasıta", _open:false, children:[], fields:[]},
-    {id:"cat_yedek", name:"Yedek Parça, Aksesuar & Tuning", _open:false, children:[], fields:[]},
-    {id:"cat_alisveris", name:"İkinci El ve Sıfır Alışveriş", _open:false, children:[], fields:[]},
-    {id:"cat_yepy", name:"Yepy", _open:false, children:[], fields:[]},
-    {id:"cat_is_mak", name:"İş Makineleri & Sanayi", _open:false, children:[], fields:[]},
-    {id:"cat_hizmetler", name:"Ustalar ve Hizmetler", _open:false, children:[], fields:[]},
-    {id:"cat_ders", name:"Özel Ders Verenler", _open:false, children:[], fields:[]},
-    {id:"cat_is_ilan", name:"İş İlanları", _open:false, children:[], fields:[]},
-    {id:"cat_hayvanlar", name:"Hayvanlar Alemi", _open:false, children:[], fields:[]},
-    {id:"cat_yardimci", name:"Yardımcı Arayanlar", _open:false, children:[], fields:[]},
+    { id: "cat_vasita",    name: "Vasıta",                          _open: false, children: [], fields: [] },
+    { id: "cat_yedek",     name: "Yedek Parça, Aksesuar & Tuning",  _open: false, children: [], fields: [] },
+    { id: "cat_alisveris", name: "İkinci El ve Sıfır Alışveriş",    _open: false, children: [], fields: [] },
+    { id: "cat_yepy",      name: "Yepy",                            _open: false, children: [], fields: [] },
+    { id: "cat_is_mak",    name: "İş Makineleri & Sanayi",          _open: false, children: [], fields: [] },
+    { id: "cat_hizmetler", name: "Ustalar ve Hizmetler",            _open: false, children: [], fields: [] },
+    { id: "cat_ders",      name: "Özel Ders Verenler",              _open: false, children: [], fields: [] },
+    { id: "cat_is_ilan",   name: "İş İlanları",                     _open: false, children: [], fields: [] },
+    { id: "cat_hayvanlar", name: "Hayvanlar Alemi",                  _open: false, children: [], fields: [] },
+    { id: "cat_yardimci",  name: "Yardımcı Arayanlar",              _open: false, children: [], fields: [] },
   ]
 };
 
-// ─── FIELD BUILDERS ───────────────────────────────────────────────────────────
-function f(id, name, type, required, options) {
-  const o = {id, name, type: type||'text', required:!!required};
-  if (options) o.options = options;
-  return o;
-}
-
-function fields_universal() {
-  return [
-    f('u1','İlan Başlığı','text',true),
-    f('u2','Açıklama','text',true),
-    f('u3','Fiyat','number',true),
-    f('u4','m² (Brüt)','number',true),
-    f('u5','m² (Net)','number',true),
-    f('u6','Tapu Durumu','select',true,['Kat Mülkiyetli','Kat İrtifaklı','Hisseli Tapu','Müstakil Tapulu','Arsa Tapulu','Kooperatif Hisseli Tapu','Yurt Dışı Tapulu','Tapu Kaydı Yok']),
-    f('u7','Taşınmaz Numarası','text',true),
-    f('u8','Kimden','select',true,['Sahibinden','Emlakçı']),
-    f('u9','Takaslı','bool',false),
-  ];
-}
-
-function fields_kiralik_base() {
-  return [
-    f('u1','İlan Başlığı','text',true),
-    f('u2','Açıklama','text',true),
-    f('u3','Fiyat','number',true),
-    f('u4','m² (Brüt)','number',true),
-    f('u5','m² (Net)','number',true),
-    f('u8','Kimden','select',true,['Sahibinden','Emlakçı']),
-  ];
-}
-
-function fields_KA_core() {
-  return [
-    f('ka1','Oda Sayısı','select',false,['Stüdyo (1+0)','1+1','2+1','3+1','4+1','5+1','6+1 ve üzeri']),
-    f('ka2','Bina Yaşı','select',false,['0 (Sıfır)','1-5','6-10','11-15','16-20','21 ve üzeri']),
-    f('ka3','Bulunduğu Kat','select',false,['Bodrum','Zemin','Bahçe Katı','1','2','3','4','5','6','7','8','9','10 ve üzeri']),
-    f('ka4','Kat Sayısı','number',false),
-    f('ka5','Isıtma','select',false,['Doğalgaz (Kombi)','Merkezi','Soba','Yerden Isıtma','Klima','Yok']),
-    f('ka6','Banyo Sayısı','number',false),
-    f('ka7','Mutfak','select',false,['Açık Mutfak','Kapalı Mutfak','Amerikan Mutfak']),
-    f('ka8','Balkon','bool',false),
-    f('ka9','Asansör','bool',false),
-    f('ka10','Otopark','bool',false),
-    f('ka11','Eşyalı','bool',false),
-    f('ka12','Yapının Durumu','select',false,['Sıfır','İkinci El','Boş','Kiracılı']),
-    f('ka13','Aidat (TL)','number',false),
-    f('ka14','Krediye Uygun','bool',false),
-  ];
-}
-
-function fields_KA() { return [...fields_kiralik_base(), ...fields_KA_core()]; }
-function fields_KA_with_universal() { return [...fields_universal(), ...fields_KA_core()]; }
-function fields_KB() { return [...fields_KA(), f('kb1','Zemin Etüdü','bool',false)]; }
-function fields_KB_with_universal() { return [...fields_KA_with_universal(), f('kb1','Zemin Etüdü','bool',false)]; }
-function fields_KC_extra() { return [f('kc1','Zemin Etüdü','bool',false), f('kc2','Kullanım Durumu','select',false,['Boş','Kiracılı','Ev Sahibi Kullanıyor'])]; }
-function fields_KC() { return [...fields_KA(), ...fields_KC_extra()]; }
-function fields_KC_with_universal() { return [...fields_KA_with_universal(), ...fields_KC_extra()]; }
-
-function fields_KD() {
-  return [
-    f('u1','İlan Başlığı','text',true),
-    f('u2','Açıklama','text',true),
-    f('u3','Fiyat','number',true),
-    f('u4','m² (Brüt)','number',true),
-    f('u5','m² (Net)','number',true),
-    f('kd1','Oda Sayısı','select',false,['Stüdyo','1+1','2+1','3+1','4+1']),
-    f('kd2','Bulunduğu Kat','select',false,['Zemin','1','2','3','4','5+']),
-    f('kd3','Kat Sayısı','number',false),
-    f('kd4','Isıtma','select',false,['Doğalgaz','Merkezi','Klima','Soba','Yok']),
-    f('kd5','Banyo Sayısı','number',false),
-    f('kd6','Mutfak','select',false,['Açık','Kapalı','Amerikan']),
-    f('kd7','Kişi Kapasitesi','number',false),
-    f('kd8','Yatak Sayısı','number',false),
-    f('kd9','Balkon','bool',false),
-    f('kd10','Asansör','bool',false),
-    f('kd11','Otopark','bool',false),
-    f('kd12','İzin Belge No','text',false),
-    f('u8','Kimden','select',true,['Sahibinden','Emlakçı']),
-  ];
-}
-
-function fields_KE() {
-  return [
-    f('u1','İlan Başlığı','text',true),
-    f('u2','Açıklama','text',true),
-    f('u3','Fiyat','number',true),
-    f('ke1','Devre Mülk Adı','text',true),
-    f('ke2','Dönem','text',false),
-    f('ke3','Süre','text',false),
-    f('u4','m² (Brüt)','number',false),
-    f('u5','m² (Net)','number',false),
-    f('ke4','Oda Sayısı','select',false,['1+1','2+1','3+1','4+1']),
-    f('ke5','Kişi Kapasitesi','number',false),
-    f('ke6','Yatak Sayısı','number',false),
-    f('ke7','Banyo Sayısı','number',false),
-    f('ke8','İzin Belge No','text',false),
-    f('u8','Kimden','select',true,['Sahibinden','Emlakçı']),
-  ];
-}
-
-function fields_KF_with_universal() {
-  return [
-    ...fields_universal(),
-    f('kf1','Kalan Ödeme Tutarı','number',false),
-    f('kf2','Kalan Taksit','number',false),
-    f('ka1','Oda Sayısı','select',false,['Stüdyo','1+1','2+1','3+1','4+1']),
-    f('ka2','Bina Yaşı','select',false,['0','1-5','6-10','11-15','16-20','21+']),
-    f('ka3','Bulunduğu Kat','select',false,['Bodrum','Zemin','1','2','3','4','5','6','7','8','9','10+']),
-    f('ka4','Kat Sayısı','number',false),
-    f('ka5','Isıtma','select',false,['Doğalgaz','Merkezi','Soba','Klima','Yok']),
-    f('ka6','Banyo Sayısı','number',false),
-    f('ka9','Asansör','bool',false),
-    f('ka10','Otopark','bool',false),
-    f('ka7','Mutfak','select',false,['Açık','Kapalı','Amerikan']),
-    f('u8','Kimden','select',true,['Sahibinden','Emlakçı']),
-  ];
-}
-
-function fields_KG_with_universal() {
-  return [
-    ...fields_universal(),
-    f('kg1','Kalan Ödeme Tutarı','number',false),
-    f('kg2','Kalan Taksit','number',false),
-    f('ka1','Oda Sayısı','select',false,['3+1','4+1','5+1','6+']),
-    f('kg3','Açık Alan m²','number',false),
-    f('ka2','Bina Yaşı','select',false,['0','1-5','6-10','11-15','16-20','21+']),
-    f('ka5','Isıtma','select',false,['Doğalgaz','Merkezi','Klima','Yerden']),
-    f('ka6','Banyo Sayısı','number',false),
-    f('ka10','Otopark','bool',false),
-    f('ka7','Mutfak','select',false,['Açık','Kapalı','Amerikan']),
-    f('u8','Kimden','select',true,['Sahibinden','Emlakçı']),
-  ];
-}
-
-// İŞ YERİ FIELD BUILDERS
-function fields_iy_universal() { return [...fields_universal()]; }
-
-function fields_IYA_with_universal() {
-  return [...fields_iy_universal(),
-    f('iya1','Bölüm & Oda Sayısı','number',false),
-    f('iya2','Banyo Sayısı','number',false),
-    f('iya3','Kat Sayısı','number',false),
-    f('iya4','Bulunduğu Kat','select',false,['Bodrum','Zemin','1','2','3','4','5','6+']),
-    f('iya5','Aidat (TL)','number',false),
-    f('iya6','Bina Yaşı','select',false,['0','1-5','6-10','11-15','16-20','21+']),
-    f('iya7','Isıtma','select',false,['Doğalgaz','Merkezi','Klima','Soba','Yok']),
-    f('iya8','Yapının Durumu','select',false,['Sıfır','İkinci El']),
-    f('iya9','Kullanım Durumu','select',false,['Boş','Kiracılı']),
-    f('iya10','Zemin Etüdü','bool',false),
-    f('iya11','Krediye Uygunluk','bool',false),
-    f('iya12','Kiracılı','bool',false),
-  ];
-}
-
-function fields_IYB_with_universal() {
-  return [...fields_iy_universal(),
-    f('iyb1','Bölüm & Oda Sayısı','number',false),
-    f('iyb2','Bina Yaşı','select',false,['0','1-5','6-10','11-20','21+']),
-    f('iyb3','Giriş Yüksekliği (m)','number',false),
-    f('iyb4','Isıtma','select',false,['Doğalgaz','Soba','Klima','Yok']),
-    f('iyb5','Kiracılı','bool',false),
-    f('iyb6','Durumu','select',false,['Sıfır','İkinci El']),
-  ];
-}
-
-function fields_IYC_with_universal() {
-  return [...fields_iy_universal(),
-    f('iyc1','Kat Sayısı','number',false),
-    f('iyc2','Bina Yaşı','select',false,['0','1-5','6-10','11-20','21+']),
-    f('iyc3','Isıtma','select',false,['Merkezi','Klima','Yok']),
-    f('iyc4','Asansör Sayısı','number',false),
-    f('iyc5','Kiracılı','bool',false),
-    f('iyc6','Durumu','select',false,['Sıfır','İkinci El']),
-  ];
-}
-
-function fields_IYD_with_universal() {
-  return [...fields_iy_universal(),
-    f('iyd1','Açık Alan (m²)','number',false),
-    f('iyd2','Kapalı Alan (m²)','number',false),
-    f('iyd3','Pompa Sayısı','number',false),
-    f('iyd4','Günlük Satış (L)','number',false),
-    f('iyd5','Bina Yaşı','select',false,['0','1-5','6-10','11-20','21+']),
-    f('iyd6','Krediye Uygunluk','bool',false),
-    f('iyd7','Kiracılı','bool',false),
-  ];
-}
-
-function fields_IYE_with_universal() {
-  return [...fields_iy_universal(),
-    f('iye1','Yapı Tipi','select',false,['Sabit','Seyyar','Prefabrik']),
-    f('iye2','Yapının Durumu','select',false,['Sıfır','İkinci El']),
-    f('iye3','Kullanım Durumu','select',false,['Boş','Kiracılı']),
-    f('iye4','Kiracılı','bool',false),
-  ];
-}
-
-function fields_IYF_with_universal() {
-  return [...fields_iy_universal(),
-    f('iyf1','Oda Sayısı','number',false),
-    f('iyf2','Bina Yaşı','select',false,['0','1-5','6-10','11-20','21+']),
-    f('iyf3','Aidat (TL)','number',false),
-    f('iyf4','Isıtma','select',false,['Merkezi','Doğalgaz','Klima','Yok']),
-    f('iyf5','Bulunduğu Kat','select',false,['Bodrum','Zemin','1','2','3','4','5','6+']),
-    f('iyf6','Kiracılı','bool',false),
-    f('iyf7','Krediye Uygunluk','bool',false),
-  ];
-}
-
-function fields_IYG_with_universal() {
-  return [...fields_iy_universal(),
-    f('iyg1','Açık Alan (m²)','number',false),
-    f('iyg2','Kapalı Alan (m²)','number',false),
-    f('iyg3','Kiracılı','bool',false),
-    f('iyg4','Krediye Uygunluk','bool',false),
-  ];
-}
-
-function fields_IYH_with_universal() {
-  return [...fields_iy_universal(),
-    f('iyh1','Giriş Yüksekliği (m)','number',false),
-    f('iyh2','Bina Yaşı','select',false,['0','1-5','6-10','11-20','21+']),
-    f('iyh3','Isıtma','select',false,['Doğalgaz','Soba','Klima','Yok']),
-    f('iyh4','Yapının Durumu','select',false,['Sıfır','İkinci El']),
-    f('iyh5','Kullanım Durumu','select',false,['Boş','Kiracılı']),
-    f('iyh6','Krediye Uygunluk','bool',false),
-    f('iyh7','Zemin Etüdü','bool',false),
-    f('iyh8','Kiracılı','bool',false),
-  ];
-}
-
-function fields_IYI_with_universal() {
-  return [...fields_iy_universal(),
-    f('iyi1','Masa Sayısı','number',false),
-    f('iyi2','Kişi Kapasitesi','number',false),
-    f('iyi3','Bina Yaşı','select',false,['0','1-5','6-10','11-20','21+']),
-    f('iyi4','Kiracılı','bool',false),
-  ];
-}
-
-function fields_IYJ_with_universal() {
-  return [...fields_iy_universal(),
-    f('iyj1','Bölüm & Oda Sayısı','number',false),
-    f('iyj2','Aidat (TL)','number',false),
-    f('iyj3','Isıtma','select',false,['Merkezi','Doğalgaz','Klima','Yok']),
-    f('iyj4','Bina Yaşı','select',false,['0','1-5','6-10','11-20','21+']),
-    f('iyj5','Krediye Uygunluk','bool',false),
-  ];
-}
-
-function fields_IYK_with_universal() {
-  return [...fields_iy_universal(),
-    f('iyk1','Tipi','select',false,['Biyokütle & Biyogaz','Güneş Enerjisi','Hidroelektrik','Jeotermal','Rüzgar Enerjisi','Termik']),
-    f('iyk2','Yapının Durumu','select',false,['Sıfır','İkinci El']),
-    f('iyk3','Kiracılı','bool',false),
-    f('iyk4','Kullanım Durumu','select',false,['Aktif','Pasif']),
-    f('iyk5','Durumu','select',false,['Sıfır','İkinci El']),
-  ];
-}
-
-function fields_IYL_with_universal() {
-  return [...fields_iy_universal(),
-    f('iyl1','Açık Alan (m²)','number',false),
-    f('iyl2','Kapalı Alan (m²)','number',false),
-    f('iyl3','Bina Adedi','number',false),
-    f('iyl4','Bölüm & Oda Sayısı','number',false),
-    f('iyl5','Kat Sayısı','number',false),
-    f('iyl6','Giriş Yüksekliği (m)','number',false),
-    f('iyl7','Kiracılı','bool',false),
-    f('iyl8','Bina Yaşı','select',false,['0','1-5','6-10','11-20','21+']),
-    f('iyl9','Isıtma','select',false,['Doğalgaz','Merkezi','Klima','Soba','Yok']),
-    f('iyl10','Yapının Durumu','select',false,['Sıfır','İkinci El']),
-    f('iyl11','Kullanım Durumu','select',false,['Aktif','Boş']),
-    f('iyl12','Krediye Uygunluk','bool',false),
-    f('iyl13','Zemin Etüdü','bool',false),
-  ];
-}
-
-// ─── STATE ───────────────────────────────────────────────────────────────────
+// ─── STATE ─────────────────────────────────────────────────────────────────────
 let data = { categories: [] };
 let selectedId = null;
 let modalCallback = null;
 let dragSrcId = null;
 let searchQuery = '';
 
-// ─── MOBILE TABS ─────────────────────────────────────────────────────────────
+// ─── MOBILE TABS ───────────────────────────────────────────────────────────────
 function showMobilePanel(panel) {
   const treePanel = document.getElementById('treePanel');
   const editorPanel = document.getElementById('editorPanel');
   const tabTree = document.getElementById('tabTree');
   const tabEditor = document.getElementById('tabEditor');
-
   if (panel === 'tree') {
     treePanel.classList.remove('mobile-hidden');
     editorPanel.classList.add('mobile-hidden');
@@ -1154,7 +969,7 @@ function showMobilePanel(panel) {
   }
 }
 
-// ─── UTILS ───────────────────────────────────────────────────────────────────
+// ─── UTILS ─────────────────────────────────────────────────────────────────────
 function uid() { return Math.random().toString(36).slice(2, 9); }
 
 function findNode(id, nodes) {
@@ -1210,20 +1025,15 @@ function matchesSearch(node, q) {
   return false;
 }
 
-// ─── SEARCH ──────────────────────────────────────────────────────────────────
-function filterTree(q) {
-  searchQuery = q;
-  renderTree();
-}
+// ─── SEARCH ────────────────────────────────────────────────────────────────────
+function filterTree(q) { searchQuery = q; renderTree(); }
 
-// ─── RENDER TREE ─────────────────────────────────────────────────────────────
+// ─── RENDER TREE ───────────────────────────────────────────────────────────────
 function renderTree() {
   const root = document.getElementById('treeRoot');
   root.innerHTML = '';
   data.categories.forEach(n => {
-    if (matchesSearch(n, searchQuery)) {
-      root.appendChild(buildNode(n, 0));
-    }
+    if (matchesSearch(n, searchQuery)) root.appendChild(buildNode(n, 0));
   });
 }
 
@@ -1238,9 +1048,7 @@ function buildNode(node, level) {
 
   const row = document.createElement('div');
   row.className = 'node-row' + (isSelected ? ' selected' : '');
-  if (searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase())) {
-    row.classList.add('highlight');
-  }
+  if (searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase())) row.classList.add('highlight');
   row.style.paddingLeft = (8 + level * 14) + 'px';
 
   const toggle = document.createElement('div');
@@ -1274,7 +1082,6 @@ function buildNode(node, level) {
 
   actions.appendChild(addBtn);
   actions.appendChild(delBtn);
-
   row.appendChild(toggle);
   row.appendChild(label);
   row.appendChild(badge);
@@ -1300,9 +1107,7 @@ function buildNode(node, level) {
   if (hasChildren && isOpen) {
     const children = document.createElement('div');
     children.className = 'tree-children open';
-    node.children
-      .filter(c => matchesSearch(c, searchQuery))
-      .forEach(c => children.appendChild(buildNode(c, level + 1)));
+    node.children.filter(c => matchesSearch(c, searchQuery)).forEach(c => children.appendChild(buildNode(c, level + 1)));
     wrapper.appendChild(children);
   }
 
@@ -1324,14 +1129,9 @@ function moveNode(srcId, targetId) {
   showToast('Taşındı ✓');
 }
 
-// ─── SELECT NODE ─────────────────────────────────────────────────────────────
-function selectNode(id) {
-  selectedId = id;
-  renderTree();
-  renderEditor();
-}
+// ─── SELECT & EDITOR ───────────────────────────────────────────────────────────
+function selectNode(id) { selectedId = id; renderTree(); renderEditor(); }
 
-// ─── RENDER EDITOR ───────────────────────────────────────────────────────────
 function renderEditor() {
   const panel = document.getElementById('editorContent');
   const bc = document.getElementById('breadcrumb');
@@ -1445,9 +1245,7 @@ function renderFields(node) {
   });
 }
 
-function typeLabel(t) {
-  return { text:'METİN', number:'SAYI', select:'SEÇENEK', bool:'E/H' }[t] || t;
-}
+function typeLabel(t) { return { text:'METİN', number:'SAYI', select:'SEÇENEK', bool:'E/H' }[t] || t; }
 
 function cycleType(i) {
   const node = findNode(selectedId, data.categories);
@@ -1457,10 +1255,7 @@ function cycleType(i) {
   renderFields(node);
 }
 
-function updateField(i, key, val) {
-  const node = findNode(selectedId, data.categories);
-  node.fields[i][key] = val;
-}
+function updateField(i, key, val) { const node = findNode(selectedId, data.categories); node.fields[i][key] = val; }
 
 function removeField(i) {
   const node = findNode(selectedId, data.categories);
@@ -1488,15 +1283,11 @@ function addField() {
   showToast(`"${name}" eklendi ✓`);
 }
 
-function updateNodeName(val) {
-  const node = findNode(selectedId, data.categories);
-  node.name = val;
-  renderTree();
-}
+function updateNodeName(val) { findNode(selectedId, data.categories).name = val; renderTree(); }
 function updateNodeCode(val) { findNode(selectedId, data.categories).code = val; }
 function updateNodeNote(val) { findNode(selectedId, data.categories).note = val; }
 
-// ─── ADD / DELETE MODAL ──────────────────────────────────────────────────────
+// ─── MODAL ─────────────────────────────────────────────────────────────────────
 function openAddModal(parentId) {
   const overlay = document.getElementById('modalOverlay');
   document.getElementById('modalTitle').textContent = parentId ? 'Alt Kategori Ekle' : 'Ana Kategori Ekle';
@@ -1523,10 +1314,7 @@ function openAddModal(parentId) {
   };
 }
 
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  modalCallback = null;
-}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); modalCallback = null; }
 
 function confirmModal() {
   const val = document.getElementById('modalInput').value.trim();
@@ -1552,7 +1340,7 @@ function deleteNodeById(id) {
   showToast('Silindi');
 }
 
-// ─── JSON ────────────────────────────────────────────────────────────────────
+// ─── JSON ──────────────────────────────────────────────────────────────────────
 function getCleanData() {
   function clean(nodes) {
     return nodes.map(n => {
@@ -1569,9 +1357,7 @@ function getCleanData() {
 
 function toggleJson() {
   const panel = document.getElementById('jsonPanel');
-  if (!panel.classList.contains('open')) {
-    document.getElementById('jsonTextarea').value = JSON.stringify(getCleanData(), null, 2);
-  }
+  if (!panel.classList.contains('open')) document.getElementById('jsonTextarea').value = JSON.stringify(getCleanData(), null, 2);
   panel.classList.toggle('open');
 }
 
@@ -1616,7 +1402,6 @@ function saveAll() {
   showToast('Kaydedildi ✓');
 }
 
-// ─── AUTO LOAD ────────────────────────────────────────────────────────────────
 function loadSaved() {
   const saved = localStorage.getItem('gotapu_categories');
   if (saved) {
@@ -1630,7 +1415,6 @@ function loadSaved() {
   return false;
 }
 
-// ─── TOAST ───────────────────────────────────────────────────────────────────
 let toastTimer;
 function showToast(msg) {
   const el = document.getElementById('toast');
@@ -1644,11 +1428,10 @@ function escHtml(s) {
   return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
+// ─── INIT ──────────────────────────────────────────────────────────────────────
 if (!loadSaved()) {
-  data = JSON.parse(JSON.stringify(INITIAL_DATA)); // deep copy
+  data = JSON.parse(JSON.stringify(INITIAL_DATA));
 }
-
 renderTree();
 renderEditor();
 </script>
