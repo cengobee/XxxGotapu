@@ -61,6 +61,7 @@
 
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="kredi.js"></script>
 
 <style>
 /* ═══════════════════════════════════════════════════════
@@ -1196,6 +1197,7 @@ const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+window._sbClient = sb;
 
 const SAYFA_BOYUTU = 12;
 let aktifSayfa = 1;
@@ -1688,8 +1690,8 @@ async function ilanlarYukle(sayfa = 1) {
   const to   = from + SAYFA_BOYUTU - 1;
 
   const { data, error } = await sorguOlustur(
-    sb.from('ilanlar').select('*')
-  ).order('one_cikan', { ascending: false })
+    sb.from('ilanlar').select('*,one_cikarma_tipi,one_cikarma_bitis,meta_reklam_aktif,meta_reklam_bitis')
+  ).order('one_cikarma_tipi', { ascending: true, nullsFirst: false })
    .order('created_at', { ascending: false })
    .range(from, to);
 
@@ -1717,7 +1719,7 @@ async function ilanlarYukle(sayfa = 1) {
   // Liste görünümü — Sahibinden stili
   listEl.innerHTML = `<div class="ilan-liste-wrap">` +
     data.map(ilan => `
-    <a class="ilan-item ${ilan.one_cikan ? 'one-cikan-ilan' : ''}" href="ilan-detay.html?id=${ilan.id}">
+    <a class="ilan-item ${(ilan.one_cikarma_tipi && ilan.one_cikarma_bitis && new Date(ilan.one_cikarma_bitis)>new Date()) ? 'one-cikan-ilan' : ''}" href="ilan-detay.html?id=${ilan.id}">
       <div class="ilan-thumb">
         ${(ilan.foto_url || (ilan.foto_urls && ilan.foto_urls[0]))
           ? `<img src="${ilan.foto_url || ilan.foto_urls[0]}" loading="lazy">`
@@ -1728,7 +1730,9 @@ async function ilanlarYukle(sayfa = 1) {
         <div class="ilan-loc">📍 ${ilan.konum || ''}</div>
         <div class="ilan-price">
           ${formatFiyat(ilan.fiyat, ilan.tip)}
-          ${ilan.one_cikan ? ' <span style="font-size:10px;color:var(--gold)">⭐</span>' : ''}
+          ${(ilan.one_cikarma_tipi==='premium' && ilan.one_cikarma_bitis && new Date(ilan.one_cikarma_bitis)>new Date()) ? ' <span style="font-size:10px;color:#ff6b35">🌟</span>' : ''}
+          ${(ilan.one_cikarma_tipi==='standart' && ilan.one_cikarma_bitis && new Date(ilan.one_cikarma_bitis)>new Date()) ? ' <span style="font-size:10px;color:var(--gold)">⭐</span>' : ''}
+          ${(ilan.meta_reklam_aktif && ilan.meta_reklam_bitis && new Date(ilan.meta_reklam_bitis)>new Date()) ? ' <span style="font-size:10px;color:#4a90d9">📢</span>' : ''}
         </div>
         <div class="ilan-tags">
           <span class="tag ${ilan.tip === 'kiralik' ? 'tag-green' : 'tag-rust'}">${ilan.tip === 'kiralik' ? 'KİRALIK' : 'SATILIK'}</span>
@@ -1784,4 +1788,4 @@ async function mesajSay() {
 }
 </script>
 </body>
-  </html>
+</html>
