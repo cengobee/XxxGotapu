@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+  /* ── GENEL PROFİL HEADER ── */
   .profile-header { text-align: center; padding: 20px 0; }
   .avatar {
     width: 88px; height: 88px; border-radius: 50%;
@@ -17,6 +18,8 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 44px; margin: 0 auto 12px; overflow: hidden; position: relative; cursor: pointer;
   }
+  .avatar.kurumsal { border-radius: 20px; border-color: #4a90d9; }
+  .avatar.freelancer { border-color: #e8603a; }
   .avatar img { width: 100%; height: 100%; object-fit: cover; }
   .avatar-edit {
     position: absolute; bottom: 0; right: 0;
@@ -25,8 +28,24 @@
     font-size: 12px; z-index: 2;
   }
   .profile-name { font-size: 20px; font-weight: 900; }
+  .profile-firma { font-size: 16px; font-weight: 900; color: #4a90d9; margin-top: 3px; }
   .profile-email { font-size: 13px; color: var(--text3); margin-top: 3px; }
   .verified { display: inline-flex; align-items: center; gap: 5px; background: rgba(46,204,113,0.1); color: var(--green); border-radius: 50px; padding: 4px 12px; font-size: 12px; font-weight: 700; margin-top: 8px; }
+
+  /* ── ROZETLEr ── */
+  .rozet-wrap { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+  .rozet {
+    display: inline-flex; align-items: center; gap: 5px;
+    border-radius: 50px; padding: 5px 14px;
+    font-size: 12px; font-weight: 800;
+  }
+  .rozet-kurumsal { background: rgba(74,144,217,0.12); color: #4a90d9; border: 1px solid rgba(74,144,217,0.25); }
+  .rozet-freelancer { background: rgba(232,96,58,0.12); color: #e8603a; border: 1px solid rgba(232,96,58,0.25); }
+  .rozet-bireysel { background: rgba(245,200,66,0.1); color: var(--gold); border: 1px solid rgba(245,200,66,0.2); }
+  .rozet-onay { background: rgba(46,204,113,0.12); color: var(--green); border: 1px solid rgba(46,204,113,0.2); }
+  .rozet-bekliyor { background: rgba(245,200,66,0.1); color: var(--gold); border: 1px solid rgba(245,200,66,0.2); }
+
+  /* ── MENU SİSTEMİ ── */
   .menu-section { margin-bottom: 20px; }
   .menu-label { font-size: 12px; font-weight: 800; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; padding: 0 4px; }
   .menu-item {
@@ -42,18 +61,14 @@
   .menu-text { flex: 1; font-size: 15px; font-weight: 700; }
   .menu-arrow { color: var(--text3); }
 
-  .stat-row-inline {
-    display: flex; gap: 0; margin-bottom: 20px; background: transparent;
-  }
-  .stat-inline-box {
-    display: flex; align-items: center; gap: 8px; padding: 6px 16px 6px 0;
-  }
-  .stat-inline-box + .stat-inline-box {
-    padding-left: 16px; border-left: 1px solid var(--border);
-  }
+  /* ── İSTATİSTİKLER ── */
+  .stat-row-inline { display: flex; gap: 0; margin-bottom: 20px; background: transparent; }
+  .stat-inline-box { display: flex; align-items: center; gap: 8px; padding: 6px 16px 6px 0; }
+  .stat-inline-box + .stat-inline-box { padding-left: 16px; border-left: 1px solid var(--border); }
   .stat-inline-num { font-size: 18px; font-weight: 900; color: var(--gold); }
   .stat-inline-lbl { font-size: 13px; font-weight: 700; color: var(--text2); }
 
+  /* ── İLAN KARTLARI ── */
   .ilanim-item {
     display: flex; gap: 0; align-items: stretch;
     background: var(--bg); border-bottom: 1px solid var(--border);
@@ -95,10 +110,14 @@
     border: 1px solid rgba(245,200,66,0.3); border-radius: 6px; padding: 5px 8px;
     font-size: 10px; font-weight: 800; color: var(--gold); text-align: center; text-decoration: none;
   }
+
+  /* ── ALICI İLAN KARTI ── */
   .alici-ilan-card {
     background: rgba(74,144,217,0.06); border: 1px solid rgba(74,144,217,0.2);
     border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
   }
+
+  /* ── HİZMETLER TOGGLE ── */
   .hizmetler-toggle-btn {
     width: 100%; display: flex; align-items: center; justify-content: space-between;
     background: var(--card); border: 1px solid var(--border);
@@ -129,7 +148,7 @@
   }
   .hizmet-ver-btn:active { background: var(--card2); }
 
-  /* ── KREDİ KUTUSU (kurumsal) ── */
+  /* ── KREDİ BANNER ── */
   .kredi-banner {
     display: flex; align-items: center; justify-content: space-between;
     background: linear-gradient(135deg, #1a1a2e, #0f3460);
@@ -140,28 +159,39 @@
   .kredi-banner-ikon { font-size: 28px; }
   .kredi-banner-label { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
   .kredi-banner-sayi { font-size: 24px; font-weight: 900; color: #f5c518; }
-  .kredi-banner-btn {
-    background: #f5c518; color: #1a1a1a;
-    border-radius: 50px; padding: 8px 16px;
-    font-size: 12px; font-weight: 900; white-space: nowrap;
+  .kredi-banner-btn { background: #f5c518; color: #1a1a1a; border-radius: 50px; padding: 8px 16px; font-size: 12px; font-weight: 900; white-space: nowrap; }
+
+  /* ── FİRMA / UZMAN BİLGİ KARTI ── */
+  .profil-bilgi-kart {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 20px;
+  }
+  .profil-bilgi-satir {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .profil-bilgi-satir:last-child { border-bottom: none; padding-bottom: 0; }
+  .profil-bilgi-ikon { font-size: 16px; width: 22px; flex-shrink: 0; }
+  .profil-bilgi-label { font-size: 11px; font-weight: 800; color: var(--text3); margin-bottom: 2px; }
+  .profil-bilgi-deger { font-size: 13px; font-weight: 700; color: var(--text); }
+
+  /* ── UZMAN: Uzmanlık Etiketleri ── */
+  .uzmanlik-etiket-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .uzmanlik-etiket {
+    background: rgba(232,96,58,0.1); border: 1px solid rgba(232,96,58,0.25);
+    color: #e8603a; border-radius: 50px; padding: 4px 12px;
+    font-size: 12px; font-weight: 700;
   }
 
-  /* ── ONAY ROZETİ ── */
-  .onay-rozet {
-    display: inline-flex; align-items: center; gap: 6px;
-    border-radius: 50px; padding: 5px 14px;
-    font-size: 12px; font-weight: 800; margin-top: 8px;
-  }
-  .onay-rozet.onaylandi { background: rgba(46,204,113,0.12); color: var(--green); }
-  .onay-rozet.bekleniyor { background: rgba(245,200,66,0.12); color: var(--gold); }
-
-  /* ── FORM MODAL BÖLÜMÜ AYIRICI ── */
+  /* ── FORM DÜZENLE ── */
   .form-section-title {
     font-size: 11px; font-weight: 900; color: var(--text3);
     letter-spacing: 1.5px; text-transform: uppercase;
     margin: 20px 0 12px; padding-bottom: 8px;
     border-bottom: 1px solid var(--border);
   }
+  .alan-row-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -209,29 +239,34 @@
 
 <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="avatarDegistir(this)">
 
-<!-- KENDİ PROFİLİM -->
+<!-- ═══════════════════════════════════════
+     KENDİ PROFİLİM
+═══════════════════════════════════════ -->
 <div class="page fade-up" id="benimProfilSayfasi">
 
   <div class="profile-header">
-    <div class="avatar" onclick="document.getElementById('avatarInput').click()">
+    <div class="avatar" id="avatarEl" onclick="document.getElementById('avatarInput').click()">
       <span id="avatarEmoji">👤</span>
       <img id="avatarImg" style="display:none">
       <div class="avatar-edit">✏️</div>
     </div>
+
+    <!-- Ad (bireysel & freelancer), Firma Adı (kurumsal) -->
     <div class="profile-name" id="profilAd">Yükleniyor...</div>
+    <div class="profile-firma" id="profilFirmaAdi" style="display:none"></div>
     <div class="profile-email" id="profilEmail"></div>
     <div class="profile-email" id="profilTel"></div>
     <div class="profile-email" id="profilSehir"></div>
-    <div style="display:inline-block;background:rgba(245,200,66,0.1);color:var(--gold);border-radius:50px;padding:3px 12px;font-size:12px;font-weight:700;margin-top:4px" id="profilTip"></div>
-    <!-- Kurumsal firma adı -->
-    <div style="font-size:15px;font-weight:900;color:var(--text);margin-top:6px;display:none" id="profilFirmaAdi"></div>
-    <!-- Yetki no rozeti -->
-    <div id="profilOnayRozeti" style="display:none"></div>
+
+    <!-- Rozetler -->
+    <div class="rozet-wrap" id="profilRozetler"></div>
+
+    <!-- Hakkımda / Bio -->
     <div style="font-size:13px;color:var(--text2);margin-top:8px;line-height:1.6;display:none;padding:0 8px" id="profilHakkimda"></div>
     <div class="verified" id="verifiedBadge" style="display:none">✓ Doğrulanmış Üye</div>
   </div>
 
-  <!-- KREDİ BANNER (sadece kurumsal) -->
+  <!-- KREDİ BANNER — sadece kurumsal -->
   <div id="krediBannerAlani" style="display:none">
     <a href="odeme.html" class="kredi-banner">
       <div class="kredi-banner-sol">
@@ -245,6 +280,19 @@
     </a>
   </div>
 
+  <!-- UZMAN BİLGİ KARTI — sadece freelancer -->
+  <div id="uzmanBilgiKarti" style="display:none;margin-bottom:20px">
+    <div class="menu-label">Uzmanlık Bilgileri</div>
+    <div class="profil-bilgi-kart" id="uzmanBilgiIcerik"></div>
+  </div>
+
+  <!-- KURUMSAL BİLGİ KARTI — sadece kurumsal -->
+  <div id="kurumsalBilgiKarti" style="display:none;margin-bottom:20px">
+    <div class="menu-label">Firma Bilgileri</div>
+    <div class="profil-bilgi-kart" id="kurumsalBilgiIcerik"></div>
+  </div>
+
+  <!-- İSTATİSTİKLER -->
   <div class="stat-row-inline" style="justify-content:center;margin-bottom:20px">
     <div class="stat-inline-box">
       <span class="stat-inline-num" id="ilanSayisi">0</span>
@@ -256,17 +304,19 @@
     </div>
   </div>
 
+  <!-- SATICI İLANLARIM -->
   <div class="menu-section">
     <div class="menu-label">Satıcı İlanlarım</div>
     <div class="card" style="padding:0;overflow:hidden" id="ilanlarimCard"><div class="spinner" style="padding:24px"></div></div>
   </div>
 
+  <!-- ALICI ARAMALARIM -->
   <div class="menu-section">
     <div class="menu-label">Alıcı Aramalarım</div>
     <div id="aliciIlanCard"><div class="spinner"></div></div>
   </div>
 
-  <!-- HİZMETLER -->
+  <!-- EV HİZMETLERİ -->
   <div class="menu-section">
     <button class="hizmetler-toggle-btn" id="hizmetlerToggleBtn" onclick="hizmetlerToggle()">
       <span>🏠 Ev Hizmetleri</span>
@@ -291,6 +341,7 @@
     </div>
   </div>
 
+  <!-- HESAP MENÜSÜ -->
   <div class="menu-section">
     <div class="menu-label">Hesap</div>
     <div class="hizmet-ver-btn" onclick="hizmetVerTikla()">
@@ -305,25 +356,39 @@
     <div class="menu-item" onclick="cikisYap()" style="color:var(--rust);border-radius:0 0 var(--radius) var(--radius)"><div class="menu-icon">🚪</div><div class="menu-text" style="color:var(--rust)">Çıkış Yap</div><div class="menu-arrow">›</div></div>
   </div>
 
-</div>
+</div><!-- /benimProfilSayfasi -->
 
-<!-- BAŞKASININ PROFİLİ -->
+<!-- ═══════════════════════════════════════
+     BAŞKASININ PROFİLİ
+═══════════════════════════════════════ -->
 <div class="page fade-up" id="baskaProfil" style="display:none">
   <div style="margin-bottom:12px">
     <button onclick="history.back()" style="background:var(--card);border:1.5px solid var(--border);border-radius:50px;padding:8px 18px;font-size:14px;font-weight:800;color:var(--text);cursor:pointer;font-family:Nunito,sans-serif">← Geri</button>
   </div>
   <div class="profile-header">
-    <div class="avatar" style="cursor:default">
+    <div class="avatar" id="bAvEl" style="cursor:default">
       <span id="bAvEmoji">👤</span>
       <img id="bAvImg" style="display:none">
     </div>
     <div class="profile-name" id="bAvAd">Yükleniyor...</div>
+    <div class="profile-firma" id="bAvFirma" style="display:none"></div>
     <div class="profile-email" id="bAvSehir"></div>
-    <div style="display:inline-block;background:rgba(245,200,66,0.1);color:var(--gold);border-radius:50px;padding:3px 12px;font-size:12px;font-weight:700;margin-top:4px" id="bAvTip"></div>
-    <div style="font-size:14px;font-weight:900;color:var(--text);margin-top:6px;display:none" id="bAvFirma"></div>
+    <div class="rozet-wrap" id="bAvRozetler"></div>
     <div style="font-size:13px;color:var(--text2);margin-top:8px;line-height:1.6;display:none;padding:0 8px" id="bAvHakkimda"></div>
     <div class="verified" id="bAvVerified" style="display:none">✓ Doğrulanmış Üye</div>
   </div>
+
+  <!-- Başkasının uzman bilgisi -->
+  <div id="bAvUzmanKart" style="display:none;margin-bottom:20px">
+    <div class="menu-label">Hizmet Bilgileri</div>
+    <div class="profil-bilgi-kart" id="bAvUzmanIcerik"></div>
+  </div>
+  <!-- Başkasının kurumsal bilgisi -->
+  <div id="bAvKurumsalKart" style="display:none;margin-bottom:20px">
+    <div class="menu-label">Firma Bilgileri</div>
+    <div class="profil-bilgi-kart" id="bAvKurumsalIcerik"></div>
+  </div>
+
   <div class="stat-row-inline" style="justify-content:center;margin-bottom:24px">
     <div class="stat-inline-box">
       <span class="stat-inline-num" id="bAvIlanSay">0</span>
@@ -372,29 +437,102 @@ sb.auth.getSession().then(({ data }) => {
   }
 });
 
-function hizmetlerToggle() {
-  document.getElementById('hizmetlerBody').classList.toggle('open');
-  document.getElementById('hizmetlerArrow').classList.toggle('open');
+// ─────────────────────────────────────────
+// YARDIMCI FONKSİYONLAR
+// ─────────────────────────────────────────
+function kullaniciTipLabel(tip) {
+  const etiketler = {
+    bireysel: 'Bireysel',
+    kurumsal: '🏢 Kurumsal',
+    freelancer: '🔧 Freelancer',
+    hizmet_saglayici: '🔧 Hizmet Sağlayıcı'
+  };
+  return etiketler[tip] || tip;
 }
 
-function hizmetVerTikla() {
-  const modal = document.createElement('div');
-  modal.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end';
-  modal.innerHTML = `
-    <div style="background:var(--bg2);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%">
-      <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
-      <div style="font-size:32px;text-align:center;margin-bottom:12px">🛠️</div>
-      <h3 style="font-size:20px;font-weight:900;margin-bottom:12px;text-align:center">Hizmet Ver</h3>
-      <p style="font-size:14px;color:var(--text2);text-align:center;line-height:1.7;margin-bottom:20px">Bu özellik çok yakında geliyor!<br>Tadilat, temizlik, nakliye ve daha fazla hizmet kategorisinde ilan verebileceksiniz.</p>
-      <button onclick="this.closest('[style]').remove()" style="width:100%;padding:14px;border-radius:50px;background:var(--gold);color:var(--bg);border:none;font-family:Nunito,sans-serif;font-size:15px;font-weight:900;cursor:pointer">Tamam</button>
-    </div>`;
-  document.body.appendChild(modal);
-  modal.onclick = e => { if(e.target===modal) modal.remove(); };
+function kategoriLabel(kat) {
+  const map = {
+    emlakci:'🏠 Emlakçı', temizlik:'🧹 Temizlik', boya:'🖌️ Boya & Badana',
+    nakliye:'🚚 Nakliye', cilingir:'🔑 Çilingir', tadilat:'🔧 Tadilat',
+    sigorta:'🛡️ Sigorta', teknik:'📱 Teknik Servis', dekorasyon:'🛋️ Dekorasyon',
+    aracyikama:'🚗 Araç Yıkama', koltukyikama:'🛋️ Koltuk Yıkama',
+    haliyikama:'🪞 Halı Yıkama', ilacalama:'🦟 İlaçlama', petek:'♨️ Petek & Kombi',
+    tesisat:'🔩 Tesisat', elektrik:'⚡ Elektrik', insaat:'🏗️ İnşaat',
+    galeri:'🚗 Galeri', diger:'👷 Diğer'
+  };
+  return map[kat] || kat;
 }
 
+function onayDurumLabel(durum) {
+  if (durum === 'onaylandi') return '<span class="rozet rozet-onay">✅ Onaylı</span>';
+  return '<span class="rozet rozet-bekliyor">⏳ Onay Bekleniyor</span>';
+}
+
+// Kullanıcı tipine göre rozetleri oluştur
+function rozetlerOlustur(profil, hedef = 'profilRozetler') {
+  const tip = profil?.kullanici_tipi || 'bireysel';
+  const onay = profil?.kurumsal_onay;
+  let html = '';
+
+  if (tip === 'kurumsal') {
+    html += onay === 'onaylandi'
+      ? '<span class="rozet rozet-kurumsal">🏢 Kurumsal</span>'
+      : '<span class="rozet rozet-bekliyor">🏢 Kurumsal — Onay Bekleniyor</span>';
+    if (profil.kategori) html += `<span class="rozet rozet-bireysel">${kategoriLabel(profil.kategori)}</span>`;
+  } else if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
+    html += onay === 'onaylandi'
+      ? '<span class="rozet rozet-freelancer">🔧 Freelancer</span>'
+      : '<span class="rozet rozet-bekliyor">🔧 Freelancer — Onay Bekleniyor</span>';
+    if (profil.kategori) html += `<span class="rozet rozet-bireysel">${kategoriLabel(profil.kategori)}</span>`;
+  } else {
+    html += '<span class="rozet rozet-bireysel">👤 Bireysel</span>';
+  }
+
+  document.getElementById(hedef).innerHTML = html;
+}
+
+// Avatar yükle
+function avatarYukle(avatarUrl, emojiId, imgId, tip) {
+  if (avatarUrl) {
+    const el = document.getElementById(emojiId);
+    const img = document.getElementById(imgId);
+    if (el) el.style.display = 'none';
+    if (img) { img.src = avatarUrl; img.style.display = 'block'; }
+  }
+  // Avatar şeklini tipe göre ayarla
+  const avEl = document.getElementById(emojiId)?.closest('.avatar');
+  if (avEl) {
+    avEl.classList.remove('kurumsal', 'freelancer');
+    if (tip === 'kurumsal') avEl.classList.add('kurumsal');
+    if (tip === 'freelancer') avEl.classList.add('freelancer');
+  }
+}
+
+// Uzman bilgi kartı HTML'i
+function uzmanBilgiHTML(profil) {
+  let html = '';
+  if (profil.kategori) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🔧</div><div><div class="profil-bilgi-label">Uzmanlık</div><div class="profil-bilgi-deger">${kategoriLabel(profil.kategori)}</div></div></div>`;
+  if (profil.ucret) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">💰</div><div><div class="profil-bilgi-label">Ücret</div><div class="profil-bilgi-deger">${Number(profil.ucret).toLocaleString('tr-TR')} ₺</div></div></div>`;
+  if (profil.deneyim_yil) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">📅</div><div><div class="profil-bilgi-label">Deneyim</div><div class="profil-bilgi-deger">${profil.deneyim_yil} yıl</div></div></div>`;
+  if (profil.kurumsal_sehir || profil.sehir) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">📍</div><div><div class="profil-bilgi-label">Hizmet Bölgesi</div><div class="profil-bilgi-deger">${profil.kurumsal_sehir || profil.sehir}</div></div></div>`;
+  return html || '<div style="color:var(--text3);font-size:13px;padding:8px">Henüz bilgi eklenmedi.</div>';
+}
+
+// Kurumsal bilgi kartı HTML'i
+function kurumsalBilgiHTML(profil) {
+  let html = '';
+  if (profil.kategori) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🏢</div><div><div class="profil-bilgi-label">Firma Türü</div><div class="profil-bilgi-deger">${kategoriLabel(profil.kategori)}</div></div></div>`;
+  if (profil.kurumsal_sehir || profil.sehir) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">📍</div><div><div class="profil-bilgi-label">Konum</div><div class="profil-bilgi-deger">${profil.kurumsal_sehir || profil.sehir}</div></div></div>`;
+  if (profil.ofis_adresi) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🗺️</div><div><div class="profil-bilgi-label">Ofis Adresi</div><div class="profil-bilgi-deger">${profil.ofis_adresi}</div></div></div>`;
+  if (profil.calisan_sayisi) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">👥</div><div><div class="profil-bilgi-label">Çalışan Sayısı</div><div class="profil-bilgi-deger">${profil.calisan_sayisi}</div></div></div>`;
+  if (profil.website_url) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🌐</div><div><div class="profil-bilgi-label">Web Sitesi</div><div class="profil-bilgi-deger"><a href="${profil.website_url}" target="_blank" style="color:var(--gold);text-decoration:none">${profil.website_url.replace(/^https?:\/\//,'')}</a></div></div></div>`;
+  return html || '<div style="color:var(--text3);font-size:13px;padding:8px">Henüz firma bilgisi eklenmedi.</div>';
+}
+
+// ilan kartı HTML
 function ilanKartHTML(i, kendi = false) {
   const onayClass = i.onay_durumu === 'onaylandi' ? 'onay-onaylandi' : i.onay_durumu === 'reddedildi' ? 'onay-reddedildi' : 'onay-bekliyor';
-  const onayText  = i.onay_durumu === 'onaylandi' ? '✅ Onaylandı' : i.onay_durumu === 'reddedildi' ? '❌ Reddedildi' : '⏳ Onay Bekleniyor';
+  const onayText  = i.onay_durumu === 'onaylandi' ? '✅ Onaylandı' : i.onay_durumu === 'reddedildi' ? '❌ Reddedildi' : '⏳ Bekliyor';
   const fiyat = Number(i.fiyat).toLocaleString('tr-TR') + ' ₺' + (i.tip === 'kiralik' ? '/ay' : '');
   const resim = i.foto_url ? `<img src="${i.foto_url}">` : (i.tip === 'kiralik' ? '🏘️' : '🏙️');
   const kendiAksiyonlar = kendi ? `
@@ -422,23 +560,54 @@ function ilanKartHTML(i, kendi = false) {
     </div>`;
 }
 
-// ── BAŞKASININ PROFİLİ
+// ─────────────────────────────────────────
+// BAŞKASININ PROFİLİ
+// ─────────────────────────────────────────
 let baskaKullaniciId = null;
 async function baskaProfilYukle(uid) {
   baskaKullaniciId = uid;
   const { data: profil } = await sb.from('profiles').select('*').eq('id', uid).single();
   if (!profil) { document.getElementById('bAvAd').textContent = 'Kullanıcı bulunamadı'; return; }
-  document.getElementById('bAvAd').textContent = profil.full_name || 'İsimsiz';
-  if (profil.sehir) document.getElementById('bAvSehir').textContent = '📍 ' + profil.sehir;
-  if (profil.kullanici_tipi) document.getElementById('bAvTip').textContent = kullaniciTipLabel(profil.kullanici_tipi);
-  if (profil.firma_adi) { const f = document.getElementById('bAvFirma'); f.textContent = '🏢 ' + profil.firma_adi; f.style.display = 'block'; }
-  if (profil.hakkimda || profil.aciklama) { const h = document.getElementById('bAvHakkimda'); h.textContent = profil.hakkimda || profil.aciklama; h.style.display = 'block'; }
-  if (profil.verified) document.getElementById('bAvVerified').style.display = 'inline-flex';
-  if (profil.avatar_url || profil.logo_url) {
+
+  const tip = profil.kullanici_tipi || 'bireysel';
+
+  // İsim / firma adı
+  if (tip === 'kurumsal' && profil.firma_adi) {
+    document.getElementById('bAvAd').textContent = profil.full_name || '';
+    const f = document.getElementById('bAvFirma');
+    f.textContent = '🏢 ' + profil.firma_adi; f.style.display = 'block';
+  } else {
+    document.getElementById('bAvAd').textContent = profil.full_name || 'İsimsiz';
+  }
+
+  // Avatar (kurumsal için logo_url tercih)
+  const avUrl = (tip === 'kurumsal' ? profil.logo_url : null) || profil.avatar_url;
+  if (avUrl) {
     document.getElementById('bAvEmoji').style.display = 'none';
     const img = document.getElementById('bAvImg');
-    img.src = profil.avatar_url || profil.logo_url; img.style.display = 'block';
+    img.src = avUrl; img.style.display = 'block';
   }
+  const avEl = document.getElementById('bAvEl');
+  if (tip === 'kurumsal') avEl.classList.add('kurumsal');
+  if (tip === 'freelancer') avEl.classList.add('freelancer');
+
+  if (profil.sehir) document.getElementById('bAvSehir').textContent = '📍 ' + profil.sehir;
+  rozetlerOlustur(profil, 'bAvRozetler');
+  if (profil.hakkimda || profil.aciklama) {
+    const h = document.getElementById('bAvHakkimda');
+    h.textContent = profil.hakkimda || profil.aciklama; h.style.display = 'block';
+  }
+  if (profil.verified) document.getElementById('bAvVerified').style.display = 'inline-flex';
+
+  // Tip bazlı bilgi kartı
+  if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
+    document.getElementById('bAvUzmanKart').style.display = 'block';
+    document.getElementById('bAvUzmanIcerik').innerHTML = uzmanBilgiHTML(profil);
+  } else if (tip === 'kurumsal') {
+    document.getElementById('bAvKurumsalKart').style.display = 'block';
+    document.getElementById('bAvKurumsalIcerik').innerHTML = kurumsalBilgiHTML(profil);
+  }
+
   const { data: ilanlar } = await sb.from('ilanlar').select('*').eq('user_id', uid).eq('onay_durumu', 'onaylandi').order('created_at', { ascending: false });
   document.getElementById('bAvIlanSay').textContent = ilanlar?.length || 0;
   const kart = document.getElementById('baskaIlanlar');
@@ -448,34 +617,57 @@ async function baskaProfilYukle(uid) {
 }
 function mesajGonder() { if (baskaKullaniciId) window.location.href = `mesajlar.html?karsi_id=${baskaKullaniciId}`; }
 
-// ── KENDİ PROFİLİM
+// ─────────────────────────────────────────
+// KENDİ PROFİLİM
+// ─────────────────────────────────────────
 async function profilYukle() {
   const { data: profil } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
   currentProfil = profil;
 
   if (profil) {
+    const tip = profil.kullanici_tipi || 'bireysel';
+
+    // İsim gösterimi — kurumsal'da firma adı öne çıkar
     document.getElementById('profilAd').textContent = profil.full_name || 'İsimsiz';
+    if (tip === 'kurumsal' && profil.firma_adi) {
+      const f = document.getElementById('profilFirmaAdi');
+      f.textContent = '🏢 ' + profil.firma_adi; f.style.display = 'block';
+    }
+
     document.getElementById('profilEmail').textContent = profil.email || currentUser.email;
     if (profil.phone) document.getElementById('profilTel').textContent = '📞 ' + profil.phone;
     if (profil.sehir) document.getElementById('profilSehir').textContent = '📍 ' + profil.sehir;
-    if (profil.kullanici_tipi) document.getElementById('profilTip').textContent = kullaniciTipLabel(profil.kullanici_tipi);
-    if (profil.hakkimda || profil.aciklama) { const h = document.getElementById('profilHakkimda'); h.textContent = profil.hakkimda || profil.aciklama; h.style.display = 'block'; }
-    if (profil.verified) document.getElementById('verifiedBadge').style.display = 'inline-flex';
-    if (profil.avatar_url || profil.logo_url) {
+
+    // Avatar
+    const avUrl = (tip === 'kurumsal' ? profil.logo_url : null) || profil.avatar_url;
+    if (avUrl) {
       document.getElementById('avatarEmoji').style.display = 'none';
       const img = document.getElementById('avatarImg');
-      img.src = profil.avatar_url || profil.logo_url; img.style.display = 'block';
+      img.src = avUrl; img.style.display = 'block';
     }
+    const avEl = document.getElementById('avatarEl');
+    avEl.classList.remove('kurumsal', 'freelancer');
+    if (tip === 'kurumsal') avEl.classList.add('kurumsal');
+    if (tip === 'freelancer') avEl.classList.add('freelancer');
 
-    // Kurumsal özel alanlar
-    if (profil.kullanici_tipi === 'kurumsal') {
-      if (profil.firma_adi) { const f = document.getElementById('profilFirmaAdi'); f.textContent = '🏢 ' + profil.firma_adi; f.style.display = 'block'; }
-      // Onay rozeti
-      const rozet = document.getElementById('profilOnayRozeti');
-      rozet.style.display = 'block';
-      rozet.innerHTML = profil.onaylandi
-        ? '<div class="onay-rozet onaylandi">✅ Yetki No Doğrulandı</div>'
-        : '<div class="onay-rozet bekleniyor">⏳ Yetki No İnceleniyor</div>';
+    // Rozetler
+    rozetlerOlustur(profil, 'profilRozetler');
+
+    // Bio/Hakkımda
+    if (profil.hakkimda || profil.aciklama) {
+      const h = document.getElementById('profilHakkimda');
+      h.textContent = profil.hakkimda || profil.aciklama; h.style.display = 'block';
+    }
+    if (profil.verified) document.getElementById('verifiedBadge').style.display = 'inline-flex';
+
+    // Tip bazlı içerik
+    if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
+      document.getElementById('uzmanBilgiKarti').style.display = 'block';
+      document.getElementById('uzmanBilgiIcerik').innerHTML = uzmanBilgiHTML(profil);
+    }
+    if (tip === 'kurumsal') {
+      document.getElementById('kurumsalBilgiKarti').style.display = 'block';
+      document.getElementById('kurumsalBilgiIcerik').innerHTML = kurumsalBilgiHTML(profil);
       // Kredi banner
       document.getElementById('krediBannerAlani').style.display = 'block';
       const { data: kredi } = await sb.from('agent_credits').select('bakiye').eq('agent_id', currentUser.id).single();
@@ -485,6 +677,7 @@ async function profilYukle() {
     document.getElementById('profilAd').textContent = currentUser.email;
   }
 
+  // İlanlar
   const { data: ilanlar } = await sb.from('ilanlar').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   document.getElementById('ilanSayisi').textContent = ilanlar?.filter(i => i.onay_durumu === 'onaylandi').length || 0;
   const kart = document.getElementById('ilanlarimCard');
@@ -492,6 +685,7 @@ async function profilYukle() {
     ? `<div class="empty" style="padding:24px"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div><a href="ilan-ver.html" class="btn btn-gold btn-md" style="margin-top:12px;max-width:200px">+ İlan Ver</a></div>`
     : ilanlar.map(i => ilanKartHTML(i, true)).join('');
 
+  // Alıcı ilanlar
   const { data: aliciIlan } = await sb.from('arayan_ilanlar').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   const aliciEl = document.getElementById('aliciIlanCard');
   if (!aliciIlan || aliciIlan.length === 0) {
@@ -525,77 +719,99 @@ async function aliciIlanSil(id) {
   profilYukle();
 }
 
-// ── KULLANICI TİPİ ETİKETİ
-function kullaniciTipLabel(tip) {
-  const etiketler = {
-    bireysel: 'Bireysel',
-    kurumsal: '🏢 Kurumsal / Emlakçı',
-    freelancer: '🛠️ Freelancer',
-    hizmet_saglayici: '🔧 Hizmet Sağlayıcı'
-  };
-  return etiketler[tip] || tip;
-}
-
-// ── AVATAR
-async function avatarDegistir(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const fileName = `avatars/${currentUser.id}`;
-  const { error: uploadError } = await sb.storage.from('avatarlar').upload(fileName, file, { upsert: true });
-  if (uploadError) { alert('Fotoğraf yüklenemedi: ' + uploadError.message); return; }
-  const { data } = sb.storage.from('avatarlar').getPublicUrl(fileName);
-  await sb.from('profiles').update({ avatar_url: data.publicUrl + '?t=' + Date.now() }).eq('id', currentUser.id);
-  document.getElementById('avatarEmoji').style.display = 'none';
-  const img = document.getElementById('avatarImg');
-  img.src = data.publicUrl + '?t=' + Date.now(); img.style.display = 'block';
-  alert('✅ Profil fotoğrafı güncellendi!');
-}
-
-// ── PROFİL DÜZENLE — Kullanıcı tipine göre farklı form
+// ─────────────────────────────────────────
+// PROFİL DÜZENLE MODAL — Tipe göre farklı form
+// ─────────────────────────────────────────
 async function profilDuzenle() {
   const p = currentProfil || {};
   const tip = p.kullanici_tipi || 'bireysel';
 
-  // Ortak alanlar (herkes)
+  // ── Ortak alanlar
   const ortakAlanlar = `
-    <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">👤 Ad Soyad *</label><input class="input" type="text" id="editAd" value="${p.full_name||''}"></div>
-    <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📞 Telefon</label><input class="input" type="tel" id="editTel" value="${p.phone||''}" placeholder="05XX XXX XX XX"></div>
-    <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏙️ Şehir / İlçe</label><input class="input" type="text" id="editSehir" value="${p.sehir||''}" placeholder="ör. Ankara, Çankaya"></div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">👤 Ad Soyad *</label>
+      <input class="input" type="text" id="editAd" value="${p.full_name||''}">
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📞 Telefon</label>
+      <input class="input" type="tel" id="editTel" value="${p.phone||''}" placeholder="05XX XXX XX XX">
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏙️ Şehir / İlçe</label>
+      <input class="input" type="text" id="editSehir" value="${p.sehir||''}" placeholder="ör. Ankara, Çankaya">
+    </div>
   `;
 
-  // Tip'e göre ek alanlar
+  // ── Tip'e göre ek alanlar
   let ekAlanlar = '';
   let formBaslik = '⚙️ Profili Düzenle';
+  let formAlt = kullaniciTipLabel(tip);
 
   if (tip === 'kurumsal') {
     formBaslik = '🏢 Kurumsal Profili Düzenle';
     ekAlanlar = `
       <div class="form-section-title">Firma Bilgileri</div>
-      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏢 Firma / Ofis Adı *</label><input class="input" type="text" id="editFirmaAdi" value="${p.firma_adi||''}" placeholder="ör. Güven Gayrimenkul"></div>
-      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🪪 Yetki Numarası</label><input class="input" type="text" id="editYetkiNo" value="${p.yetki_belge_no||''}" placeholder="Ticaret sicil / yetki no"></div>
-      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏛️ Vergi No / TC</label><input class="input" type="text" id="editVergiNo" value="${p.vergi_no||''}" placeholder="Vergi numarası"></div>
-      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📍 Ofis Adresi</label><input class="input" type="text" id="editOfisAdresi" value="${p.ofis_adresi||''}" placeholder="Tam adres"></div>
-      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">👥 Çalışan Sayısı</label><input class="input" type="number" id="editCalisanSayisi" value="${p.calisan_sayisi||''}" placeholder="ör. 5" min="1"></div>
-      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🌐 Web Sitesi</label><input class="input" type="url" id="editWebsite" value="${p.website_url||''}" placeholder="https://firmaniz.com"></div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏢 Firma Adı *</label>
+        <input class="input" type="text" id="editFirmaAdi" value="${p.firma_adi||''}" placeholder="ör. Güven Gayrimenkul">
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏛️ Vergi No</label>
+        <input class="input" type="text" id="editVergiNo" value="${p.vergi_no||''}" placeholder="10 haneli vergi numarası" maxlength="11" inputmode="numeric">
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📍 Ofis Adresi</label>
+        <input class="input" type="text" id="editOfisAdresi" value="${p.ofis_adresi||''}" placeholder="Tam adres">
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">👥 Çalışan Sayısı</label>
+        <select class="input" id="editCalisanSayisi" style="padding:12px">
+          <option value="">Seçin</option>
+          ${['1-5','6-20','21-50','51-100','100+'].map(s=>`<option value="${s}" ${p.calisan_sayisi===s?'selected':''}>${s} kişi</option>`).join('')}
+        </select>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🌐 Web Sitesi</label>
+        <input class="input" type="url" id="editWebsite" value="${p.website_url||''}" placeholder="https://firmaniz.com">
+      </div>
       <div class="form-section-title">Tanıtım</div>
-      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Firma Hakkında</label><textarea class="input" id="editAciklama" rows="3" style="resize:none" placeholder="Firmanızı ve hizmetlerinizi tanıtın...">${p.aciklama||''}</textarea></div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Firma Hakkında</label>
+        <textarea class="input" id="editAciklama" rows="3" style="resize:none" placeholder="Firmanızı ve hizmetlerinizi tanıtın...">${p.aciklama||''}</textarea>
+      </div>
     `;
+
   } else if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
-    formBaslik = '🛠️ Hizmet Profilini Düzenle';
+    formBaslik = '🔧 Hizmet Profilini Düzenle';
     ekAlanlar = `
       <div class="form-section-title">Hizmet Bilgileri</div>
-      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🔧 Uzmanlık Alanı</label><input class="input" type="text" id="editUzmanlik" value="${p.uzmanlik||''}" placeholder="ör. Tadilat, Boya, Temizlik"></div>
-      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">💰 Saatlik / Günlük Ücret (₺)</label><input class="input" type="number" id="editFiyat" value="${p.ucret||''}" placeholder="ör. 350"></div>
-      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📋 Deneyim (yıl)</label><input class="input" type="number" id="editDeneyim" value="${p.deneyim_yil||''}" placeholder="ör. 5" min="0"></div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🔧 Uzmanlık / Hizmet Türü</label>
+        <input class="input" type="text" id="editUzmanlik" value="${p.uzmanlik||p.kategori||''}" placeholder="ör. Tadilat, Boya, Temizlik">
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">💰 Saatlik / Günlük Ücret (₺)</label>
+        <input class="input" type="number" id="editFiyat" value="${p.ucret||''}" placeholder="ör. 350">
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📅 Deneyim (yıl)</label>
+        <input class="input" type="number" id="editDeneyim" value="${p.deneyim_yil||''}" placeholder="ör. 5" min="0">
+      </div>
       <div class="form-section-title">Hakkımda</div>
-      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Kendinizi Tanıtın</label><textarea class="input" id="editHakkimda" rows="3" style="resize:none" placeholder="Yaptığınız işi, deneyiminizi anlatın...">${p.hakkimda||''}</textarea></div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Kendinizi Tanıtın</label>
+        <textarea class="input" id="editHakkimda" rows="3" style="resize:none" placeholder="Yaptığınız işi, deneyiminizi anlatın...">${p.hakkimda||''}</textarea>
+      </div>
     `;
+
   } else {
     // Bireysel
-    formBaslik = '👤 Profili Düzenle';
     ekAlanlar = `
       <div class="form-section-title">Hakkımda</div>
-      <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Hakkımda</label><textarea class="input" id="editHakkimda" rows="3" style="resize:none" placeholder="Kendinizi kısaca tanıtın...">${p.hakkimda||''}</textarea></div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Hakkımda</label>
+        <textarea class="input" id="editHakkimda" rows="3" style="resize:none" placeholder="Kendinizi kısaca tanıtın...">${p.hakkimda||''}</textarea>
+      </div>
     `;
   }
 
@@ -606,7 +822,7 @@ async function profilDuzenle() {
     <div style="background:var(--bg2);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-height:90vh;overflow-y:auto">
       <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
       <h3 style="font-size:18px;font-weight:900;margin-bottom:4px">${formBaslik}</h3>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:20px">${kullaniciTipLabel(tip)}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:20px">${formAlt}</div>
       ${ortakAlanlar}
       ${ekAlanlar}
       <div id="editError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
@@ -617,7 +833,9 @@ async function profilDuzenle() {
   modal.onclick = e => { if(e.target===modal) modal.remove(); };
 }
 
-// ── PROFİL KAYDET — Tipe göre farklı alanlar
+// ─────────────────────────────────────────
+// PROFİL KAYDET
+// ─────────────────────────────────────────
 async function profilKaydet(tip) {
   const ad = document.getElementById('editAd').value.trim();
   if (!ad) {
@@ -626,14 +844,12 @@ async function profilKaydet(tip) {
     return;
   }
 
-  // Ortak güncelleme
   const guncellemeler = {
     full_name: ad,
     phone: document.getElementById('editTel').value.trim() || null,
     sehir: document.getElementById('editSehir').value.trim() || null,
   };
 
-  // Tip'e özel alanlar
   if (tip === 'kurumsal') {
     const firmaAdi = document.getElementById('editFirmaAdi').value.trim();
     if (!firmaAdi) {
@@ -642,20 +858,19 @@ async function profilKaydet(tip) {
       return;
     }
     Object.assign(guncellemeler, {
-      firma_adi: firmaAdi,
-      yetki_belge_no: document.getElementById('editYetkiNo').value.trim() || null,
-      vergi_no: document.getElementById('editVergiNo').value.trim() || null,
-      ofis_adresi: document.getElementById('editOfisAdresi').value.trim() || null,
-      calisan_sayisi: parseInt(document.getElementById('editCalisanSayisi').value) || null,
-      website_url: document.getElementById('editWebsite').value.trim() || null,
-      aciklama: document.getElementById('editAciklama').value.trim() || null,
+      firma_adi:      firmaAdi,
+      vergi_no:       document.getElementById('editVergiNo').value.trim() || null,
+      ofis_adresi:    document.getElementById('editOfisAdresi').value.trim() || null,
+      calisan_sayisi: document.getElementById('editCalisanSayisi').value || null,
+      website_url:    document.getElementById('editWebsite').value.trim() || null,
+      aciklama:       document.getElementById('editAciklama').value.trim() || null,
     });
   } else if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
     Object.assign(guncellemeler, {
-      uzmanlik: document.getElementById('editUzmanlik').value.trim() || null,
-      ucret: parseFloat(document.getElementById('editFiyat').value) || null,
-      deneyim_yil: parseInt(document.getElementById('editDeneyim').value) || null,
-      hakkimda: document.getElementById('editHakkimda').value.trim() || null,
+      uzmanlik:     document.getElementById('editUzmanlik').value.trim() || null,
+      ucret:        parseFloat(document.getElementById('editFiyat').value) || null,
+      deneyim_yil:  parseInt(document.getElementById('editDeneyim').value) || null,
+      hakkimda:     document.getElementById('editHakkimda').value.trim() || null,
     });
   } else {
     guncellemeler.hakkimda = document.getElementById('editHakkimda').value.trim() || null;
@@ -669,6 +884,44 @@ async function profilKaydet(tip) {
   }
   document.getElementById('profilModal').remove();
   profilYukle();
+}
+
+// ─────────────────────────────────────────
+// DİĞER FONKSİYONLAR
+// ─────────────────────────────────────────
+function hizmetlerToggle() {
+  document.getElementById('hizmetlerBody').classList.toggle('open');
+  document.getElementById('hizmetlerArrow').classList.toggle('open');
+}
+
+function hizmetVerTikla() {
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%">
+      <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
+      <div style="font-size:32px;text-align:center;margin-bottom:12px">🛠️</div>
+      <h3 style="font-size:20px;font-weight:900;margin-bottom:12px;text-align:center">Hizmet Ver</h3>
+      <p style="font-size:14px;color:var(--text2);text-align:center;line-height:1.7;margin-bottom:20px">Bu özellik çok yakında geliyor!<br>Tadilat, temizlik, nakliye ve daha fazla hizmet kategorisinde ilan verebileceksiniz.</p>
+      <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:14px;border-radius:50px;background:var(--gold);color:var(--bg);border:none;font-family:Nunito,sans-serif;font-size:15px;font-weight:900;cursor:pointer">Tamam</button>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.onclick = e => { if(e.target===modal) modal.remove(); };
+}
+
+async function avatarDegistir(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const fileName = `avatars/${currentUser.id}`;
+  const { error: uploadError } = await sb.storage.from('avatarlar').upload(fileName, file, { upsert: true });
+  if (uploadError) { alert('Fotoğraf yüklenemedi: ' + uploadError.message); return; }
+  const { data } = sb.storage.from('avatarlar').getPublicUrl(fileName);
+  const url = data.publicUrl + '?t=' + Date.now();
+  await sb.from('profiles').update({ avatar_url: url }).eq('id', currentUser.id);
+  document.getElementById('avatarEmoji').style.display = 'none';
+  const img = document.getElementById('avatarImg');
+  img.src = url; img.style.display = 'block';
+  alert('✅ Profil fotoğrafı güncellendi!');
 }
 
 async function ilanSil(ilanId) {
