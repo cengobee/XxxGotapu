@@ -203,6 +203,7 @@
   <button class="tab-btn" onclick="sekmeAc('raporlar',this)">📈 Raporlar</button>
   <button class="tab-btn" onclick="sekmeAc('mesajlar',this)">💬 Mesajlar</button>
   <button class="tab-btn" onclick="sekmeAc('sikayetler',this)">🚨 Şikayetler</button>
+  <button class="tab-btn" onclick="sekmeAc('onecikanlar',this)">🚀 Öne Çıkanlar <span id="onecikanBadge" style="background:var(--gold);color:#1a1a1a;font-size:10px;font-weight:800;padding:1px 6px;border-radius:50px;margin-left:4px;display:none">0</span></button>
   <button class="tab-btn" onclick="sekmeAc('bankalar',this)">🏦 Bankalar</button>
 </div>
 
@@ -353,6 +354,17 @@
     <div id="sikayetListesi"><div class="spinner"></div></div>
   </div>
 
+  <!-- 🚀 ÖNE ÇIKANLAR -->
+  <div id="sekme-onecikanlar" style="display:none">
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="onecikanFiltreler">
+      <button class="act-btn act-gold" onclick="onecikanFiltrele('tumu',this)">Tümü</button>
+      <button class="act-btn" onclick="onecikanFiltrele('premium',this)">🌟 Premium</button>
+      <button class="act-btn" onclick="onecikanFiltrele('standart',this)">⭐ Standart</button>
+      <button class="act-btn" onclick="onecikanFiltrele('meta',this)">📢 Meta Reklam</button>
+    </div>
+    <div id="onecikanListesi"><div class="spinner"></div></div>
+  </div>
+
   <!-- 🏦 BANKA FAİZ YÖNETİMİ -->
   <div id="sekme-bankalar" style="display:none">
     <div class="faiz-bilgi-kutu">
@@ -410,7 +422,7 @@ sb.auth.getSession().then(({ data }) => {
   tumunuYukle();
 });
 
-const TÜM_SEKMELER = ['ozet','onay','ilanlar','teklifler','kullanicilar','kurumsal','odemeler','raporlar','mesajlar','sikayetler','bankalar'];
+const TÜM_SEKMELER = ['ozet','onay','ilanlar','teklifler','kullanicilar','kurumsal','odemeler','raporlar','mesajlar','sikayetler','onecikanlar','bankalar'];
 
 function sekmeAc(sekme, btn) {
   TÜM_SEKMELER.forEach(s => {
@@ -434,7 +446,8 @@ async function tumunuYukle() {
     ozetYukle(), onayBekleyenleriYukle(), ilanlariYukle(),
     teklifleriYukle(), kullanicilariYukle(), kurumsalUyeleriYukle(),
     odemetalepleriniYukle(), raporlariYukle(), mesajlariYukle(),
-    sikayetleriYukle(), bankalariYukle()
+    sikayetleriYukle(), bankalariYukle(),
+    onecikanlariYukle()
   ]);
 }
 
@@ -926,6 +939,87 @@ function sikayetleriGoster(l){const el=document.getElementById('sikayetListesi')
 function sikayetFiltrele(f,el){document.querySelectorAll('#sikayetFiltreler .act-btn').forEach(b=>b.classList.remove('act-gold'));el.classList.add('act-gold');sikayetleriGoster(f==='tumu'?tumSikayetler:tumSikayetler.filter(s=>s.durum===f));}
 async function sikayetDurumGuncelle(id,d){await sb.from('sikayetler').update({durum:d}).eq('id',id);await sikayetleriYukle();}
 async function sikayetSilAdmin(id){if(!confirm('Silmek istiyor musunuz?'))return;await sb.from('sikayetler').delete().eq('id',id);await sikayetleriYukle();}
+
+// ══════════════════════════════════════════════
+// 🚀 ÖNE ÇIKANLAR
+// ══════════════════════════════════════════════
+let tumOnecikanlar = [];
+
+async function onecikanlariYukle() {
+  const simdi = new Date().toISOString();
+  const { data } = await sb.from('ilanlar')
+    .select('id,baslik,konum,fiyat,tip,user_id,one_cikarma_tipi,one_cikarma_bitis,meta_reklam_aktif,meta_reklam_bitis,goruntulenmesayisi,favori_sayisi')
+    .or(`one_cikarma_bitis.gt.${simdi},meta_reklam_bitis.gt.${simdi}`)
+    .order('one_cikarma_bitis', { ascending: false });
+  tumOnecikanlar = data || [];
+  const badge = document.getElementById('onecikanBadge');
+  if (tumOnecikanlar.length > 0) { badge.textContent = tumOnecikanlar.length; badge.style.display = 'inline'; }
+  onecikanListesiGoster('tumu');
+}
+
+function onecikanListesiGoster(filtre) {
+  let liste = [...tumOnecikanlar];
+  if (filtre === 'premium') liste = liste.filter(i => i.one_cikarma_tipi === 'premium');
+  else if (filtre === 'standart') liste = liste.filter(i => i.one_cikarma_tipi === 'standart');
+  else if (filtre === 'meta') liste = liste.filter(i => i.meta_reklam_aktif);
+  const el = document.getElementById('onecikanListesi');
+  if (!liste.length) {
+    el.innerHTML = '<div class="empty" style="padding:30px"><div class="empty-icon">🚀</div><div class="empty-title">Aktif öne çıkarma yok</div></div>';
+    return;
+  }
+  el.innerHTML = liste.map(i => {
+    const simdi = new Date();
+    const oneBitis = i.one_cikarma_bitis ? new Date(i.one_cikarma_bitis) : null;
+    const metaBitis = i.meta_reklam_bitis ? new Date(i.meta_reklam_bitis) : null;
+    const oneKalan = oneBitis && oneBitis > simdi ? Math.ceil((oneBitis - simdi) / 86400000) : null;
+    const metaKalan = metaBitis && metaBitis > simdi ? Math.ceil((metaBitis - simdi) / 86400000) : null;
+    const tipRozet = i.one_cikarma_tipi === 'premium'
+      ? '<span style="background:rgba(255,107,53,0.15);color:#ff6b35;border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">🌟 Premium</span>'
+      : i.one_cikarma_tipi === 'standart'
+      ? '<span style="background:rgba(245,200,66,0.15);color:var(--gold);border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">⭐ Standart</span>'
+      : '';
+    const metaRozet = i.meta_reklam_aktif && metaKalan
+      ? '<span style="background:rgba(74,144,217,0.15);color:#4a90d9;border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">📢 Meta</span>'
+      : '';
+    return `<div class="admin-card">
+      <div class="admin-card-head">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">${tipRozet}${metaRozet}</div>
+          <div class="admin-card-title">${i.baslik}</div>
+          <div class="admin-card-meta">💰 ${Number(i.fiyat).toLocaleString('tr-TR')} ₺ • 📍 ${i.konum || ''}</div>
+          <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap">
+            ${oneKalan ? `<span style="font-size:11px;color:var(--gold);font-weight:700">⭐ ${oneKalan} gün kaldı</span>` : ''}
+            ${metaKalan ? `<span style="font-size:11px;color:#4a90d9;font-weight:700">📢 ${metaKalan} gün kaldı</span>` : ''}
+            <span style="font-size:11px;color:var(--text3);font-weight:700">👁 ${(i.goruntulenmesayisi||0).toLocaleString('tr-TR')}</span>
+            <span style="font-size:11px;color:var(--text3);font-weight:700">❤️ ${i.favori_sayisi||0}</span>
+          </div>
+        </div>
+      </div>
+      <div class="admin-card-actions">
+        <a href="ilan-detay.html?id=${i.id}" class="act-btn act-blue">👁️ İlanı Gör</a>
+        <button class="act-btn act-rust" onclick="oneCikarmaSonlandir('${i.id}')">⏹️ Sonlandır</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function onecikanFiltrele(filtre, el) {
+  document.querySelectorAll('#onecikanFiltreler .act-btn').forEach(b => b.classList.remove('act-gold'));
+  el.classList.add('act-gold');
+  onecikanListesiGoster(filtre);
+}
+
+async function oneCikarmaSonlandir(ilanId) {
+  if (!confirm('Bu ilanın öne çıkarması sonlandırılsın mı?')) return;
+  await sb.from('ilanlar').update({
+    one_cikarma_tipi: null,
+    one_cikarma_bitis: null,
+    meta_reklam_aktif: false,
+    meta_reklam_bitis: null
+  }).eq('id', ilanId);
+  await onecikanlariYukle();
+  toast('Öne çıkarma sonlandırıldı.', 'bilgi');
+}
 
 // ══════════════════════════════════════════════
 // BANKA FAİZ
