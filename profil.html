@@ -9,6 +9,7 @@
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="kredi.js"></script>
 <style>
   /* ── GENEL PROFİL HEADER ── */
   .profile-header { text-align: center; padding: 20px 0; }
@@ -194,7 +195,7 @@
   .alan-row-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 </style>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f5c518">
+  <meta name="theme-color" content="#f5c718">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -419,6 +420,7 @@ const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+window._sbClient = sb;
 let currentUser = null;
 let currentProfil = null;
 
@@ -522,6 +524,7 @@ function uzmanBilgiHTML(profil) {
 function kurumsalBilgiHTML(profil) {
   let html = '';
   if (profil.kategori) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🏢</div><div><div class="profil-bilgi-label">Firma Türü</div><div class="profil-bilgi-deger">${kategoriLabel(profil.kategori)}</div></div></div>`;
+  if (profil.yetki_belge_no) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🪪</div><div><div class="profil-bilgi-label">Yetki Belge No</div><div class="profil-bilgi-deger" style="color:var(--green);font-weight:900">${profil.yetki_belge_no}</div></div></div>`;
   if (profil.kurumsal_sehir || profil.sehir) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">📍</div><div><div class="profil-bilgi-label">Konum</div><div class="profil-bilgi-deger">${profil.kurumsal_sehir || profil.sehir}</div></div></div>`;
   if (profil.ofis_adresi) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🗺️</div><div><div class="profil-bilgi-label">Ofis Adresi</div><div class="profil-bilgi-deger">${profil.ofis_adresi}</div></div></div>`;
   if (profil.calisan_sayisi) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">👥</div><div><div class="profil-bilgi-label">Çalışan Sayısı</div><div class="profil-bilgi-deger">${profil.calisan_sayisi}</div></div></div>`;
@@ -535,12 +538,25 @@ function ilanKartHTML(i, kendi = false) {
   const onayText  = i.onay_durumu === 'onaylandi' ? '✅ Onaylandı' : i.onay_durumu === 'reddedildi' ? '❌ Reddedildi' : '⏳ Bekliyor';
   const fiyat = Number(i.fiyat).toLocaleString('tr-TR') + ' ₺' + (i.tip === 'kiralik' ? '/ay' : '');
   const resim = i.foto_url ? `<img src="${i.foto_url}">` : (i.tip === 'kiralik' ? '🏘️' : '🏙️');
+
+  const simdi = new Date();
+  let oneCikanRozet = '';
+  if (i.one_cikarma_tipi==='premium' && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis)>simdi)
+    oneCikanRozet = '<span style="background:rgba(255,107,53,0.15);color:#ff6b35;border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">🌟 Premium</span>';
+  else if (i.one_cikarma_tipi==='standart' && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis)>simdi)
+    oneCikanRozet = '<span style="background:rgba(245,200,66,0.15);color:var(--gold);border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">⭐ Öne Çıkan</span>';
+  if (i.meta_reklam_aktif && i.meta_reklam_bitis && new Date(i.meta_reklam_bitis)>simdi)
+    oneCikanRozet += '<span style="background:rgba(74,144,217,0.15);color:#4a90d9;border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">📢 Meta</span>';
+
+  const istatistik = kendi ? `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border);margin-top:6px;flex-wrap:wrap"><span style="font-size:11px;font-weight:700;color:var(--text3)">👁 ${(i.goruntulenmesayisi||0).toLocaleString('tr-TR')}</span><span style="font-size:11px;font-weight:700;color:var(--text3)">❤️ ${i.favori_sayisi||0}</span>${oneCikanRozet}<button onclick="KrediSistemi.oneCikarModal('${i.id}','${(i.baslik||'').replace(/'/g,"\\'")}');event.stopPropagation()" style="margin-left:auto;background:var(--gold);color:var(--bg);border:none;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif">🚀 Öne Çıkar</button></div>` : '';
+
   const kendiAksiyonlar = kendi ? `
     <div class="ilanim-actions">
       <a href="ilan-duzenle.html?id=${i.id}" class="btn-duzenle">✏️ Düzenle</a>
       <button onclick="ilanSil('${i.id}')" class="btn-sil">🗑️ Sil</button>
     </div>
     <a href="degerleme.html?ilan_id=${i.id}" class="ekspertiz-link">📊 Ekspertiz Raporu — 800 ₺</a>
+    ${istatistik}
   ` : '';
   const tikla = !kendi ? `onclick="location.href='ilan-detay.html?id=${i.id}'"` : '';
   return `
@@ -678,7 +694,7 @@ async function profilYukle() {
   }
 
   // İlanlar
-  const { data: ilanlar } = await sb.from('ilanlar').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  const { data: ilanlar } = await sb.from('ilanlar').select('*,goruntulenmesayisi,favori_sayisi,one_cikarma_tipi,one_cikarma_bitis,meta_reklam_aktif,meta_reklam_bitis').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   document.getElementById('ilanSayisi').textContent = ilanlar?.filter(i => i.onay_durumu === 'onaylandi').length || 0;
   const kart = document.getElementById('ilanlarimCard');
   kart.innerHTML = (!ilanlar || ilanlar.length === 0)
