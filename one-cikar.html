@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>GoTapu — İlanı Öne Çıkar</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="kredi.js"></script>
+<style>
+  .paket-kart {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color .2s, transform .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .paket-kart.standart { border-color: rgba(245,200,66,0.4); }
+  .paket-kart.premium  { border-color: rgba(255,107,53,0.5); }
+  .paket-kart.meta     { border-color: rgba(74,144,217,0.5); }
+  .paket-kart.secildi  { transform: scale(1.01); }
+  .paket-kart.secildi.standart { border-color: var(--gold); background: rgba(245,200,66,0.06); }
+  .paket-kart.secildi.premium  { border-color: #ff6b35; background: rgba(255,107,53,0.06); }
+  .paket-kart.secildi.meta     { border-color: #4a90d9; background: rgba(74,144,217,0.06); }
+  .paket-kart.yetersiz { opacity: 0.55; }
+
+  .paket-bant {
+    position: absolute; top: 14px; right: -28px;
+    background: #ff6b35; color: white;
+    font-size: 10px; font-weight: 900;
+    padding: 3px 36px; transform: rotate(45deg);
+    letter-spacing: 0.5px;
+  }
+  .paket-bant.meta-bant { background: #4a90d9; }
+
+  .paket-baslik { font-size: 17px; font-weight: 900; margin-bottom: 4px; }
+  .paket-aciklama { font-size: 13px; color: var(--text2); margin-bottom: 14px; line-height: 1.5; }
+  .paket-ozellikler { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .paket-ozellik { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--text2); }
+  .paket-ozellik::before { content: '✓'; color: var(--green); font-weight: 900; }
+  .paket-fiyat { display: flex; align-items: baseline; gap: 4px; margin-bottom: 14px; }
+  .paket-fiyat-sayi { font-size: 28px; font-weight: 900; color: var(--gold); }
+  .paket-fiyat-birim { font-size: 13px; color: var(--text3); font-weight: 700; }
+  .paket-sure { font-size: 12px; color: var(--text3); font-weight: 700; }
+
+  .sec-btn {
+    width: 100%; padding: 13px;
+    border-radius: 50px; border: none;
+    font-family: Nunito, sans-serif;
+    font-size: 14px; font-weight: 900;
+    cursor: pointer; transition: opacity .2s;
+  }
+  .sec-btn.standart-btn { background: var(--gold); color: var(--bg); }
+  .sec-btn.premium-btn  { background: linear-gradient(135deg,#ff6b35,#ff9500); color: white; }
+  .sec-btn.meta-btn     { background: linear-gradient(135deg,#1877f2,#4a90d9); color: white; }
+  .sec-btn:disabled     { opacity: 0.5; cursor: not-allowed; }
+
+  /* Bakiye kutusu */
+  .bakiye-kutu {
+    display: flex; align-items: center; gap: 12px;
+    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+    border-radius: 16px; padding: 16px 20px; margin-bottom: 24px;
+  }
+  .bakiye-ikon { font-size: 28px; }
+  .bakiye-label { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .bakiye-sayi  { font-size: 24px; font-weight: 900; color: #f5c518; }
+
+  /* İlan seçim kartı */
+  .ilan-secici {
+    background: var(--card); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 14px; margin-bottom: 24px; cursor: pointer;
+  }
+  .ilan-secici:active { background: var(--card2); }
+  .ilan-secici-baslik { font-size: 13px; font-weight: 900; margin-bottom: 3px; }
+  .ilan-secici-alt { font-size: 12px; color: var(--text3); }
+
+  /* Aktif paket bilgi */
+  .aktif-paket-bilgi {
+    border-radius: 12px; padding: 12px 16px; margin-bottom: 14px;
+    font-size: 13px; font-weight: 700;
+  }
+  .aktif-standart { background: rgba(245,200,66,0.1); color: var(--gold); border: 1px solid rgba(245,200,66,0.2); }
+  .aktif-premium  { background: rgba(255,107,53,0.1); color: #ff6b35; border: 1px solid rgba(255,107,53,0.2); }
+  .aktif-meta     { background: rgba(74,144,217,0.1); color: #4a90d9; border: 1px solid rgba(74,144,217,0.2); }
+
+  /* Başarı ekranı */
+  .basari-ekran { text-align: center; padding: 40px 20px; display: none; }
+  .basari-ikon { font-size: 64px; margin-bottom: 16px; }
+  .basari-baslik { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+  .basari-aciklama { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 24px; }
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f5c518">
+</head>
+<body>
+<script>
+(function() {
+  if (localStorage.getItem('gotapu_tema') === 'light') document.body.classList.add('light');
+})();
+</script>
+
+<nav class="top-nav">
+  <a href="profil.html" class="nav-logo" style="font-size:14px;font-weight:800">← Geri</a>
+  <div class="nav-actions">
+    <div id="kredi-bakiye-widget" style="gap:5px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:6px 14px"></div>
+  </div>
+</nav>
+
+<div class="page fade-up" id="anaSayfa">
+
+  <!-- Sayfa başlığı -->
+  <div style="margin-bottom:20px">
+    <h2 style="font-size:22px;font-weight:900;margin-bottom:4px">🚀 İlanı Öne Çıkar</h2>
+    <p style="font-size:13px;color:var(--text2);line-height:1.5">Daha fazla kişiye ulaşın, ilanınızı üst sıralara taşıyın.</p>
+  </div>
+
+  <!-- Bakiye -->
+  <div class="bakiye-kutu">
+    <div class="bakiye-ikon">💎</div>
+    <div>
+      <div class="bakiye-label">Kredi Bakiyeniz</div>
+      <div class="bakiye-sayi" id="bakiyeSayi">Yükleniyor...</div>
+    </div>
+    <a href="odeme.html" style="margin-left:auto;background:rgba(245,197,24,0.15);color:#f5c518;border:1px solid rgba(245,197,24,0.3);border-radius:50px;padding:8px 16px;font-size:12px;font-weight:900;text-decoration:none;white-space:nowrap">+ Kredi Yükle</a>
+  </div>
+
+  <!-- İlan Seçimi -->
+  <div style="margin-bottom:8px">
+    <div style="font-size:12px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Öne Çıkarılacak İlan</div>
+    <div id="ilanSeciciAlani">
+      <div class="spinner" style="padding:20px"></div>
+    </div>
+  </div>
+
+  <!-- Aktif paket bilgisi -->
+  <div id="aktifPaketBilgi"></div>
+
+  <!-- Paketler -->
+  <div style="margin-bottom:8px">
+    <div style="font-size:12px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Paket Seçin</div>
+    <div id="paketlerAlani">
+      <div class="spinner" style="padding:20px"></div>
+    </div>
+  </div>
+
+  <!-- Bilgi notu -->
+  <div style="background:rgba(74,144,217,0.07);border:1px solid rgba(74,144,217,0.2);border-radius:12px;padding:14px;margin-bottom:24px">
+    <div style="font-size:12px;font-weight:900;color:#4a90d9;margin-bottom:6px">ℹ️ Nasıl çalışır?</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.6">
+      • <b>Standart</b>: İlanınız arama sonuçlarında üst sıralara taşınır.<br>
+      • <b>Premium</b>: Ana sayfada özel bölümde ve en üst sırada görünür.<br>
+      • <b>Meta Reklam</b>: Facebook & Instagram'da hedefli reklam. +100.000 gösterim.<br>
+      • Tüm paketler 7 gün geçerlidir. Kredi iadesi yapılmaz.
+    </div>
+  </div>
+
+</div><!-- /anaSayfa -->
+
+<!-- Başarı Ekranı -->
+<div class="basari-ekran" id="basariEkrani">
+  <div class="basari-ikon" id="basariIkon">🚀</div>
+  <div class="basari-baslik" id="basariBaslik">İlan Öne Çıkarıldı!</div>
+  <div class="basari-aciklama" id="basariAciklama"></div>
+  <a href="profil.html" class="btn btn-gold btn-lg" style="display:block;max-width:280px;margin:0 auto 12px">Profilime Dön</a>
+  <a href="anasayfa.html" class="btn btn-outline btn-md" style="display:block;max-width:280px;margin:0 auto;text-align:center">Ana Sayfayı Gör →</a>
+</div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
+  <a href="eslesmeler.html" class="bnav-item"><div class="bnav-icon">✨</div>Eşleşmeler</a>
+  <a href="ilan-ver.html" class="bnav-center">+</a>
+  <a href="mesajlar.html" class="bnav-item"><div class="bnav-icon">💬</div>Mesajlar</a>
+  <a href="profil.html" class="bnav-item"><div class="bnav-icon">👤</div>Profil</a>
+</nav>
+
+<script>
+const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const { createClient } = supabase;
+window._sbClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = window._sbClient;
+
+let currentUser  = null;
+let secilenIlanId = null;
+let secilenIlan   = null;
+let mevcutBakiye  = 0;
+
+// URL'den ilan_id parametresi varsa direkt seç
+const urlParams = new URLSearchParams(window.location.search);
+const urlIlanId = urlParams.get('ilan_id');
+
+async function sayfaYukle() {
+  const { data } = await sb.auth.getSession();
+  if (!data.session) { window.location.href = 'index.html'; return; }
+  currentUser = data.session.user;
+
+  // Bakiye
+  const bakiye = await KrediSistemi.bakiyeGetir(true);
+  mevcutBakiye = bakiye?.bakiye || 0;
+  document.getElementById('bakiyeSayi').textContent = mevcutBakiye + ' kredi';
+
+  // İlanları yükle
+  await ilanlariYukle();
+
+  // Paketleri yükle
+  await paketleriYukle();
+}
+
+async function ilanlariYukle() {
+  const { data: ilanlar } = await sb
+    .from('ilanlar')
+    .select('id,baslik,fiyat,konum,tip,goruntulenmesayisi,favori_sayisi,one_cikarma_tipi,one_cikarma_bitis,meta_reklam_aktif,meta_reklam_bitis')
+    .eq('user_id', currentUser.id)
+    .eq('onay_durumu', 'onaylandi')
+    .order('created_at', { ascending: false });
+
+  const alan = document.getElementById('ilanSeciciAlani');
+
+  if (!ilanlar || ilanlar.length === 0) {
+    alan.innerHTML = `<div style="background:rgba(232,96,58,0.07);border:1px solid rgba(232,96,58,0.2);border-radius:12px;padding:16px;font-size:13px;color:var(--text2);text-align:center">Onaylı ilanınız bulunamadı.<br><a href="ilan-ver.html" style="color:var(--gold);font-weight:800">+ İlan Ver →</a></div>`;
+    return;
+  }
+
+  if (urlIlanId && ilanlar.find(i => i.id === urlIlanId)) {
+    secilenIlanId = urlIlanId;
+    secilenIlan   = ilanlar.find(i => i.id === urlIlanId);
+  } else if (ilanlar.length === 1) {
+    secilenIlanId = ilanlar[0].id;
+    secilenIlan   = ilanlar[0];
+  }
+
+  if (ilanlar.length === 1) {
+    // Tek ilan — direkt göster
+    alan.innerHTML = ilanKartHTML(ilanlar[0], true);
+  } else {
+    // Birden fazla — dropdown/liste
+    alan.innerHTML = `
+      <select id="ilanSecDropdown" class="input" style="padding:12px" onchange="ilanSecildi(this.value, ${JSON.stringify(ilanlar).replace(/"/g,'&quot;')})">
+        <option value="">— İlan seçin —</option>
+        ${ilanlar.map(i => `<option value="${i.id}" ${i.id === secilenIlanId ? 'selected' : ''}>${i.baslik} — ${Number(i.fiyat).toLocaleString('tr-TR')}₺</option>`).join('')}
+      </select>
+      <div id="secilenIlanKart" style="margin-top:10px">
+        ${secilenIlan ? ilanKartHTML(secilenIlan, false) : ''}
+      </div>`;
+  }
+
+  // Aktif paket bilgisini göster
+  if (secilenIlan) aktifPaketGoster(secilenIlan);
+}
+
+function ilanSecildi(ilanId, ilanlarJson) {
+  let ilanlar;
+  try { ilanlar = typeof ilanlarJson === 'string' ? JSON.parse(ilanlarJson.replace(/&quot;/g,'"')) : ilanlarJson; }
+  catch(_) { return; }
+  secilenIlan   = ilanlar.find(i => i.id === ilanId);
+  secilenIlanId = ilanId;
+  document.getElementById('secilenIlanKart').innerHTML = secilenIlan ? ilanKartHTML(secilenIlan, false) : '';
+  if (secilenIlan) aktifPaketGoster(secilenIlan);
+  paketleriYukle();
+}
+
+function ilanKartHTML(ilan, secili) {
+  const oneCiktiMi = ilan.one_cikarma_tipi && ilan.one_cikarma_bitis && new Date(ilan.one_cikarma_bitis) > new Date();
+  const metaAktif  = ilan.meta_reklam_aktif && ilan.meta_reklam_bitis && new Date(ilan.meta_reklam_bitis) > new Date();
+  return `
+    <div class="ilan-secici ${secili ? 'secildi' : ''}">
+      <div class="ilan-secici-baslik">${ilan.baslik}</div>
+      <div class="ilan-secici-alt">
+        💰 ${Number(ilan.fiyat).toLocaleString('tr-TR')}₺  •  📍 ${ilan.konum || '—'}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+        <span style="font-size:11px;color:var(--text3);font-weight:700">👁 ${(ilan.goruntulenmesayisi||0).toLocaleString('tr-TR')}</span>
+        <span style="font-size:11px;color:var(--text3);font-weight:700">❤️ ${ilan.favori_sayisi||0}</span>
+        ${oneCiktiMi ? `<span style="background:rgba(245,200,66,0.15);color:var(--gold);border-radius:50px;padding:1px 8px;font-size:10px;font-weight:800">${ilan.one_cikarma_tipi === 'premium' ? '🌟 Premium' : '⭐ Öne Çıkan'}</span>` : ''}
+        ${metaAktif  ? `<span style="background:rgba(74,144,217,0.15);color:#4a90d9;border-radius:50px;padding:1px 8px;font-size:10px;font-weight:800">📢 Meta</span>` : ''}
+      </div>
+    </div>`;
+}
+
+function aktifPaketGoster(ilan) {
+  const alan = document.getElementById('aktifPaketBilgi');
+  if (!ilan) { alan.innerHTML = ''; return; }
+  let html = '';
+  const oneCiktiMi = ilan.one_cikarma_tipi && ilan.one_cikarma_bitis && new Date(ilan.one_cikarma_bitis) > new Date();
+  const metaAktif  = ilan.meta_reklam_aktif && ilan.meta_reklam_bitis && new Date(ilan.meta_reklam_bitis) > new Date();
+  if (oneCiktiMi) {
+    const kalan = Math.ceil((new Date(ilan.one_cikarma_bitis) - new Date()) / 86400000);
+    const tip   = ilan.one_cikarma_tipi;
+    html += `<div class="aktif-paket-bilgi aktif-${tip}">${tip === 'premium' ? '🌟 Premium Öne Çıkarma' : '⭐ Standart Öne Çıkarma'} aktif — ${kalan} gün kaldı</div>`;
+  }
+  if (metaAktif) {
+    const kalan = Math.ceil((new Date(ilan.meta_reklam_bitis) - new Date()) / 86400000);
+    html += `<div class="aktif-paket-bilgi aktif-meta">📢 Meta Reklam aktif — ${kalan} gün kaldı</div>`;
+  }
+  alan.innerHTML = html;
+}
+
+async function paketleriYukle() {
+  const paketler = await KrediSistemi.paketleriGetir();
+  const alan     = document.getElementById('paketlerAlani');
+
+  if (!paketler || paketler.length === 0) {
+    alan.innerHTML = '<div style="color:var(--text3);text-align:center;padding:20px">Paketler yüklenemedi.</div>';
+    return;
+  }
+
+  const renkler  = { standart: 'var(--gold)', premium: '#ff6b35', meta: '#4a90d9' };
+  const ikonlar  = { standart: '⭐', premium: '🌟', meta: '📢' };
+  const bantText = { premium: 'POPÜLER', meta: 'MAX ÇIKIS' };
+
+  alan.innerHTML = paketler.map(p => {
+    const yeterlimi  = mevcutBakiye >= p.kredi_bedel;
+    const ozellikler = JSON.parse(p.ozellikler || '[]');
+    const bant       = bantText[p.kod] ? `<div class="paket-bant ${p.kod === 'meta' ? 'meta-bant' : ''}">${bantText[p.kod]}</div>` : '';
+
+    return `
+      <div class="paket-kart ${p.kod} ${yeterlimi ? '' : 'yetersiz'}">
+        ${bant}
+        <div class="paket-baslik" style="color:${renkler[p.kod]}">${ikonlar[p.kod]} ${p.ad}</div>
+        <div class="paket-aciklama">${p.aciklama}</div>
+        <div class="paket-fiyat">
+          <span class="paket-fiyat-sayi">${p.kredi_bedel}</span>
+          <span class="paket-fiyat-birim">kredi</span>
+          <span class="paket-sure" style="margin-left:8px">• ${p.sure_gun} gün</span>
+        </div>
+        <div class="paket-ozellikler">
+          ${ozellikler.map(o => `<div class="paket-ozellik">${o}</div>`).join('')}
+        </div>
+        ${yeterlimi
+          ? `<button id="btn-${p.kod}" class="sec-btn ${p.kod}-btn" onclick="paketSec('${p.kod}','${p.ad}',${p.kredi_bedel})">
+               Seç → ${p.kredi_bedel} kredi harca
+             </button>`
+          : `<div style="text-align:center">
+               <div style="font-size:12px;color:var(--text3);font-weight:700;margin-bottom:8px">Yetersiz kredi (${mevcutBakiye}/${p.kredi_bedel})</div>
+               <a href="odeme.html" style="display:block;padding:11px;border-radius:50px;background:var(--card2);border:1px solid var(--border);font-size:13px;font-weight:800;color:var(--text);text-align:center;text-decoration:none">💎 Kredi Yükle →</a>
+             </div>`
+        }
+      </div>`;
+  }).join('');
+}
+
+async function paketSec(paketKod, paketAd, krediMiktar) {
+  if (!secilenIlanId) {
+    KrediSistemi.toast('Lütfen önce bir ilan seçin!', 'uyari');
+    document.getElementById('ilanSeciciAlani').scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+
+  const onay = confirm(
+    `"${paketAd}" paketi seçildi.\n` +
+    `${krediMiktar} kredi harcanacak.\n` +
+    `Mevcut bakiye: ${mevcutBakiye} kredi\n\n` +
+    `Devam edilsin mi?`
+  );
+  if (!onay) return;
+
+  const btn = document.getElementById('btn-' + paketKod);
+  if (btn) { btn.textContent = '⏳ İşleniyor...'; btn.disabled = true; }
+
+  const sonuc = await KrediSistemi.ilanOneCikar(secilenIlanId, paketKod);
+
+  if (sonuc?.basarili) {
+    // Başarı ekranı
+    const ikonlar = { standart: '⭐', premium: '🌟', meta: '📢' };
+    const aciklar = {
+      standart: 'İlanınız 7 gün boyunca arama sonuçlarının üstünde görünecek.',
+      premium:  'İlanınız 7 gün boyunca ana sayfada ve en üst sırada özel olarak gösterilecek.',
+      meta:     'İlanınız Facebook ve Instagram\'da 7 gün boyunca reklam olarak yayınlanacak.'
+    };
+    document.getElementById('anaSayfa').style.display = 'none';
+    const basari = document.getElementById('basariEkrani');
+    basari.style.display = 'block';
+    document.getElementById('basariIkon').textContent = ikonlar[paketKod] || '🚀';
+    document.getElementById('basariBaslik').textContent = 'İlan Öne Çıkarıldı!';
+    document.getElementById('basariAciklama').innerHTML = `${aciklar[paketKod] || ''}<br><br>Kalan krediniz: <strong>${sonuc.kalan_bakiye} kredi</strong>`;
+    await KrediSistemi.bakiyeWidgetGuncelle();
+  } else {
+    if (btn) { btn.textContent = 'Tekrar Dene'; btn.disabled = false; }
+    if (sonuc?.hata === 'yetersiz_kredi') {
+      KrediSistemi.toast(`Yetersiz kredi! Gereken: ${sonuc.gereken}, Mevcut: ${sonuc.mevcut}`, 'hata');
+      setTimeout(() => { window.location.href = 'odeme.html'; }, 2000);
+    } else if (sonuc?.hata === 'yetkisiz') {
+      KrediSistemi.toast('Bu ilan size ait değil.', 'hata');
+    } else {
+      KrediSistemi.toast('Hata: ' + (sonuc?.hata || 'Bilinmiyor'), 'hata');
+    }
+  }
+}
+
+sayfaYukle();
+</script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/XxxGotapu/sw.js", { scope: "/XxxGotapu/" })
+      .catch(e => console.log("SW error:", e));
+  }
+</script>
+</body>
+</html>
