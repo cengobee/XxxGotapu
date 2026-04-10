@@ -9,6 +9,7 @@
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="kredi.js"></script>
 <style>
 
 /* ══ 3'LÜ SEKME ══ */
@@ -401,6 +402,7 @@ const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+window._sbClient = sb;
 const EMOJI = { satilik:'🏙️', kiralik:'🏘️' };
 
 // ── Global state
@@ -794,40 +796,28 @@ function blurKartlariniOlustur() {
 // ══════════════════════════════════════════════
 async function profilAc(btn, buyerId, ilanTipi, arayanIlanId) {
   const krediGereken = ilanTipi === 'satilik' ? 2 : 1;
-
-  // Bakiye kontrolü
   const mevcutBakiye = kredi ? kredi.bakiye : 0;
   if (mevcutBakiye < krediGereken) {
     toast(`❌ Yetersiz kredi! Gereken: ${krediGereken}, Mevcut: ${mevcutBakiye}`, 'hata');
     setTimeout(() => { window.location.href = 'odeme.html'; }, 1800);
     return;
   }
-
-  // Günlük limit
-  const bugun = new Date().toISOString().split('T')[0];
-  const { count } = await sb.from('profil_acmalar').select('id',{count:'exact',head:true})
-    .eq('agent_id', currentUser.id).gte('tarih', bugun+'T00:00:00');
-  if ((count||0) >= 3) {
-    toast('⏰ Günlük 3 profil açma limitine ulaştınız. Yarın tekrar deneyin.', 'hata');
-    return;
-  }
-
   if (!confirm(`Bu profili açmak ${krediGereken} kredi harcayacak.\nMevcut: ${mevcutBakiye} kredi\n\nDevam etmek istiyor musunuz?`)) return;
 
   btn.disabled = true;
   btn.textContent = '⏳ Açılıyor...';
 
-  const { data: sonuc, error } = await sb.rpc('kredi_harca', {
+  // Yeni RPC kullan
+  const { data: sonuc, error } = await sb.rpc('eslesme_iletisim_ac', {
     p_agent_id: currentUser.id,
     p_buyer_id: buyerId,
-    p_ilan_tipi: ilanTipi,
-    p_ilan_id: aktifIlanId
+    p_tip: 'profil'
   });
 
   if (error || !sonuc?.basarili) {
     btn.disabled = false;
     btn.textContent = `💎 ${krediGereken} Kredi Harca → Aç`;
-    toast('❌ ' + (sonuc?.mesaj || error?.message || 'Bir hata oluştu'), 'hata');
+    toast('❌ ' + (sonuc?.hata || error?.message || 'Bir hata oluştu'), 'hata');
     return;
   }
 
@@ -835,14 +825,12 @@ async function profilAc(btn, buyerId, ilanTipi, arayanIlanId) {
   kredi = { ...(kredi||{}), bakiye: sonuc.kalan_bakiye };
   document.getElementById('krediNavSayi').textContent = sonuc.kalan_bakiye;
   document.getElementById('rolKrediSayi').textContent = sonuc.kalan_bakiye;
-
   toast(`✅ Profil açıldı! Kalan kredi: ${sonuc.kalan_bakiye}`, 'basari');
 
-  // Kartı güncelle — açık hale getir
+  // Kartı güncelle
   const kart = btn.closest('.blur-kart');
   if (kart) {
     kart.classList.add('acik');
-    // Profil bilgisini çek
     const { data: aliciProfil } = await sb.from('profiles').select('*').eq('id', buyerId).single();
     if (aliciProfil) {
       const kilitKat = document.getElementById('kilit_' + buyerId);
@@ -852,7 +840,6 @@ async function profilAc(btn, buyerId, ilanTipi, arayanIlanId) {
           <div class="blur-kilit-icon">🔓</div>
           <div class="blur-kilit-aciklama">Profil açıldı!</div>
           <button class="blur-ac-btn acik-btn" onclick="mesajGonderAlici('${buyerId}','${arayanIlanId}')">💬 Mesaj Gönder</button>`;
-        // Telefon
         const blur_ust = kart.querySelector('.blur-isim');
         if (blur_ust) blur_ust.textContent = aliciProfil.full_name || 'Kullanıcı';
         kart.querySelector('.blur-avatar').style.filter = 'none';
