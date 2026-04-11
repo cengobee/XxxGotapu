@@ -1690,7 +1690,7 @@ async function ilanlarYukle(sayfa = 1) {
   const to   = from + SAYFA_BOYUTU - 1;
 
   const { data, error } = await sorguOlustur(
-    sb.from('ilanlar').select('*,one_cikarma_tipi,one_cikarma_bitis,meta_reklam_aktif,meta_reklam_bitis')
+    sb.from('ilanlar').select('*,one_cikarma_tipi,one_cikarma_bitis,meta_reklam_aktif,meta_reklam_bitis,profiles!user_id(kullanici_tipi,kurumsal_onay,firma_adi)')
   ).order('one_cikarma_tipi', { ascending: true, nullsFirst: false })
    .order('created_at', { ascending: false })
    .range(from, to);
