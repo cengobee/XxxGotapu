@@ -970,7 +970,12 @@ async function oneCikarIlan(ilanId, ilanBaslik) {
         <span style="font-size:18px;font-weight:900;color:var(--gold)">${bakiye} kredi</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
-        <button onclick="oneCikarSatinAl('${ilanId}','standart',this)" style="background:linear-gradient(135deg,rgba(245,200,66,0.15),rgba(245,200,66,0.05));border:2px solid var(--gold);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:Nunito,sans-serif;text-align:left">
+        ${ilanData?.one_cikarma_tipi !== 'standart' ? `<button onclick="oneCikarSatinAl('${ilanId}','standart',this)" style="background:linear-gradient(135deg,rgba(245,200,66,0.15),rgba(245,200,66,0.05));border:2px solid var(--gold);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:Nunito,sans-serif;text-align:left;width:100%">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div><div style="font-size:14px;font-weight:900;color:var(--gold)">⭐ Standart — 7 Gün</div><div style="font-size:11px;color:var(--text3);margin-top:3px">Üst sıralarda gösterilir, altın çerçeve</div></div>
+    <div style="font-size:16px;font-weight:900;color:var(--gold)">50 kr</div>
+  </div>
+</button>` : ''}
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div><div style="font-size:14px;font-weight:900;color:var(--gold)">⭐ Standart — 7 Gün</div><div style="font-size:11px;color:var(--text3);margin-top:3px">Üst sıralarda gösterilir, altın çerçeve</div></div>
             <div style="font-size:16px;font-weight:900;color:var(--gold)">50 kr</div>
