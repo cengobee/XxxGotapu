@@ -549,9 +549,10 @@ function ilanKartHTML(i, kendi = false) {
     oneCikanRozet += '<span style="background:rgba(74,144,217,0.15);color:#4a90d9;border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">📢 Meta</span>';
 
   const istatistik = kendi ? `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border);margin-top:6px;flex-wrap:wrap"><span style="font-size:11px;font-weight:700;color:var(--text3)">👁 ${(i.goruntulenmesayisi||0).toLocaleString('tr-TR')}</span><span style="font-size:11px;font-weight:700;color:var(--text3)">❤️ ${i.favori_sayisi||0}</span>${oneCikanRozet}<
-  ${(i.one_cikarma_tipi && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis)>simdi)
-  ? `<span style="margin-left:auto;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;color:var(--text3)">✅ Aktif</span>`
-  : `<button onclick="oneCikarIlan('${i.id}','${(i.baslik||'').replace(/'/g,"\\'")}');event.stopPropagation()" style="margin-left:auto;background:var(--gold);color:var(--bg);border:none;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif">🚀 Öne Çıkar</button>`
+  ${(i.one_cikarma_tipi==='premium' && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis)>simdi)
+  ? `<span style="margin-left:auto;background:rgba(255,107,53,0.1);border:1px solid #ff6b35;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;color:#ff6b35">🌟 Premium Aktif</span>`
+  : `<button onclick="oneCikarIlan('${i.id}','${(i.baslik||'').replace(/'/g,"\\'")}');event.stopPropagation()" style="margin-left:auto;background:var(--gold);color:var(--bg);border:none;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif">${(i.one_cikarma_tipi==='standart' && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis)>simdi) ? '⬆️ Yükselt' : '🚀 Öne Çıkar'}</button>`
+  }
                                                                                                                                                                                                                                                                                                                                                                                                               }</div>` : '';
 
   const kendiAksiyonlar = kendi ? `
