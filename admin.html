@@ -1054,7 +1054,7 @@ async function yeniBankaEkle(){const ad=document.getElementById('yeniBankaAd').v
 function hesaplaTaksit(k,r,n){const ri=r/100;if(ri===0)return k/n;return k*ri*Math.pow(1+ri,n)/(Math.pow(1+ri,n)-1);}
 
 function detayKapat(){document.getElementById('detayModal').classList.remove('open');}
-async function cikis(){await sb.auth.signOut();window.location.href='auth.html';}
+async function cikis(){await sb.auth.signOut();window.location.href='index.html';}
 </script>
 <script>
   if ("serviceWorker" in navigator) {
