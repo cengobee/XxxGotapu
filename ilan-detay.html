@@ -421,7 +421,30 @@ async function ilanYukle(sorgu){
   sayfayiOlustur();
   document.getElementById('actionBottom').style.display='flex';
   // Görüntülenme kaydet
-  try { KrediSistemi.ilanGoruntule(ilanId).then(function(r){ var el=document.getElementById('goruntulmeSayaci'); if(el&&r&&r.goruntuleme_sayisi!==undefined) el.textContent=Number(r.goruntuleme_sayisi).toLocaleString('tr-TR'); }); } catch(e){}
+// Görüntülenme sayacını artır
+try {
+  sb.rpc('goruntulme_artir', { ilan_id_param: ilanId }).then(function(r) {
+    if (r.error) {
+      // RPC yoksa direkt update dene
+      sb.from('ilanlar')
+        .select('goruntulenmesayisi')
+        .eq('id', ilanId)
+        .single()
+        .then(function(res) {
+          if (!res.error && res.data) {
+            var yeni = (res.data.goruntulenmesayisi || 0) + 1;
+            sb.from('ilanlar')
+              .update({ goruntulenmesayisi: yeni })
+              .eq('id', ilanId)
+              .then(function() {
+                var el = document.getElementById('goruntulmeSayaci');
+                if (el) el.textContent = yeni.toLocaleString('tr-TR');
+              });
+          }
+        });
+    }
+  });
+} catch(e) {}
 }
 
 async function bankaFaizleriYukle(){
