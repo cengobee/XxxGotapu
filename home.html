@@ -374,7 +374,28 @@
   border-bottom: 1px solid var(--border);
 }
 .ilan-item:last-child { border-bottom: none; }
-.ilan-item.one-cikan-ilan { background: rgba(245,200,66,0.04); border-left: 3px solid var(--gold); }
+.ilan-item.one-cikan-ilan {
+  background: linear-gradient(135deg, rgba(245,200,66,0.12), rgba(245,200,66,0.04));
+  border-left: 4px solid var(--gold);
+  box-shadow: 0 2px 12px rgba(245,200,66,0.18);
+  position: relative;
+}
+.ilan-item.one-cikan-ilan::before {
+  content: '⭐ ÖZEL';
+  position: absolute;
+  top: 8px; right: 8px;
+  background: var(--gold);
+  color: #1a1a1a;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 50px;
+  letter-spacing: 0.5px;
+}
+.ilan-item.one-cikan-ilan .ilan-thumb {
+  border: 2px solid rgba(245,200,66,0.5);
+  border-radius: 8px;
+}
 .ilan-item:hover { background: rgba(245,200,66,0.06); }
 
 .ilan-thumb {
