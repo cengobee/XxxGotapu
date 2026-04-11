@@ -480,11 +480,7 @@ function sayfayiOlustur(){
   if(ilan.meta_reklam_aktif&&ilan.meta_reklam_bitis&&new Date(ilan.meta_reklam_bitis)>simdi)
     oneCikanHTML+='<span style="background:rgba(74,144,217,0.15);color:#4a90d9;border-radius:50px;padding:3px 10px;font-size:11px;font-weight:800">📢 Meta Reklam</span>';
 
-  var goruntulemeBar='<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap">'+
-    '<span style="font-size:12px;font-weight:700;color:var(--text3)">👁 <strong id="goruntulmeSayaci" style="color:var(--text)">'+(ilan.goruntulenmesayisi||0).toLocaleString('tr-TR')+'</strong> görüntülenme</span>'+
-    '<span style="font-size:12px;font-weight:700;color:var(--text3)">❤️ <strong style="color:var(--text)">'+(ilan.favori_sayisi||0)+'</strong> favori</span>'+
-    (oneCikanHTML?'<div style="display:flex;gap:6px;flex-wrap:wrap">'+oneCikanHTML+'</div>':'')+
-  '</div>';
+  var goruntulemeBar=(oneCikanHTML?'<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div style="display:flex;gap:6px;flex-wrap:wrap">'+oneCikanHTML+'</div></div>':'');
 
   var baslikHTML='<div class="detay-baslik-blok">'+
     '<div class="detay-fiyat">'+fiyatStr+' ₺'+fiyatEk+'</div>'+
