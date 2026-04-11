@@ -252,17 +252,14 @@
       <div class="avatar-edit">✏️</div>
     </div>
 
-    <!-- Ad (bireysel & freelancer), Firma Adı (kurumsal) -->
     <div class="profile-name" id="profilAd">Yükleniyor...</div>
     <div class="profile-firma" id="profilFirmaAdi" style="display:none"></div>
     <div class="profile-email" id="profilEmail"></div>
     <div class="profile-email" id="profilTel"></div>
     <div class="profile-email" id="profilSehir"></div>
 
-    <!-- Rozetler -->
     <div class="rozet-wrap" id="profilRozetler"></div>
 
-    <!-- Hakkımda / Bio -->
     <div style="font-size:13px;color:var(--text2);margin-top:8px;line-height:1.6;display:none;padding:0 8px" id="profilHakkimda"></div>
     <div class="verified" id="verifiedBadge" style="display:none">✓ Doğrulanmış Üye</div>
   </div>
@@ -379,12 +376,10 @@
     <div class="verified" id="bAvVerified" style="display:none">✓ Doğrulanmış Üye</div>
   </div>
 
-  <!-- Başkasının uzman bilgisi -->
   <div id="bAvUzmanKart" style="display:none;margin-bottom:20px">
     <div class="menu-label">Hizmet Bilgileri</div>
     <div class="profil-bilgi-kart" id="bAvUzmanIcerik"></div>
   </div>
-  <!-- Başkasının kurumsal bilgisi -->
   <div id="bAvKurumsalKart" style="display:none;margin-bottom:20px">
     <div class="menu-label">Firma Bilgileri</div>
     <div class="profil-bilgi-kart" id="bAvKurumsalIcerik"></div>
@@ -465,13 +460,7 @@ function kategoriLabel(kat) {
   return map[kat] || kat;
 }
 
-function onayDurumLabel(durum) {
-  if (durum === 'onaylandi') return '<span class="rozet rozet-onay">✅ Onaylı</span>';
-  return '<span class="rozet rozet-bekliyor">⏳ Onay Bekleniyor</span>';
-}
-
-// Kullanıcı tipine göre rozetleri oluştur
-function rozetlerOlustur(profil, hedef = 'profilRozetler') {
+function rozetlerOlustur(profil, hedef) {
   const tip = profil?.kullanici_tipi || 'bireysel';
   const onay = profil?.kurumsal_onay;
   let html = '';
@@ -493,7 +482,6 @@ function rozetlerOlustur(profil, hedef = 'profilRozetler') {
   document.getElementById(hedef).innerHTML = html;
 }
 
-// Avatar yükle
 function avatarYukle(avatarUrl, emojiId, imgId, tip) {
   if (avatarUrl) {
     const el = document.getElementById(emojiId);
@@ -501,7 +489,6 @@ function avatarYukle(avatarUrl, emojiId, imgId, tip) {
     if (el) el.style.display = 'none';
     if (img) { img.src = avatarUrl; img.style.display = 'block'; }
   }
-  // Avatar şeklini tipe göre ayarla
   const avEl = document.getElementById(emojiId)?.closest('.avatar');
   if (avEl) {
     avEl.classList.remove('kurumsal', 'freelancer');
@@ -510,7 +497,6 @@ function avatarYukle(avatarUrl, emojiId, imgId, tip) {
   }
 }
 
-// Uzman bilgi kartı HTML'i
 function uzmanBilgiHTML(profil) {
   let html = '';
   if (profil.kategori) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🔧</div><div><div class="profil-bilgi-label">Uzmanlık</div><div class="profil-bilgi-deger">${kategoriLabel(profil.kategori)}</div></div></div>`;
@@ -520,7 +506,6 @@ function uzmanBilgiHTML(profil) {
   return html || '<div style="color:var(--text3);font-size:13px;padding:8px">Henüz bilgi eklenmedi.</div>';
 }
 
-// Kurumsal bilgi kartı HTML'i
 function kurumsalBilgiHTML(profil) {
   let html = '';
   if (profil.kategori) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🏢</div><div><div class="profil-bilgi-label">Firma Türü</div><div class="profil-bilgi-deger">${kategoriLabel(profil.kategori)}</div></div></div>`;
@@ -532,38 +517,57 @@ function kurumsalBilgiHTML(profil) {
   return html || '<div style="color:var(--text3);font-size:13px;padding:8px">Henüz firma bilgisi eklenmedi.</div>';
 }
 
-// ilan kartı HTML
-function ilanKartHTML(i, kendi = false) {
+// ─────────────────────────────────────────
+// İLAN KARTI HTML — DÜZELTİLDİ
+// ─────────────────────────────────────────
+function ilanKartHTML(i, kendi) {
   const onayClass = i.onay_durumu === 'onaylandi' ? 'onay-onaylandi' : i.onay_durumu === 'reddedildi' ? 'onay-reddedildi' : 'onay-bekliyor';
   const onayText  = i.onay_durumu === 'onaylandi' ? '✅ Onaylandı' : i.onay_durumu === 'reddedildi' ? '❌ Reddedildi' : '⏳ Bekliyor';
   const fiyat = Number(i.fiyat).toLocaleString('tr-TR') + ' ₺' + (i.tip === 'kiralik' ? '/ay' : '');
   const resim = i.foto_url ? `<img src="${i.foto_url}">` : (i.tip === 'kiralik' ? '🏘️' : '🏙️');
 
   const simdi = new Date();
-  let oneCikanRozet = '';
-  if (i.one_cikarma_tipi==='premium' && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis)>simdi)
-    oneCikanRozet = '<span style="background:rgba(255,107,53,0.15);color:#ff6b35;border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">🌟 Premium</span>';
-  else if (i.one_cikarma_tipi==='standart' && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis)>simdi)
-    oneCikanRozet = '<span style="background:rgba(245,200,66,0.15);color:var(--gold);border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">⭐ Öne Çıkan</span>';
-  if (i.meta_reklam_aktif && i.meta_reklam_bitis && new Date(i.meta_reklam_bitis)>simdi)
-    oneCikanRozet += '<span style="background:rgba(74,144,217,0.15);color:#4a90d9;border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">📢 Meta</span>';
+  const premiumAktif  = i.one_cikarma_tipi === 'premium'  && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis) > simdi;
+  const standartAktif = i.one_cikarma_tipi === 'standart' && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis) > simdi;
+  const metaAktif     = i.meta_reklam_aktif && i.meta_reklam_bitis && new Date(i.meta_reklam_bitis) > simdi;
 
-  const istatistik = kendi ? `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border);margin-top:6px;flex-wrap:wrap"><span style="font-size:11px;font-weight:700;color:var(--text3)">👁 ${(i.goruntulenmesayisi||0).toLocaleString('tr-TR')}</span><span style="font-size:11px;font-weight:700;color:var(--text3)">❤️ ${i.favori_sayisi||0}</span>${oneCikanRozet}<
-  ${(i.one_cikarma_tipi==='premium' && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis)>simdi)
-  ? `<span style="margin-left:auto;background:rgba(255,107,53,0.1);border:1px solid #ff6b35;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;color:#ff6b35">🌟 Premium Aktif</span>`
-  : `<button onclick="oneCikarIlan('${i.id}','${(i.baslik||'').replace(/'/g,"\\'")}');event.stopPropagation()" style="margin-left:auto;background:var(--gold);color:var(--bg);border:none;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif">${(i.one_cikarma_tipi==='standart' && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis)>simdi) ? '⬆️ Yükselt' : '🚀 Öne Çıkar'}</button>`
-  
-                                                                                                                                                                                                                                                                                                                                                                                                              }</div>` : '';
+  let oneCikanRozet = '';
+  if (premiumAktif)  oneCikanRozet += '<span style="background:rgba(255,107,53,0.15);color:#ff6b35;border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">🌟 Premium</span>';
+  else if (standartAktif) oneCikanRozet += '<span style="background:rgba(245,200,66,0.15);color:var(--gold);border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">⭐ Öne Çıkan</span>';
+  if (metaAktif) oneCikanRozet += '<span style="background:rgba(74,144,217,0.15);color:#4a90d9;border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">📢 Meta</span>';
+
+  // Öne çıkar butonu mantığı:
+  // - Premium aktifse: hiç buton yok (Premium Aktif rozeti yeterli)
+  // - Standart aktifse: "Yükselt" butonu (premium'a yükselt)
+  // - Hiçbiri aktif değilse: "Öne Çıkar" butonu
+  let oneCikarBtn = '';
+  if (premiumAktif) {
+    oneCikarBtn = '<span style="background:rgba(255,107,53,0.1);border:1px solid #ff6b35;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;color:#ff6b35">🌟 Premium Aktif</span>';
+  } else if (standartAktif) {
+    oneCikarBtn = `<button onclick="oneCikarIlan('${i.id}','${(i.baslik||'').replace(/'/g,"\\'")}','${i.one_cikarma_tipi||''}');event.stopPropagation()" style="background:var(--gold);color:var(--bg);border:none;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif">⬆️ Yükselt</button>`;
+  } else {
+    oneCikarBtn = `<button onclick="oneCikarIlan('${i.id}','${(i.baslik||'').replace(/'/g,"\\'")}','');event.stopPropagation()" style="background:var(--gold);color:var(--bg);border:none;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif">🚀 Öne Çıkar</button>`;
+  }
+
+  // İstatistik satırı — görüntülenme ve favori burada gösterilir
+  const istatistik = kendi ? `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border);margin-top:6px;flex-wrap:wrap">
+      <span style="font-size:11px;font-weight:700;color:var(--text3)">👁 ${(i.goruntulenmesayisi || 0).toLocaleString('tr-TR')}</span>
+      <span style="font-size:11px;font-weight:700;color:var(--text3)">❤️ ${i.favori_sayisi || 0}</span>
+      ${oneCikanRozet}
+      <span style="margin-left:auto">${oneCikarBtn}</span>
+    </div>` : '';
 
   const kendiAksiyonlar = kendi ? `
     <div class="ilanim-actions">
       <a href="ilan-duzenle.html?id=${i.id}" class="btn-duzenle">✏️ Düzenle</a>
-      <button onclick="ilanSil('${i.id}')" class="btn-sil">🗑️ Sil</button>
+      <button onclick="ilanSil('${i.id}');event.stopPropagation()" class="btn-sil">🗑️ Sil</button>
     </div>
     <a href="degerleme.html?ilan_id=${i.id}" class="ekspertiz-link">📊 Ekspertiz Raporu — 800 ₺</a>
-    ${istatistik}
-  ` : '';
+    ${istatistik}` : '';
+
   const tikla = !kendi ? `onclick="location.href='ilan-detay.html?id=${i.id}'"` : '';
+
   return `
     <div class="ilanim-item" ${tikla}>
       <div class="ilanim-thumb">${resim}</div>
@@ -573,7 +577,7 @@ function ilanKartHTML(i, kendi = false) {
             <div class="ilanim-price">${fiyat}</div>
             ${kendi ? `<span class="onay-badge ${onayClass}">${onayText}</span>` : ''}
           </div>
-          <div class="ilanim-title">${i.baslik}</div>
+          <div class="ilanim-title">${i.baslik || ''}</div>
           <div class="ilanim-loc">📍 ${i.konum || ''}</div>
         </div>
         ${kendiAksiyonlar}
@@ -592,7 +596,6 @@ async function baskaProfilYukle(uid) {
 
   const tip = profil.kullanici_tipi || 'bireysel';
 
-  // İsim / firma adı
   if (tip === 'kurumsal' && profil.firma_adi) {
     document.getElementById('bAvAd').textContent = profil.full_name || '';
     const f = document.getElementById('bAvFirma');
@@ -601,7 +604,6 @@ async function baskaProfilYukle(uid) {
     document.getElementById('bAvAd').textContent = profil.full_name || 'İsimsiz';
   }
 
-  // Avatar (kurumsal için logo_url tercih)
   const avUrl = (tip === 'kurumsal' ? profil.logo_url : null) || profil.avatar_url;
   if (avUrl) {
     document.getElementById('bAvEmoji').style.display = 'none';
@@ -620,7 +622,6 @@ async function baskaProfilYukle(uid) {
   }
   if (profil.verified) document.getElementById('bAvVerified').style.display = 'inline-flex';
 
-  // Tip bazlı bilgi kartı
   if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
     document.getElementById('bAvUzmanKart').style.display = 'block';
     document.getElementById('bAvUzmanIcerik').innerHTML = uzmanBilgiHTML(profil);
@@ -648,7 +649,6 @@ async function profilYukle() {
   if (profil) {
     const tip = profil.kullanici_tipi || 'bireysel';
 
-    // İsim gösterimi — kurumsal'da firma adı öne çıkar
     document.getElementById('profilAd').textContent = profil.full_name || 'İsimsiz';
     if (tip === 'kurumsal' && profil.firma_adi) {
       const f = document.getElementById('profilFirmaAdi');
@@ -659,7 +659,6 @@ async function profilYukle() {
     if (profil.phone) document.getElementById('profilTel').textContent = '📞 ' + profil.phone;
     if (profil.sehir) document.getElementById('profilSehir').textContent = '📍 ' + profil.sehir;
 
-    // Avatar
     const avUrl = (tip === 'kurumsal' ? profil.logo_url : null) || profil.avatar_url;
     if (avUrl) {
       document.getElementById('avatarEmoji').style.display = 'none';
@@ -671,17 +670,14 @@ async function profilYukle() {
     if (tip === 'kurumsal') avEl.classList.add('kurumsal');
     if (tip === 'freelancer') avEl.classList.add('freelancer');
 
-    // Rozetler
     rozetlerOlustur(profil, 'profilRozetler');
 
-    // Bio/Hakkımda
     if (profil.hakkimda || profil.aciklama) {
       const h = document.getElementById('profilHakkimda');
       h.textContent = profil.hakkimda || profil.aciklama; h.style.display = 'block';
     }
     if (profil.verified) document.getElementById('verifiedBadge').style.display = 'inline-flex';
 
-    // Tip bazlı içerik
     if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
       document.getElementById('uzmanBilgiKarti').style.display = 'block';
       document.getElementById('uzmanBilgiIcerik').innerHTML = uzmanBilgiHTML(profil);
@@ -689,7 +685,6 @@ async function profilYukle() {
     if (tip === 'kurumsal') {
       document.getElementById('kurumsalBilgiKarti').style.display = 'block';
       document.getElementById('kurumsalBilgiIcerik').innerHTML = kurumsalBilgiHTML(profil);
-      // Kredi banner
       document.getElementById('krediBannerAlani').style.display = 'block';
       const { data: kredi } = await sb.from('agent_credits').select('bakiye').eq('agent_id', currentUser.id).single();
       document.getElementById('krediBannerSayi').textContent = (kredi?.bakiye ?? 0) + ' kredi';
@@ -698,15 +693,17 @@ async function profilYukle() {
     document.getElementById('profilAd').textContent = currentUser.email;
   }
 
-  // İlanlar
-  const { data: ilanlar } = await sb.from('ilanlar').select('*,goruntulenmesayisi,favori_sayisi,one_cikarma_tipi,one_cikarma_bitis,meta_reklam_aktif,meta_reklam_bitis').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  const { data: ilanlar } = await sb.from('ilanlar')
+    .select('*,goruntulenmesayisi,favori_sayisi,one_cikarma_tipi,one_cikarma_bitis,meta_reklam_aktif,meta_reklam_bitis')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false });
+
   document.getElementById('ilanSayisi').textContent = ilanlar?.filter(i => i.onay_durumu === 'onaylandi').length || 0;
   const kart = document.getElementById('ilanlarimCard');
   kart.innerHTML = (!ilanlar || ilanlar.length === 0)
     ? `<div class="empty" style="padding:24px"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div><a href="ilan-ver.html" class="btn btn-gold btn-md" style="margin-top:12px;max-width:200px">+ İlan Ver</a></div>`
     : ilanlar.map(i => ilanKartHTML(i, true)).join('');
 
-  // Alıcı ilanlar
   const { data: aliciIlan } = await sb.from('arayan_ilanlar').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   const aliciEl = document.getElementById('aliciIlanCard');
   if (!aliciIlan || aliciIlan.length === 0) {
@@ -741,13 +738,12 @@ async function aliciIlanSil(id) {
 }
 
 // ─────────────────────────────────────────
-// PROFİL DÜZENLE MODAL — Tipe göre farklı form
+// PROFİL DÜZENLE MODAL
 // ─────────────────────────────────────────
 async function profilDuzenle() {
   const p = currentProfil || {};
   const tip = p.kullanici_tipi || 'bireysel';
 
-  // ── Ortak alanlar
   const ortakAlanlar = `
     <div style="margin-bottom:14px">
       <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">👤 Ad Soyad *</label>
@@ -760,10 +756,8 @@ async function profilDuzenle() {
     <div style="margin-bottom:14px">
       <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏙️ Şehir / İlçe</label>
       <input class="input" type="text" id="editSehir" value="${p.sehir||''}" placeholder="ör. Ankara, Çankaya">
-    </div>
-  `;
+    </div>`;
 
-  // ── Tip'e göre ek alanlar
   let ekAlanlar = '';
   let formBaslik = '⚙️ Profili Düzenle';
   let formAlt = kullaniciTipLabel(tip);
@@ -799,9 +793,7 @@ async function profilDuzenle() {
       <div style="margin-bottom:14px">
         <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Firma Hakkında</label>
         <textarea class="input" id="editAciklama" rows="3" style="resize:none" placeholder="Firmanızı ve hizmetlerinizi tanıtın...">${p.aciklama||''}</textarea>
-      </div>
-    `;
-
+      </div>`;
   } else if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
     formBaslik = '🔧 Hizmet Profilini Düzenle';
     ekAlanlar = `
@@ -822,18 +814,14 @@ async function profilDuzenle() {
       <div style="margin-bottom:14px">
         <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Kendinizi Tanıtın</label>
         <textarea class="input" id="editHakkimda" rows="3" style="resize:none" placeholder="Yaptığınız işi, deneyiminizi anlatın...">${p.hakkimda||''}</textarea>
-      </div>
-    `;
-
+      </div>`;
   } else {
-    // Bireysel
     ekAlanlar = `
       <div class="form-section-title">Hakkımda</div>
       <div style="margin-bottom:14px">
         <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Hakkımda</label>
         <textarea class="input" id="editHakkimda" rows="3" style="resize:none" placeholder="Kendinizi kısaca tanıtın...">${p.hakkimda||''}</textarea>
-      </div>
-    `;
+      </div>`;
   }
 
   const modal = document.createElement('div');
@@ -950,13 +938,40 @@ async function ilanSil(ilanId) {
   await sb.from('ilanlar').delete().eq('id', ilanId).eq('user_id', currentUser.id);
   profilYukle();
 }
-async function oneCikarIlan(ilanId, ilanBaslik) {
+
+// ─────────────────────────────────────────
+// ÖNE ÇIKAR MODAL — DÜZELTİLDİ
+// ilanMevcutTip: '', 'standart', 'premium'
+// ─────────────────────────────────────────
+async function oneCikarIlan(ilanId, ilanBaslik, ilanMevcutTip) {
   event.stopPropagation();
 
-  // Kredi kontrolü
   const { data: kredi } = await sb.from('agent_credits')
     .select('bakiye').eq('agent_id', currentUser.id).single();
   const bakiye = kredi?.bakiye ?? 0;
+
+  // Standart aktifse sadece Premium butonu göster, değilse her ikisini göster
+  const standartButon = (ilanMevcutTip !== 'standart' && ilanMevcutTip !== 'premium') ? `
+    <button onclick="oneCikarSatinAl('${ilanId}','standart',this)" style="background:linear-gradient(135deg,rgba(245,200,66,0.15),rgba(245,200,66,0.05));border:2px solid var(--gold);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:Nunito,sans-serif;text-align:left;width:100%;display:block;margin-bottom:0">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:14px;font-weight:900;color:var(--gold)">⭐ Standart — 7 Gün</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">Üst sıralarda gösterilir, altın çerçeve</div>
+        </div>
+        <div style="font-size:16px;font-weight:900;color:var(--gold)">50 kr</div>
+      </div>
+    </button>` : '';
+
+  const premiumButon = ilanMevcutTip !== 'premium' ? `
+    <button onclick="oneCikarSatinAl('${ilanId}','premium',this)" style="background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,107,53,0.05));border:2px solid #ff6b35;border-radius:14px;padding:14px 16px;cursor:pointer;font-family:Nunito,sans-serif;text-align:left;width:100%;display:block">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:14px;font-weight:900;color:#ff6b35">🌟 Premium — 30 Gün</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">En üst sıra, özel çerçeve, daha fazla görünüm</div>
+        </div>
+        <div style="font-size:16px;font-weight:900;color:#ff6b35">150 kr</div>
+      </div>
+    </button>` : '';
 
   const modal = document.createElement('div');
   modal.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.75);display:flex;align-items:flex-end';
@@ -970,18 +985,9 @@ async function oneCikarIlan(ilanId, ilanBaslik) {
         <span style="font-size:18px;font-weight:900;color:var(--gold)">${bakiye} kredi</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
-        ${ilanData?.one_cikarma_tipi !== 'standart' ? `<button onclick="oneCikarSatinAl('${ilanId}','standart',this)" style="background:linear-gradient(135deg,rgba(245,200,66,0.15),rgba(245,200,66,0.05));border:2px solid var(--gold);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:Nunito,sans-serif;text-align:left;width:100%">
-  <div style="display:flex;justify-content:space-between;align-items:center">
-    <div><div style="font-size:14px;font-weight:900;color:var(--gold)">⭐ Standart — 7 Gün</div><div style="font-size:11px;color:var(--text3);margin-top:3px">Üst sıralarda gösterilir, altın çerçeve</div></div>
-    <div style="font-size:16px;font-weight:900;color:var(--gold)">50 kr</div>
-  </div>
-</button>` : '' }
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><div style="font-size:14px;font-weight:900;color:var(--gold)">⭐ Standart — 7 Gün</div><div style="font-size:11px;color:var(--text3);margin-top:3px">Üst sıralarda gösterilir, altın çerçeve</div></div>
-            <div style="font-size:16px;font-weight:900;color:var(--gold)">50 kr</div>
-          </div>
-        </button>
-        <button onclick="oneCikarSatinAl('${ilanId}','premium',this)" style="background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,107,53,0.05));border:2px solid #ff6b35;border-radius:14px;padding:14px 16px;cursor:pointer;font-family:Nunito,sans-serif;text-align:left">
+        ${standartButon}
+        ${premiumButon}
+        ${(!standartButon && !premiumButon) ? '<div style="text-align:center;padding:16px;color:var(--text3);font-size:14px;font-weight:700">✅ İlanınız zaten en yüksek seviyede öne çıkarılmış.</div>' : ''}
       </div>
       ${bakiye < 50 ? `<a href="odeme.html" style="display:block;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:12px;font-size:13px;font-weight:800;color:var(--text);text-decoration:none;margin-bottom:10px">💎 Kredi Yükle →</a>` : ''}
       <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:12px;border-radius:50px;background:transparent;border:1px solid var(--border);font-family:Nunito,sans-serif;font-size:14px;font-weight:800;color:var(--text3);cursor:pointer">İptal</button>
@@ -1022,7 +1028,6 @@ async function oneCikarSatinAl(ilanId, tip, btn) {
 
   if (krediHata) { alert('Kredi güncellenemedi: ' + krediHata.message); return; }
 
-  // Kredi işlem logu
   await sb.from('kredi_islemleri').insert({
     agent_id: currentUser.id,
     miktar: -maliyet,
@@ -1034,6 +1039,7 @@ async function oneCikarSatinAl(ilanId, tip, btn) {
   alert(`✅ İlanınız ${gun} gün boyunca ${tip === 'premium' ? 'Premium' : 'Standart'} olarak öne çıkarıldı!`);
   profilYukle();
 }
+
 async function cikisYap() {
   await sb.auth.signOut();
   window.location.href = 'https://gotapu.com';
