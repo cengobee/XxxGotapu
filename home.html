@@ -1758,7 +1758,9 @@ async function ilanlarYukle(sayfa = 1) {
   // Liste görünümü — Sahibinden stili
   listEl.innerHTML = `<div class="ilan-liste-wrap">` +
     data.map(ilan => `
-    <a class="ilan-item ${(ilan.one_cikarma_tipi && ilan.one_cikarma_bitis && new Date(ilan.one_cikarma_bitis)>new Date()) ? 'one-cikan-ilan' : ''}" href="ilan-detay.html?id=${ilan.id}">
+    <a class="ilan-item ${
+  (ilan.one_cikarma_tipi==='premium' && ilan.one_cikarma_bitis && new Date(ilan.one_cikarma_bitis)>new Date()) ? 'one-cikan-premium' :
+  (ilan.one_cikarma_tipi==='standart' && ilan.one_cikarma_bitis && new Date(ilan.one_cikarma_bitis)>new Date()) ? 'one-cikan-ilan' : ''}" href="ilan-detay.html?id=${ilan.id}">
       <div class="ilan-thumb">
         ${(ilan.foto_url || (ilan.foto_urls && ilan.foto_urls[0]))
           ? `<img src="${ilan.foto_url || ilan.foto_urls[0]}" loading="lazy">`
