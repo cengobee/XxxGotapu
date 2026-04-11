@@ -886,7 +886,27 @@ function ilanKartHTML(i) {
 }
 async function hizliOnayla(id){await sb.from('ilanlar').update({onay_durumu:'onaylandi'}).eq('id',id);const {data:ilan}=await sb.from('ilanlar').select('user_id,baslik').eq('id',id).single();if(ilan)await sb.from('bildirimler').insert({user_id:ilan.user_id,tip:'ilan_onay',baslik:'✅ İlanınız Onaylandı!',mesaj:`"${ilan.baslik}" yayına alındı.`,ilan_id:id,okundu:false});await ilanlariYukle();await ozetYukle();await onayBekleyenleriYukle();}
 async function hizliReddet(id){await sb.from('ilanlar').update({onay_durumu:'reddedildi'}).eq('id',id);await ilanlariYukle();await ozetYukle();await onayBekleyenleriYukle();}
-async function oneCikanToggle(id,m){await sb.from('ilanlar').update({one_cikan:!m}).eq('id',id);await ilanlariYukle();}
+async function oneCikanToggle(id, m) {
+  if (m) {
+    // Öne çıkarmayı kaldır
+    await sb.from('ilanlar').update({
+      one_cikan: false,
+      one_cikarma_tipi: null,
+      one_cikarma_bitis: null
+    }).eq('id', id);
+  } else {
+    // 30 gün standart öne çıkar
+    const bitis = new Date();
+    bitis.setDate(bitis.getDate() + 30);
+    await sb.from('ilanlar').update({
+      one_cikan: true,
+      one_cikarma_tipi: 'standart',
+      one_cikarma_bitis: bitis.toISOString()
+    }).eq('id', id);
+  }
+  await ilanlariYukle();
+  await onecikanlariYukle();
+}
 async function ilanSilAdmin(id){if(!confirm('Bu ilanı silmek istediğinizden emin misiniz?'))return;await sb.from('ilanlar').delete().eq('id',id);await ilanlariYukle();await ozetYukle();await onayBekleyenleriYukle();}
 function ilanAra(q){ilanlariGoster(tumIlanlar.filter(i=>(i.baslik||'').toLowerCase().includes(q.toLowerCase())||(i.konum||'').toLowerCase().includes(q.toLowerCase())));}
 
