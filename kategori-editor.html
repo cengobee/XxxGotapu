@@ -1309,8 +1309,9 @@ function closeModal() { document.getElementById('modalOverlay').classList.remove
 function confirmModal() {
   const val = document.getElementById('modalInput').value.trim();
   if (!val) return;
+  const cb = modalCallback; // closeModal null yapmadan önce kaydet
   closeModal();
-  if (modalCallback) modalCallback(val);
+  if (cb) cb(val);
 }
 
 document.getElementById('modalInput').addEventListener('keydown', (e) => {
