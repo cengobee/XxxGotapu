@@ -470,7 +470,6 @@ function f(id, name, type, required, options) {
   return o;
 }
 
-// Tüm satılık/iş yeri ilanlarında ZORUNLU olan evrensel alanlar
 function fields_universal_satilik() {
   return [
     f('u1', 'İlan Başlığı', 'text', true),
@@ -485,7 +484,6 @@ function fields_universal_satilik() {
   ];
 }
 
-// Kiralık ilanlar için evrensel alanlar (tapu yok)
 function fields_universal_kiralik() {
   return [
     f('u1', 'İlan Başlığı', 'text', true),
@@ -497,7 +495,6 @@ function fields_universal_kiralik() {
   ];
 }
 
-// Konut için ortak ek alanlar (satılık+kiralık ortak)
 function fields_konut_detay() {
   return [
     f('ka1', 'Oda Sayısı', 'select', false, ['Stüdyo (1+0)','1+1','2+1','3+1','4+1','5+1','6+1 ve üzeri']),
@@ -517,12 +514,9 @@ function fields_konut_detay() {
   ];
 }
 
-// Satılık konut = evrensel + detay
 function flds_konut_sat() { return [...fields_universal_satilik(), ...fields_konut_detay()]; }
-// Kiralık konut = evrensel_kiralik + detay
 function flds_konut_kir() { return [...fields_universal_kiralik(), ...fields_konut_detay()]; }
 
-// Köşk/Yalı/Çiftlik için ekstra
 function flds_konut_sat_kosk() {
   return [...flds_konut_sat(),
     f('kc1', 'Zemin Etüdü', 'bool', false),
@@ -536,7 +530,6 @@ function flds_konut_kir_kosk() {
   ];
 }
 
-// Turistik/günlük kiralık
 function flds_turistik() {
   return [
     f('u1', 'İlan Başlığı', 'text', true),
@@ -559,7 +552,6 @@ function flds_turistik() {
   ];
 }
 
-// Devre mülk
 function flds_devremulk() {
   return [
     f('u1', 'İlan Başlığı', 'text', true),
@@ -578,7 +570,6 @@ function flds_devremulk() {
   ];
 }
 
-// İş Yeri - ortak evrensel + zorunlu standart alanlar
 function fields_iy_base() {
   return [
     ...fields_universal_satilik(),
@@ -590,7 +581,6 @@ function fields_iy_base() {
   ];
 }
 
-// İş Yeri kategorilerine özel ek alanlar
 function flds_iy_ofis() {
   return [...fields_iy_base(),
     f('iy_oda', 'Oda Sayısı', 'number', false),
@@ -725,7 +715,6 @@ function flds_iy_genel() {
   ];
 }
 
-// Devren satılık konut
 function flds_devren_konut() {
   return [...fields_universal_satilik(),
     f('kf1', 'Kalan Ödeme Tutarı', 'number', false),
@@ -1301,6 +1290,7 @@ function openAddModal(parentId) {
     const newNode = { id: uid(), name, children: [], fields: [], _open: true };
     if (parentId) {
       const parent = findNode(parentId, data.categories);
+      if (!parent) { showToast('⚠️ Kategori bulunamadı'); return; }
       if (!parent.children) parent.children = [];
       parent.children.push(newNode);
       parent._open = true;
@@ -1385,8 +1375,7 @@ function handleImport(e) {
       const imported = JSON.parse(ev.target.result);
       if (imported.categories) {
         data = imported;
-        function ensureOpen(nodes) { nodes.forEach(n => { n._open = true; if (n.children) ensureOpen(n.children); }); }
-        ensureOpen(data.categories);
+        ensureDataIntegrity(data.categories);
         selectedId = null;
         renderTree(); renderEditor();
         showToast('JSON yüklendi ✓');
@@ -1395,6 +1384,18 @@ function handleImport(e) {
   };
   r.readAsText(file);
   e.target.value = '';
+}
+
+// ─── DATA INTEGRITY ────────────────────────────────────────────────────────────
+// Tüm node'larda children ve fields array'lerinin varlığını, _open flag'ini garanti eder.
+// localStorage'dan veya JSON import'tan gelen eksik/bozuk verileri düzeltir.
+function ensureDataIntegrity(nodes) {
+  nodes.forEach(n => {
+    if (!Array.isArray(n.children)) n.children = [];
+    if (!Array.isArray(n.fields)) n.fields = [];
+    if (n._open === undefined) n._open = true;
+    ensureDataIntegrity(n.children);
+  });
 }
 
 function saveAll() {
@@ -1407,8 +1408,7 @@ function loadSaved() {
   if (saved) {
     try {
       data = JSON.parse(saved);
-      function ensureOpen(nodes) { nodes.forEach(n => { if (n._open === undefined) n._open = true; if (n.children) ensureOpen(n.children); }); }
-      ensureOpen(data.categories);
+      ensureDataIntegrity(data.categories); // ← Eksik children/fields/open değerlerini düzelt
       return true;
     } catch {}
   }
