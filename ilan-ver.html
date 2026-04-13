@@ -328,7 +328,33 @@
     <div class="back-title" id="sayfaBaslik">İlan Ver</div>
   </div>
   <p style="font-size:13px;color:var(--text3);margin-bottom:20px" id="sayfaAciklama">Ücretsiz yayınla, komisyon ödemeden</p>
-
+<!-- KATEGORİ SEÇİM BLOĞU -->
+<div id="kategoriSecimBolum">
+  <div style="font-size:12px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">KATEGORİ SEÇ</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">
+    <div class="role-card" id="katKart_emlak" onclick="secKategori('emlak')" style="border:2px solid var(--border)">
+      <div class="role-icon">🏠</div>
+      <div class="role-name">Emlak</div>
+      <div class="role-desc">Konut, Arsa, İşyeri</div>
+    </div>
+    <div class="role-card" id="katKart_vasita" onclick="secKategori('vasita')" style="border:2px solid var(--border);opacity:0.5;cursor:not-allowed">
+      <div class="role-icon">🚗</div>
+      <div class="role-name">Vasıta</div>
+      <div class="role-desc" style="color:var(--gold)">Yakında</div>
+    </div>
+    <div class="role-card" id="katKart_ikinciEl" onclick="secKategori('ikinciEl')" style="border:2px solid var(--border);opacity:0.5;cursor:not-allowed">
+      <div class="role-icon">📦</div>
+      <div class="role-name">İkinci El</div>
+      <div class="role-desc" style="color:var(--gold)">Yakında</div>
+    </div>
+    <div class="role-card" id="katKart_hizmet" onclick="secKategori('hizmet')" style="border:2px solid var(--border)">
+      <div class="role-icon">🔧</div>
+      <div class="role-name">Hizmetler</div>
+      <div class="role-desc">Tadilat, Temizlik...</div>
+    </div>
+  </div>
+</div>
+<!-- /KATEGORİ SEÇİM BLOĞU -->
   <div id="rolSecimBolum">
     <div style="font-size:12px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">BEN BİR...</div>
     <div class="role-grid">
