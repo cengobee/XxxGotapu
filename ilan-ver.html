@@ -1640,7 +1640,9 @@ sb.auth.getSession().then(async({data})=>{
 
 window.addEventListener('DOMContentLoaded',()=>{
   // Kategori verileri kategoriler.js'den yüklenir
-  emlakFormunuDoldur();
+  emlakTipleriniOlustur();
+emlakSelectleriniDoldur();
+aliciEmlakListesiOlustur();
   illerDoldur('ilSec'); illerDoldur('aliciIlSec');
   document.getElementById('mahalleInput').addEventListener('input',konumGuncelle);
   document.getElementById('ilceSec').addEventListener('change',konumGuncelle);
