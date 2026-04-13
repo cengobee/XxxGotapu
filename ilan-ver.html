@@ -11,17 +11,61 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="kategoriler.js"></script>
 <style>
-  .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-  .role-card {
-    background: var(--card); border: 2px solid var(--border);
-    border-radius: var(--radius); padding: 18px 12px;
-    text-align: center; cursor: pointer; transition: all .2s;
+  /* --- Eski role-card (kullanılmıyor ama hata çıkmasın) --- */
+  .role-grid { display: none; }
+  .role-card { display: none; }
+  .role-icon { display: none; }
+  .role-name { display: none; }
+  .role-desc { display: none; }
+
+  /* === YENİ WİZARD LİSTE STİLİ === */
+  .wizard-baslik {
+    font-size: 11px; font-weight: 900; color: var(--text3);
+    letter-spacing: 1.2px; text-transform: uppercase;
+    margin: 0 0 10px; padding: 0;
   }
-  .role-card.selected { border-color: var(--gold); background: rgba(245,200,66,0.08); }
-  .role-card:active { transform: scale(0.97); }
-  .role-icon { font-size: 36px; margin-bottom: 8px; }
-  .role-name { font-size: 14px; font-weight: 800; }
-  .role-desc { font-size: 11px; color: var(--text3); margin-top: 4px; line-height: 1.4; }
+  .wizard-liste {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .wizard-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 15px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background .15s;
+    text-decoration: none;
+  }
+  .wizard-item:last-child { border-bottom: none; }
+  .wizard-item:active, .wizard-item:hover { background: rgba(245,200,66,0.05); }
+  .wizard-item.secili { background: rgba(245,200,66,0.08); }
+  .wizard-item.disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+  .wizard-item-sol { display: flex; flex-direction: column; gap: 3px; }
+  .wizard-item-ad {
+    font-size: 15px; font-weight: 800; color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .wizard-item-acik { font-size: 12px; color: var(--text3); font-weight: 600; }
+  .wizard-item-badge {
+    font-size: 10px; font-weight: 900; color: var(--gold);
+    background: rgba(245,200,66,0.12); border: 1px solid rgba(245,200,66,0.25);
+    border-radius: 50px; padding: 2px 8px; letter-spacing: .5px;
+  }
+  .wizard-ok { color: var(--text3); font-size: 18px; flex-shrink: 0; }
+  .wizard-item.secili .wizard-ok { color: var(--gold); }
+
+  /* Breadcrumb üstte */
+  .wizard-breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700; color: var(--text3);
+    margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .wizard-breadcrumb span { cursor: pointer; }
+  .wizard-breadcrumb span:hover { color: var(--gold); }
+  .wizard-breadcrumb .bc-sep { color: var(--border); }
+  .wizard-breadcrumb .bc-aktif { color: var(--text); }
   .form-group { margin-bottom: 16px; }
   .form-label { font-size: 13px; font-weight: 800; color: var(--text2); margin-bottom: 8px; display: block; }
 
@@ -328,51 +372,72 @@
     <div class="back-title" id="sayfaBaslik">İlan Ver</div>
   </div>
   <p style="font-size:13px;color:var(--text3);margin-bottom:20px" id="sayfaAciklama">Ücretsiz yayınla, komisyon ödemeden</p>
-<!-- KATEGORİ SEÇİM BLOĞU -->
-<div id="kategoriSecimBolum">
-  <div style="font-size:12px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">KATEGORİ SEÇ</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">
-    <div class="role-card" id="katKart_emlak" onclick="secKategori('emlak')" style="border:2px solid var(--border)">
-      <div class="role-icon">🏠</div>
-      <div class="role-name">Emlak</div>
-      <div class="role-desc">Konut, Arsa, İşyeri</div>
+<!-- KATEGORİ SEÇİM BLOĞU — ADIM 1 -->
+<div id="wizardAdim1">
+  <div class="wizard-baslik">Kategori seçin</div>
+  <div class="wizard-liste">
+    <div class="wizard-item" onclick="wizardKategori('emlak')">
+      <div class="wizard-item-sol">
+        <div class="wizard-item-ad">Emlak</div>
+        <div class="wizard-item-acik">Konut, Arsa, İş Yeri, Bina</div>
+      </div>
+      <span class="wizard-ok">›</span>
     </div>
-    <div class="role-card" id="katKart_vasita" onclick="secKategori('vasita')" style="border:2px solid var(--border);opacity:0.5;cursor:not-allowed">
-      <div class="role-icon">🚗</div>
-      <div class="role-name">Vasıta</div>
-      <div class="role-desc" style="color:var(--gold)">Yakında</div>
+    <div class="wizard-item" onclick="wizardKategori('hizmet')">
+      <div class="wizard-item-sol">
+        <div class="wizard-item-ad">Hizmetler</div>
+        <div class="wizard-item-acik">Tadilat, Temizlik, Nakliyat...</div>
+      </div>
+      <span class="wizard-ok">›</span>
     </div>
-    <div class="role-card" id="katKart_ikinciEl" onclick="secKategori('ikinciEl')" style="border:2px solid var(--border);opacity:0.5;cursor:not-allowed">
-      <div class="role-icon">📦</div>
-      <div class="role-name">İkinci El</div>
-      <div class="role-desc" style="color:var(--gold)">Yakında</div>
+    <div class="wizard-item disabled">
+      <div class="wizard-item-sol">
+        <div class="wizard-item-ad">Vasıta <span class="wizard-item-badge">Yakında</span></div>
+        <div class="wizard-item-acik">Otomobil, Motosiklet, Ticari</div>
+      </div>
+      <span class="wizard-ok">›</span>
     </div>
-    <div class="role-card" id="katKart_hizmet" onclick="secKategori('hizmet')" style="border:2px solid var(--border)">
-      <div class="role-icon">🔧</div>
-      <div class="role-name">Hizmetler</div>
-      <div class="role-desc">Tadilat, Temizlik...</div>
+    <div class="wizard-item disabled">
+      <div class="wizard-item-sol">
+        <div class="wizard-item-ad">İkinci El <span class="wizard-item-badge">Yakında</span></div>
+        <div class="wizard-item-acik">Elektronik, Ev Eşyası, Giyim...</div>
+      </div>
+      <span class="wizard-ok">›</span>
+    </div>
+  </div>
+</div>
+
+<!-- ADIM 2: Alıcı / Satıcı seçimi -->
+<div id="wizardAdim2" style="display:none">
+  <div class="wizard-breadcrumb">
+    <span onclick="wizardGeri(1)">Kategori</span>
+    <span class="bc-sep">›</span>
+    <span class="bc-aktif" id="bcKategori">Emlak</span>
+  </div>
+  <div class="wizard-baslik">Ne yapmak istiyorsunuz?</div>
+  <div class="wizard-liste">
+    <div class="wizard-item" id="wizardSaticiItem" onclick="wizardRol('satici')">
+      <div class="wizard-item-sol">
+        <div class="wizard-item-ad">İlan Vermek İstiyorum</div>
+        <div class="wizard-item-acik" id="wizardSaticiAcik">Satmak veya kiraya vermek istiyorum</div>
+      </div>
+      <span class="wizard-ok">›</span>
+    </div>
+    <div class="wizard-item" id="wizardAliciItem" onclick="wizardRol('alici')">
+      <div class="wizard-item-sol">
+        <div class="wizard-item-ad">Arıyorum / Talep Açmak İstiyorum</div>
+        <div class="wizard-item-acik" id="wizardAliciAcik">Ev veya işyeri arıyorum</div>
+      </div>
+      <span class="wizard-ok">›</span>
     </div>
   </div>
 </div>
 <!-- /KATEGORİ SEÇİM BLOĞU -->
-  <div id="rolSecimBolum" style="display:none">
-    <div style="font-size:12px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">BEN BİR...</div>
-    <div class="role-grid">
-      <div class="role-card selected" id="roleKart0" onclick="secRole(0)">
-        <div class="role-icon">🏠</div>
-        <div class="role-name">Satıcı / Kiraya Veren</div>
-        <div class="role-desc">Emlakımı satmak veya kiraya vermek istiyorum</div>
-      </div>
-      <div class="role-card" id="roleKart1" onclick="secRole(1)">
-        <div class="role-icon">🔍</div>
-        <div class="role-name">Alıcı / Kiracı</div>
-        <div class="role-desc">Ev veya işyeri arıyorum</div>
-      </div>
-    </div>
-  </div>
+  <!-- Rol seçimi artık wizardAdim2 içinde yönetiliyor -->
+  <div id="rolSecimBolum" style="display:none"></div>
 
   <!-- ===== SATICI FORMU ===== -->
-  <div id="saticiForm">
+  <div id="saticiForm" style="display:none">
     <!-- HİZMET FORMU (basit) -->
 <div id="hizmetForm" style="display:none">
   <div style="background:rgba(74,144,217,0.08);border:1px solid rgba(74,144,217,0.2);border-radius:var(--radius);padding:24px;text-align:center;margin-top:16px">
@@ -1338,37 +1403,68 @@ function secEmlakBtn(el) {
   document.getElementById('fotoGrupArsa').style.display   = seciliEmlakGrup==='arsa'   ? '' : 'none';
   document.getElementById('fotoGrupIsyeri').style.display = seciliEmlakGrup==='isyeri' ? '' : 'none';
 }
-function secKategori(kategori) {
-  // Vasıta ve İkinci El henüz hazır değil
-  if (kategori === 'vasita' || kategori === 'ikinciEl') return;
+/* ═══ YENİ WİZARD NAVİGASYON ═══ */
+let _wizardKategori = null; // 'emlak' | 'hizmet'
 
-  // Kartları güncelle
-  document.querySelectorAll('#kategoriSecimBolum .role-card').forEach(k => {
-    k.classList.remove('selected');
-  });
-  const seciliKart = document.getElementById('katKart_' + kategori);
-  if (seciliKart) seciliKart.classList.add('selected');
-
-  // Kategori bloğunu gizle, ilgili formu göster
-  document.getElementById('kategoriSecimBolum').style.display = 'none';
-
-  if (kategori === 'emlak') {
-    document.getElementById('rolSecimBolum').style.display = 'block';
-    document.getElementById('saticiForm').style.display = 'block';
-    document.getElementById('aliciForm').style.display = 'none';
-    document.getElementById('hizmetForm').style.display = 'none';
-    document.getElementById('sayfaAciklama').textContent = 'Ücretsiz yayınla, komisyon ödemeden';
-  } else if (kategori === 'hizmet') {
-    document.getElementById('rolSecimBolum').style.display = 'none';
+function wizardGeri(adim) {
+  if (adim === 1) {
+    // Adım 1'e dön
+    document.getElementById('wizardAdim1').style.display = '';
+    document.getElementById('wizardAdim2').style.display = 'none';
     document.getElementById('saticiForm').style.display = 'none';
     document.getElementById('aliciForm').style.display = 'none';
-    document.getElementById('hizmetForm').style.display = 'block';
-    document.getElementById('sayfaAciklama').textContent = 'Hizmet ilanı ver';
+    document.getElementById('hizmetForm').style.display = 'none';
+    document.getElementById('sayfaBaslik').textContent = 'İlan Ver';
+    document.getElementById('sayfaAciklama').textContent = 'Ücretsiz yayınla, komisyon ödemeden';
   }
 }
+
+function wizardKategori(kategori) {
+  _wizardKategori = kategori;
+  document.getElementById('wizardAdim1').style.display = 'none';
+  document.getElementById('saticiForm').style.display = 'none';
+  document.getElementById('aliciForm').style.display = 'none';
+  document.getElementById('hizmetForm').style.display = 'none';
+
+  if (kategori === 'hizmet') {
+    // Hizmet için direkt formu göster (alıcı/satıcı yok)
+    document.getElementById('wizardAdim2').style.display = 'none';
+    document.getElementById('hizmetForm').style.display = 'block';
+    document.getElementById('sayfaBaslik').textContent = 'Hizmet İlanı';
+    document.getElementById('sayfaAciklama').textContent = 'Hizmetinizi ücretsiz yayınlayın';
+    return;
+  }
+
+  // Emlak: adım 2'yi göster
+  document.getElementById('bcKategori').textContent = kategori === 'emlak' ? 'Emlak' : kategori;
+  if (kategori === 'emlak') {
+    document.getElementById('wizardSaticiAcik').textContent = 'Satmak veya kiraya vermek istiyorum';
+    document.getElementById('wizardAliciAcik').textContent = 'Ev, arsa veya işyeri arıyorum';
+  }
+  document.getElementById('wizardAdim2').style.display = '';
+}
+
+function wizardRol(rol) {
+  document.getElementById('wizardAdim2').style.display = 'none';
+  if (rol === 'satici') {
+    aktifRol = 0;
+    document.getElementById('saticiForm').style.display = 'block';
+    document.getElementById('aliciForm').style.display = 'none';
+    document.getElementById('sayfaBaslik').textContent = 'İlan Ver';
+    document.getElementById('sayfaAciklama').textContent = 'Ücretsiz yayınla, komisyon ödemeden';
+  } else {
+    aktifRol = 1;
+    document.getElementById('saticiForm').style.display = 'none';
+    document.getElementById('aliciForm').style.display = 'block';
+    document.getElementById('sayfaBaslik').textContent = 'Arama Oluştur';
+    document.getElementById('sayfaAciklama').textContent = 'Kriterlerinize uygun ilanlar eşleşir';
+  }
+}
+
+/* Eski fonksiyonlar — geriye dönük uyumluluk için korunuyor */
+function secKategori(kategori) { wizardKategori(kategori); }
 function secRole(index) {
   aktifRol = index;
-  document.querySelectorAll('.role-card').forEach((c,i)=>c.classList.toggle('selected',i===index));
   document.getElementById('saticiForm').style.display = index===0?'block':'none';
   document.getElementById('aliciForm').style.display  = index===1?'block':'none';
 }
@@ -1657,10 +1753,14 @@ sb.auth.getSession().then(async({data})=>{
   if(!data.session){window.location.href='auth.html';return;}
   currentUser=data.session.user;
   if(modParam==='alici-duzenle'){
-    document.getElementById('rolSecimBolum').style.display='none';
+    document.getElementById('wizardAdim1').style.display='none';
+    document.getElementById('wizardAdim2').style.display='none';
     document.getElementById('sayfaBaslik').textContent='Arama Tercihlerim';
     document.getElementById('sayfaAciklama').textContent='Aramalarını yönet ve düzenle';
-    secRole(1); await mevcutAramalariYukle();
+    aktifRol=1;
+    document.getElementById('saticiForm').style.display='none';
+    document.getElementById('aliciForm').style.display='block';
+    await mevcutAramalariYukle();
     if(aramaIdParam) await aramaDuzenle(aramaIdParam);
   }
 });
