@@ -1338,7 +1338,34 @@ function secEmlakBtn(el) {
   document.getElementById('fotoGrupArsa').style.display   = seciliEmlakGrup==='arsa'   ? '' : 'none';
   document.getElementById('fotoGrupIsyeri').style.display = seciliEmlakGrup==='isyeri' ? '' : 'none';
 }
+function secKategori(kategori) {
+  // Vasıta ve İkinci El henüz hazır değil
+  if (kategori === 'vasita' || kategori === 'ikinciEl') return;
 
+  // Kartları güncelle
+  document.querySelectorAll('#kategoriSecimBolum .role-card').forEach(k => {
+    k.classList.remove('selected');
+  });
+  const seciliKart = document.getElementById('katKart_' + kategori);
+  if (seciliKart) seciliKart.classList.add('selected');
+
+  // Kategori bloğunu gizle, ilgili formu göster
+  document.getElementById('kategoriSecimBolum').style.display = 'none';
+
+  if (kategori === 'emlak') {
+    document.getElementById('rolSecimBolum').style.display = 'block';
+    document.getElementById('saticiForm').style.display = 'block';
+    document.getElementById('aliciForm').style.display = 'none';
+    document.getElementById('hizmetForm').style.display = 'none';
+    document.getElementById('sayfaAciklama').textContent = 'Ücretsiz yayınla, komisyon ödemeden';
+  } else if (kategori === 'hizmet') {
+    document.getElementById('rolSecimBolum').style.display = 'none';
+    document.getElementById('saticiForm').style.display = 'none';
+    document.getElementById('aliciForm').style.display = 'none';
+    document.getElementById('hizmetForm').style.display = 'block';
+    document.getElementById('sayfaAciklama').textContent = 'Hizmet ilanı ver';
+  }
+}
 function secRole(index) {
   aktifRol = index;
   document.querySelectorAll('.role-card').forEach((c,i)=>c.classList.toggle('selected',i===index));
