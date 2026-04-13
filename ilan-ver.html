@@ -465,6 +465,62 @@
   </div>
 </div>
 
+<!-- ═══ WİZARD ADIM 4: FOTOĞRAFLAR + ÖNE ÇIKART ═══ -->
+<div class="wiz-ekran gizli" id="wiz4">
+  <div class="wiz-nav">
+    <button class="wiz-geri" onclick="wiz4Geri()">←</button>
+    <div class="wiz-nav-baslik">Fotoğraf &amp; Öne Çıkart</div>
+  </div>
+  <div class="wiz-icerik">
+
+    <!-- Öne Çıkart -->
+    <div class="one-cikan-bar" onclick="odemeAc()" style="margin-bottom:20px">
+      <div>
+        <div style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px">⭐ <span>Öne Çıkart</span> <span style="font-size:11px;color:var(--gold);background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3);padding:2px 8px;border-radius:50px">499 ₺</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:3px">Ana sayfada en üstte göster — Daha fazla alıcıya ulaş</div>
+      </div>
+      <div style="color:var(--gold);font-size:20px">›</div>
+    </div>
+
+    <!-- Sanal Tur Fotoğrafları -->
+    <div class="bolum-baslik">📷 Sanal Tur Fotoğrafları</div>
+    <div id="fotoUyari" class="foto-uyari">⚠️ Maksimum 25 fotoğraf yükleyebilirsiniz!</div>
+    <div class="toplam-foto-sayac">📷 Toplam: <span id="toplamFotoSayi">0</span> / 25 fotoğraf</div>
+
+    <div id="fotoGrupKonut">
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('salon')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛋️</span><div><div class="oda-foto-ad">Salon</div><div class="oda-foto-sayi" id="sayi-salon">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-salon">›</span></div><div class="oda-foto-icerik" id="icerik-salon"><div class="oda-foto-grid" id="grid-salon"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_salon').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('mutfak')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🍳</span><div><div class="oda-foto-ad">Mutfak</div><div class="oda-foto-sayi" id="sayi-mutfak">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-mutfak">›</span></div><div class="oda-foto-icerik" id="icerik-mutfak"><div class="oda-foto-grid" id="grid-mutfak"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_mutfak').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('yatak')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛏️</span><div><div class="oda-foto-ad">Yatak Odası</div><div class="oda-foto-sayi" id="sayi-yatak">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-yatak">›</span></div><div class="oda-foto-icerik" id="icerik-yatak"><div class="oda-foto-grid" id="grid-yatak"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_yatak').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('yatak4')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛏️</span><div><div class="oda-foto-ad">Yatak Odası 2 / 3 / 4</div><div class="oda-foto-sayi" id="sayi-yatak4">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-yatak4">›</span></div><div class="oda-foto-icerik" id="icerik-yatak4"><div class="oda-foto-grid" id="grid-yatak4"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_yatak4').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('ebeveyn')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">👫</span><div><div class="oda-foto-ad">Ebeveyn Suite / Master</div><div class="oda-foto-sayi" id="sayi-ebeveyn">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-ebeveyn">›</span></div><div class="oda-foto-icerik" id="icerik-ebeveyn"><div class="oda-foto-grid" id="grid-ebeveyn"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_ebeveyn').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('calisma')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">💻</span><div><div class="oda-foto-ad">Çalışma Odası</div><div class="oda-foto-sayi" id="sayi-calisma">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-calisma">›</span></div><div class="oda-foto-icerik" id="icerik-calisma"><div class="oda-foto-grid" id="grid-calisma"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_calisma').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('banyo')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🚿</span><div><div class="oda-foto-ad">Banyo / WC</div><div class="oda-foto-sayi" id="sayi-banyo">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-banyo">›</span></div><div class="oda-foto-icerik" id="icerik-banyo"><div class="oda-foto-grid" id="grid-banyo"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_banyo').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('kiler')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🗄️</span><div><div class="oda-foto-ad">Kiler / Depo Odası</div><div class="oda-foto-sayi" id="sayi-kiler">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-kiler">›</span></div><div class="oda-foto-icerik" id="icerik-kiler"><div class="oda-foto-grid" id="grid-kiler"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_kiler').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('bodrum')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏚️</span><div><div class="oda-foto-ad">Bodrum / Antre / Koridor</div><div class="oda-foto-sayi" id="sayi-bodrum">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-bodrum">›</span></div><div class="oda-foto-icerik" id="icerik-bodrum"><div class="oda-foto-grid" id="grid-bodrum"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_bodrum').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('balkon')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🌿</span><div><div class="oda-foto-ad">Balkon / Teras / Bahçe</div><div class="oda-foto-sayi" id="sayi-balkon">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-balkon">›</span></div><div class="oda-foto-icerik" id="icerik-balkon"><div class="oda-foto-grid" id="grid-balkon"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_balkon').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('teras')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🌇</span><div><div class="oda-foto-ad">Teras / Çatı Katı</div><div class="oda-foto-sayi" id="sayi-teras">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-teras">›</span></div><div class="oda-foto-icerik" id="icerik-teras"><div class="oda-foto-grid" id="grid-teras"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_teras').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('garaj')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🚘</span><div><div class="oda-foto-ad">Garaj / Kapalı Otopark</div><div class="oda-foto-sayi" id="sayi-garaj">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-garaj">›</span></div><div class="oda-foto-icerik" id="icerik-garaj"><div class="oda-foto-grid" id="grid-garaj"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_garaj').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('havuz')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏊</span><div><div class="oda-foto-ad">Havuz / Spor Alanı</div><div class="oda-foto-sayi" id="sayi-havuz">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-havuz">›</span></div><div class="oda-foto-icerik" id="icerik-havuz"><div class="oda-foto-grid" id="grid-havuz"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_havuz').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('dis')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏠</span><div><div class="oda-foto-ad">Dış Görünüm / Bina</div><div class="oda-foto-sayi" id="sayi-dis">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-dis">›</span></div><div class="oda-foto-icerik" id="icerik-dis"><div class="oda-foto-grid" id="grid-dis"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_dis').click()">📷 Fotoğraf Ekle</button></div></div>
+    </div>
+
+    <div id="fotoGrupArsa" style="display:none">
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('parsel')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🗺️</span><div><div class="oda-foto-ad">Parsel / Arsa Görünümü</div><div class="oda-foto-sayi" id="sayi-parsel">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-parsel">›</span></div><div class="oda-foto-icerik" id="icerik-parsel"><div class="oda-foto-grid" id="grid-parsel"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_parsel').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('diger')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">📄</span><div><div class="oda-foto-ad">Tapu / Belge Fotoğrafı</div><div class="oda-foto-sayi" id="sayi-diger">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-diger">›</span></div><div class="oda-foto-icerik" id="icerik-diger"><div class="oda-foto-grid" id="grid-diger"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_diger').click()">📷 Fotoğraf Ekle</button></div></div>
+    </div>
+
+    <div id="fotoGrupIsyeri" style="display:none">
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('isyeri_ic')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏪</span><div><div class="oda-foto-ad">İşyeri İç Görünüm</div><div class="oda-foto-sayi" id="sayi-isyeri_ic">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-isyeri_ic">›</span></div><div class="oda-foto-icerik" id="icerik-isyeri_ic"><div class="oda-foto-grid" id="grid-isyeri_ic"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_isyeri_ic').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('isyeri_dis')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏢</span><div><div class="oda-foto-ad">İşyeri Dış / Vitrin</div><div class="oda-foto-sayi" id="sayi-isyeri_dis">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-isyeri_dis">›</span></div><div class="oda-foto-icerik" id="icerik-isyeri_dis"><div class="oda-foto-grid" id="grid-isyeri_dis"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_isyeri_dis').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('otopark')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🅿️</span><div><div class="oda-foto-ad">Otopark / Depo</div><div class="oda-foto-sayi" id="sayi-otopark">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-otopark">›</span></div><div class="oda-foto-icerik" id="icerik-otopark"><div class="oda-foto-grid" id="grid-otopark"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_otopark').click()">📷 Fotoğraf Ekle</button></div></div>
+      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('spor')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">📷</span><div><div class="oda-foto-ad">Diğer</div><div class="oda-foto-sayi" id="sayi-spor">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-spor">›</span></div><div class="oda-foto-icerik" id="icerik-spor"><div class="oda-foto-grid" id="grid-spor"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_spor').click()">📷 Fotoğraf Ekle</button></div></div>
+    </div>
+
+    <div id="ilanError4" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
+    <button class="btn btn-gold btn-lg" onclick="ilanYayinla()" id="yayinlaBtn">🚀 İlanı Yayınla</button>
+  </div>
+</div>
+
   <!-- ===== SATICI FORMU ===== -->
   <div id="saticiForm" style="display:none">
     <!-- HİZMET FORMU (basit) -->
@@ -907,56 +963,13 @@
     </div>
     <!-- /bolumIsyeri -->
 
-    <div class="bolum-baslik">⭐ Özel Seçenekler</div>
-    <div class="one-cikan-bar" onclick="odemeAc()">
-      <div>
-        <div style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px">⭐ <span>Öne Çıkart</span> <span style="font-size:11px;color:var(--gold);background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3);padding:2px 8px;border-radius:50px">499 ₺</span></div>
-        <div style="font-size:12px;color:var(--text3);margin-top:3px">Ana sayfada en üstte göster — Daha fazla alıcıya ulaş</div>
-      </div>
-      <div style="color:var(--gold);font-size:20px">›</div>
-    </div>
-
-    <!-- ODA BAZLI FOTOĞRAFLAR -->
-    <div class="bolum-baslik">📷 Sanal Tur Fotoğrafları</div>
-    <div id="fotoUyari" class="foto-uyari">⚠️ Maksimum 25 fotoğraf yükleyebilirsiniz!</div>
-    <div class="toplam-foto-sayac">📷 Toplam: <span id="toplamFotoSayi">0</span> / 25 fotoğraf</div>
-
-    <div id="fotoGrupKonut">
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('salon')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛋️</span><div><div class="oda-foto-ad">Salon</div><div class="oda-foto-sayi" id="sayi-salon">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-salon">›</span></div><div class="oda-foto-icerik" id="icerik-salon"><div class="oda-foto-grid" id="grid-salon"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_salon').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('mutfak')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🍳</span><div><div class="oda-foto-ad">Mutfak</div><div class="oda-foto-sayi" id="sayi-mutfak">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-mutfak">›</span></div><div class="oda-foto-icerik" id="icerik-mutfak"><div class="oda-foto-grid" id="grid-mutfak"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_mutfak').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('yatak')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛏️</span><div><div class="oda-foto-ad">Yatak Odası</div><div class="oda-foto-sayi" id="sayi-yatak">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-yatak">›</span></div><div class="oda-foto-icerik" id="icerik-yatak"><div class="oda-foto-grid" id="grid-yatak"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_yatak').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('yatak4')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🛏️</span><div><div class="oda-foto-ad">Yatak Odası 2 / 3 / 4</div><div class="oda-foto-sayi" id="sayi-yatak4">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-yatak4">›</span></div><div class="oda-foto-icerik" id="icerik-yatak4"><div class="oda-foto-grid" id="grid-yatak4"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_yatak4').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('ebeveyn')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">👫</span><div><div class="oda-foto-ad">Ebeveyn Suite / Master</div><div class="oda-foto-sayi" id="sayi-ebeveyn">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-ebeveyn">›</span></div><div class="oda-foto-icerik" id="icerik-ebeveyn"><div class="oda-foto-grid" id="grid-ebeveyn"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_ebeveyn').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('calisma')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">💻</span><div><div class="oda-foto-ad">Çalışma Odası</div><div class="oda-foto-sayi" id="sayi-calisma">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-calisma">›</span></div><div class="oda-foto-icerik" id="icerik-calisma"><div class="oda-foto-grid" id="grid-calisma"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_calisma').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('banyo')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🚿</span><div><div class="oda-foto-ad">Banyo / WC</div><div class="oda-foto-sayi" id="sayi-banyo">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-banyo">›</span></div><div class="oda-foto-icerik" id="icerik-banyo"><div class="oda-foto-grid" id="grid-banyo"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_banyo').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('kiler')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🗄️</span><div><div class="oda-foto-ad">Kiler / Depo Odası</div><div class="oda-foto-sayi" id="sayi-kiler">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-kiler">›</span></div><div class="oda-foto-icerik" id="icerik-kiler"><div class="oda-foto-grid" id="grid-kiler"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_kiler').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('bodrum')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏚️</span><div><div class="oda-foto-ad">Bodrum / Antre / Koridor</div><div class="oda-foto-sayi" id="sayi-bodrum">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-bodrum">›</span></div><div class="oda-foto-icerik" id="icerik-bodrum"><div class="oda-foto-grid" id="grid-bodrum"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_bodrum').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('balkon')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🌿</span><div><div class="oda-foto-ad">Balkon / Teras / Bahçe</div><div class="oda-foto-sayi" id="sayi-balkon">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-balkon">›</span></div><div class="oda-foto-icerik" id="icerik-balkon"><div class="oda-foto-grid" id="grid-balkon"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_balkon').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('teras')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🌇</span><div><div class="oda-foto-ad">Teras / Çatı Katı</div><div class="oda-foto-sayi" id="sayi-teras">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-teras">›</span></div><div class="oda-foto-icerik" id="icerik-teras"><div class="oda-foto-grid" id="grid-teras"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_teras').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('garaj')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🚘</span><div><div class="oda-foto-ad">Garaj / Kapalı Otopark</div><div class="oda-foto-sayi" id="sayi-garaj">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-garaj">›</span></div><div class="oda-foto-icerik" id="icerik-garaj"><div class="oda-foto-grid" id="grid-garaj"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_garaj').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('havuz')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏊</span><div><div class="oda-foto-ad">Havuz / Spor Alanı</div><div class="oda-foto-sayi" id="sayi-havuz">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-havuz">›</span></div><div class="oda-foto-icerik" id="icerik-havuz"><div class="oda-foto-grid" id="grid-havuz"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_havuz').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('dis')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏠</span><div><div class="oda-foto-ad">Dış Görünüm / Bina</div><div class="oda-foto-sayi" id="sayi-dis">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-dis">›</span></div><div class="oda-foto-icerik" id="icerik-dis"><div class="oda-foto-grid" id="grid-dis"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_dis').click()">📷 Fotoğraf Ekle</button></div></div>
-    </div>
-
-    <div id="fotoGrupArsa" style="display:none">
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('parsel')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🗺️</span><div><div class="oda-foto-ad">Parsel / Arsa Görünümü</div><div class="oda-foto-sayi" id="sayi-parsel">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-parsel">›</span></div><div class="oda-foto-icerik" id="icerik-parsel"><div class="oda-foto-grid" id="grid-parsel"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_parsel').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('diger')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">📄</span><div><div class="oda-foto-ad">Tapu / Belge Fotoğrafı</div><div class="oda-foto-sayi" id="sayi-diger">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-diger">›</span></div><div class="oda-foto-icerik" id="icerik-diger"><div class="oda-foto-grid" id="grid-diger"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_diger').click()">📷 Fotoğraf Ekle</button></div></div>
-    </div>
-
-    <div id="fotoGrupIsyeri" style="display:none">
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('isyeri_ic')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏪</span><div><div class="oda-foto-ad">İşyeri İç Görünüm</div><div class="oda-foto-sayi" id="sayi-isyeri_ic">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-isyeri_ic">›</span></div><div class="oda-foto-icerik" id="icerik-isyeri_ic"><div class="oda-foto-grid" id="grid-isyeri_ic"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_isyeri_ic').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('isyeri_dis')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🏢</span><div><div class="oda-foto-ad">İşyeri Dış / Vitrin</div><div class="oda-foto-sayi" id="sayi-isyeri_dis">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-isyeri_dis">›</span></div><div class="oda-foto-icerik" id="icerik-isyeri_dis"><div class="oda-foto-grid" id="grid-isyeri_dis"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_isyeri_dis').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('otopark')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🅿️</span><div><div class="oda-foto-ad">Otopark / Depo</div><div class="oda-foto-sayi" id="sayi-otopark">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-otopark">›</span></div><div class="oda-foto-icerik" id="icerik-otopark"><div class="oda-foto-grid" id="grid-otopark"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_otopark').click()">📷 Fotoğraf Ekle</button></div></div>
-      <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('spor')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">📷</span><div><div class="oda-foto-ad">Diğer</div><div class="oda-foto-sayi" id="sayi-spor">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-spor">›</span></div><div class="oda-foto-icerik" id="icerik-spor"><div class="oda-foto-grid" id="grid-spor"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_spor').click()">📷 Fotoğraf Ekle</button></div></div>
-    </div>
-
     <div class="bolum-baslik">📝 Açıklama</div>
     <div class="form-group">
       <textarea class="input" id="aciklama" rows="5" placeholder="Daha iyi bir görünüm için lütfen açıklamanızı yazın..." style="resize:none;line-height:1.6"></textarea>
     </div>
 
     <div id="ilanError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
-    <button class="btn btn-gold btn-lg" onclick="ilanYayinla()" id="yayinlaBtn">🚀 İlanı Yayınla</button>
+    <button class="btn btn-gold btn-lg" onclick="wiz4Ac()" id="devamBtn">Devam Et →</button>
   </div>
   <!-- /saticiForm -->
 
@@ -1492,11 +1505,34 @@ function wizFormAc(altKat) {
   document.getElementById('bolumKonut').style.display  = altKat==='konut'  ? '' : 'none';
   document.getElementById('bolumArsa').style.display   = altKat==='arsa'   ? '' : 'none';
   document.getElementById('bolumIsyeri').style.display = altKat==='isyeri' ? '' : 'none';
+  // wiz4 foto gruplarını ayarla
   document.getElementById('fotoGrupKonut').style.display  = altKat==='konut'  ? '' : 'none';
   document.getElementById('fotoGrupArsa').style.display   = altKat==='arsa'   ? '' : 'none';
   document.getElementById('fotoGrupIsyeri').style.display = altKat==='isyeri' ? '' : 'none';
   document.getElementById('sayfaBaslik').textContent = 'İlan Ver';
   document.getElementById('sayfaAciklama').textContent = 'Ücretsiz yayınla, komisyon ödemeden';
+}
+
+function wiz4Ac() {
+  const baslik = document.getElementById('baslik').value.trim();
+  const fiyat  = document.getElementById('fiyat').value;
+  const konum  = document.getElementById('konum').value.trim();
+  const errEl  = document.getElementById('ilanError');
+  if (!baslik || !fiyat || !konum) {
+    errEl.textContent = '⚠️ Başlık, fiyat ve konum zorunludur!';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  // Satıcı formunu gizle, wiz4'ü göster
+  document.getElementById('saticiForm').style.display = 'none';
+  document.getElementById('wiz4').classList.remove('gizli');
+  document.getElementById('wiz4').scrollTop = 0;
+}
+
+function wiz4Geri() {
+  document.getElementById('wiz4').classList.add('gizli');
+  document.getElementById('saticiForm').style.display = 'block';
 }
 
 function wizGeriGit(adim) {
@@ -1626,7 +1662,7 @@ async function ilanYayinla() {
   const baslik=document.getElementById('baslik').value.trim();
   const fiyat=document.getElementById('fiyat').value;
   const konum=document.getElementById('konum').value.trim();
-  const errEl=document.getElementById('ilanError');
+  const errEl=document.getElementById('ilanError4');
   if(!baslik||!fiyat||!konum){errEl.textContent='⚠️ Başlık, fiyat ve konum zorunludur!';errEl.style.display='block';return;}
   const btn=document.getElementById('yayinlaBtn');
   btn.textContent='⏳ Yayınlanıyor...'; btn.disabled=true; errEl.style.display='none';
