@@ -9,6 +9,7 @@
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="kategoriler.js"></script>
 <style>
   .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
   .role-card {
@@ -232,22 +233,6 @@
   .toggle.on { background: var(--gold); }
   .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: white; transition: left .2s; }
   .toggle.on::after { left: 25px; }
-
-  /* ── Sahibinden tarzı ana bölüm accordion ── */
-  .bolum-accordion { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
-  .bolum-accordion-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 16px; cursor: pointer; user-select: none;
-    background: var(--card); transition: background .15s;
-  }
-  .bolum-accordion-header:active { background: rgba(245,200,66,0.06); }
-  .bolum-accordion-header.acik { background: rgba(245,200,66,0.05); border-bottom: 1px solid var(--border); }
-  .bolum-accordion-header-sol { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 900; color: var(--text); letter-spacing: .3px; }
-  .bolum-accordion-ok { font-size: 16px; color: var(--text3); transition: transform .25s; flex-shrink: 0; }
-  .bolum-accordion-header.acik .bolum-accordion-ok { transform: rotate(180deg); color: var(--gold); }
-  .bolum-accordion-body { display: none; padding: 16px 16px 4px; background: var(--bg); }
-  .bolum-accordion-body.acik { display: block; }
-  .bolum-accordion-ozet { font-size: 11px; color: var(--text3); font-weight: 600; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -376,15 +361,7 @@
     <div class="form-group">
       <label class="form-label">Emlak Tipi</label>
       <div class="sec-row" id="emlakTipi">
-        <button class="sec-btn active" data-tip="konut" onclick="secEmlakBtn(this)">🏢 Daire</button>
-        <button class="sec-btn" data-tip="konut" onclick="secEmlakBtn(this)">🏡 Villa</button>
-        <button class="sec-btn" data-tip="konut" onclick="secEmlakBtn(this)">🏠 Müstakil</button>
-        <button class="sec-btn" data-tip="konut" onclick="secEmlakBtn(this)">🏘️ Residence</button>
-        <button class="sec-btn" data-tip="arsa" onclick="secEmlakBtn(this)">🏗️ Arsa</button>
-        <button class="sec-btn" data-tip="arsa" onclick="secEmlakBtn(this)">🌳 Tarla/Bağ Bahçe</button>
-        <button class="sec-btn" data-tip="isyeri" onclick="secEmlakBtn(this)">🏪 İşyeri/Ofis</button>
-        <button class="sec-btn" data-tip="isyeri" onclick="secEmlakBtn(this)">🏭 Depo/Fabrika</button>
-        <button class="sec-btn" data-tip="konut" onclick="secEmlakBtn(this)">🚪 Oda</button>
+        <!-- kategoriler.js tarafından doldurulur -->
       </div>
     </div>
 
@@ -415,32 +392,19 @@
 
     <!-- KONUT ÖZELLİKLERİ -->
     <div id="bolumKonut">
-      <div class="bolum-accordion">
-        <div class="bolum-accordion-header acik" onclick="bolumToggle('konutAcc')" id="konutAcc-header">
-          <div class="bolum-accordion-header-sol">🏠 Konut Özellikleri</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="bolum-accordion-ozet" id="konutAcc-ozet"></span>
-            <span class="bolum-accordion-ok">▼</span>
-          </div>
-        </div>
-        <div class="bolum-accordion-body acik" id="konutAcc-body">
+      <div class="bolum-baslik">🏠 Konut Özellikleri</div>
 
       <div class="two-col">
         <div class="form-group">
           <label class="form-label">Oda Sayısı</label>
           <select class="kriter-select" id="odaSayisi">
-            <option value="">Seçiniz</option>
-            <option>Stüdyo</option><option>1+0</option><option>1+1</option>
-            <option>2+1</option><option>3+1</option><option>3+2</option>
-            <option>4+1</option><option>4+2</option><option>5+1</option>
-            <option>5+2</option><option>6+1 ve üzeri</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Banyo Sayısı</label>
           <select class="kriter-select" id="banyoSayisi">
-            <option value="">Seçiniz</option>
-            <option>1</option><option>2</option><option>3</option><option>4+</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
       </div>
@@ -460,24 +424,13 @@
         <div class="form-group">
           <label class="form-label">Bulunduğu Kat</label>
           <select class="kriter-select" id="katSec">
-            <option value="">Seçiniz</option>
-            <option>Bodrum Kat</option><option>Zemin Kat</option><option>Bahçe Katı</option>
-            <option>Giriş Katı</option><option>Kot 1</option><option>Kot 2</option>
-            <option>Yüksek Giriş</option><option>Asma Kat</option>
-            <option>1. Kat</option><option>2. Kat</option><option>3. Kat</option>
-            <option>4. Kat</option><option>5. Kat</option><option>6. Kat</option>
-            <option>7. Kat</option><option>8. Kat</option><option>9. Kat</option>
-            <option>10. Kat</option><option>11-15. Kat</option><option>16-20. Kat</option>
-            <option>20+ Kat</option><option>Çatı Katı</option><option>Teras Katı</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Bina Kat Sayısı</label>
           <select class="kriter-select" id="katSayisi">
-            <option value="">Seçiniz</option>
-            <option>1</option><option>2</option><option>3</option><option>4</option>
-            <option>5</option><option>6</option><option>7</option><option>8</option>
-            <option>9</option><option>10</option><option>11-15</option><option>16-20</option><option>20+</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
       </div>
@@ -485,23 +438,15 @@
       <div class="form-group">
         <label class="form-label">Bina Yaşı</label>
         <select class="kriter-select" id="binaYasi">
-          <option value="">Seçiniz</option>
-          <option>0 (Sıfır)</option><option>1-5 Yıl</option><option>6-10 Yıl</option>
-          <option>11-15 Yıl</option><option>16-20 Yıl</option><option>21-30 Yıl</option><option>30+ Yıl</option>
-        </select>
+            <!-- kategoriler.js -->
+          </select>
       </div>
 
       <div class="form-group">
         <label class="form-label">Isıtma Tipi</label>
         <select class="kriter-select" id="isitmaSel">
-          <option value="">Seçiniz</option>
-          <option>Kombi (Doğalgaz)</option><option>Kombi (LPG)</option>
-          <option>Merkezi Isıtma</option><option>Merkezi (Pay Ölçer)</option>
-          <option>Kat Kaloriferi</option><option>Klima</option>
-          <option>Yerden Isıtma</option><option>Güneş Enerjisi</option>
-          <option>Soba</option><option>Şömine</option>
-          <option>VRF Sistemi</option><option>Isıtma Yok</option>
-        </select>
+            <!-- kategoriler.js -->
+          </select>
       </div>
 
       <!-- Cephe — çoklu, accordion -->
@@ -516,7 +461,8 @@
         </div>
         <div class="coklu-toggle-body" id="cepheToggle-body">
           <div class="coklu-liste" id="cephe">
-            <div class="coklu-item" onclick="cokluSec(this,'cephe','cepheToggle')"><span>⬆️ Kuzey</span><span class="coklu-check"></span></div>
+              <!-- kategoriler.js -->
+            </div>
             <div class="coklu-item" onclick="cokluSec(this,'cephe','cepheToggle')"><span>⬇️ Güney</span><span class="coklu-check"></span></div>
             <div class="coklu-item" onclick="cokluSec(this,'cephe','cepheToggle')"><span>➡️ Doğu</span><span class="coklu-check"></span></div>
             <div class="coklu-item" onclick="cokluSec(this,'cephe','cepheToggle')"><span>⬅️ Batı</span><span class="coklu-check"></span></div>
@@ -528,23 +474,19 @@
         </div>
       </div>
 
-      <div class="bolum-baslik" style="margin-top:4px">📄 Kullanım & Tapu</div>
+      <div class="bolum-baslik">📄 Kullanım & Tapu</div>
 
       <div class="two-col">
         <div class="form-group">
           <label class="form-label">Kullanım Durumu</label>
           <select class="kriter-select" id="kullanimDurumu">
-            <option value="">Seçiniz</option>
-            <option>Boş</option><option>Kiracılı</option><option>Mülk Sahibi Kullanıyor</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Tapu Durumu</label>
           <select class="kriter-select" id="tapuDurumu">
-            <option value="">Seçiniz</option>
-            <option>Kat Mülkiyeti</option><option>Kat İrtifakı</option>
-            <option>Hisseli Tapu</option><option>Arsa Tapusu</option>
-            <option>Kooperatif Tapusu</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
       </div>
@@ -553,15 +495,13 @@
         <div class="form-group">
           <label class="form-label">Eşya Durumu</label>
           <select class="kriter-select" id="esyaDurumu">
-            <option value="">Seçiniz</option>
-            <option>Eşyalı</option><option>Yarı Eşyalı</option><option>Eşyasız (Boş)</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Krediye Uygunluk</label>
           <select class="kriter-select" id="krediUygun">
-            <option value="">Seçiniz</option>
-            <option>Evet</option><option>Hayır</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
       </div>
@@ -598,7 +538,8 @@
         </div>
         <div class="coklu-toggle-body" id="icOzToggle-body">
           <div class="coklu-liste" id="icOzellikler">
-            <div class="coklu-item" onclick="cokluSec(this,'icOzellikler','icOzToggle')"><span>🪟 Balkon</span><span class="coklu-check"></span></div>
+              <!-- kategoriler.js -->
+            </div>
             <div class="coklu-item" onclick="cokluSec(this,'icOzellikler','icOzToggle')"><span>🌿 Teras</span><span class="coklu-check"></span></div>
             <div class="coklu-item" onclick="cokluSec(this,'icOzellikler','icOzToggle')"><span>🏡 Bahçe (Özel)</span><span class="coklu-check"></span></div>
             <div class="coklu-item" onclick="cokluSec(this,'icOzellikler','icOzToggle')"><span>🚿 Ebeveyn Banyosu</span><span class="coklu-check"></span></div>
@@ -635,7 +576,8 @@
         </div>
         <div class="coklu-toggle-body" id="disOzToggle-body">
           <div class="coklu-liste" id="disOzellikler">
-            <div class="coklu-item" onclick="cokluSec(this,'disOzellikler','disOzToggle')"><span>🛗 Asansör</span><span class="coklu-check"></span></div>
+              <!-- kategoriler.js -->
+            </div>
             <div class="coklu-item" onclick="cokluSec(this,'disOzellikler','disOzToggle')"><span>🅿️ Kapalı Otopark</span><span class="coklu-check"></span></div>
             <div class="coklu-item" onclick="cokluSec(this,'disOzellikler','disOzToggle')"><span>🚗 Açık Otopark</span><span class="coklu-check"></span></div>
             <div class="coklu-item" onclick="cokluSec(this,'disOzellikler','disOzToggle')"><span>🏊 Yüzme Havuzu (Açık)</span><span class="coklu-check"></span></div>
@@ -654,22 +596,12 @@
           </div>
         </div>
       </div>
-      </div><!-- /konutAcc-body -->
-      </div><!-- /bolum-accordion -->
     </div>
     <!-- /bolumKonut -->
 
     <!-- ARSA / TARLA -->
     <div id="bolumArsa" style="display:none">
-      <div class="bolum-accordion">
-        <div class="bolum-accordion-header acik" onclick="bolumToggle('arsaAcc')" id="arsaAcc-header">
-          <div class="bolum-accordion-header-sol">🌍 Arsa / Tarla / Bağ Bahçe Özellikleri</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="bolum-accordion-ozet" id="arsaAcc-ozet"></span>
-            <span class="bolum-accordion-ok">▼</span>
-          </div>
-        </div>
-        <div class="bolum-accordion-body acik" id="arsaAcc-body">
+      <div class="bolum-baslik">🌍 Arsa / Tarla / Bağ Bahçe Özellikleri</div>
       <div class="two-col">
         <div class="form-group"><label class="form-label">Alan (m²)</label><input class="input" type="number" id="arsaM2" placeholder="ör. 500"></div>
         <div class="form-group"><label class="form-label">Pafta / Ada / Parsel</label><input class="input" type="text" id="parselNo" placeholder="isteğe bağlı"></div>
@@ -678,19 +610,13 @@
         <div class="form-group">
           <label class="form-label">Tapu Türü</label>
           <select class="kriter-select" id="arsaTapuTuru">
-            <option value="">Seçiniz</option>
-            <option>Müstakil Tapulu</option><option>Hisseli Tapu</option>
-            <option>Özel Mülk</option><option>Hazine</option>
-            <option>Belediye</option><option>Vakıf Tapusu</option><option>Tarla Tapusu</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">İmar Durumu</label>
           <select class="kriter-select" id="imarDurumu">
-            <option value="">Seçiniz</option>
-            <option>İmarlı</option><option>İmarsız</option><option>Ada İmarlı</option>
-            <option>Köy İmarlı</option><option>Konut İmarlı</option><option>Ticaret İmarlı</option>
-            <option>Sanayi İmarlı</option><option>Turizm İmarlı</option><option>Tarla / Tarım Arazisi</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
       </div>
@@ -698,15 +624,13 @@
         <div class="form-group">
           <label class="form-label">Gabari (Kat)</label>
           <select class="kriter-select" id="gabari">
-            <option value="">Seçiniz</option>
-            <option>1 Kat</option><option>2 Kat</option><option>3 Kat</option>
-            <option>4 Kat</option><option>5 Kat</option><option>6+ Kat</option><option>Serbest</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Krediye Uygunluk</label>
           <select class="kriter-select" id="arsaKrediUygun">
-            <option value="">Seçiniz</option><option>Evet</option><option>Hayır</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
       </div>
@@ -722,7 +646,8 @@
         </div>
         <div class="coklu-toggle-body" id="arsaOzToggle-body">
           <div class="coklu-liste" id="arsaOzellikler">
-            <div class="coklu-item" onclick="cokluSec(this,'arsaOzellikler','arsaOzToggle')"><span>🔲 Köşe Parsel</span><span class="coklu-check"></span></div>
+              <!-- kategoriler.js -->
+            </div>
             <div class="coklu-item" onclick="cokluSec(this,'arsaOzellikler','arsaOzToggle')"><span>🛣️ Yola Cepheli</span><span class="coklu-check"></span></div>
             <div class="coklu-item" onclick="cokluSec(this,'arsaOzellikler','arsaOzToggle')"><span>🌊 Denize Cepheli / Yakın</span><span class="coklu-check"></span></div>
             <div class="coklu-item" onclick="cokluSec(this,'arsaOzellikler','arsaOzToggle')"><span>🏞️ Göle / Nehre Cepheli</span><span class="coklu-check"></span></div>
@@ -744,33 +669,17 @@
           </div>
         </div>
       </div>
-      </div><!-- /arsaAcc-body -->
-      </div><!-- /bolum-accordion -->
     </div>
     <!-- /bolumArsa -->
 
     <!-- İŞYERİ -->
     <div id="bolumIsyeri" style="display:none">
-      <div class="bolum-accordion">
-        <div class="bolum-accordion-header acik" onclick="bolumToggle('isyeriAcc')" id="isyeriAcc-header">
-          <div class="bolum-accordion-header-sol">🏪 İşyeri / Depo Özellikleri</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="bolum-accordion-ozet" id="isyeriAcc-ozet"></span>
-            <span class="bolum-accordion-ok">▼</span>
-          </div>
-        </div>
-        <div class="bolum-accordion-body acik" id="isyeriAcc-body">
+      <div class="bolum-baslik">🏪 İşyeri / Depo Özellikleri</div>
       <div class="form-group">
         <label class="form-label">İşyeri Türü</label>
         <select class="kriter-select" id="isyeriTuru">
-          <option value="">Seçiniz</option>
-          <option>Dükkan / Mağaza</option><option>Ofis / Büro</option>
-          <option>Depo / Antrepo</option><option>Fabrika / Atölye</option>
-          <option>Restoran / Kafe (Hazır)</option><option>Showroom</option>
-          <option>Fırın (Hazır)</option><option>Kuaför (Hazır)</option>
-          <option>Eczane Devir</option><option>Klinik / Muayenehane</option>
-          <option>Eğitim Kurumu</option><option>Diğer</option>
-        </select>
+            <!-- kategoriler.js -->
+          </select>
       </div>
       <div class="two-col">
         <div class="form-group"><label class="form-label">Net m²</label><input class="input" type="number" id="isyeriM2net" placeholder="ör. 80"></div>
@@ -780,18 +689,13 @@
         <div class="form-group">
           <label class="form-label">Bulunduğu Kat</label>
           <select class="kriter-select" id="isyeriKat">
-            <option value="">Seçiniz</option>
-            <option>Bodrum</option><option>Zemin (Cadde)</option><option>1. Kat</option>
-            <option>2. Kat</option><option>3. Kat</option><option>4. Kat</option>
-            <option>5. Kat ve üzeri</option><option>Çatı Katı</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Bina Yaşı</label>
           <select class="kriter-select" id="isyeriBinaYasi">
-            <option value="">Seçiniz</option>
-            <option>0 (Sıfır)</option><option>1-5 Yıl</option><option>6-10 Yıl</option>
-            <option>11-15 Yıl</option><option>16-20 Yıl</option><option>21+ Yıl</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
       </div>
@@ -799,17 +703,13 @@
         <div class="form-group">
           <label class="form-label">Isıtma</label>
           <select class="kriter-select" id="isyeriIsitma">
-            <option value="">Seçiniz</option>
-            <option>Merkezi</option><option>Kombi</option><option>Klima</option>
-            <option>Yerden Isıtma</option><option>Soba</option><option>Yok</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Kullanım Durumu</label>
           <select class="kriter-select" id="isyeriKullanimDurumu">
-            <option value="">Seçiniz</option>
-            <option>Boş</option><option>Kiracılı</option>
-            <option>Mal Sahibi Kullanıyor</option><option>Devir (Halihazır Müşterili)</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
       </div>
@@ -817,17 +717,13 @@
         <div class="form-group">
           <label class="form-label">Tapu Durumu</label>
           <select class="kriter-select" id="isyeriTapuDurumu">
-            <option value="">Seçiniz</option>
-            <option>Kat Mülkiyeti</option><option>Kat İrtifakı</option>
-            <option>Hisseli Tapu</option><option>Arsa Tapusu</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Cephe</label>
           <select class="kriter-select" id="isyeriCephe">
-            <option value="">Seçiniz</option>
-            <option>Caddeye Cepheli</option><option>Köşe Dükkan</option>
-            <option>Yan Sokak</option><option>AVM İçi</option><option>Pasaj İçi</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
       </div>
@@ -835,7 +731,7 @@
         <div class="form-group">
           <label class="form-label">Krediye Uygunluk</label>
           <select class="kriter-select" id="isyeriKrediUygun">
-            <option value="">Seçiniz</option><option>Evet</option><option>Hayır</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
         <div class="form-group">
@@ -855,7 +751,8 @@
         </div>
         <div class="coklu-toggle-body" id="isyeriOzToggle-body">
           <div class="coklu-liste" id="isyeriOzellikler">
-            <div class="coklu-item" onclick="cokluSec(this,'isyeriOzellikler','isyeriOzToggle')"><span>🚻 WC / Tuvalet</span><span class="coklu-check"></span></div>
+              <!-- kategoriler.js -->
+            </div>
             <div class="coklu-item" onclick="cokluSec(this,'isyeriOzellikler','isyeriOzToggle')"><span>🚿 Banyo</span><span class="coklu-check"></span></div>
             <div class="coklu-item" onclick="cokluSec(this,'isyeriOzellikler','isyeriOzToggle')"><span>🍳 Mutfak / Ofis Mutfağı</span><span class="coklu-check"></span></div>
             <div class="coklu-item" onclick="cokluSec(this,'isyeriOzellikler','isyeriOzToggle')"><span>📦 Depo Alanı</span><span class="coklu-check"></span></div>
@@ -879,17 +776,10 @@
           </div>
         </div>
       </div>
-      </div><!-- /isyeriAcc-body -->
-      </div><!-- /bolum-accordion -->
     </div>
     <!-- /bolumIsyeri -->
 
-    <div class="bolum-accordion">
-      <div class="bolum-accordion-header acik" onclick="bolumToggle('ozelAcc')" id="ozelAcc-header">
-        <div class="bolum-accordion-header-sol">⭐ Özel Seçenekler</div>
-        <span class="bolum-accordion-ok">▼</span>
-      </div>
-      <div class="bolum-accordion-body acik" id="ozelAcc-body">
+    <div class="bolum-baslik">⭐ Özel Seçenekler</div>
     <div class="one-cikan-bar" onclick="odemeAc()">
       <div>
         <div style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px">⭐ <span>Öne Çıkart</span> <span style="font-size:11px;color:var(--gold);background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3);padding:2px 8px;border-radius:50px">499 ₺</span></div>
@@ -897,19 +787,9 @@
       </div>
       <div style="color:var(--gold);font-size:20px">›</div>
     </div>
-      </div><!-- /ozelAcc-body -->
-    </div><!-- /bolum-accordion ozelAcc -->
 
     <!-- ODA BAZLI FOTOĞRAFLAR -->
-    <div class="bolum-accordion">
-      <div class="bolum-accordion-header" onclick="bolumToggle('fotoAcc')" id="fotoAcc-header">
-        <div class="bolum-accordion-header-sol">📷 Sanal Tur Fotoğrafları</div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="bolum-accordion-ozet" id="fotoAcc-ozet"></span>
-          <span class="bolum-accordion-ok">▼</span>
-        </div>
-      </div>
-      <div class="bolum-accordion-body" id="fotoAcc-body">
+    <div class="bolum-baslik">📷 Sanal Tur Fotoğrafları</div>
     <div id="fotoUyari" class="foto-uyari">⚠️ Maksimum 25 fotoğraf yükleyebilirsiniz!</div>
     <div class="toplam-foto-sayac">📷 Toplam: <span id="toplamFotoSayi">0</span> / 25 fotoğraf</div>
 
@@ -941,20 +821,11 @@
       <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('otopark')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🅿️</span><div><div class="oda-foto-ad">Otopark / Depo</div><div class="oda-foto-sayi" id="sayi-otopark">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-otopark">›</span></div><div class="oda-foto-icerik" id="icerik-otopark"><div class="oda-foto-grid" id="grid-otopark"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_otopark').click()">📷 Fotoğraf Ekle</button></div></div>
       <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('spor')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">📷</span><div><div class="oda-foto-ad">Diğer</div><div class="oda-foto-sayi" id="sayi-spor">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-spor">›</span></div><div class="oda-foto-icerik" id="icerik-spor"><div class="oda-foto-grid" id="grid-spor"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_spor').click()">📷 Fotoğraf Ekle</button></div></div>
     </div>
-      </div><!-- /fotoAcc-body -->
-    </div><!-- /bolum-accordion fotoAcc -->
 
-    <div class="bolum-accordion">
-      <div class="bolum-accordion-header acik" onclick="bolumToggle('aciklamaAcc')" id="aciklamaAcc-header">
-        <div class="bolum-accordion-header-sol">📝 Açıklama</div>
-        <span class="bolum-accordion-ok">▼</span>
-      </div>
-      <div class="bolum-accordion-body acik" id="aciklamaAcc-body">
-    <div class="form-group" style="margin-top:4px">
+    <div class="bolum-baslik">📝 Açıklama</div>
+    <div class="form-group">
       <textarea class="input" id="aciklama" rows="5" placeholder="Daha iyi bir görünüm için lütfen açıklamanızı yazın..." style="resize:none;line-height:1.6"></textarea>
     </div>
-      </div><!-- /aciklamaAcc-body -->
-    </div><!-- /bolum-accordion aciklamaAcc -->
 
     <div id="ilanError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
     <button class="btn btn-gold btn-lg" onclick="ilanYayinla()" id="yayinlaBtn">🚀 İlanı Yayınla</button>
@@ -994,7 +865,8 @@
         </div>
         <div class="coklu-toggle-body" id="aliciEmlakToggle-body">
           <div class="coklu-liste" id="aliciEmlakListe">
-            <div class="coklu-item" data-grup="konut" onclick="aliciEmlakSec(this)"><span>🏢 Daire</span><span class="coklu-check"></span></div>
+              <!-- kategoriler.js -->
+            </div>
             <div class="coklu-item" data-grup="konut" onclick="aliciEmlakSec(this)"><span>🏡 Villa</span><span class="coklu-check"></span></div>
             <div class="coklu-item" data-grup="konut" onclick="aliciEmlakSec(this)"><span>🏠 Müstakil</span><span class="coklu-check"></span></div>
             <div class="coklu-item" data-grup="konut" onclick="aliciEmlakSec(this)"><span>🏘️ Residence</span><span class="coklu-check"></span></div>
@@ -1022,7 +894,8 @@
           </div>
           <div class="coklu-toggle-body" id="aliciOdaToggle-body">
             <div class="coklu-liste" id="aliciOdaListe">
-              <div class="coklu-item" onclick="cokluSec(this,'aliciOdaListe','aliciOdaToggle')"><span>Stüdyo</span><span class="coklu-check"></span></div>
+              <!-- kategoriler.js -->
+            </div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciOdaListe','aliciOdaToggle')"><span>1+0</span><span class="coklu-check"></span></div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciOdaListe','aliciOdaToggle')"><span>1+1</span><span class="coklu-check"></span></div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciOdaListe','aliciOdaToggle')"><span>2+1</span><span class="coklu-check"></span></div>
@@ -1055,7 +928,8 @@
           </div>
           <div class="coklu-toggle-body" id="aliciBinaToggle-body">
             <div class="coklu-liste" id="aliciBinaListe">
-              <div class="coklu-item" onclick="cokluSec(this,'aliciBinaListe','aliciBinaToggle')"><span>0 (Sıfır)</span><span class="coklu-check"></span></div>
+              <!-- kategoriler.js -->
+            </div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciBinaListe','aliciBinaToggle')"><span>1-5 Yıl</span><span class="coklu-check"></span></div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciBinaListe','aliciBinaToggle')"><span>6-10 Yıl</span><span class="coklu-check"></span></div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciBinaListe','aliciBinaToggle')"><span>11-20 Yıl</span><span class="coklu-check"></span></div>
@@ -1068,17 +942,14 @@
           <div class="t-section">
             <div class="t-label">🔥 Isıtma</div>
             <select class="kriter-select" id="aliciIsitma">
-              <option value="">Farketmez</option>
-              <option>Kombi (Doğalgaz)</option><option>Merkezi</option>
-              <option>Yerden Isıtma</option><option>Klima</option>
-            </select>
+            <!-- kategoriler.js -->
+          </select>
           </div>
           <div class="t-section">
             <div class="t-label">📄 Tapu</div>
             <select class="kriter-select" id="aliciTapu">
-              <option value="">Farketmez</option>
-              <option>Kat Mülkiyeti</option><option>Kat İrtifakı</option><option>Arsa Tapusu</option>
-            </select>
+            <!-- kategoriler.js -->
+          </select>
           </div>
         </div>
 
@@ -1086,16 +957,14 @@
           <div class="t-section">
             <div class="t-label">🪑 Eşya Durumu</div>
             <select class="kriter-select" id="aliciEsya">
-              <option value="">Farketmez</option>
-              <option>Eşyalı</option><option>Yarı Eşyalı</option><option>Boş</option>
-            </select>
+            <!-- kategoriler.js -->
+          </select>
           </div>
           <div class="t-section">
             <div class="t-label">🏘️ Site İçinde?</div>
             <select class="kriter-select" id="aliciSite">
-              <option value="">Farketmez</option>
-              <option>Evet</option><option>Hayır</option>
-            </select>
+            <!-- kategoriler.js -->
+          </select>
           </div>
         </div>
 
@@ -1110,7 +979,8 @@
           </div>
           <div class="coklu-toggle-body" id="aliciOzToggle-body">
             <div class="coklu-liste" id="aliciOzListe">
-              <div class="coklu-item" onclick="cokluSec(this,'aliciOzListe','aliciOzToggle')"><span>🪟 Balkon</span><span class="coklu-check"></span></div>
+              <!-- kategoriler.js -->
+            </div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciOzListe','aliciOzToggle')"><span>🛗 Asansör</span><span class="coklu-check"></span></div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciOzListe','aliciOzToggle')"><span>🅿️ Otopark</span><span class="coklu-check"></span></div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciOzListe','aliciOzToggle')"><span>👮 Güvenlik</span><span class="coklu-check"></span></div>
@@ -1129,18 +999,14 @@
           <div class="t-section">
             <div class="t-label">🏗️ İmar Durumu</div>
             <select class="kriter-select" id="aliciImar">
-              <option value="">Farketmez</option>
-              <option>İmarlı</option><option>İmarsız</option>
-              <option>Konut İmarlı</option><option>Ticari / Sanayi</option><option>Tarım Arazisi</option>
-            </select>
+            <!-- kategoriler.js -->
+          </select>
           </div>
           <div class="t-section">
             <div class="t-label">📜 Tapu Türü</div>
             <select class="kriter-select" id="aliciTapuArsa">
-              <option value="">Farketmez</option>
-              <option>Müstakil</option><option>Hisseli</option>
-              <option>Arsa Tapusu</option><option>Tarla Tapusu</option>
-            </select>
+            <!-- kategoriler.js -->
+          </select>
           </div>
         </div>
         <div class="t-section">
@@ -1162,7 +1028,8 @@
           </div>
           <div class="coklu-toggle-body" id="aliciArsaOzToggle-body">
             <div class="coklu-liste" id="aliciArsaOzListe">
-              <div class="coklu-item" onclick="cokluSec(this,'aliciArsaOzListe','aliciArsaOzToggle')"><span>🛣️ Yola Cepheli</span><span class="coklu-check"></span></div>
+              <!-- kategoriler.js -->
+            </div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciArsaOzListe','aliciArsaOzToggle')"><span>⚡ Elektrik Var</span><span class="coklu-check"></span></div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciArsaOzListe','aliciArsaOzToggle')"><span>💧 Su Var</span><span class="coklu-check"></span></div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciArsaOzListe','aliciArsaOzToggle')"><span>🔲 Köşe Parsel</span><span class="coklu-check"></span></div>
@@ -1178,10 +1045,7 @@
         <div class="t-section">
           <div class="t-label">🏪 İşyeri Türü</div>
           <select class="kriter-select" id="aliciIsyeriKullanim">
-            <option value="">Farketmez</option>
-            <option>Dükkan / Mağaza</option><option>Ofis / Büro</option>
-            <option>Depo</option><option>Restoran / Cafe</option>
-            <option>Klinik</option><option>Eğitim Kurumu</option>
+            <!-- kategoriler.js -->
           </select>
         </div>
         <div class="t-section">
@@ -1196,9 +1060,8 @@
           <div class="t-section">
             <div class="t-label">🏗️ Kat Tercihi</div>
             <select class="kriter-select" id="aliciIsyeriKat">
-              <option value="">Farketmez</option>
-              <option>Zemin Kat (Cadde)</option><option>Üst Kat</option><option>Bodrum</option>
-            </select>
+            <!-- kategoriler.js -->
+          </select>
           </div>
           <div class="t-section"></div>
         </div>
@@ -1213,7 +1076,8 @@
           </div>
           <div class="coklu-toggle-body" id="aliciIsyeriOzToggle-body">
             <div class="coklu-liste" id="aliciIsyeriOzListe">
-              <div class="coklu-item" onclick="cokluSec(this,'aliciIsyeriOzListe','aliciIsyeriOzToggle')"><span>🛣️ Caddeye Cepheli</span><span class="coklu-check"></span></div>
+              <!-- kategoriler.js -->
+            </div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciIsyeriOzListe','aliciIsyeriOzToggle')"><span>🛗 Asansör</span><span class="coklu-check"></span></div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciIsyeriOzListe','aliciIsyeriOzToggle')"><span>🅿️ Otopark</span><span class="coklu-check"></span></div>
               <div class="coklu-item" onclick="cokluSec(this,'aliciIsyeriOzListe','aliciIsyeriOzToggle')"><span>🚻 WC</span><span class="coklu-check"></span></div>
@@ -1316,15 +1180,6 @@ async function benzersizKisaKodUret() {
     mevcut = !!data;
   } while(mevcut);
   return kod;
-}
-
-/* ═══ BÖLÜM ACCORDION ═══ */
-function bolumToggle(accId) {
-  const header = document.getElementById(accId+'-header');
-  const body   = document.getElementById(accId+'-body');
-  if(!header||!body) return;
-  const acik = body.classList.toggle('acik');
-  header.classList.toggle('acik', acik);
 }
 
 /* ═══ ÇOKLU LİSTE (accordion) ═══ */
@@ -1561,12 +1416,7 @@ function odaGridGuncelle(oda) {
   });
 }
 function odaFotoSil(oda,index) { odaFotolar[oda].splice(index,1); odaGridGuncelle(oda); toplamSayacGuncelle(); document.getElementById('fotoUyari').style.display='none'; }
-function toplamSayacGuncelle() {
-  const say = toplamFotoSayisi();
-  document.getElementById('toplamFotoSayi').textContent = say;
-  const oz = document.getElementById('fotoAcc-ozet');
-  if(oz) oz.textContent = say > 0 ? say + ' fotoğraf' : '';
-}
+function toplamSayacGuncelle() { document.getElementById('toplamFotoSayi').textContent=toplamFotoSayisi(); }
 
 /* ═══ İLAN YAYINLA ═══ */
 async function ilanYayinla() {
@@ -1755,6 +1605,8 @@ sb.auth.getSession().then(async({data})=>{
 });
 
 window.addEventListener('DOMContentLoaded',()=>{
+  // Kategori verileri kategoriler.js'den yüklenir
+  emlakFormunuDoldur();
   illerDoldur('ilSec'); illerDoldur('aliciIlSec');
   document.getElementById('mahalleInput').addEventListener('input',konumGuncelle);
   document.getElementById('ilceSec').addEventListener('change',konumGuncelle);
