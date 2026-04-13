@@ -232,6 +232,22 @@
   .toggle.on { background: var(--gold); }
   .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: white; transition: left .2s; }
   .toggle.on::after { left: 25px; }
+
+  /* ── Sahibinden tarzı ana bölüm accordion ── */
+  .bolum-accordion { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+  .bolum-accordion-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; cursor: pointer; user-select: none;
+    background: var(--card); transition: background .15s;
+  }
+  .bolum-accordion-header:active { background: rgba(245,200,66,0.06); }
+  .bolum-accordion-header.acik { background: rgba(245,200,66,0.05); border-bottom: 1px solid var(--border); }
+  .bolum-accordion-header-sol { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 900; color: var(--text); letter-spacing: .3px; }
+  .bolum-accordion-ok { font-size: 16px; color: var(--text3); transition: transform .25s; flex-shrink: 0; }
+  .bolum-accordion-header.acik .bolum-accordion-ok { transform: rotate(180deg); color: var(--gold); }
+  .bolum-accordion-body { display: none; padding: 16px 16px 4px; background: var(--bg); }
+  .bolum-accordion-body.acik { display: block; }
+  .bolum-accordion-ozet { font-size: 11px; color: var(--text3); font-weight: 600; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f5c518">
@@ -399,7 +415,15 @@
 
     <!-- KONUT ÖZELLİKLERİ -->
     <div id="bolumKonut">
-      <div class="bolum-baslik">🏠 Konut Özellikleri</div>
+      <div class="bolum-accordion">
+        <div class="bolum-accordion-header acik" onclick="bolumToggle('konutAcc')" id="konutAcc-header">
+          <div class="bolum-accordion-header-sol">🏠 Konut Özellikleri</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="bolum-accordion-ozet" id="konutAcc-ozet"></span>
+            <span class="bolum-accordion-ok">▼</span>
+          </div>
+        </div>
+        <div class="bolum-accordion-body acik" id="konutAcc-body">
 
       <div class="two-col">
         <div class="form-group">
@@ -504,7 +528,7 @@
         </div>
       </div>
 
-      <div class="bolum-baslik">📄 Kullanım & Tapu</div>
+      <div class="bolum-baslik" style="margin-top:4px">📄 Kullanım & Tapu</div>
 
       <div class="two-col">
         <div class="form-group">
@@ -630,12 +654,22 @@
           </div>
         </div>
       </div>
+      </div><!-- /konutAcc-body -->
+      </div><!-- /bolum-accordion -->
     </div>
     <!-- /bolumKonut -->
 
     <!-- ARSA / TARLA -->
     <div id="bolumArsa" style="display:none">
-      <div class="bolum-baslik">🌍 Arsa / Tarla / Bağ Bahçe Özellikleri</div>
+      <div class="bolum-accordion">
+        <div class="bolum-accordion-header acik" onclick="bolumToggle('arsaAcc')" id="arsaAcc-header">
+          <div class="bolum-accordion-header-sol">🌍 Arsa / Tarla / Bağ Bahçe Özellikleri</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="bolum-accordion-ozet" id="arsaAcc-ozet"></span>
+            <span class="bolum-accordion-ok">▼</span>
+          </div>
+        </div>
+        <div class="bolum-accordion-body acik" id="arsaAcc-body">
       <div class="two-col">
         <div class="form-group"><label class="form-label">Alan (m²)</label><input class="input" type="number" id="arsaM2" placeholder="ör. 500"></div>
         <div class="form-group"><label class="form-label">Pafta / Ada / Parsel</label><input class="input" type="text" id="parselNo" placeholder="isteğe bağlı"></div>
@@ -710,12 +744,22 @@
           </div>
         </div>
       </div>
+      </div><!-- /arsaAcc-body -->
+      </div><!-- /bolum-accordion -->
     </div>
     <!-- /bolumArsa -->
 
     <!-- İŞYERİ -->
     <div id="bolumIsyeri" style="display:none">
-      <div class="bolum-baslik">🏪 İşyeri / Depo Özellikleri</div>
+      <div class="bolum-accordion">
+        <div class="bolum-accordion-header acik" onclick="bolumToggle('isyeriAcc')" id="isyeriAcc-header">
+          <div class="bolum-accordion-header-sol">🏪 İşyeri / Depo Özellikleri</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="bolum-accordion-ozet" id="isyeriAcc-ozet"></span>
+            <span class="bolum-accordion-ok">▼</span>
+          </div>
+        </div>
+        <div class="bolum-accordion-body acik" id="isyeriAcc-body">
       <div class="form-group">
         <label class="form-label">İşyeri Türü</label>
         <select class="kriter-select" id="isyeriTuru">
@@ -835,10 +879,17 @@
           </div>
         </div>
       </div>
+      </div><!-- /isyeriAcc-body -->
+      </div><!-- /bolum-accordion -->
     </div>
     <!-- /bolumIsyeri -->
 
-    <div class="bolum-baslik">⭐ Özel Seçenekler</div>
+    <div class="bolum-accordion">
+      <div class="bolum-accordion-header acik" onclick="bolumToggle('ozelAcc')" id="ozelAcc-header">
+        <div class="bolum-accordion-header-sol">⭐ Özel Seçenekler</div>
+        <span class="bolum-accordion-ok">▼</span>
+      </div>
+      <div class="bolum-accordion-body acik" id="ozelAcc-body">
     <div class="one-cikan-bar" onclick="odemeAc()">
       <div>
         <div style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px">⭐ <span>Öne Çıkart</span> <span style="font-size:11px;color:var(--gold);background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3);padding:2px 8px;border-radius:50px">499 ₺</span></div>
@@ -846,9 +897,19 @@
       </div>
       <div style="color:var(--gold);font-size:20px">›</div>
     </div>
+      </div><!-- /ozelAcc-body -->
+    </div><!-- /bolum-accordion ozelAcc -->
 
     <!-- ODA BAZLI FOTOĞRAFLAR -->
-    <div class="bolum-baslik">📷 Sanal Tur Fotoğrafları</div>
+    <div class="bolum-accordion">
+      <div class="bolum-accordion-header" onclick="bolumToggle('fotoAcc')" id="fotoAcc-header">
+        <div class="bolum-accordion-header-sol">📷 Sanal Tur Fotoğrafları</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="bolum-accordion-ozet" id="fotoAcc-ozet"></span>
+          <span class="bolum-accordion-ok">▼</span>
+        </div>
+      </div>
+      <div class="bolum-accordion-body" id="fotoAcc-body">
     <div id="fotoUyari" class="foto-uyari">⚠️ Maksimum 25 fotoğraf yükleyebilirsiniz!</div>
     <div class="toplam-foto-sayac">📷 Toplam: <span id="toplamFotoSayi">0</span> / 25 fotoğraf</div>
 
@@ -880,11 +941,20 @@
       <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('otopark')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">🅿️</span><div><div class="oda-foto-ad">Otopark / Depo</div><div class="oda-foto-sayi" id="sayi-otopark">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-otopark">›</span></div><div class="oda-foto-icerik" id="icerik-otopark"><div class="oda-foto-grid" id="grid-otopark"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_otopark').click()">📷 Fotoğraf Ekle</button></div></div>
       <div class="oda-foto-bolum"><div class="oda-foto-baslik" onclick="odaToggle('spor')"><div class="oda-foto-baslik-sol"><span class="oda-foto-em">📷</span><div><div class="oda-foto-ad">Diğer</div><div class="oda-foto-sayi" id="sayi-spor">Fotoğraf eklenmedi</div></div></div><span class="oda-foto-ok" id="ok-spor">›</span></div><div class="oda-foto-icerik" id="icerik-spor"><div class="oda-foto-grid" id="grid-spor"></div><button class="oda-ekle-btn" onclick="document.getElementById('fotoInput_spor').click()">📷 Fotoğraf Ekle</button></div></div>
     </div>
+      </div><!-- /fotoAcc-body -->
+    </div><!-- /bolum-accordion fotoAcc -->
 
-    <div class="bolum-baslik">📝 Açıklama</div>
-    <div class="form-group">
+    <div class="bolum-accordion">
+      <div class="bolum-accordion-header acik" onclick="bolumToggle('aciklamaAcc')" id="aciklamaAcc-header">
+        <div class="bolum-accordion-header-sol">📝 Açıklama</div>
+        <span class="bolum-accordion-ok">▼</span>
+      </div>
+      <div class="bolum-accordion-body acik" id="aciklamaAcc-body">
+    <div class="form-group" style="margin-top:4px">
       <textarea class="input" id="aciklama" rows="5" placeholder="Daha iyi bir görünüm için lütfen açıklamanızı yazın..." style="resize:none;line-height:1.6"></textarea>
     </div>
+      </div><!-- /aciklamaAcc-body -->
+    </div><!-- /bolum-accordion aciklamaAcc -->
 
     <div id="ilanError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
     <button class="btn btn-gold btn-lg" onclick="ilanYayinla()" id="yayinlaBtn">🚀 İlanı Yayınla</button>
@@ -1248,6 +1318,15 @@ async function benzersizKisaKodUret() {
   return kod;
 }
 
+/* ═══ BÖLÜM ACCORDION ═══ */
+function bolumToggle(accId) {
+  const header = document.getElementById(accId+'-header');
+  const body   = document.getElementById(accId+'-body');
+  if(!header||!body) return;
+  const acik = body.classList.toggle('acik');
+  header.classList.toggle('acik', acik);
+}
+
 /* ═══ ÇOKLU LİSTE (accordion) ═══ */
 function cokluToggle(toggleId) {
   const header = document.getElementById(toggleId+'-header');
@@ -1482,7 +1561,12 @@ function odaGridGuncelle(oda) {
   });
 }
 function odaFotoSil(oda,index) { odaFotolar[oda].splice(index,1); odaGridGuncelle(oda); toplamSayacGuncelle(); document.getElementById('fotoUyari').style.display='none'; }
-function toplamSayacGuncelle() { document.getElementById('toplamFotoSayi').textContent=toplamFotoSayisi(); }
+function toplamSayacGuncelle() {
+  const say = toplamFotoSayisi();
+  document.getElementById('toplamFotoSayi').textContent = say;
+  const oz = document.getElementById('fotoAcc-ozet');
+  if(oz) oz.textContent = say > 0 ? say + ' fotoğraf' : '';
+}
 
 /* ═══ İLAN YAYINLA ═══ */
 async function ilanYayinla() {
