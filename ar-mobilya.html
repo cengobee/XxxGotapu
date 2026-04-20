@@ -110,10 +110,8 @@ input[type=range]{flex:1;accent-color:#1D9E75;cursor:pointer}
 (function() {
 'use strict';
 
-// ─── 1. CANVAS + RENDERER ────────────────────────────────────────
 var cv = document.getElementById('cv');
 var wrap = document.getElementById('wrap');
-
 var W = function() { return wrap.clientWidth || window.innerWidth - 240; };
 var H = function() { return wrap.clientHeight || window.innerHeight - 82; };
 
@@ -129,7 +127,6 @@ var camera = new THREE.PerspectiveCamera(45, W() / H(), 0.01, 200);
 camera.position.set(0, 2, 6);
 camera.lookAt(0, 1, 0);
 
-// Işıklar
 scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 var sun = new THREE.DirectionalLight(0xfff8e0, 1.2);
 sun.position.set(5, 10, 5);
@@ -140,7 +137,6 @@ var fill = new THREE.DirectionalLight(0xaaccff, 0.5);
 fill.position.set(-3, 4, -2);
 scene.add(fill);
 
-// Şeffaf zemin (gölge)
 var gnd = new THREE.Mesh(
   new THREE.PlaneGeometry(50, 50),
   new THREE.ShadowMaterial({ opacity: 0.25 })
@@ -155,10 +151,8 @@ window.addEventListener('resize', function() {
   camera.updateProjectionMatrix();
 });
 
-// Render loop
 (function loop() { requestAnimationFrame(loop); renderer.render(scene, camera); })();
 
-// ─── 2. KAMERA ORBIT ─────────────────────────────────────────────
 var cam = { theta: 0.5, phi: 1.1, r: 6, tx: 0, ty: 0.8 };
 
 function applyCam() {
@@ -172,7 +166,6 @@ function applyCam() {
 }
 applyCam();
 
-// ─── 3. SÜRÜKLEME ────────────────────────────────────────────────
 var model = null;
 var curColor = 0xC8A882;
 var floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
@@ -198,9 +191,7 @@ cv.addEventListener('mousedown', function(e) {
   if (e.button === 0 && model) {
     var pt = floorHit(e.clientX, e.clientY);
     if (pt) { dragging = true; dragOff.subVectors(model.position, pt); }
-  } else {
-    orbiting = true;
-  }
+  } else { orbiting = true; }
 });
 cv.addEventListener('mousemove', function(e) {
   if (dragging && model) {
@@ -222,7 +213,6 @@ cv.addEventListener('wheel', function(e) {
   applyCam();
 }, { passive: false });
 
-// Touch
 var tdrag = false, torbit = false, toff = new THREE.Vector3(), tlast = {x:0,y:0};
 cv.addEventListener('touchstart', function(e) {
   e.preventDefault();
@@ -248,34 +238,23 @@ cv.addEventListener('touchmove', function(e) {
 }, { passive: false });
 cv.addEventListener('touchend', function() { tdrag = false; torbit = false; });
 
-// ─── 4. MOBİLYA GEOMETRİ ─────────────────────────────────────────
 var LEG = 0x5c3d1e, GREY = 0xdddddd;
 
 function box(w, h, d, col, x, y, z) {
-  var m = new THREE.Mesh(
-    new THREE.BoxGeometry(w, h, d),
-    new THREE.MeshLambertMaterial({ color: col })
-  );
-  m.position.set(x||0, y||0, z||0);
-  m.castShadow = true; m.receiveShadow = true;
-  return m;
+  var m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshLambertMaterial({ color: col }));
+  m.position.set(x||0, y||0, z||0); m.castShadow = true; m.receiveShadow = true; return m;
 }
 function cyl(rt, rb, h, col, x, y, z) {
-  var m = new THREE.Mesh(
-    new THREE.CylinderGeometry(rt, rb, h, 16),
-    new THREE.MeshLambertMaterial({ color: col })
-  );
-  m.position.set(x||0, y||0, z||0);
-  m.castShadow = true; m.receiveShadow = true;
-  return m;
+  var m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, 16), new THREE.MeshLambertMaterial({ color: col }));
+  m.position.set(x||0, y||0, z||0); m.castShadow = true; m.receiveShadow = true; return m;
 }
 
 function makeSofa(w) {
   var g = new THREE.Group(), c = curColor;
-  g.add(box(w, 0.20, 0.90, c,  0, 0.40,  0));         // oturma
-  g.add(box(w, 0.58, 0.14, c,  0, 0.74, -0.38));      // sırtlık
-  g.add(box(0.14, 0.32, 0.90, c, -w/2+0.07, 0.56, 0)); // sol kol
-  g.add(box(0.14, 0.32, 0.90, c,  w/2-0.07, 0.56, 0)); // sağ kol
+  g.add(box(w, 0.20, 0.90, c, 0, 0.40, 0));
+  g.add(box(w, 0.58, 0.14, c, 0, 0.74, -0.38));
+  g.add(box(0.14, 0.32, 0.90, c, -w/2+0.07, 0.56, 0));
+  g.add(box(0.14, 0.32, 0.90, c,  w/2-0.07, 0.56, 0));
   var lx = w/2-0.12, lz = 0.34;
   [[-lx,lz],[lx,lz],[lx,-lz],[-lx,-lz]].forEach(function(p) {
     g.add(cyl(0.04, 0.04, 0.30, LEG, p[0], 0.15, p[1]));
@@ -298,12 +277,12 @@ function makeTable() {
 
 function makeTV() {
   var g = new THREE.Group(), c = curColor;
-  g.add(box(1.90, 0.48, 0.42, c,  0, 0.24,  0));
+  g.add(box(1.90, 0.48, 0.42, c, 0, 0.24, 0));
   g.add(box(0.60, 0.38, 0.02, 0xaaaaaa, -0.63, 0.24, 0.22));
-  g.add(box(0.60, 0.38, 0.02, 0xaaaaaa,  0,    0.24, 0.22));
-  g.add(box(0.60, 0.38, 0.02, 0xaaaaaa,  0.63, 0.24, 0.22));
-  g.add(box(1.30, 0.75, 0.05, 0x050505,  0, 0.96, 0.19));
-  g.add(box(1.90, 0.04, 0.38, c,  0, 0.02, 0));
+  g.add(box(0.60, 0.38, 0.02, 0xaaaaaa, 0, 0.24, 0.22));
+  g.add(box(0.60, 0.38, 0.02, 0xaaaaaa, 0.63, 0.24, 0.22));
+  g.add(box(1.30, 0.75, 0.05, 0x050505, 0, 0.96, 0.19));
+  g.add(box(1.90, 0.04, 0.38, c, 0, 0.02, 0));
   return g;
 }
 
@@ -311,9 +290,7 @@ function makeShelf() {
   var g = new THREE.Group(), c = curColor;
   g.add(box(0.04, 1.80, 0.32, c, -0.44, 0.90, 0));
   g.add(box(0.04, 1.80, 0.32, c,  0.44, 0.90, 0));
-  [0.08, 0.52, 0.96, 1.40, 1.75].forEach(function(y) {
-    g.add(box(0.88, 0.04, 0.32, c, 0, y, 0));
-  });
+  [0.08, 0.52, 0.96, 1.40, 1.75].forEach(function(y) { g.add(box(0.88, 0.04, 0.32, c, 0, y, 0)); });
   g.add(box(0.88, 1.80, 0.02, 0x888888, 0, 0.90, -0.15));
   return g;
 }
@@ -340,17 +317,16 @@ function makeWardrobe() {
 }
 
 var BUILDERS = {
-  sofa3:    function() { return makeSofa(2.10); },
-  sofa2:    function() { return makeSofa(1.60); },
-  sofa1:    function() { return makeSofa(0.90); },
-  table:    function() { return makeTable(); },
-  tv:       function() { return makeTV(); },
-  shelf:    function() { return makeShelf(); },
-  bed:      function() { return makeBed(); },
+  sofa3: function() { return makeSofa(2.10); },
+  sofa2: function() { return makeSofa(1.60); },
+  sofa1: function() { return makeSofa(0.90); },
+  table: function() { return makeTable(); },
+  tv:    function() { return makeTV(); },
+  shelf: function() { return makeShelf(); },
+  bed:   function() { return makeBed(); },
   wardrobe: function() { return makeWardrobe(); },
 };
 
-// ─── 5. GLB MODELLER ─────────────────────────────────────────────
 var GLB = {
   sofa3: { url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb', size: 2.1 },
   sofa2: { url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb', size: 1.6 },
@@ -362,9 +338,7 @@ function showLoader(txt) {
   document.getElementById('loaderTxt').textContent = txt || 'Yükleniyor...';
   document.getElementById('loader').style.display = 'flex';
 }
-function hideLoader() {
-  document.getElementById('loader').style.display = 'none';
-}
+function hideLoader() { document.getElementById('loader').style.display = 'none'; }
 
 function tryGLB(key, onOk, onFail) {
   var info = GLB[key];
@@ -387,7 +361,6 @@ function tryGLB(key, onOk, onFail) {
   );
 }
 
-// ─── 6. MODEL EKLE ───────────────────────────────────────────────
 function placeModel(m) {
   model = m;
   model.position.set(0, 0, 0);
@@ -410,18 +383,13 @@ window.addModel = function(key, btn) {
   if (model) { scene.remove(model); model = null; }
   document.querySelectorAll('.btn').forEach(function(b) { b.classList.remove('on'); });
   if (btn) btn.classList.add('on');
-
   if (GLB[key]) {
-    tryGLB(key,
-      function(m) { placeModel(m); },
-      function() { placeModel(BUILDERS[key]()); }
-    );
+    tryGLB(key, function(m) { placeModel(m); }, function() { placeModel(BUILDERS[key]()); });
   } else {
     placeModel(BUILDERS[key]());
   }
 };
 
-// ─── 7. KONTROLLER ───────────────────────────────────────────────
 window.setClr = function(hex, el) {
   curColor = hex;
   document.querySelectorAll('.dot').forEach(function(d) { d.classList.remove('on'); });
@@ -431,10 +399,7 @@ window.setClr = function(hex, el) {
   model.traverse(function(c) {
     if (c.isMesh && c.material && c.material.color) {
       var mc = c.material.color;
-      // Ayak (koyu kahve) ve metalik renkleri değiştirme
-      if (mc.r > 0.25 || mc.g > 0.2 || mc.b > 0.35) {
-        c.material.color.set(col);
-      }
+      if (mc.r > 0.25 || mc.g > 0.2 || mc.b > 0.35) { c.material.color.set(col); }
     }
   });
 };
@@ -455,41 +420,79 @@ window.delModel = function() {
   sb('Model kaldırıldı');
 };
 
-// ─── 8. ODA FOTOĞRAFI ────────────────────────────────────────────
+// ─── ODA FOTOĞRAFI — DÜZELTİLDİ ─────────────────────────────────
+// ÖNEMLİ: Cloudflare URL değişirse sadece bu satırı güncelle!
 const API_URL = 'https://deck-locking-tribal-shareware.trycloudflare.com';
+const MAX_SIZE = 800; // Fotoğrafı 800px'e küçült — timeout önler
+
+// Fotoğrafı canvas ile yeniden boyutlandır ve blob döndür
+function resizeImage(file, maxPx) {
+  return new Promise(function(resolve) {
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function() {
+      var w = img.width, h = img.height;
+      var scale = Math.min(1, maxPx / Math.max(w, h));
+      var nw = Math.round(w * scale), nh = Math.round(h * scale);
+      var c = document.createElement('canvas');
+      c.width = nw; c.height = nh;
+      c.getContext('2d').drawImage(img, 0, 0, nw, nh);
+      URL.revokeObjectURL(url);
+      c.toBlob(resolve, 'image/jpeg', 0.92);
+    };
+    img.src = url;
+  });
+}
 
 window.loadRoomPhoto = async function(inp) {
   var f = inp.files[0]; if (!f) return;
-  
-  showLoader('Odanız hazırlanıyor...');
-  
+  inp.value = ''; // Aynı dosyayı tekrar seçebilmek için sıfırla
+
+  showLoader('Fotoğraf hazırlanıyor...');
+
   try {
-    const formData = new FormData();
-    formData.append('file', f);
-    
-    const res = await fetch(API_URL + '/clean-room', {
+    // 1. Fotoğrafı küçült (800px max)
+    var resized = await resizeImage(f, MAX_SIZE);
+
+    showLoader('Mobilyalar siliniyor... (20-30 sn)');
+
+    // 2. API'ye gönder
+    var formData = new FormData();
+    formData.append('file', resized, 'room.jpg');
+
+    var res = await fetch(API_URL + '/clean-room', {
       method: 'POST',
       body: formData
     });
-    
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    var img = document.getElementById('bg');
-    img.src = url;
-    img.style.display = 'block';
-    sb('Oda hazır — sağdan mobilya seç');
+
+    if (!res.ok) throw new Error('API ' + res.status);
+
+    var blob = await res.blob();
+    var cleanUrl = URL.createObjectURL(blob);
+
+    // 3. Temizlenmiş fotoğrafı göster
+    var bgImg = document.getElementById('bg');
+    bgImg.onload = function() {
+      bgImg.style.display = 'block';
+      hideLoader();
+      sb('Oda hazır ✓ — sağdan mobilya seç ve yerleştir');
+    };
+    bgImg.onerror = function() { hideLoader(); sb('Görüntü yüklenemedi'); };
+    bgImg.style.display = 'none';
+    bgImg.src = cleanUrl;
+
   } catch(e) {
-    var url = URL.createObjectURL(f);
-    var img = document.getElementById('bg');
-    img.src = url;
-    img.style.display = 'block';
-    sb('Oda yüklendi');
-  } finally {
-    hideLoader();
+    console.error('API hatası:', e);
+    // Fallback: orijinal fotoğrafı göster
+    var fallbackUrl = URL.createObjectURL(f);
+    var bgImg = document.getElementById('bg');
+    bgImg.onload = function() { bgImg.style.display = 'block'; hideLoader(); };
+    bgImg.src = fallbackUrl;
+    sb('⚠ API bağlanamadı — orijinal gösteriliyor');
   }
 };
 
-// Demo oda otomatik yükle
+// Demo oda
 window.addEventListener('load', function() {
   var img = document.getElementById('bg');
   img.src = 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80';
@@ -499,10 +502,9 @@ window.addEventListener('load', function() {
   };
 });
 
-// ─── 9. STATUS ───────────────────────────────────────────────────
 function sb(msg) { document.getElementById('sb').textContent = msg; }
 
-})(); // IIFE kapanış
+})();
 </script>
 </body>
 </html>
