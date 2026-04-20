@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoTapu 3D Test</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
+body { background:#111; color:#fff; font-family:sans-serif; display:flex; flex-direction:column; }
+#top { height:48px; background:#1e293b; display:flex; align-items:center; padding:0 16px; gap:12px; flex-shrink:0; border-bottom:1px solid #334155; }
+#top h1 { font-size:14px; font-weight:600; white-space:nowrap; }
+.main { flex:1; display:flex; overflow:hidden; min-height:0; }
+#canvasWrap { flex:1; position:relative; overflow:hidden; min-width:0; }
+#bgImg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none; pointer-events:none; z-index:0; }
+#cv { position:absolute; inset:0; width:100%; height:100%; cursor:grab; z-index:1; }
+#cv:active { cursor:grabbing; }
+.panel { width:240px; min-width:240px; max-width:240px; background:#1e293b; border-left:1px solid #334155; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
+.btn { padding:9px 12px; background:#334155; border:none; color:#fff; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; text-align:left; transition:background .1s; width:100%; }
+.btn:hover { background:#1D9E75; }
+.btn.on { background:#1D9E75; }
+#status { height:34px; background:#0f172a; display:flex; align-items:center; padding:0 14px; font-size:11px; color:#64748b; flex-shrink:0; }
+.sep { font-size:10px; color:#475569; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-top:6px; padding-top:6px; border-top:1px solid #334155; }
+.sep:first-child { margin-top:0; border-top:none; }
+input[type=range] { width:100%; accent-color:#1D9E75; cursor:pointer; }
+.row { display:flex; align-items:center; gap:8px; font-size:11px; }
+.row label { color:#94a3b8; width:52px; flex-shrink:0; font-size:10px; }
+.row span { color:#fff; font-weight:700; width:34px; text-align:right; font-size:10px; }
+</style>
+</head>
+<body>
+
+<div id="top">
+  <div style="width:28px;height:28px;background:#1D9E75;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;">G</div>
+  <h1>GoTapu 3D</h1>
+  <span style="background:rgba(29,158,117,.2);color:#6ee7b7;font-size:9px;padding:2px 8px;border-radius:10px;font-weight:800;border:1px solid rgba(29,158,117,.3)">TEST</span>
+  <div style="flex:1"></div>
+  <button class="btn" style="padding:6px 14px" onclick="loadBg()">📷 Oda Yükle</button>
+</div>
+
+<div class="main">
+  <div id="canvasWrap">
+    <img id="bgImg" src="" alt="">
+    <canvas id="cv"></canvas>
+  </div>
+
+  <div class="panel">
+    <div class="sep">Koltuk Takımları</div>
+    <button class="btn" onclick="addModel('sofa3')">🛋 Atlas 3'lü — 12.900₺</button>
+    <button class="btn" onclick="addModel('sofa2')">🛋 Atlas 2'li — 9.400₺</button>
+    <button class="btn" onclick="addModel('sofa1')">💺 Atlas Tekli — 5.800₺</button>
+
+    <div class="sep" style="margin-top:8px">Oturma Odası</div>
+    <button class="btn" onclick="addModel('table')">☕ Neva Sehpa — 2.200₺</button>
+    <button class="btn" onclick="addModel('tv')">📺 Flex TV — 8.900₺</button>
+    <button class="btn" onclick="addModel('shelf')">📚 Kitaplık — 4.800₺</button>
+
+    <div class="sep" style="margin-top:8px">Yatak Odası</div>
+    <button class="btn" onclick="addModel('bed')">🛏 Luna Yatak — 14.500₺</button>
+    <button class="btn" onclick="addModel('wardrobe')">🚪 Flex Gardrop — 11.200₺</button>
+
+    <div class="sep" style="margin-top:8px">Renk</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px">
+      <div style="width:24px;height:24px;border-radius:50%;background:#C8A882;cursor:pointer;border:2px solid #fff" onclick="setColor(0xC8A882)" title="Bej"></div>
+      <div style="width:24px;height:24px;border-radius:50%;background:#8B7355;cursor:pointer" onclick="setColor(0x8B7355)" title="Ceviz"></div>
+      <div style="width:24px;height:24px;border-radius:50%;background:#4A3728;cursor:pointer" onclick="setColor(0x4A3728)" title="Venge"></div>
+      <div style="width:24px;height:24px;border-radius:50%;background:#1a1a1a;cursor:pointer" onclick="setColor(0x1a1a1a)" title="Siyah"></div>
+      <div style="width:24px;height:24px;border-radius:50%;background:#F5F0E8;cursor:pointer;border:1px solid #555" onclick="setColor(0xF5F0E8)" title="Krem"></div>
+      <div style="width:24px;height:24px;border-radius:50%;background:#1B5E38;cursor:pointer" onclick="setColor(0x1B5E38)" title="Yeşil"></div>
+      <div style="width:24px;height:24px;border-radius:50%;background:#1B3A6E;cursor:pointer" onclick="setColor(0x1B3A6E)" title="Lacivert"></div>
+      <div style="width:24px;height:24px;border-radius:50%;background:#8B1A1A;cursor:pointer" onclick="setColor(0x8B1A1A)" title="Bordo"></div>
+      <div style="width:24px;height:24px;border-radius:50%;background:#D4AF37;cursor:pointer" onclick="setColor(0xD4AF37)" title="Altın"></div>
+      <div style="width:24px;height:24px;border-radius:50%;background:#607D8B;cursor:pointer" onclick="setColor(0x607D8B)" title="Çelik"></div>
+    </div>
+
+    <div class="sep" style="margin-top:4px">Kontrol</div>
+    <div class="row"><label>Boyut</label><input type="range" id="sc" min="0.5" max="3" step="0.1" value="1" oninput="scaleM(this.value)"><span id="scv">×1</span></div>
+    <div class="row"><label>Döndür</label><input type="range" id="rot" min="0" max="360" step="5" value="0" oninput="rotM(this.value)"><span id="rotv">0°</span></div>
+    <button class="btn" style="background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.4);color:#fca5a5;margin-top:4px" onclick="removeM()">✕ Kaldır</button>
+  </div>
+</div>
+
+<div id="status">Sağ panelden mobilya seç — sol tık sürükle • sağ tık kamera döndür • scroll zoom</div>
+
+<input type="file" id="fi" accept="image/*" style="display:none" onchange="onFile(this)">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script>
+
+// ── SAHNE KURULUM ────────────────────────────────────────────────
+const cv = document.getElementById('cv');
+
+const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x000000, 0);
+
+const scene  = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 200);
+camera.position.set(0, 2, 6);
+camera.lookAt(0, 0.5, 0);
+
+// Canvas boyutunu ayarla — renderer'dan SONRA
+function resizeCv() {
+  const w = Math.max(100, window.innerWidth - 240);
+  const h = Math.max(100, window.innerHeight - 48 - 34);
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+resizeCv();
+window.addEventListener('resize', resizeCv);
+
+// Işıklar
+scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+const sun = new THREE.DirectionalLight(0xfff8e0, 1.2);
+sun.position.set(5, 10, 5);
+sun.castShadow = true;
+sun.shadow.mapSize.width  = 1024;
+sun.shadow.mapSize.height = 1024;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xaaccff, 0.5);
+fill.position.set(-3, 4, -2);
+scene.add(fill);
+
+// Zemin (gölge alır, şeffaf)
+const gnd = new THREE.Mesh(
+  new THREE.PlaneGeometry(50, 50),
+  new THREE.ShadowMaterial({ opacity: 0.25 })
+);
+gnd.rotation.x = -Math.PI / 2;
+gnd.receiveShadow = true;
+scene.add(gnd);
+
+// Render loop
+function animate() { requestAnimationFrame(animate); renderer.render(scene, camera); }
+animate();
+
+// ── KAMERA ORBIT ─────────────────────────────────────────────────
+let cam = { theta: 0.5, phi: 1.0, r: 6, tx: 0, ty: 0.5 };
+
+function applyCam() {
+  const { theta, phi, r, tx, ty } = cam;
+  camera.position.set(
+    tx + r * Math.sin(phi) * Math.sin(theta),
+    ty + r * Math.cos(phi),
+    r * Math.sin(phi) * Math.cos(theta)
+  );
+  camera.lookAt(tx, ty, 0);
+  camera.updateProjectionMatrix();
+}
+applyCam();
+
+// ── MOBİLYA SÜRÜKLEME ────────────────────────────────────────────
+var model = null;
+var curColor = 0xC8A882;
+const floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+const raycaster   = new THREE.Raycaster();
+const mouse2      = new THREE.Vector2();
+
+function getFloorPoint(clientX, clientY) {
+  const rect = cv.getBoundingClientRect();
+  mouse2.x =  ((clientX - rect.left) / rect.width)  * 2 - 1;
+  mouse2.y = -((clientY - rect.top)  / rect.height) * 2 + 1;
+  raycaster.setFromCamera(mouse2, camera);
+  const pt = new THREE.Vector3();
+  const ok = raycaster.ray.intersectPlane(floorPlane, pt);
+  return ok ? pt : null;
+}
+
+let isDragging = false;
+let isOrbit    = false;
+let dragOffset = new THREE.Vector3();
+let lastMouse  = { x: 0, y: 0 };
+
+cv.addEventListener('mousedown', e => {
+  lastMouse = { x: e.clientX, y: e.clientY };
+
+  if (e.button === 0 && model) {
+    // Sol tık + model var → sürükle
+    const pt = getFloorPoint(e.clientX, e.clientY);
+    if (pt) {
+      isDragging = true;
+      dragOffset.subVectors(model.position, pt);
+      e.preventDefault();
+    }
+  } else {
+    // Sağ tık VEYA sol tık (model yok) → kamera
+    isOrbit = true;
+    e.preventDefault();
+  }
+});
+
+cv.addEventListener('mousemove', e => {
+  if (isDragging && model) {
+    const pt = getFloorPoint(e.clientX, e.clientY);
+    if (pt) {
+      model.position.x = pt.x + dragOffset.x;
+      model.position.z = pt.z + dragOffset.z;
+    }
+    status('📍 Konumlandırılıyor...');
+  } else if (isOrbit) {
+    const dx = e.clientX - lastMouse.x;
+    const dy = e.clientY - lastMouse.y;
+    cam.theta -= dx * 0.007;
+    cam.phi    = Math.max(0.1, Math.min(1.45, cam.phi + dy * 0.007));
+    applyCam();
+    lastMouse = { x: e.clientX, y: e.clientY };
+  }
+});
+
+cv.addEventListener('mouseup',    () => { isDragging = false; isOrbit = false; });
+cv.addEventListener('mouseleave', () => { isDragging = false; isOrbit = false; });
+cv.addEventListener('contextmenu', e => e.preventDefault());
+
+cv.addEventListener('wheel', e => {
+  e.preventDefault();
+  cam.r = Math.max(1.5, Math.min(20, cam.r + e.deltaY * 0.015));
+  applyCam();
+}, { passive: false });
+
+// Touch
+let touchDrag = false, touchOrbit = false, touchOffset = new THREE.Vector3();
+let lastTouch = { x: 0, y: 0 };
+
+cv.addEventListener('touchstart', e => {
+  e.preventDefault();
+  if (e.touches.length === 1 && model) {
+    const t = e.touches[0];
+    const pt = getFloorPoint(t.clientX, t.clientY);
+    if (pt) { touchDrag = true; touchOffset.subVectors(model.position, pt); }
+  } else {
+    touchOrbit = true;
+    lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }
+}, { passive: false });
+
+cv.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (touchDrag && model && e.touches.length === 1) {
+    const t = e.touches[0];
+    const pt = getFloorPoint(t.clientX, t.clientY);
+    if (pt) { model.position.x = pt.x + touchOffset.x; model.position.z = pt.z + touchOffset.z; }
+  } else if (touchOrbit) {
+    const cx = e.touches[0].clientX, cy = e.touches[0].clientY;
+    cam.theta -= (cx - lastTouch.x) * 0.007;
+    cam.phi    = Math.max(0.1, Math.min(1.45, cam.phi + (cy - lastTouch.y) * 0.007));
+    applyCam();
+    lastTouch = { x: cx, y: cy };
+  }
+}, { passive: false });
+
+cv.addEventListener('touchend', () => { touchDrag = false; touchOrbit = false; });
+
+// ── MOBİLYA YAPICI ───────────────────────────────────────────────
+function m(geo, col, x, y, z, rx, ry, rz) {
+  const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: col }));
+  mesh.position.set(x||0, y||0, z||0);
+  if (rx) mesh.rotation.x = rx;
+  if (ry) mesh.rotation.y = ry;
+  if (rz) mesh.rotation.z = rz;
+  mesh.castShadow   = true;
+  mesh.receiveShadow = true;
+  return mesh;
+}
+
+const LEG  = 0x5c3d1e;
+const GREY = 0xdddddd;
+
+function makeSofa(w) {
+  const g = new THREE.Group();
+  const mat = curColor;
+  // Oturma
+  g.add(m(new THREE.BoxGeometry(w, 0.2, 0.9), mat,  0, 0.4, 0));
+  // Sırtlık
+  g.add(m(new THREE.BoxGeometry(w, 0.6, 0.15), mat, 0, 0.75, -0.375));
+  // Sol kolçak
+  g.add(m(new THREE.BoxGeometry(0.15, 0.35, 0.9), mat, -w/2+0.075, 0.575, 0));
+  // Sağ kolçak
+  g.add(m(new THREE.BoxGeometry(0.15, 0.35, 0.9), mat,  w/2-0.075, 0.575, 0));
+  // Ayaklar
+  const lx = w/2 - 0.12, lz = 0.35;
+  [[-lx,lz],[lx,lz],[lx,-lz],[-lx,-lz]].forEach(([x,z]) =>
+    g.add(m(new THREE.CylinderGeometry(0.04,0.04,0.32,8), LEG, x, 0.16, z))
+  );
+  // Yastıklar
+  const n = Math.round(w / 0.7);
+  for (let i = 0; i < n; i++) {
+    const ox = (i - (n-1)/2) * (w/n);
+    g.add(m(new THREE.BoxGeometry(w/n - 0.06, 0.3, 0.4), GREY, ox, 0.65, -0.2));
+  }
+  return g;
+}
+
+function makeTable() {
+  const g = new THREE.Group();
+  g.add(m(new THREE.CylinderGeometry(0.45, 0.45, 0.06, 32), 0x111111, 0, 0.47, 0));
+  g.add(m(new THREE.CylinderGeometry(0.05, 0.08, 0.44, 16), LEG,     0, 0.22, 0));
+  g.add(m(new THREE.CylinderGeometry(0.3,  0.3,  0.04, 32), LEG,     0, 0.02, 0));
+  return g;
+}
+
+function makeTV() {
+  const g = new THREE.Group();
+  const mat = curColor;
+  // Gövde
+  g.add(m(new THREE.BoxGeometry(1.9, 0.48, 0.42), mat, 0, 0.24, 0));
+  // Kapılar
+  for (let i = -1; i <= 1; i++)
+    g.add(m(new THREE.BoxGeometry(0.6, 0.38, 0.02), 0xaaaaaa, i*0.63, 0.24, 0.22));
+  // TV ekran
+  g.add(m(new THREE.BoxGeometry(1.3, 0.75, 0.05), 0x050505, 0, 0.96, 0.19));
+  // Ayak tabanı
+  g.add(m(new THREE.BoxGeometry(1.9, 0.04, 0.38), mat, 0, 0.02, 0));
+  return g;
+}
+
+function makeShelf() {
+  const g = new THREE.Group();
+  const mat = curColor;
+  // Yanlar
+  g.add(m(new THREE.BoxGeometry(0.04, 1.8, 0.32), mat, -0.44, 0.9, 0));
+  g.add(m(new THREE.BoxGeometry(0.04, 1.8, 0.32), mat,  0.44, 0.9, 0));
+  // Raflar
+  [0.08, 0.52, 0.96, 1.4, 1.75].forEach(y =>
+    g.add(m(new THREE.BoxGeometry(0.88, 0.04, 0.32), mat, 0, y, 0))
+  );
+  // Arka panel
+  g.add(m(new THREE.BoxGeometry(0.88, 1.8, 0.02), 0x999999, 0, 0.9, -0.15));
+  return g;
+}
+
+function makeBed() {
+  const g = new THREE.Group();
+  const mat = curColor;
+  // Karyola gövde
+  g.add(m(new THREE.BoxGeometry(1.65, 0.25, 2.05), 0x8B7355, 0, 0.125, 0));
+  // Yatak
+  g.add(m(new THREE.BoxGeometry(1.55, 0.22, 1.9), mat, 0, 0.36, 0));
+  // Başlık
+  g.add(m(new THREE.BoxGeometry(1.65, 0.65, 0.14), 0x8B7355, 0, 0.575, -0.955));
+  // Yastıklar
+  [-0.35, 0.35].forEach(x =>
+    g.add(m(new THREE.BoxGeometry(0.55, 0.14, 0.38), GREY, x, 0.54, 0.82))
+  );
+  return g;
+}
+
+function makeWardrobe() {
+  const g = new THREE.Group();
+  const mat = curColor;
+  // Gövde
+  g.add(m(new THREE.BoxGeometry(2.0, 2.1, 0.6), mat, 0, 1.05, 0));
+  // Kapılar
+  [[-0.5, 0],[0.5, 0]].forEach(([x]) => {
+    g.add(m(new THREE.BoxGeometry(0.95, 2.0, 0.03), 0xcccccc, x, 1.05, 0.315));
+    // Kol
+    g.add(m(new THREE.SphereGeometry(0.03, 8, 8), 0xD4AF37, x + (x<0?0.3:-0.3), 1.05, 0.345));
+  });
+  return g;
+}
+
+// ── GLB MODEL URL'LERİ (Khronos/Wayfair CC0) ──────────────────────
+const GLB_MODELS = {
+  sofa3:    'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb',
+  sofa2:    'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb',
+  sofa1:    'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF-Binary/SheenChair.glb',
+  table:    'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF-Binary/SheenChair.glb',
+  tv:       null, // geometri
+  shelf:    null, // geometri
+  bed:      'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb',
+  wardrobe: null, // geometri
+};
+
+const GLB_SCALES = {
+  sofa3: 2.2, sofa2: 1.6, sofa1: 0.9,
+  table: 0.5, bed: 1.8,
+};
+
+// Loading göstergesi
+function showLoad(txt) {
+  let el = document.getElementById('loadMsg');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'loadMsg';
+    el.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);color:#fff;padding:14px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:99;display:flex;align-items:center;gap:10px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)';
+    document.getElementById('canvasWrap').appendChild(el);
+  }
+  el.innerHTML = '<div style="width:18px;height:18px;border:2px solid rgba(29,158,117,.3);border-top-color:#1D9E75;border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0"></div>' + txt;
+  el.style.display = 'flex';
+}
+function hideLoad() {
+  const el = document.getElementById('loadMsg');
+  if (el) el.style.display = 'none';
+}
+
+// Spinner CSS
+const spinStyle = document.createElement('style');
+spinStyle.textContent = '@keyframes sp{to{transform:rotate(360deg)}}';
+document.head.appendChild(spinStyle);
+
+// GLB yükleyici
+function loadGLB(key, targetScale, onSuccess, onFail) {
+  const url = GLB_MODELS[key];
+  if (!url || !THREE.GLTFLoader) { onFail(); return; }
+  showLoad('3D model yükleniyor...');
+  const loader = new THREE.GLTFLoader();
+  loader.load(url,
+    (gltf) => {
+      hideLoad();
+      const m = gltf.scene;
+      // Otomatik boyutlandır
+      const box = new THREE.Box3().setFromObject(m);
+      const size = box.getSize(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const s = (targetScale || 1.5) / maxDim;
+      m.scale.setScalar(s);
+      m.traverse(c => { if(c.isMesh) { c.castShadow=true; c.receiveShadow=true; }});
+      onSuccess(m);
+    },
+    (p) => {
+      const pct = Math.round(p.loaded/(p.total||1)*100);
+      showLoad(`Yükleniyor %${pct}...`);
+    },
+    () => { hideLoad(); onFail(); }
+  );
+}
+
+
+  sofa3:    () => makeSofa(2.1),
+  sofa2:    () => makeSofa(1.6),
+  sofa1:    () => makeSofa(0.9),
+  table:    () => makeTable(),
+  tv:       () => makeTV(),
+  shelf:    () => makeShelf(),
+  bed:      () => makeBed(),
+  wardrobe: () => makeWardrobe(),
+};
+
+// ── MOBILYA EKLE ─────────────────────────────────────────────────
+function addModel(key) {
+  if (model) { scene.remove(model); model = null; }
+
+  // Aktif buton
+  document.querySelectorAll('.btn').forEach(b => b.classList.remove('on'));
+  if (event && event.target) event.target.classList.add('on');
+
+  const targetScale = GLB_SCALES[key] || 1.5;
+
+  // GLB varsa yükle, yoksa direkt geometri
+  if (GLB_MODELS[key]) {
+    loadGLB(key, targetScale,
+      (glbModel) => {
+        model = glbModel;
+        placeModel(key);
+        status(`✓ 3D model yüklendi — sol tık: taşı | sağ tık: döndür | scroll: zoom`);
+      },
+      () => {
+        // GLB yüklenemedi → geometri fallback
+        model = window.BUILDERS[key]();
+        placeModel(key);
+        status(`${key} eklendi (geometri mod) — sol tık: taşı | sağ tık: döndür`);
+      }
+    );
+  } else {
+    model = window.BUILDERS[key]();
+    placeModel(key);
+    status(`${key} eklendi — sol tık: taşı | sağ tık: döndür | scroll: zoom`);
+  }
+}
+
+function placeModel(key) {
+  model.position.set(0, 0, 0);
+  scene.add(model);
+
+  // Zemine oturt
+  const box = new THREE.Box3().setFromObject(model);
+  const size = new THREE.Vector3();
+  box.getSize(size);
+  model.position.y = -box.min.y;
+
+  // Kamerayı tam karşısına getir
+  const maxDim = Math.max(size.x, size.y, size.z);
+  cam.r     = maxDim * 3.5;
+  cam.theta = 0.5;
+  cam.phi   = 1.1;
+  cam.tx    = 0;
+  cam.ty    = size.y * 0.5;
+  applyCam();
+
+  // Slider sıfırla
+  document.getElementById('sc').value = 1;
+  document.getElementById('scv').textContent = '×1.0';
+  document.getElementById('rot').value = 0;
+  document.getElementById('rotv').textContent = '0°';
+}
+
+// ── KONTROLLER ───────────────────────────────────────────────────
+function setColor(hex) {
+  curColor = hex;
+  if (!model) return;
+  model.traverse(c => {
+    if (c.isMesh && c.material) {
+      const r = (hex >> 16 & 255) / 255;
+      const g = (hex >> 8  & 255) / 255;
+      const b = (hex       & 255) / 255;
+      // Sadece ana renk (ayak/metal hariç)
+      if (c.material.color) {
+        const mc = c.material.color;
+        if (!(mc.r < 0.4 && mc.g < 0.3 && mc.b < 0.2)) // ayak değilse
+          c.material.color.setRGB(r, g, b);
+      }
+    }
+  });
+}
+
+function scaleM(v) {
+  document.getElementById('scv').textContent = '×' + parseFloat(v).toFixed(1);
+  if (model) model.scale.setScalar(parseFloat(v));
+}
+
+function rotM(v) {
+  document.getElementById('rotv').textContent = v + '°';
+  if (model) model.rotation.y = v * Math.PI / 180;
+}
+
+function removeM() {
+  if (model) { scene.remove(model); model = null; }
+  document.querySelectorAll('.btn').forEach(b => b.classList.remove('on'));
+  status('Model kaldırıldı');
+}
+
+// ── ODA FOTOĞRAFI ────────────────────────────────────────────────
+function loadBg() { document.getElementById('fi').click(); }
+
+function onFile(inp) {
+  const f = inp.files[0]; if (!f) return;
+  setBg(URL.createObjectURL(f));
+}
+
+function setBg(src) {
+  const img = document.getElementById('bgImg');
+  img.src = src;
+  img.style.display = 'block';
+  renderer.setClearColor(0x000000, 0);
+  scene.background = null;
+  status('Oda yüklendi — sağdan mobilya seç');
+}
+
+// Sayfa açılınca otomatik demo yükle
+window.addEventListener('load', () => {
+  // Unsplash crossorigin=anonymous ile yükle
+  const img = document.createElement('img');
+  img.crossOrigin = 'anonymous';
+  img.onload = () => setBg(img.src);
+  img.onerror = () => {
+    // Yüklenemezse düz renk arka plan
+    const wrap = cv.parentElement;
+    wrap.style.background = 'linear-gradient(135deg,#1e293b,#0f172a)';
+    status('Demo oda yüklenemedi — kendi odanı yükle');
+  };
+  img.src = 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80&fm=jpg';
+  setBg(img.src);
+});
+
+// ── STATUS ───────────────────────────────────────────────────────
+function status(msg) { document.getElementById('status').textContent = msg; }
+
+</script>
+</body>
+</html>
