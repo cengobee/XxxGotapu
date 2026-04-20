@@ -3,130 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GoTapu 3D Test</title>
+<title>GoTapu 3D</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-html, body { height:100%; overflow:hidden; }
-body { background:#111; color:#fff; font-family:sans-serif; display:flex; flex-direction:column; }
-#top { height:48px; background:#1e293b; display:flex; align-items:center; padding:0 16px; gap:12px; flex-shrink:0; border-bottom:1px solid #334155; }
-#top h1 { font-size:14px; font-weight:600; white-space:nowrap; }
-.main { flex:1; display:flex; overflow:hidden; min-height:0; }
-#canvasWrap { flex:1; position:relative; overflow:hidden; min-width:0; }
-#bgImg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none; pointer-events:none; z-index:0; }
-#cv { position:absolute; inset:0; width:100%; height:100%; cursor:grab; z-index:1; }
-#cv:active { cursor:grabbing; }
-.panel { width:240px; min-width:240px; max-width:240px; background:#1e293b; border-left:1px solid #334155; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
-.btn { padding:9px 12px; background:#334155; border:none; color:#fff; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; text-align:left; transition:background .1s; width:100%; }
-.btn:hover { background:#1D9E75; }
-.btn.on { background:#1D9E75; }
-#status { height:34px; background:#0f172a; display:flex; align-items:center; padding:0 14px; font-size:11px; color:#64748b; flex-shrink:0; }
-.sep { font-size:10px; color:#475569; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-top:6px; padding-top:6px; border-top:1px solid #334155; }
-.sep:first-child { margin-top:0; border-top:none; }
-input[type=range] { width:100%; accent-color:#1D9E75; cursor:pointer; }
-.row { display:flex; align-items:center; gap:8px; font-size:11px; }
-.row label { color:#94a3b8; width:52px; flex-shrink:0; font-size:10px; }
-.row span { color:#fff; font-weight:700; width:34px; text-align:right; font-size:10px; }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:#111;color:#fff;font-family:sans-serif}
+body{display:flex;flex-direction:column}
+#top{height:48px;background:#1e293b;border-bottom:1px solid #334155;display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0}
+#top h1{font-size:14px;font-weight:700}
+.badge{background:rgba(29,158,117,.2);color:#6ee7b7;font-size:9px;padding:2px 7px;border-radius:8px;font-weight:800;border:1px solid rgba(29,158,117,.3)}
+.main{flex:1;display:flex;overflow:hidden;min-height:0}
+#wrap{flex:1;position:relative;overflow:hidden;min-width:0}
+#bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;display:none;pointer-events:none}
+#cv{position:absolute;inset:0;width:100%;height:100%;z-index:1;cursor:grab;display:block}
+#cv:active{cursor:grabbing}
+#loader{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);color:#fff;padding:14px 22px;border-radius:12px;font-size:12px;font-weight:600;z-index:10;display:none;align-items:center;gap:10px;backdrop-filter:blur(8px)}
+.spin{width:16px;height:16px;border:2px solid rgba(29,158,117,.3);border-top-color:#1D9E75;border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+.panel{width:240px;min-width:240px;background:#1e293b;border-left:1px solid #334155;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.panel::-webkit-scrollbar{width:3px}
+.panel::-webkit-scrollbar-thumb{background:#334155}
+.sep{font-size:9px;color:#475569;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:6px 2px 3px;border-top:1px solid #334155;margin-top:2px}
+.sep:first-child{border-top:none;padding-top:0}
+.btn{padding:9px 11px;background:#334155;border:none;color:#fff;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;text-align:left;width:100%;transition:background .12s}
+.btn:hover{background:#1D9E75}
+.btn.on{background:#1D9E75}
+.colors{display:flex;flex-wrap:wrap;gap:4px;padding:2px 0}
+.dot{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .12s}
+.dot:hover{transform:scale(1.15)}
+.dot.on{border-color:#fff;transform:scale(1.2)}
+.row{display:flex;align-items:center;gap:8px}
+.row label{font-size:10px;color:#94a3b8;width:48px;flex-shrink:0}
+.row span{font-size:10px;font-weight:700;width:32px;text-align:right;flex-shrink:0}
+input[type=range]{flex:1;accent-color:#1D9E75;cursor:pointer}
+.delbtn{padding:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5;border-radius:7px;cursor:pointer;font-size:11px;width:100%;font-family:sans-serif}
+#sb{height:34px;background:#0f172a;border-top:1px solid #1e293b;display:flex;align-items:center;padding:0 14px;font-size:10px;color:#475569;flex-shrink:0}
 </style>
 </head>
 <body>
 
 <div id="top">
-  <div style="width:28px;height:28px;background:#1D9E75;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;">G</div>
+  <div style="width:28px;height:28px;background:#1D9E75;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">G</div>
   <h1>GoTapu 3D</h1>
-  <span style="background:rgba(29,158,117,.2);color:#6ee7b7;font-size:9px;padding:2px 8px;border-radius:10px;font-weight:800;border:1px solid rgba(29,158,117,.3)">TEST</span>
+  <span class="badge">BETA</span>
   <div style="flex:1"></div>
-  <button class="btn" style="padding:6px 14px" onclick="loadBg()">📷 Oda Yükle</button>
+  <button class="btn" style="width:auto;padding:6px 14px" onclick="document.getElementById('fi').click()">📷 Oda Yükle</button>
 </div>
 
 <div class="main">
-  <div id="canvasWrap">
-    <img id="bgImg" src="" alt="">
+  <div id="wrap">
+    <img id="bg" src="" alt="">
     <canvas id="cv"></canvas>
+    <div id="loader"><div class="spin"></div><span id="loaderTxt">Yükleniyor...</span></div>
   </div>
 
   <div class="panel">
     <div class="sep">Koltuk Takımları</div>
-    <button class="btn" onclick="addModel('sofa3')">🛋 Atlas 3'lü — 12.900₺</button>
-    <button class="btn" onclick="addModel('sofa2')">🛋 Atlas 2'li — 9.400₺</button>
-    <button class="btn" onclick="addModel('sofa1')">💺 Atlas Tekli — 5.800₺</button>
+    <button class="btn" onclick="addModel('sofa3',this)">🛋 Atlas 3'lü — 12.900₺</button>
+    <button class="btn" onclick="addModel('sofa2',this)">🛋 Atlas 2'li — 9.400₺</button>
+    <button class="btn" onclick="addModel('sofa1',this)">💺 Atlas Tekli — 5.800₺</button>
 
-    <div class="sep" style="margin-top:8px">Oturma Odası</div>
-    <button class="btn" onclick="addModel('table')">☕ Neva Sehpa — 2.200₺</button>
-    <button class="btn" onclick="addModel('tv')">📺 Flex TV — 8.900₺</button>
-    <button class="btn" onclick="addModel('shelf')">📚 Kitaplık — 4.800₺</button>
+    <div class="sep">Oturma Odası</div>
+    <button class="btn" onclick="addModel('table',this)">☕ Neva Sehpa — 2.200₺</button>
+    <button class="btn" onclick="addModel('tv',this)">📺 Flex TV Ünitesi — 8.900₺</button>
+    <button class="btn" onclick="addModel('shelf',this)">📚 Kitaplık — 4.800₺</button>
 
-    <div class="sep" style="margin-top:8px">Yatak Odası</div>
-    <button class="btn" onclick="addModel('bed')">🛏 Luna Yatak — 14.500₺</button>
-    <button class="btn" onclick="addModel('wardrobe')">🚪 Flex Gardrop — 11.200₺</button>
+    <div class="sep">Yatak Odası</div>
+    <button class="btn" onclick="addModel('bed',this)">🛏 Luna Yatak — 14.500₺</button>
+    <button class="btn" onclick="addModel('wardrobe',this)">🚪 Flex Gardrop — 11.200₺</button>
 
-    <div class="sep" style="margin-top:8px">Renk</div>
-    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px">
-      <div style="width:24px;height:24px;border-radius:50%;background:#C8A882;cursor:pointer;border:2px solid #fff" onclick="setColor(0xC8A882)" title="Bej"></div>
-      <div style="width:24px;height:24px;border-radius:50%;background:#8B7355;cursor:pointer" onclick="setColor(0x8B7355)" title="Ceviz"></div>
-      <div style="width:24px;height:24px;border-radius:50%;background:#4A3728;cursor:pointer" onclick="setColor(0x4A3728)" title="Venge"></div>
-      <div style="width:24px;height:24px;border-radius:50%;background:#1a1a1a;cursor:pointer" onclick="setColor(0x1a1a1a)" title="Siyah"></div>
-      <div style="width:24px;height:24px;border-radius:50%;background:#F5F0E8;cursor:pointer;border:1px solid #555" onclick="setColor(0xF5F0E8)" title="Krem"></div>
-      <div style="width:24px;height:24px;border-radius:50%;background:#1B5E38;cursor:pointer" onclick="setColor(0x1B5E38)" title="Yeşil"></div>
-      <div style="width:24px;height:24px;border-radius:50%;background:#1B3A6E;cursor:pointer" onclick="setColor(0x1B3A6E)" title="Lacivert"></div>
-      <div style="width:24px;height:24px;border-radius:50%;background:#8B1A1A;cursor:pointer" onclick="setColor(0x8B1A1A)" title="Bordo"></div>
-      <div style="width:24px;height:24px;border-radius:50%;background:#D4AF37;cursor:pointer" onclick="setColor(0xD4AF37)" title="Altın"></div>
-      <div style="width:24px;height:24px;border-radius:50%;background:#607D8B;cursor:pointer" onclick="setColor(0x607D8B)" title="Çelik"></div>
+    <div class="sep">Renk</div>
+    <div class="colors" id="colorPalette">
+      <div class="dot on" style="background:#C8A882" onclick="setClr(0xC8A882,this)"></div>
+      <div class="dot" style="background:#8B7355" onclick="setClr(0x8B7355,this)"></div>
+      <div class="dot" style="background:#4A3728" onclick="setClr(0x4A3728,this)"></div>
+      <div class="dot" style="background:#1a1a1a" onclick="setClr(0x1a1a1a,this)"></div>
+      <div class="dot" style="background:#F5F0E8;border:1px solid #555" onclick="setClr(0xF5F0E8,this)"></div>
+      <div class="dot" style="background:#1B5E38" onclick="setClr(0x1B5E38,this)"></div>
+      <div class="dot" style="background:#1B3A6E" onclick="setClr(0x1B3A6E,this)"></div>
+      <div class="dot" style="background:#8B1A1A" onclick="setClr(0x8B1A1A,this)"></div>
+      <div class="dot" style="background:#D4AF37" onclick="setClr(0xD4AF37,this)"></div>
+      <div class="dot" style="background:#607D8B" onclick="setClr(0x607D8B,this)"></div>
     </div>
 
-    <div class="sep" style="margin-top:4px">Kontrol</div>
-    <div class="row"><label>Boyut</label><input type="range" id="sc" min="0.5" max="3" step="0.1" value="1" oninput="scaleM(this.value)"><span id="scv">×1</span></div>
-    <div class="row"><label>Döndür</label><input type="range" id="rot" min="0" max="360" step="5" value="0" oninput="rotM(this.value)"><span id="rotv">0°</span></div>
-    <button class="btn" style="background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.4);color:#fca5a5;margin-top:4px" onclick="removeM()">✕ Kaldır</button>
+    <div class="sep">Kontrol</div>
+    <div class="row">
+      <label>Boyut</label>
+      <input type="range" id="scSlider" min="0.3" max="3" step="0.05" value="1" oninput="doScale(this.value)">
+      <span id="scVal">×1.0</span>
+    </div>
+    <div class="row">
+      <label>Döndür</label>
+      <input type="range" id="rotSlider" min="0" max="360" step="5" value="0" oninput="doRot(this.value)">
+      <span id="rotVal">0°</span>
+    </div>
+    <button class="delbtn" onclick="delModel()">✕ Kaldır</button>
   </div>
 </div>
 
-<div id="status">Sağ panelden mobilya seç — sol tık sürükle • sağ tık kamera döndür • scroll zoom</div>
+<div id="sb">Oda fotoğrafı yükle — sağdan mobilya seç — sol tık: taşı • sağ tık: kamerayı döndür • scroll: zoom</div>
 
-<input type="file" id="fi" accept="image/*" style="display:none" onchange="onFile(this)">
+<input type="file" id="fi" accept="image/*" style="display:none" onchange="loadRoomPhoto(this)">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
+(function() {
+'use strict';
 
-// ── SAHNE KURULUM ────────────────────────────────────────────────
-const cv = document.getElementById('cv');
+// ─── 1. CANVAS + RENDERER ────────────────────────────────────────
+var cv = document.getElementById('cv');
+var wrap = document.getElementById('wrap');
 
-const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+var W = function() { return wrap.clientWidth || window.innerWidth - 240; };
+var H = function() { return wrap.clientHeight || window.innerHeight - 82; };
+
+var renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.setClearColor(0x000000, 0);
+renderer.setSize(W(), H());
 
-const scene  = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 200);
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(45, W() / H(), 0.01, 200);
 camera.position.set(0, 2, 6);
-camera.lookAt(0, 0.5, 0);
-
-// Canvas boyutunu ayarla — renderer'dan SONRA
-function resizeCv() {
-  const w = Math.max(100, window.innerWidth - 240);
-  const h = Math.max(100, window.innerHeight - 48 - 34);
-  renderer.setSize(w, h);
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
-}
-resizeCv();
-window.addEventListener('resize', resizeCv);
+camera.lookAt(0, 1, 0);
 
 // Işıklar
 scene.add(new THREE.AmbientLight(0xffffff, 1.0));
-const sun = new THREE.DirectionalLight(0xfff8e0, 1.2);
+var sun = new THREE.DirectionalLight(0xfff8e0, 1.2);
 sun.position.set(5, 10, 5);
 sun.castShadow = true;
-sun.shadow.mapSize.width  = 1024;
-sun.shadow.mapSize.height = 1024;
+sun.shadow.mapSize.width = sun.shadow.mapSize.height = 1024;
 scene.add(sun);
-const fill = new THREE.DirectionalLight(0xaaccff, 0.5);
+var fill = new THREE.DirectionalLight(0xaaccff, 0.5);
 fill.position.set(-3, 4, -2);
 scene.add(fill);
 
-// Zemin (gölge alır, şeffaf)
-const gnd = new THREE.Mesh(
+// Şeffaf zemin (gölge)
+var gnd = new THREE.Mesh(
   new THREE.PlaneGeometry(50, 50),
   new THREE.ShadowMaterial({ opacity: 0.25 })
 );
@@ -134,440 +149,336 @@ gnd.rotation.x = -Math.PI / 2;
 gnd.receiveShadow = true;
 scene.add(gnd);
 
-// Render loop
-function animate() { requestAnimationFrame(animate); renderer.render(scene, camera); }
-animate();
+window.addEventListener('resize', function() {
+  renderer.setSize(W(), H());
+  camera.aspect = W() / H();
+  camera.updateProjectionMatrix();
+});
 
-// ── KAMERA ORBIT ─────────────────────────────────────────────────
-let cam = { theta: 0.5, phi: 1.0, r: 6, tx: 0, ty: 0.5 };
+// Render loop
+(function loop() { requestAnimationFrame(loop); renderer.render(scene, camera); })();
+
+// ─── 2. KAMERA ORBIT ─────────────────────────────────────────────
+var cam = { theta: 0.5, phi: 1.1, r: 6, tx: 0, ty: 0.8 };
 
 function applyCam() {
-  const { theta, phi, r, tx, ty } = cam;
+  var t = cam.theta, p = cam.phi, r = cam.r;
   camera.position.set(
-    tx + r * Math.sin(phi) * Math.sin(theta),
-    ty + r * Math.cos(phi),
-    r * Math.sin(phi) * Math.cos(theta)
+    cam.tx + r * Math.sin(p) * Math.sin(t),
+    cam.ty + r * Math.cos(p),
+    r * Math.sin(p) * Math.cos(t)
   );
-  camera.lookAt(tx, ty, 0);
-  camera.updateProjectionMatrix();
+  camera.lookAt(cam.tx, cam.ty * 0.6, 0);
 }
 applyCam();
 
-// ── MOBİLYA SÜRÜKLEME ────────────────────────────────────────────
+// ─── 3. SÜRÜKLEME ────────────────────────────────────────────────
 var model = null;
 var curColor = 0xC8A882;
-const floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-const raycaster   = new THREE.Raycaster();
-const mouse2      = new THREE.Vector2();
+var floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+var ray = new THREE.Raycaster();
+var ndc = new THREE.Vector2();
 
-function getFloorPoint(clientX, clientY) {
-  const rect = cv.getBoundingClientRect();
-  mouse2.x =  ((clientX - rect.left) / rect.width)  * 2 - 1;
-  mouse2.y = -((clientY - rect.top)  / rect.height) * 2 + 1;
-  raycaster.setFromCamera(mouse2, camera);
-  const pt = new THREE.Vector3();
-  const ok = raycaster.ray.intersectPlane(floorPlane, pt);
-  return ok ? pt : null;
+function floorHit(cx, cy) {
+  var r = cv.getBoundingClientRect();
+  ndc.x = ((cx - r.left) / r.width) * 2 - 1;
+  ndc.y = -((cy - r.top) / r.height) * 2 + 1;
+  ray.setFromCamera(ndc, camera);
+  var pt = new THREE.Vector3();
+  return ray.ray.intersectPlane(floorPlane, pt) ? pt.clone() : null;
 }
 
-let isDragging = false;
-let isOrbit    = false;
-let dragOffset = new THREE.Vector3();
-let lastMouse  = { x: 0, y: 0 };
+var dragging = false, orbiting = false;
+var dragOff = new THREE.Vector3();
+var lastXY = { x: 0, y: 0 };
 
-cv.addEventListener('mousedown', e => {
-  lastMouse = { x: e.clientX, y: e.clientY };
-
-  if (e.button === 0 && model) {
-    // Sol tık + model var → sürükle
-    const pt = getFloorPoint(e.clientX, e.clientY);
-    if (pt) {
-      isDragging = true;
-      dragOffset.subVectors(model.position, pt);
-      e.preventDefault();
-    }
-  } else {
-    // Sağ tık VEYA sol tık (model yok) → kamera
-    isOrbit = true;
-    e.preventDefault();
-  }
-});
-
-cv.addEventListener('mousemove', e => {
-  if (isDragging && model) {
-    const pt = getFloorPoint(e.clientX, e.clientY);
-    if (pt) {
-      model.position.x = pt.x + dragOffset.x;
-      model.position.z = pt.z + dragOffset.z;
-    }
-    status('📍 Konumlandırılıyor...');
-  } else if (isOrbit) {
-    const dx = e.clientX - lastMouse.x;
-    const dy = e.clientY - lastMouse.y;
-    cam.theta -= dx * 0.007;
-    cam.phi    = Math.max(0.1, Math.min(1.45, cam.phi + dy * 0.007));
-    applyCam();
-    lastMouse = { x: e.clientX, y: e.clientY };
-  }
-});
-
-cv.addEventListener('mouseup',    () => { isDragging = false; isOrbit = false; });
-cv.addEventListener('mouseleave', () => { isDragging = false; isOrbit = false; });
-cv.addEventListener('contextmenu', e => e.preventDefault());
-
-cv.addEventListener('wheel', e => {
+cv.addEventListener('mousedown', function(e) {
   e.preventDefault();
-  cam.r = Math.max(1.5, Math.min(20, cam.r + e.deltaY * 0.015));
+  lastXY = { x: e.clientX, y: e.clientY };
+  if (e.button === 0 && model) {
+    var pt = floorHit(e.clientX, e.clientY);
+    if (pt) { dragging = true; dragOff.subVectors(model.position, pt); }
+  } else {
+    orbiting = true;
+  }
+});
+cv.addEventListener('mousemove', function(e) {
+  if (dragging && model) {
+    var pt = floorHit(e.clientX, e.clientY);
+    if (pt) { model.position.x = pt.x + dragOff.x; model.position.z = pt.z + dragOff.z; }
+  } else if (orbiting) {
+    cam.theta -= (e.clientX - lastXY.x) * 0.008;
+    cam.phi = Math.max(0.1, Math.min(1.45, cam.phi + (e.clientY - lastXY.y) * 0.008));
+    lastXY = { x: e.clientX, y: e.clientY };
+    applyCam();
+  }
+});
+cv.addEventListener('mouseup', function() { dragging = false; orbiting = false; });
+cv.addEventListener('mouseleave', function() { dragging = false; orbiting = false; });
+cv.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+cv.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  cam.r = Math.max(1, Math.min(20, cam.r + e.deltaY * 0.015));
   applyCam();
 }, { passive: false });
 
 // Touch
-let touchDrag = false, touchOrbit = false, touchOffset = new THREE.Vector3();
-let lastTouch = { x: 0, y: 0 };
-
-cv.addEventListener('touchstart', e => {
+var tdrag = false, torbit = false, toff = new THREE.Vector3(), tlast = {x:0,y:0};
+cv.addEventListener('touchstart', function(e) {
   e.preventDefault();
+  var t = e.touches[0];
   if (e.touches.length === 1 && model) {
-    const t = e.touches[0];
-    const pt = getFloorPoint(t.clientX, t.clientY);
-    if (pt) { touchDrag = true; touchOffset.subVectors(model.position, pt); }
-  } else {
-    touchOrbit = true;
-    lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    var pt = floorHit(t.clientX, t.clientY);
+    if (pt) { tdrag = true; toff.subVectors(model.position, pt); return; }
   }
+  torbit = true; tlast = {x:t.clientX, y:t.clientY};
 }, { passive: false });
-
-cv.addEventListener('touchmove', e => {
+cv.addEventListener('touchmove', function(e) {
   e.preventDefault();
-  if (touchDrag && model && e.touches.length === 1) {
-    const t = e.touches[0];
-    const pt = getFloorPoint(t.clientX, t.clientY);
-    if (pt) { model.position.x = pt.x + touchOffset.x; model.position.z = pt.z + touchOffset.z; }
-  } else if (touchOrbit) {
-    const cx = e.touches[0].clientX, cy = e.touches[0].clientY;
-    cam.theta -= (cx - lastTouch.x) * 0.007;
-    cam.phi    = Math.max(0.1, Math.min(1.45, cam.phi + (cy - lastTouch.y) * 0.007));
+  var t = e.touches[0];
+  if (tdrag && model) {
+    var pt = floorHit(t.clientX, t.clientY);
+    if (pt) { model.position.x = pt.x + toff.x; model.position.z = pt.z + toff.z; }
+  } else if (torbit) {
+    cam.theta -= (t.clientX - tlast.x) * 0.008;
+    cam.phi = Math.max(0.1, Math.min(1.45, cam.phi + (t.clientY - tlast.y) * 0.008));
+    tlast = {x:t.clientX, y:t.clientY};
     applyCam();
-    lastTouch = { x: cx, y: cy };
   }
 }, { passive: false });
+cv.addEventListener('touchend', function() { tdrag = false; torbit = false; });
 
-cv.addEventListener('touchend', () => { touchDrag = false; touchOrbit = false; });
+// ─── 4. MOBİLYA GEOMETRİ ─────────────────────────────────────────
+var LEG = 0x5c3d1e, GREY = 0xdddddd;
 
-// ── MOBİLYA YAPICI ───────────────────────────────────────────────
-function m(geo, col, x, y, z, rx, ry, rz) {
-  const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: col }));
-  mesh.position.set(x||0, y||0, z||0);
-  if (rx) mesh.rotation.x = rx;
-  if (ry) mesh.rotation.y = ry;
-  if (rz) mesh.rotation.z = rz;
-  mesh.castShadow   = true;
-  mesh.receiveShadow = true;
-  return mesh;
+function box(w, h, d, col, x, y, z) {
+  var m = new THREE.Mesh(
+    new THREE.BoxGeometry(w, h, d),
+    new THREE.MeshLambertMaterial({ color: col })
+  );
+  m.position.set(x||0, y||0, z||0);
+  m.castShadow = true; m.receiveShadow = true;
+  return m;
+}
+function cyl(rt, rb, h, col, x, y, z) {
+  var m = new THREE.Mesh(
+    new THREE.CylinderGeometry(rt, rb, h, 16),
+    new THREE.MeshLambertMaterial({ color: col })
+  );
+  m.position.set(x||0, y||0, z||0);
+  m.castShadow = true; m.receiveShadow = true;
+  return m;
 }
 
-const LEG  = 0x5c3d1e;
-const GREY = 0xdddddd;
-
 function makeSofa(w) {
-  const g = new THREE.Group();
-  const mat = curColor;
-  // Oturma
-  g.add(m(new THREE.BoxGeometry(w, 0.2, 0.9), mat,  0, 0.4, 0));
-  // Sırtlık
-  g.add(m(new THREE.BoxGeometry(w, 0.6, 0.15), mat, 0, 0.75, -0.375));
-  // Sol kolçak
-  g.add(m(new THREE.BoxGeometry(0.15, 0.35, 0.9), mat, -w/2+0.075, 0.575, 0));
-  // Sağ kolçak
-  g.add(m(new THREE.BoxGeometry(0.15, 0.35, 0.9), mat,  w/2-0.075, 0.575, 0));
-  // Ayaklar
-  const lx = w/2 - 0.12, lz = 0.35;
-  [[-lx,lz],[lx,lz],[lx,-lz],[-lx,-lz]].forEach(([x,z]) =>
-    g.add(m(new THREE.CylinderGeometry(0.04,0.04,0.32,8), LEG, x, 0.16, z))
-  );
-  // Yastıklar
-  const n = Math.round(w / 0.7);
-  for (let i = 0; i < n; i++) {
-    const ox = (i - (n-1)/2) * (w/n);
-    g.add(m(new THREE.BoxGeometry(w/n - 0.06, 0.3, 0.4), GREY, ox, 0.65, -0.2));
+  var g = new THREE.Group(), c = curColor;
+  g.add(box(w, 0.20, 0.90, c,  0, 0.40,  0));         // oturma
+  g.add(box(w, 0.58, 0.14, c,  0, 0.74, -0.38));      // sırtlık
+  g.add(box(0.14, 0.32, 0.90, c, -w/2+0.07, 0.56, 0)); // sol kol
+  g.add(box(0.14, 0.32, 0.90, c,  w/2-0.07, 0.56, 0)); // sağ kol
+  var lx = w/2-0.12, lz = 0.34;
+  [[-lx,lz],[lx,lz],[lx,-lz],[-lx,-lz]].forEach(function(p) {
+    g.add(cyl(0.04, 0.04, 0.30, LEG, p[0], 0.15, p[1]));
+  });
+  var n = Math.max(1, Math.round(w / 0.72));
+  for (var i = 0; i < n; i++) {
+    var ox = (i - (n-1)/2) * (w/n);
+    g.add(box(w/n-0.06, 0.28, 0.38, GREY, ox, 0.64, -0.22));
   }
   return g;
 }
 
 function makeTable() {
-  const g = new THREE.Group();
-  g.add(m(new THREE.CylinderGeometry(0.45, 0.45, 0.06, 32), 0x111111, 0, 0.47, 0));
-  g.add(m(new THREE.CylinderGeometry(0.05, 0.08, 0.44, 16), LEG,     0, 0.22, 0));
-  g.add(m(new THREE.CylinderGeometry(0.3,  0.3,  0.04, 32), LEG,     0, 0.02, 0));
+  var g = new THREE.Group();
+  g.add(cyl(0.44, 0.44, 0.06, 0x111111, 0, 0.46, 0));
+  g.add(cyl(0.05, 0.09, 0.43, LEG, 0, 0.22, 0));
+  g.add(cyl(0.28, 0.28, 0.04, LEG, 0, 0.02, 0));
   return g;
 }
 
 function makeTV() {
-  const g = new THREE.Group();
-  const mat = curColor;
-  // Gövde
-  g.add(m(new THREE.BoxGeometry(1.9, 0.48, 0.42), mat, 0, 0.24, 0));
-  // Kapılar
-  for (let i = -1; i <= 1; i++)
-    g.add(m(new THREE.BoxGeometry(0.6, 0.38, 0.02), 0xaaaaaa, i*0.63, 0.24, 0.22));
-  // TV ekran
-  g.add(m(new THREE.BoxGeometry(1.3, 0.75, 0.05), 0x050505, 0, 0.96, 0.19));
-  // Ayak tabanı
-  g.add(m(new THREE.BoxGeometry(1.9, 0.04, 0.38), mat, 0, 0.02, 0));
+  var g = new THREE.Group(), c = curColor;
+  g.add(box(1.90, 0.48, 0.42, c,  0, 0.24,  0));
+  g.add(box(0.60, 0.38, 0.02, 0xaaaaaa, -0.63, 0.24, 0.22));
+  g.add(box(0.60, 0.38, 0.02, 0xaaaaaa,  0,    0.24, 0.22));
+  g.add(box(0.60, 0.38, 0.02, 0xaaaaaa,  0.63, 0.24, 0.22));
+  g.add(box(1.30, 0.75, 0.05, 0x050505,  0, 0.96, 0.19));
+  g.add(box(1.90, 0.04, 0.38, c,  0, 0.02, 0));
   return g;
 }
 
 function makeShelf() {
-  const g = new THREE.Group();
-  const mat = curColor;
-  // Yanlar
-  g.add(m(new THREE.BoxGeometry(0.04, 1.8, 0.32), mat, -0.44, 0.9, 0));
-  g.add(m(new THREE.BoxGeometry(0.04, 1.8, 0.32), mat,  0.44, 0.9, 0));
-  // Raflar
-  [0.08, 0.52, 0.96, 1.4, 1.75].forEach(y =>
-    g.add(m(new THREE.BoxGeometry(0.88, 0.04, 0.32), mat, 0, y, 0))
-  );
-  // Arka panel
-  g.add(m(new THREE.BoxGeometry(0.88, 1.8, 0.02), 0x999999, 0, 0.9, -0.15));
+  var g = new THREE.Group(), c = curColor;
+  g.add(box(0.04, 1.80, 0.32, c, -0.44, 0.90, 0));
+  g.add(box(0.04, 1.80, 0.32, c,  0.44, 0.90, 0));
+  [0.08, 0.52, 0.96, 1.40, 1.75].forEach(function(y) {
+    g.add(box(0.88, 0.04, 0.32, c, 0, y, 0));
+  });
+  g.add(box(0.88, 1.80, 0.02, 0x888888, 0, 0.90, -0.15));
   return g;
 }
 
 function makeBed() {
-  const g = new THREE.Group();
-  const mat = curColor;
-  // Karyola gövde
-  g.add(m(new THREE.BoxGeometry(1.65, 0.25, 2.05), 0x8B7355, 0, 0.125, 0));
-  // Yatak
-  g.add(m(new THREE.BoxGeometry(1.55, 0.22, 1.9), mat, 0, 0.36, 0));
-  // Başlık
-  g.add(m(new THREE.BoxGeometry(1.65, 0.65, 0.14), 0x8B7355, 0, 0.575, -0.955));
-  // Yastıklar
-  [-0.35, 0.35].forEach(x =>
-    g.add(m(new THREE.BoxGeometry(0.55, 0.14, 0.38), GREY, x, 0.54, 0.82))
-  );
+  var g = new THREE.Group(), c = curColor;
+  g.add(box(1.65, 0.25, 2.05, 0x8B7355, 0, 0.125, 0));
+  g.add(box(1.55, 0.22, 1.90, c, 0, 0.36, 0));
+  g.add(box(1.65, 0.65, 0.14, 0x8B7355, 0, 0.575, -0.955));
+  g.add(box(0.55, 0.14, 0.38, GREY, -0.35, 0.54, 0.82));
+  g.add(box(0.55, 0.14, 0.38, GREY,  0.35, 0.54, 0.82));
   return g;
 }
 
 function makeWardrobe() {
-  const g = new THREE.Group();
-  const mat = curColor;
-  // Gövde
-  g.add(m(new THREE.BoxGeometry(2.0, 2.1, 0.6), mat, 0, 1.05, 0));
-  // Kapılar
-  [[-0.5, 0],[0.5, 0]].forEach(([x]) => {
-    g.add(m(new THREE.BoxGeometry(0.95, 2.0, 0.03), 0xcccccc, x, 1.05, 0.315));
-    // Kol
-    g.add(m(new THREE.SphereGeometry(0.03, 8, 8), 0xD4AF37, x + (x<0?0.3:-0.3), 1.05, 0.345));
-  });
+  var g = new THREE.Group(), c = curColor;
+  g.add(box(2.00, 2.10, 0.60, c, 0, 1.05, 0));
+  g.add(box(0.95, 2.00, 0.03, 0xcccccc, -0.50, 1.05, 0.315));
+  g.add(box(0.95, 2.00, 0.03, 0xcccccc,  0.50, 1.05, 0.315));
+  var sp = new THREE.Mesh(new THREE.SphereGeometry(0.03,8,8), new THREE.MeshLambertMaterial({color:0xD4AF37}));
+  sp.position.set(-0.20, 1.05, 0.345); sp.castShadow=true; g.add(sp);
+  var sp2 = sp.clone(); sp2.position.set(0.20, 1.05, 0.345); g.add(sp2);
   return g;
 }
 
-// ── GLB MODEL URL'LERİ (Khronos/Wayfair CC0) ──────────────────────
-const GLB_MODELS = {
-  sofa3:    'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb',
-  sofa2:    'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb',
-  sofa1:    'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF-Binary/SheenChair.glb',
-  table:    'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF-Binary/SheenChair.glb',
-  tv:       null, // geometri
-  shelf:    null, // geometri
-  bed:      'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb',
-  wardrobe: null, // geometri
+var BUILDERS = {
+  sofa3:    function() { return makeSofa(2.10); },
+  sofa2:    function() { return makeSofa(1.60); },
+  sofa1:    function() { return makeSofa(0.90); },
+  table:    function() { return makeTable(); },
+  tv:       function() { return makeTV(); },
+  shelf:    function() { return makeShelf(); },
+  bed:      function() { return makeBed(); },
+  wardrobe: function() { return makeWardrobe(); },
 };
 
-const GLB_SCALES = {
-  sofa3: 2.2, sofa2: 1.6, sofa1: 0.9,
-  table: 0.5, bed: 1.8,
+// ─── 5. GLB MODELLER ─────────────────────────────────────────────
+var GLB = {
+  sofa3: { url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb', size: 2.1 },
+  sofa2: { url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb', size: 1.6 },
+  sofa1: { url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF-Binary/SheenChair.glb', size: 0.9 },
+  bed:   { url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb', size: 1.7 },
 };
 
-// Loading göstergesi
-function showLoad(txt) {
-  let el = document.getElementById('loadMsg');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'loadMsg';
-    el.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);color:#fff;padding:14px 24px;border-radius:12px;font-size:13px;font-weight:600;z-index:99;display:flex;align-items:center;gap:10px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)';
-    document.getElementById('canvasWrap').appendChild(el);
-  }
-  el.innerHTML = '<div style="width:18px;height:18px;border:2px solid rgba(29,158,117,.3);border-top-color:#1D9E75;border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0"></div>' + txt;
-  el.style.display = 'flex';
+function showLoader(txt) {
+  document.getElementById('loaderTxt').textContent = txt || 'Yükleniyor...';
+  document.getElementById('loader').style.display = 'flex';
 }
-function hideLoad() {
-  const el = document.getElementById('loadMsg');
-  if (el) el.style.display = 'none';
+function hideLoader() {
+  document.getElementById('loader').style.display = 'none';
 }
 
-// Spinner CSS
-const spinStyle = document.createElement('style');
-spinStyle.textContent = '@keyframes sp{to{transform:rotate(360deg)}}';
-document.head.appendChild(spinStyle);
-
-// GLB yükleyici
-function loadGLB(key, targetScale, onSuccess, onFail) {
-  const url = GLB_MODELS[key];
-  if (!url || !THREE.GLTFLoader) { onFail(); return; }
-  showLoad('3D model yükleniyor...');
-  const loader = new THREE.GLTFLoader();
-  loader.load(url,
-    (gltf) => {
-      hideLoad();
-      const m = gltf.scene;
-      // Otomatik boyutlandır
-      const box = new THREE.Box3().setFromObject(m);
-      const size = box.getSize(new THREE.Vector3());
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const s = (targetScale || 1.5) / maxDim;
-      m.scale.setScalar(s);
-      m.traverse(c => { if(c.isMesh) { c.castShadow=true; c.receiveShadow=true; }});
-      onSuccess(m);
+function tryGLB(key, onOk, onFail) {
+  var info = GLB[key];
+  if (!info || !THREE.GLTFLoader) { onFail(); return; }
+  showLoader('3D model yükleniyor...');
+  var loader = new THREE.GLTFLoader();
+  loader.load(info.url,
+    function(gltf) {
+      hideLoader();
+      var m = gltf.scene;
+      var b = new THREE.Box3().setFromObject(m);
+      var s = new THREE.Vector3(); b.getSize(s);
+      var sc = info.size / Math.max(s.x, s.y, s.z);
+      m.scale.setScalar(sc);
+      m.traverse(function(c) { if (c.isMesh) { c.castShadow=true; c.receiveShadow=true; }});
+      onOk(m);
     },
-    (p) => {
-      const pct = Math.round(p.loaded/(p.total||1)*100);
-      showLoad(`Yükleniyor %${pct}...`);
-    },
-    () => { hideLoad(); onFail(); }
+    function(p) { showLoader('Yükleniyor %' + Math.round(p.loaded/(p.total||1)*100) + '...'); },
+    function() { hideLoader(); onFail(); }
   );
 }
 
-
-  sofa3:    () => makeSofa(2.1),
-  sofa2:    () => makeSofa(1.6),
-  sofa1:    () => makeSofa(0.9),
-  table:    () => makeTable(),
-  tv:       () => makeTV(),
-  shelf:    () => makeShelf(),
-  bed:      () => makeBed(),
-  wardrobe: () => makeWardrobe(),
-};
-
-// ── MOBILYA EKLE ─────────────────────────────────────────────────
-function addModel(key) {
-  if (model) { scene.remove(model); model = null; }
-
-  // Aktif buton
-  document.querySelectorAll('.btn').forEach(b => b.classList.remove('on'));
-  if (event && event.target) event.target.classList.add('on');
-
-  const targetScale = GLB_SCALES[key] || 1.5;
-
-  // GLB varsa yükle, yoksa direkt geometri
-  if (GLB_MODELS[key]) {
-    loadGLB(key, targetScale,
-      (glbModel) => {
-        model = glbModel;
-        placeModel(key);
-        status(`✓ 3D model yüklendi — sol tık: taşı | sağ tık: döndür | scroll: zoom`);
-      },
-      () => {
-        // GLB yüklenemedi → geometri fallback
-        model = window.BUILDERS[key]();
-        placeModel(key);
-        status(`${key} eklendi (geometri mod) — sol tık: taşı | sağ tık: döndür`);
-      }
-    );
-  } else {
-    model = window.BUILDERS[key]();
-    placeModel(key);
-    status(`${key} eklendi — sol tık: taşı | sağ tık: döndür | scroll: zoom`);
-  }
-}
-
-function placeModel(key) {
+// ─── 6. MODEL EKLE ───────────────────────────────────────────────
+function placeModel(m) {
+  model = m;
   model.position.set(0, 0, 0);
   scene.add(model);
-
-  // Zemine oturt
-  const box = new THREE.Box3().setFromObject(model);
-  const size = new THREE.Vector3();
-  box.getSize(size);
-  model.position.y = -box.min.y;
-
-  // Kamerayı tam karşısına getir
-  const maxDim = Math.max(size.x, size.y, size.z);
-  cam.r     = maxDim * 3.5;
-  cam.theta = 0.5;
-  cam.phi   = 1.1;
-  cam.tx    = 0;
-  cam.ty    = size.y * 0.5;
+  var b = new THREE.Box3().setFromObject(model);
+  var s = new THREE.Vector3(); b.getSize(s);
+  model.position.y = -b.min.y;
+  var md = Math.max(s.x, s.y, s.z);
+  cam.r = md * 3.5; cam.theta = 0.5; cam.phi = 1.1;
+  cam.tx = 0; cam.ty = s.y * 0.5;
   applyCam();
-
-  // Slider sıfırla
-  document.getElementById('sc').value = 1;
-  document.getElementById('scv').textContent = '×1.0';
-  document.getElementById('rot').value = 0;
-  document.getElementById('rotv').textContent = '0°';
+  document.getElementById('scSlider').value = 1;
+  document.getElementById('scVal').textContent = '×1.0';
+  document.getElementById('rotSlider').value = 0;
+  document.getElementById('rotVal').textContent = '0°';
+  sb('Mobilya eklendi ✓ — Sol tık: taşı | Sağ tık: döndür | Scroll: zoom');
 }
 
-// ── KONTROLLER ───────────────────────────────────────────────────
-function setColor(hex) {
+window.addModel = function(key, btn) {
+  if (model) { scene.remove(model); model = null; }
+  document.querySelectorAll('.btn').forEach(function(b) { b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+
+  if (GLB[key]) {
+    tryGLB(key,
+      function(m) { placeModel(m); },
+      function() { placeModel(BUILDERS[key]()); }
+    );
+  } else {
+    placeModel(BUILDERS[key]());
+  }
+};
+
+// ─── 7. KONTROLLER ───────────────────────────────────────────────
+window.setClr = function(hex, el) {
   curColor = hex;
+  document.querySelectorAll('.dot').forEach(function(d) { d.classList.remove('on'); });
+  if (el) el.classList.add('on');
   if (!model) return;
-  model.traverse(c => {
-    if (c.isMesh && c.material) {
-      const r = (hex >> 16 & 255) / 255;
-      const g = (hex >> 8  & 255) / 255;
-      const b = (hex       & 255) / 255;
-      // Sadece ana renk (ayak/metal hariç)
-      if (c.material.color) {
-        const mc = c.material.color;
-        if (!(mc.r < 0.4 && mc.g < 0.3 && mc.b < 0.2)) // ayak değilse
-          c.material.color.setRGB(r, g, b);
+  var col = new THREE.Color(hex);
+  model.traverse(function(c) {
+    if (c.isMesh && c.material && c.material.color) {
+      var mc = c.material.color;
+      // Ayak (koyu kahve) ve metalik renkleri değiştirme
+      if (mc.r > 0.25 || mc.g > 0.2 || mc.b > 0.35) {
+        c.material.color.set(col);
       }
     }
   });
-}
+};
 
-function scaleM(v) {
-  document.getElementById('scv').textContent = '×' + parseFloat(v).toFixed(1);
+window.doScale = function(v) {
+  document.getElementById('scVal').textContent = '×' + parseFloat(v).toFixed(1);
   if (model) model.scale.setScalar(parseFloat(v));
-}
+};
 
-function rotM(v) {
-  document.getElementById('rotv').textContent = v + '°';
+window.doRot = function(v) {
+  document.getElementById('rotVal').textContent = v + '°';
   if (model) model.rotation.y = v * Math.PI / 180;
-}
+};
 
-function removeM() {
+window.delModel = function() {
   if (model) { scene.remove(model); model = null; }
-  document.querySelectorAll('.btn').forEach(b => b.classList.remove('on'));
-  status('Model kaldırıldı');
-}
+  document.querySelectorAll('.btn').forEach(function(b) { b.classList.remove('on'); });
+  sb('Model kaldırıldı');
+};
 
-// ── ODA FOTOĞRAFI ────────────────────────────────────────────────
-function loadBg() { document.getElementById('fi').click(); }
-
-function onFile(inp) {
-  const f = inp.files[0]; if (!f) return;
-  setBg(URL.createObjectURL(f));
-}
-
-function setBg(src) {
-  const img = document.getElementById('bgImg');
-  img.src = src;
+// ─── 8. ODA FOTOĞRAFI ────────────────────────────────────────────
+window.loadRoomPhoto = function(inp) {
+  var f = inp.files[0]; if (!f) return;
+  var url = URL.createObjectURL(f);
+  var img = document.getElementById('bg');
+  img.src = url;
   img.style.display = 'block';
-  renderer.setClearColor(0x000000, 0);
-  scene.background = null;
-  status('Oda yüklendi — sağdan mobilya seç');
-}
+  sb('Oda yüklendi — sağdan mobilya seç');
+};
 
-// Sayfa açılınca otomatik demo yükle
-window.addEventListener('load', () => {
-  // Unsplash crossorigin=anonymous ile yükle
-  const img = document.createElement('img');
-  img.crossOrigin = 'anonymous';
-  img.onload = () => setBg(img.src);
-  img.onerror = () => {
-    // Yüklenemezse düz renk arka plan
-    const wrap = cv.parentElement;
-    wrap.style.background = 'linear-gradient(135deg,#1e293b,#0f172a)';
-    status('Demo oda yüklenemedi — kendi odanı yükle');
+// Demo oda otomatik yükle
+window.addEventListener('load', function() {
+  var img = document.getElementById('bg');
+  img.src = 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80';
+  img.style.display = 'block';
+  img.onerror = function() {
+    document.getElementById('wrap').style.background = 'linear-gradient(135deg,#1e293b 0%,#0f172a 100%)';
   };
-  img.src = 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80&fm=jpg';
-  setBg(img.src);
 });
 
-// ── STATUS ───────────────────────────────────────────────────────
-function status(msg) { document.getElementById('status').textContent = msg; }
+// ─── 9. STATUS ───────────────────────────────────────────────────
+function sb(msg) { document.getElementById('sb').textContent = msg; }
 
+})(); // IIFE kapanış
 </script>
 </body>
 </html>
