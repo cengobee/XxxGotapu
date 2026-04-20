@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoTapu — Mobilya Sil</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0f172a;color:#fff;font-family:sans-serif;height:100vh;display:flex;flex-direction:column}
+#top{height:48px;background:#1e293b;border-bottom:1px solid #334155;display:flex;align-items:center;padding:0 16px;gap:12px}
+#top h1{font-size:14px;font-weight:700}
+.badge{background:rgba(29,158,117,.2);color:#6ee7b7;font-size:9px;padding:2px 7px;border-radius:8px;font-weight:800;border:1px solid rgba(29,158,117,.3)}
+.main{flex:1;display:flex;overflow:hidden}
+#canvas-wrap{flex:1;position:relative;overflow:hidden;background:#111;display:flex;align-items:center;justify-content:center}
+#canvas{cursor:crosshair;display:block;max-width:100%;max-height:100%}
+.panel{width:220px;min-width:220px;background:#1e293b;border-left:1px solid #334155;padding:12px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+.sep{font-size:9px;color:#475569;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:6px 2px 3px;border-top:1px solid #334155;margin-top:4px}
+.sep:first-child{border-top:none;padding-top:0}
+.btn{padding:9px 11px;background:#334155;border:none;color:#fff;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;text-align:left;width:100%;transition:background .12s}
+.btn:hover{background:#1D9E75}
+.btn.active{background:#1D9E75}
+.btn.red{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+.btn.red:hover{background:rgba(239,68,68,.35)}
+.info{font-size:10px;color:#64748b;line-height:1.6;padding:4px 2px}
+#status{font-size:10px;color:#94a3b8;padding:4px 2px;min-height:32px;line-height:1.6}
+.dot-list{display:flex;flex-direction:column;gap:3px;max-height:120px;overflow-y:auto}
+.dot-item{font-size:10px;padding:3px 6px;border-radius:4px;display:flex;justify-content:space-between;align-items:center}
+.dot-item.pos{background:rgba(29,158,117,.15);color:#6ee7b7}
+.dot-item.neg{background:rgba(239,68,68,.15);color:#fca5a5}
+.dot-item button{background:none;border:none;color:inherit;cursor:pointer;font-size:11px;padding:0 2px}
+#sb{height:30px;background:#0f172a;border-top:1px solid #1e293b;display:flex;align-items:center;padding:0 14px;font-size:10px;color:#475569}
+#loader{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.85);color:#fff;padding:16px 24px;border-radius:12px;font-size:12px;font-weight:600;z-index:100;display:none;align-items:center;gap:10px;backdrop-filter:blur(8px)}
+.spin{width:16px;height:16px;border:2px solid rgba(29,158,117,.3);border-top-color:#1D9E75;border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="top">
+  <div style="width:28px;height:28px;background:#1D9E75;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">G</div>
+  <h1>GoTapu — Mobilya Sil</h1>
+  <span class="badge">SAM AI</span>
+</div>
+
+<div class="main">
+  <div id="canvas-wrap">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <div class="panel">
+    <div class="sep">Fotoğraf</div>
+    <button class="btn" onclick="document.getElementById('fi').click()">📷 Fotoğraf Yükle</button>
+
+    <div class="sep">Mod</div>
+    <button class="btn active" id="btnPos" onclick="setMode('pos')">✅ Silinecek Alan İşaretle</button>
+    <button class="btn" id="btnNeg" onclick="setMode('neg')">❌ Koru (Hariç Tut)</button>
+
+    <div class="sep">İşaretler</div>
+    <div class="info">Yeşil = sil, Kırmızı = koru<br>Mobilyanın ortasına tıkla</div>
+    <div class="dot-list" id="dotList"></div>
+
+    <div class="sep">İşlem</div>
+    <button class="btn" style="background:#1D9E75" onclick="doSegment()">🪄 Mobilyayı Sil</button>
+    <button class="btn red" onclick="clearDots()">✕ İşaretleri Temizle</button>
+    <button class="btn red" onclick="undoLast()">↩ Sonucu Geri Al</button>
+
+    <div class="sep">Durum</div>
+    <div id="status">Fotoğraf yükle, mobilyalara tıkla</div>
+
+    <div class="sep">İndir</div>
+    <button class="btn" onclick="downloadResult()">⬇ Sonucu İndir</button>
+  </div>
+</div>
+
+<div id="sb">Fotoğraf yükle → mobilyaya tıkla → "Mobilyayı Sil" bas</div>
+<input type="file" id="fi" accept="image/*" style="display:none" onchange="loadPhoto(this)">
+<div id="loader"><div class="spin"></div><span id="loaderTxt">İşleniyor...</span></div>
+
+<script>
+// ÖNEMLİ: Cloudflare URL değişirse sadece bunu güncelle!
+const API_URL = 'https://deck-locking-tribal-shareware.trycloudflare.com';
+
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var mode = 'pos';
+var dots = []; // {x, y, label, dispX, dispY}
+var origFile = null;
+var currentImg = null; // ImageBitmap
+var imgHistory = []; // geri al için
+var displayScale = 1, offsetX = 0, offsetY = 0;
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('btnPos').classList.toggle('active', m === 'pos');
+  document.getElementById('btnNeg').classList.toggle('active', m === 'neg');
+  sb(m === 'pos' ? 'Silinecek mobilyaya tıkla' : 'Korunacak alana tıkla');
+}
+
+function sb(msg) { document.getElementById('sb').textContent = msg; }
+function status(msg) { document.getElementById('status').textContent = msg; }
+
+function showLoader(txt) {
+  document.getElementById('loaderTxt').textContent = txt || 'İşleniyor...';
+  document.getElementById('loader').style.display = 'flex';
+}
+function hideLoader() { document.getElementById('loader').style.display = 'none'; }
+
+function loadPhoto(inp) {
+  var f = inp.files[0]; if (!f) return;
+  origFile = f;
+  dots = [];
+  imgHistory = [];
+  updateDotList();
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var wrap = document.getElementById('canvas-wrap');
+      var ww = wrap.clientWidth, wh = wrap.clientHeight;
+      displayScale = Math.min(ww / img.width, wh / img.height, 1);
+      canvas.width = Math.round(img.width * displayScale);
+      canvas.height = Math.round(img.height * displayScale);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      currentImg = img;
+      status('Hazır — mobilyalara tıkla');
+      sb('Mobilyanın ortasına tıkla → "Mobilyayı Sil"');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(f);
+  inp.value = '';
+}
+
+canvas.addEventListener('click', function(e) {
+  if (!currentImg) return;
+  var rect = canvas.getBoundingClientRect();
+  var dispX = e.clientX - rect.left;
+  var dispY = e.clientY - rect.top;
+  // Gerçek koordinata çevir
+  var realX = dispX / displayScale;
+  var realY = dispY / displayScale;
+  dots.push({ x: realX, y: realY, label: mode === 'pos' ? 1 : 0, dispX, dispY });
+  redraw();
+  updateDotList();
+  status(dots.length + ' nokta işaretlendi');
+});
+
+function redraw() {
+  if (!currentImg) return;
+  ctx.drawImage(currentImg, 0, 0, canvas.width, canvas.height);
+  dots.forEach(function(d, i) {
+    ctx.beginPath();
+    ctx.arc(d.dispX, d.dispY, 8, 0, Math.PI * 2);
+    ctx.fillStyle = d.label === 1 ? 'rgba(29,200,100,0.85)' : 'rgba(239,68,68,0.85)';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(i + 1, d.dispX, d.dispY);
+  });
+}
+
+function updateDotList() {
+  var list = document.getElementById('dotList');
+  list.innerHTML = dots.map(function(d, i) {
+    return '<div class="dot-item ' + (d.label === 1 ? 'pos' : 'neg') + '">' +
+      '<span>' + (d.label === 1 ? '✅' : '❌') + ' Nokta ' + (i+1) + ' (' + Math.round(d.x) + ',' + Math.round(d.y) + ')</span>' +
+      '<button onclick="removeDot(' + i + ')">✕</button>' +
+      '</div>';
+  }).join('');
+}
+
+function removeDot(i) {
+  dots.splice(i, 1);
+  redraw();
+  updateDotList();
+}
+
+function clearDots() {
+  dots = [];
+  redraw();
+  updateDotList();
+  status('İşaretler temizlendi');
+}
+
+function undoLast() {
+  if (imgHistory.length === 0) { status('Geri alınacak işlem yok'); return; }
+  var prev = imgHistory.pop();
+  currentImg = prev.img;
+  origFile = prev.file;
+  dots = [];
+  redraw();
+  updateDotList();
+  status('Geri alındı');
+}
+
+async function doSegment() {
+  if (!origFile) { status('Önce fotoğraf yükle!'); return; }
+  if (dots.filter(d => d.label === 1).length === 0) { status('En az 1 yeşil nokta gerekli!'); return; }
+
+  showLoader('SAM analiz ediyor...');
+  status('İşleniyor...');
+
+  try {
+    // Mevcut durumu history'ye kaydet
+    var snapImg = new Image();
+    snapImg.src = canvas.toDataURL();
+    await new Promise(r => { snapImg.onload = r; });
+    imgHistory.push({ img: currentImg, file: origFile });
+
+    var formData = new FormData();
+    formData.append('file', origFile, 'room.jpg');
+    formData.append('points', JSON.stringify(dots.map(d => [d.x, d.y])));
+    formData.append('labels', JSON.stringify(dots.map(d => d.label)));
+
+    showLoader('Mobilya siliniyor... (20-30 sn)');
+
+    var res = await fetch(API_URL + '/segment', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!res.ok) throw new Error('API ' + res.status);
+
+    var blob = await res.blob();
+    var url = URL.createObjectURL(blob);
+
+    // Sonucu göster
+    var img = new Image();
+    img.onload = function() {
+      currentImg = img;
+      // Yeni blob'u file olarak sakla (zincirleme silme için)
+      origFile = new File([blob], 'room.jpg', { type: 'image/jpeg' });
+      dots = [];
+      redraw();
+      updateDotList();
+      hideLoader();
+      status('✅ Mobilya silindi! Başka mobilya için tekrar tıkla.');
+      sb('Harika! Başka mobilya silmek için tekrar tıkla veya indir.');
+    };
+    img.src = url;
+
+  } catch(e) {
+    hideLoader();
+    status('❌ Hata: ' + e.message);
+    console.error(e);
+  }
+}
+
+function downloadResult() {
+  if (!currentImg) { status('Önce fotoğraf yükle!'); return; }
+  var link = document.createElement('a');
+  link.download = 'gotapu-temiz-oda.jpg';
+  link.href = canvas.toDataURL('image/jpeg', 0.95);
+  link.click();
+}
+</script>
+</body>
+</html>
