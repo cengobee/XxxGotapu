@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>GoTapu AR</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--g:#1D9E75;--gd:#0F6E56;--gl:#E1F5EE;--tx:#0f172a;--mu:#64748b;--bd:#e2e8f0;--w:#fff;--rd:#ef4444}
+body{font-family:'DM Sans',sans-serif;background:#0f172a;color:#fff;height:100vh;overflow:hidden;display:flex;flex-direction:column;user-select:none}
+
+/* TOPBAR */
+.topbar{height:54px;background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;z-index:100;position:relative}
+.tl{display:flex;align-items:center;gap:10px}
+.logo{width:34px;height:34px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;text-decoration:none;box-shadow:0 2px 8px rgba(29,158,117,.4)}
+.topbar h1{font-size:14px;font-weight:600;font-family:'DM Serif Display',serif}
+.badge{background:rgba(29,158,117,.2);color:#6ee7b7;font-size:9px;padding:2px 8px;border-radius:10px;font-weight:800;letter-spacing:.06em;border:1px solid rgba(29,158,117,.3)}
+.tr{display:flex;align-items:center;gap:8px}
+.tbtn{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);font-size:12px;cursor:pointer;color:rgba(255,255,255,.8);font-family:'DM Sans',sans-serif;transition:all .15s;font-weight:500}
+.tbtn:active{background:rgba(255,255,255,.12)}
+.tbtn.primary{background:var(--g);color:#fff;border-color:var(--g);font-weight:600;box-shadow:0 2px 8px rgba(29,158,117,.35)}
+
+/* MAIN */
+.main{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column}
+
+/* AR CANVAS */
+#arCanvas{position:absolute;top:0;left:0;width:100%;height:100%;display:none}
+#threeCanvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;display:none}
+
+/* LANDING */
+.landing{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:32px 24px;text-align:center;height:100%}
+.land-icon{width:88px;height:88px;background:linear-gradient(135deg,rgba(29,158,117,.2),rgba(29,158,117,.05));border:1px solid rgba(29,158,117,.3);border-radius:24px;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.land-icon svg{width:44px;height:44px;stroke:var(--g);stroke-width:1.5;fill:none}
+.land-title{font-size:26px;font-weight:700;font-family:'DM Serif Display',serif;line-height:1.2}
+.land-sub{font-size:13px;color:rgba(255,255,255,.45);line-height:1.8;max-width:320px}
+.land-steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%;max-width:360px}
+.lstep{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 8px;text-align:center}
+.lstep-num{width:24px;height:24px;background:var(--g);border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 6px}
+.lstep-txt{font-size:10px;color:rgba(255,255,255,.5);line-height:1.5}
+.start-btn{width:100%;max-width:320px;padding:16px;background:var(--g);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 20px rgba(29,158,117,.4);transition:all .15s}
+.start-btn:active{transform:scale(.97)}
+.compat-note{font-size:11px;color:rgba(255,255,255,.3);padding:8px 16px;background:rgba(255,255,255,.04);border-radius:8px;max-width:320px;line-height:1.6}
+
+/* AR VIEW */
+.ar-view{display:none;flex:1;position:relative;flex-direction:column}
+.ar-view.active{display:flex}
+
+/* RETICLE (hedef noktası) */
+.reticle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;pointer-events:none;z-index:50;display:none}
+.reticle svg{width:100%;height:100%}
+.reticle.show{display:block}
+
+/* AR HINT */
+.ar-hint{position:absolute;top:50%;left:50%;transform:translate(-50%, calc(-50% + 80px));background:rgba(0,0,0,.7);backdrop-filter:blur(8px);color:#fff;font-size:12px;padding:8px 16px;border-radius:20px;pointer-events:none;z-index:50;white-space:nowrap;font-weight:500;display:none}
+.ar-hint.show{display:block}
+
+/* PLACED ITEM IN AR */
+.ar-furn{position:absolute;transform:translate(-50%,-100%);pointer-events:all;cursor:pointer;z-index:30;transition:filter .1s}
+.ar-furn img{display:block;filter:drop-shadow(0 8px 16px rgba(0,0,0,.5));pointer-events:none}
+.ar-furn.selected img{filter:drop-shadow(0 0 0 3px var(--g)) drop-shadow(0 8px 16px rgba(0,0,0,.5))}
+.ar-furn .furn-shadow{position:absolute;bottom:-4px;left:10%;width:80%;height:8px;background:rgba(0,0,0,.35);border-radius:50%;filter:blur(5px)}
+.ar-furn-del{position:absolute;top:-10px;right:-10px;width:24px;height:24px;background:var(--rd);color:#fff;border-radius:50%;font-size:13px;font-weight:700;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);z-index:10;border:none}
+.ar-furn.selected .ar-furn-del{display:flex}
+
+/* BOTTOM SHEET - KATALOG */
+.bottom-sheet{position:absolute;bottom:0;left:0;right:0;background:rgba(15,23,42,.97);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.08);border-radius:20px 20px 0 0;z-index:80;transition:transform .35s cubic-bezier(.32,.72,0,1);transform:translateY(calc(100% - 72px))}
+.bottom-sheet.open{transform:translateY(0)}
+.bs-handle{padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
+.bs-handle-bar{width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px}
+.bs-handle-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:6px}
+.bs-handle-label .count{background:var(--g);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px}
+.bs-content{padding:0 14px 24px;max-height:55vh;overflow-y:auto}
+.bs-content::-webkit-scrollbar{display:none}
+
+/* KATEGORİ */
+.cat-row{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:none}
+.cat-row::-webkit-scrollbar{display:none}
+.cat-chip{padding:6px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;font-size:11px;font-weight:600;color:rgba(255,255,255,.6);white-space:nowrap;cursor:pointer;flex-shrink:0;transition:all .12s}
+.cat-chip.on{background:rgba(29,158,117,.2);border-color:rgba(29,158,117,.5);color:#6ee7b7}
+
+/* MOBİLYA GRID */
+.furn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.fcard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .15s;position:relative}
+.fcard:active{transform:scale(.95)}
+.fcard.adding{animation:pulse .3s ease}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+.fcard-img{width:100%;height:80px;object-fit:cover;display:block}
+.fcard-body{padding:7px}
+.fcard-name{font-size:10px;font-weight:600;color:#fff;line-height:1.3}
+.fcard-price{font-size:10px;color:#6ee7b7;font-weight:700;margin-top:2px}
+.dtag{display:block;font-size:8px;color:rgba(29,158,117,.8);font-weight:700;margin-top:1px}
+.fcard-add{position:absolute;top:6px;right:6px;width:22px;height:22px;background:var(--g);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;opacity:0;transition:opacity .1s}
+.fcard:hover .fcard-add{opacity:1}
+
+/* SELECTED ITEM CONTROLS */
+.sel-controls{position:absolute;top:0;left:0;right:0;background:rgba(15,23,42,.9);backdrop-filter:blur(12px);padding:12px 16px;display:none;z-index:70;border-bottom:1px solid rgba(255,255,255,.08)}
+.sel-controls.show{display:flex;flex-direction:column;gap:10px}
+.sel-name{font-size:13px;font-weight:700}
+.sel-price{font-size:11px;color:#6ee7b7;font-weight:600}
+.sel-sliders{display:flex;flex-direction:column;gap:6px}
+.sl-row{display:flex;align-items:center;gap:10px}
+.sl-lbl{font-size:10px;color:rgba(255,255,255,.5);width:48px;flex-shrink:0}
+.sl-val{font-size:10px;font-weight:700;width:32px;text-align:right;flex-shrink:0}
+input[type=range]{flex:1;accent-color:var(--g);cursor:pointer;height:3px}
+.sel-btns{display:flex;gap:6px}
+.sc-btn{flex:1;padding:8px;border-radius:8px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .1s}
+.sc-btn:active{transform:scale(.95)}
+.sc-btn.flip{background:rgba(255,255,255,.08);color:#fff}
+.sc-btn.del{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+
+/* TOTAL BAR */
+.total-bar{position:absolute;top:62px;right:12px;background:rgba(15,23,42,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:6px 12px;z-index:60;display:none}
+.total-bar.show{display:block}
+.total-price{font-size:12px;font-weight:700;color:#6ee7b7;font-family:'DM Serif Display',serif}
+.total-count{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
+
+/* NOT SUPPORTED */
+.not-supported{display:none;flex-direction:column;align-items:center;gap:16px;padding:32px 24px;text-align:center;height:100%;justify-content:center}
+.not-supported.show{display:flex}
+.ns-icon{font-size:48px}
+.ns-title{font-size:18px;font-weight:700}
+.ns-sub{font-size:12px;color:rgba(255,255,255,.45);line-height:1.8;max-width:300px}
+.ns-alt-btn{padding:12px 24px;background:var(--g);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+/* STATUS */
+.statusbar{height:38px;background:rgba(15,23,42,.95);border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0}
+.status-msg{font-size:11px;color:rgba(255,255,255,.4)}
+.total-sm{font-size:12px;font-weight:700;color:#6ee7b7;font-family:'DM Serif Display',serif}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tl">
+    <a href="index.html" class="logo">G</a>
+    <h1>GoTapu AR <span class="badge">LIVE</span></h1>
+  </div>
+  <div class="tr">
+    <button class="tbtn" id="exitArBtn" onclick="exitAR()" style="display:none">Çık</button>
+    <button class="tbtn primary" id="saveBtn" onclick="saveSession()" style="display:none">Kaydet</button>
+  </div>
+</div>
+
+<div class="main" id="mainArea">
+
+  <!-- LANDING -->
+  <div class="landing" id="landingScreen">
+    <div class="land-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4V7z"/><path d="M12 3v18M3 7l9 4 9-4"/></svg>
+    </div>
+    <div class="land-title">Mobilyayı Odanda Gör</div>
+    <div class="land-sub">Kameranı aç, gerçek odanda mobilya yerleştir. Satın almadan önce nasıl görüneceğini gör.</div>
+    <div class="land-steps">
+      <div class="lstep"><div class="lstep-num">1</div><div class="lstep-txt">Kamerayı odana doğrult</div></div>
+      <div class="lstep"><div class="lstep-num">2</div><div class="lstep-txt">Zemin algılanana kadar bekle</div></div>
+      <div class="lstep"><div class="lstep-num">3</div><div class="lstep-txt">Mobilya seç ve yerleştir</div></div>
+    </div>
+    <button class="start-btn" onclick="startAR()">Kamerayı Aç — AR Başlat</button>
+    <div class="compat-note">Android: Chrome 81+  •  iPhone: Safari 15.4+  •  Masaüstü: 2D mod açılır</div>
+  </div>
+
+  <!-- AR VIEW -->
+  <div class="ar-view" id="arView">
+    <canvas id="arCanvas"></canvas>
+
+    <!-- Hedef noktası -->
+    <div class="reticle" id="reticle">
+      <svg viewBox="0 0 60 60" fill="none">
+        <ellipse cx="30" cy="30" rx="26" ry="10" stroke="white" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.8"/>
+        <circle cx="30" cy="30" r="3" fill="white" opacity="0.9"/>
+        <line x1="30" y1="18" x2="30" y2="22" stroke="white" stroke-width="1.5"/>
+        <line x1="30" y1="38" x2="30" y2="42" stroke="white" stroke-width="1.5"/>
+        <line x1="18" y1="30" x2="22" y2="30" stroke="white" stroke-width="1.5"/>
+        <line x1="38" y1="30" x2="42" y2="30" stroke="white" stroke-width="1.5"/>
+      </svg>
+    </div>
+
+    <div class="ar-hint" id="arHint">Zemin algılanıyor — telefonu yavaşça hareket ettir</div>
+
+    <!-- Yerleştirilen mobilyalar -->
+    <div id="arFurnLayer"></div>
+
+    <!-- Seçili mobilya kontrolleri -->
+    <div class="sel-controls" id="selControls">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div><div class="sel-name" id="selName">—</div><div class="sel-price" id="selPrice"></div></div>
+        <button onclick="deselectAR()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:7px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">Kapat</button>
+      </div>
+      <div class="sel-sliders">
+        <div class="sl-row">
+          <span class="sl-lbl">Boyut</span>
+          <input type="range" id="arSizeSlider" min="30" max="300" value="100" oninput="arResize(this.value)">
+          <span class="sl-val" id="arSizeVal">%100</span>
+        </div>
+        <div class="sl-row">
+          <span class="sl-lbl">Döndür</span>
+          <input type="range" id="arRotSlider" min="-180" max="180" value="0" step="5" oninput="arRotate(this.value)">
+          <span class="sl-val" id="arRotVal">0°</span>
+        </div>
+        <div class="sl-row">
+          <span class="sl-lbl">Şeffaflık</span>
+          <input type="range" id="arOpacSlider" min="20" max="100" value="90" oninput="arOpac(this.value)">
+          <span class="sl-val" id="arOpacVal">%90</span>
+        </div>
+      </div>
+      <div class="sel-btns">
+        <button class="sc-btn flip" onclick="arFlip()">↔ Çevir</button>
+        <button class="sc-btn del" onclick="arDelete()">Kaldır</button>
+      </div>
+    </div>
+
+    <!-- Toplam fiyat -->
+    <div class="total-bar" id="totalBar">
+      <div class="total-price" id="arTotalPrice">0₺</div>
+      <div class="total-count" id="arTotalCount">0 mobilya</div>
+    </div>
+
+    <!-- Alt Sheet - Katalog -->
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="bs-handle" onclick="toggleSheet()">
+        <div class="bs-handle-bar"></div>
+        <div class="bs-handle-label">
+          Katalog
+          <span class="count" id="sheetCount">14</span>
+        </div>
+      </div>
+      <div class="bs-content">
+        <div class="cat-row">
+          <div class="cat-chip on" onclick="filterCat('all',this)">Tümü</div>
+          <div class="cat-chip" onclick="filterCat('oturma',this)">Oturma</div>
+          <div class="cat-chip" onclick="filterCat('yatak',this)">Yatak</div>
+          <div class="cat-chip" onclick="filterCat('yemek',this)">Yemek</div>
+          <div class="cat-chip" onclick="filterCat('donusum',this)">Dönüşümlü</div>
+        </div>
+        <div class="furn-grid" id="furnGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESTEKLENMIYOR -->
+  <div class="not-supported" id="notSupported">
+    <div class="ns-icon">📱</div>
+    <div class="ns-title">Telefon Gerekli</div>
+    <div class="ns-sub">AR modu için Android (Chrome) veya iPhone (Safari 15.4+) gerekiyor. Masaüstünde 2D mod kullan.</div>
+    <button class="ns-alt-btn" onclick="start2DMode()">2D Modda Devam Et</button>
+  </div>
+
+</div>
+
+<div class="statusbar">
+  <span class="status-msg" id="statusMsg">AR başlatmak için butona bas</span>
+  <span class="total-sm" id="totalSm">0₺</span>
+</div>
+
+<!-- THREE.JS + WebXR -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+
+// ── VERİ ────────────────────────────────────────────────────────────
+const CATALOG = [
+  {id:'k3',  name:"Atlas 3'lü Koltuk", price:12900, cat:'oturma', img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80', w:240,h:115, realW:2.2},
+  {id:'k2',  name:"Atlas 2'li Koltuk", price:9400,  cat:'oturma', img:'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=500&q=80', w:190,h:100, realW:1.6},
+  {id:'k1',  name:"Atlas Tekli",       price:5800,  cat:'oturma', img:'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=500&q=80', w:120,h:100, realW:0.9},
+  {id:'kl',  name:"L Köşe Takımı",     price:18500, cat:'oturma', img:'https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=500&q=80', w:280,h:155, realW:2.7},
+  {id:'sh',  name:"Neva Sehpa",        price:2200,  cat:'oturma', img:'https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=500&q=80', w:110,h:70,  realW:0.8},
+  {id:'hl',  name:"Buhara Halı",       price:4600,  cat:'oturma', img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80', w:270,h:135, realW:3.0},
+  {id:'lb',  name:"Trio Lambader",     price:2800,  cat:'oturma', img:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=500&q=80', w:70, h:185, realW:0.4},
+  {id:'yt',  name:"Luna Yatak",        price:14500, cat:'yatak',  img:'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=500&q=80', w:270,h:135, realW:1.7},
+  {id:'gd',  name:"Flex Gardrop",      price:11200, cat:'yatak',  img:'https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?w=500&q=80', w:190,h:215, realW:2.2, flex:true},
+  {id:'km',  name:"Luna Komodin",      price:2400,  cat:'yatak',  img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80', w:95, h:115, realW:0.5},
+  {id:'ms',  name:"Flex Masa",         price:9800,  cat:'yemek',  img:'https://images.unsplash.com/photo-1449247709967-d4461a6a6103?w=500&q=80', w:250,h:125, realW:1.6, flex:true},
+  {id:'sd',  name:"Vega Sandalye",     price:1600,  cat:'yemek',  img:'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&q=80', w:90, h:120, realW:0.5},
+  {id:'tv',  name:"Flex TV Ünitesi",   price:8900,  cat:'donusum',img:'https://images.unsplash.com/photo-1593784991095-a205069470b6?w=500&q=80', w:260,h:85,  realW:2.0, flex:true},
+  {id:'ks',  name:"Flex Konsol",       price:6200,  cat:'donusum',img:'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80', w:185,h:95,  realW:1.4, flex:true},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────
+let xrSession = null;
+let xrRefSpace = null;
+let xrHitTestSrc = null;
+let renderer, scene, camera;
+let reticleObj = null;
+let hitTestActive = false;
+let arItems = [];
+let selectedArId = null;
+let totalPrice = 0;
+let idC = 0;
+let sheetOpen = false;
+let currentCat = 'all';
+let is2DMode = false;
+// 2D mode state
+let placed2D = [];
+let photoLoaded2D = false;
+let dragState2D = null;
+
+// ── INIT ─────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  buildCatalog();
+});
+
+function buildCatalog(cat='all') {
+  const grid = document.getElementById('furnGrid');
+  const items = cat==='all' ? CATALOG : cat==='donusum' ? CATALOG.filter(x=>x.flex) : CATALOG.filter(x=>x.cat===cat);
+  grid.innerHTML = items.map(item => `
+    <div class="fcard" id="fc_${item.id}" onclick="placeItem('${item.id}')">
+      <img class="fcard-img" src="${item.img}" onerror="this.style.background='#1e293b'">
+      <div class="fcard-body">
+        <div class="fcard-name">${item.name}</div>
+        <div class="fcard-price">${item.price.toLocaleString('tr-TR')}₺</div>
+        ${item.flex?'<span class="dtag">Dönüşümlü</span>':''}
+      </div>
+      <div class="fcard-add">+</div>
+    </div>
+  `).join('');
+  document.getElementById('sheetCount').textContent = items.length;
+}
+
+function filterCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  buildCatalog(cat);
+}
+
+// ── AR BAŞLAT ──────────────────────────────────────────────────────
+async function startAR() {
+  if(!navigator.xr) { fallback2D(); return; }
+  const supported = await navigator.xr.isSessionSupported('immersive-ar').catch(()=>false);
+  if(!supported) { fallback2D(); return; }
+
+  try {
+    xrSession = await navigator.xr.requestSession('immersive-ar', {
+      requiredFeatures: ['hit-test'],
+      optionalFeatures: ['dom-overlay', 'light-estimation'],
+      domOverlay: {root: document.getElementById('arView')}
+    });
+    initThreeAR();
+    xrSession.addEventListener('end', onAREnd);
+    setStatus('Zemin algılanıyor — telefonu yavaşça hareket ettir');
+  } catch(e) {
+    console.warn('AR error:', e);
+    fallback2D();
+  }
+}
+
+function initThreeAR() {
+  // Three.js renderer
+  renderer = new THREE.WebGLRenderer({canvas: document.getElementById('arCanvas'), alpha: true, antialias: true});
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.xr.enabled = true;
+  renderer.xr.setSession(xrSession);
+
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.01, 20);
+  scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  dirLight.position.set(1, 2, 1); scene.add(dirLight);
+
+  // Reticle (zemin hedef noktası)
+  const rGeo = new THREE.RingGeometry(0.1, 0.13, 32);
+  rGeo.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+  reticleObj = new THREE.Mesh(rGeo, new THREE.MeshBasicMaterial({color:0x1D9E75, side:THREE.DoubleSide}));
+  reticleObj.visible = false; scene.add(reticleObj);
+
+  // Hit test
+  xrSession.requestReferenceSpace('viewer').then(vs => {
+    xrSession.requestHitTestSource({space: vs}).then(src => {
+      xrHitTestSrc = src;
+    });
+  });
+  xrSession.requestReferenceSpace('local').then(rs => { xrRefSpace = rs; });
+
+  // AR loop
+  renderer.setAnimationLoop(onARFrame);
+
+  // DOM
+  document.getElementById('landingScreen').style.display = 'none';
+  document.getElementById('arView').classList.add('active');
+  document.getElementById('arCanvas').style.display = 'block';
+  document.getElementById('reticle').classList.add('show');
+  document.getElementById('arHint').classList.add('show');
+  document.getElementById('exitArBtn').style.display = 'inline-block';
+  document.getElementById('saveBtn').style.display = 'inline-block';
+  openSheet();
+}
+
+function onARFrame(t, frame) {
+  if(!frame) return;
+  if(xrHitTestSrc && xrRefSpace) {
+    const results = frame.getHitTestResults(xrHitTestSrc);
+    if(results.length > 0) {
+      const pose = results[0].getPose(xrRefSpace);
+      reticleObj.visible = true;
+      reticleObj.matrix.fromArray(pose.transform.matrix);
+      reticleObj.matrix.decompose(reticleObj.position, reticleObj.quaternion, reticleObj.scale);
+      if(!hitTestActive) {
+        hitTestActive = true;
+        document.getElementById('arHint').textContent = 'Zemin bulundu ✓ — Katalogdan mobilya seç';
+        setTimeout(()=>document.getElementById('arHint').classList.remove('show'), 2500);
+      }
+    } else { reticleObj.visible = false; }
+  }
+  renderer.render(scene, camera);
+}
+
+// ── AR MOBİLYA PLACE ─────────────────────────────────────────────
+function placeItem(itemId) {
+  const item = CATALOG.find(x=>x.id===itemId); if(!item) return;
+
+  // Kart animasyonu
+  const fc = document.getElementById('fc_'+itemId);
+  if(fc) { fc.classList.add('adding'); setTimeout(()=>fc.classList.remove('adding'),300); }
+
+  if(is2DMode) { place2DItem(item); return; }
+
+  // AR modda: reticle pozisyonuna yerleştir
+  const id = 'ar_'+(++idC);
+  const layer = document.getElementById('arFurnLayer');
+
+  // Viewport'taki pozisyon (reticle ortada)
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const cx = vw/2, cy = vh * 0.55;
+
+  const el = document.createElement('div');
+  el.className = 'ar-furn';
+  el.id = id;
+  el.style.cssText = `left:${cx}px;top:${cy}px;width:${item.w}px`;
+  el.innerHTML = `
+    <img src="${item.img}" style="width:${item.w}px;height:${item.h}px;object-fit:contain;display:block;opacity:0.92" draggable="false">
+    <div class="furn-shadow"></div>
+    <button class="ar-furn-del" onclick="arDeleteById('${id}')">✕</button>
+  `;
+  el.addEventListener('click', e=>{e.stopPropagation();selectArItem(id);});
+
+  // Sürükleme
+  let dragging=false, dx=0, dy=0;
+  el.addEventListener('pointerdown', e=>{
+    if(e.target.classList.contains('ar-furn-del')) return;
+    dragging=true; dx=e.clientX-cx; dy=e.clientY-cy;
+    el.setPointerCapture(e.pointerId);
+  });
+  el.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    const nx=e.clientX-dx, ny=e.clientY-dy;
+    const p=arItems.find(x=>x.id===id);
+    if(p){p.x=nx;p.y=ny;el.style.left=nx+'px';el.style.top=ny+'px';}
+    // Perspektif: y arttıkça küçül
+    const scaleY = Math.max(0.4, Math.min(1.4, 1-(ny-vh*0.5)/(vh*0.4)*0.4));
+    const img=el.querySelector('img');
+    if(img){img.style.width=(item.w*scaleY)+'px';img.style.height=(item.h*scaleY)+'px';}
+  });
+  el.addEventListener('pointerup', ()=>dragging=false);
+
+  layer.appendChild(el);
+  arItems.push({id, itemId, el, x:cx, y:cy, rot:0, opac:0.92, flipped:false});
+
+  totalPrice += item.price;
+  updateARTotal();
+  selectArItem(id);
+  setStatus(item.name+' eklendi — sürükle ve konumlandır');
+  closeSheet();
+}
+
+// ── AR ITEM SELECT ─────────────────────────────────────────────────
+function selectArItem(id) {
+  arItems.forEach(p=>p.el.classList.remove('selected'));
+  selectedArId = id;
+  const p = arItems.find(x=>x.id===id); if(!p) return;
+  p.el.classList.add('selected');
+  const item = CATALOG.find(x=>x.id===p.itemId);
+  document.getElementById('selName').textContent = item.name;
+  document.getElementById('selPrice').textContent = item.price.toLocaleString('tr-TR')+'₺';
+  document.getElementById('arSizeSlider').value = 100;
+  document.getElementById('arSizeVal').textContent = '%100';
+  document.getElementById('arRotSlider').value = p.rot;
+  document.getElementById('arRotVal').textContent = p.rot+'°';
+  document.getElementById('arOpacSlider').value = Math.round(p.opac*100);
+  document.getElementById('arOpacVal').textContent = '%'+Math.round(p.opac*100);
+  document.getElementById('selControls').classList.add('show');
+}
+
+function deselectAR() {
+  arItems.forEach(p=>p.el.classList.remove('selected'));
+  selectedArId = null;
+  document.getElementById('selControls').classList.remove('show');
+}
+
+function arResize(v) {
+  document.getElementById('arSizeVal').textContent='%'+v;
+  const p = arItems.find(x=>x.id===selectedArId); if(!p) return;
+  const item = CATALOG.find(x=>x.id===p.itemId);
+  const s = parseInt(v)/100;
+  const img = p.el.querySelector('img');
+  if(img){img.style.width=(item.w*s)+'px';img.style.height=(item.h*s)+'px';}
+}
+
+function arRotate(v) {
+  document.getElementById('arRotVal').textContent=v+'°';
+  const p = arItems.find(x=>x.id===selectedArId); if(!p) return;
+  p.rot=parseInt(v);
+  const img=p.el.querySelector('img');
+  if(img) img.style.transform=`rotate(${v}deg) scaleX(${p.flipped?-1:1})`;
+}
+
+function arOpac(v) {
+  document.getElementById('arOpacVal').textContent='%'+v;
+  const p = arItems.find(x=>x.id===selectedArId); if(!p) return;
+  p.opac=parseInt(v)/100;
+  const img=p.el.querySelector('img');
+  if(img) img.style.opacity=p.opac;
+}
+
+function arFlip() {
+  const p=arItems.find(x=>x.id===selectedArId);if(!p) return;
+  p.flipped=!p.flipped;
+  const img=p.el.querySelector('img');
+  if(img) img.style.transform=`rotate(${p.rot}deg) scaleX(${p.flipped?-1:1})`;
+}
+
+function arDelete() { if(selectedArId) arDeleteById(selectedArId); }
+function arDeleteById(id) {
+  const p=arItems.find(x=>x.id===id);if(!p) return;
+  totalPrice -= CATALOG.find(x=>x.id===p.itemId).price;
+  p.el.remove(); arItems=arItems.filter(x=>x.id!==id);
+  if(selectedArId===id) deselectAR();
+  updateARTotal(); setStatus('Mobilya kaldırıldı');
+}
+
+function updateARTotal() {
+  const bar=document.getElementById('totalBar');
+  document.getElementById('arTotalPrice').textContent=totalPrice.toLocaleString('tr-TR')+'₺';
+  document.getElementById('arTotalCount').textContent=arItems.length+' mobilya';
+  document.getElementById('totalSm').textContent=totalPrice.toLocaleString('tr-TR')+'₺';
+  bar.classList.toggle('show', arItems.length>0);
+}
+
+// ── SHEET ──────────────────────────────────────────────────────────
+function toggleSheet() { sheetOpen=!sheetOpen; document.getElementById('bottomSheet').classList.toggle('open',sheetOpen); }
+function openSheet() { sheetOpen=true; document.getElementById('bottomSheet').classList.add('open'); }
+function closeSheet() { sheetOpen=false; document.getElementById('bottomSheet').classList.remove('open'); }
+
+// ── AR BİTİŞ ──────────────────────────────────────────────────────
+function onAREnd() {
+  xrSession=null; xrHitTestSrc=null; xrRefSpace=null;
+  renderer?.setAnimationLoop(null);
+  document.getElementById('arView').classList.remove('active');
+  document.getElementById('landingScreen').style.display='flex';
+  setStatus('AR oturumu sona erdi');
+}
+
+function exitAR() {
+  if(xrSession) xrSession.end();
+  else { document.getElementById('arView').classList.remove('active'); document.getElementById('landingScreen').style.display='flex'; }
+}
+
+// ── FALLBACK: 2D MOD ───────────────────────────────────────────────
+function fallback2D() {
+  is2DMode = true;
+  const supported = document.getElementById('notSupported');
+  supported.classList.add('show');
+  document.getElementById('landingScreen').style.display='none';
+  setStatus('Masaüstü/eski tarayıcı — 2D mod');
+}
+
+function start2DMode() {
+  document.getElementById('notSupported').classList.remove('show');
+  // 2D modda oda fotoğrafı yükle
+  const input = document.createElement('input');
+  input.type='file'; input.accept='image/*';
+  input.onchange = e => {
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      init2DCanvas(ev.target.result);
+    };
+    reader.readAsDataURL(file);
+  };
+  // Demo ile başla
+  init2DCanvas('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=85');
+  document.getElementById('arView').classList.add('active');
+  document.getElementById('exitArBtn').style.display='inline-block';
+  document.getElementById('saveBtn').style.display='inline-block';
+  openSheet();
+  setStatus('2D Mod: Demo oda yüklendi — katalogdan mobilya ekle');
+}
+
+function init2DCanvas(src) {
+  const layer = document.getElementById('arFurnLayer');
+  // Arka plan
+  const bg = document.createElement('img');
+  bg.src=src; bg.id='bg2D';
+  bg.style.cssText='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;z-index:0';
+  bg.draggable=false;
+  layer.insertBefore(bg, layer.firstChild);
+  photoLoaded2D=true;
+}
+
+function place2DItem(item) {
+  if(!photoLoaded2D) return;
+  const id='d_'+(++idC);
+  const vw=window.innerWidth, vh=window.innerHeight;
+  const cx=vw*0.35+Math.random()*vw*0.25;
+  const cy=vh*0.45+Math.random()*vh*0.15;
+  const layer=document.getElementById('arFurnLayer');
+  const el=document.createElement('div');
+  el.className='ar-furn';
+  el.id=id;
+  el.style.cssText=`left:${cx}px;top:${cy}px;z-index:${10+idC}`;
+  el.innerHTML=`
+    <img src="${item.img}" style="width:${item.w}px;height:${item.h}px;object-fit:contain;display:block;opacity:0.92;filter:drop-shadow(0 8px 20px rgba(0,0,0,.45))" draggable="false">
+    <div class="furn-shadow"></div>
+    <button class="ar-furn-del" onclick="arDeleteById('${id}')">✕</button>
+  `;
+  el.addEventListener('click',e=>{e.stopPropagation();selectArItem(id);});
+
+  let dragging=false,ox=0,oy=0;
+  el.addEventListener('pointerdown',e=>{
+    if(e.target.classList.contains('ar-furn-del'))return;
+    dragging=true;ox=e.clientX-cx;oy=e.clientY-cy;
+    el.setPointerCapture(e.pointerId);e.preventDefault();
+  });
+  el.addEventListener('pointermove',e=>{
+    if(!dragging)return;
+    const nx=e.clientX-ox,ny=e.clientY-oy;
+    const p=arItems.find(x=>x.id===id);if(p){p.x=nx;p.y=ny;}
+    el.style.left=nx+'px';el.style.top=ny+'px';
+    // Perspektif ölçekleme
+    const baseScale=0.6+((ny/vh)*0.8);
+    const img=el.querySelector('img');
+    if(img){img.style.width=(item.w*baseScale)+'px';img.style.height=(item.h*baseScale)+'px';}
+  });
+  el.addEventListener('pointerup',()=>dragging=false);
+  layer.appendChild(el);
+  arItems.push({id,itemId:item.id,el,x:cx,y:cy,rot:0,opac:0.92,flipped:false});
+  totalPrice+=item.price;
+  updateARTotal();
+  selectArItem(id);
+  setStatus(item.name+' eklendi');
+}
+
+// ── KAYDET ────────────────────────────────────────────────────────
+function saveSession() {
+  const data={items:arItems.map(p=>({itemId:p.itemId,name:CATALOG.find(x=>x.id===p.itemId)?.name})),total:totalPrice,savedAt:new Date().toLocaleString('tr-TR')};
+  localStorage.setItem('gotapu_ar_'+Date.now(),JSON.stringify(data));
+  alert(`Kaydedildi!\n${arItems.length} mobilya • ${totalPrice.toLocaleString('tr-TR')}₺`);
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────
+function setStatus(msg){document.getElementById('statusMsg').textContent=msg;}
+
+// Dışarı tıklayınca deselect
+document.getElementById('arFurnLayer')?.addEventListener('click',e=>{
+  if(e.target.id==='arFurnLayer'||e.target.id==='bg2D') deselectAR();
+});
+
+window.addEventListener('resize',()=>{
+  if(renderer) renderer.setSize(window.innerWidth,window.innerHeight);
+});
+</script>
+</body>
+</html>
