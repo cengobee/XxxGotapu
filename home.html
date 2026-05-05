@@ -10,7 +10,39 @@
 <script src="kredi.js"></script>
 <style>
 *{box-sizing:border-box}
-.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--card);border-bottom:1px solid var(--border)}
+
+/* Koyu mod değişkenleri — stil.css yüklenmese bile çalışır */
+:root{
+  --bg:#0F1117;
+  --bg2:#181B24;
+  --card:#1E2130;
+  --card2:#252A3A;
+  --border:rgba(255,255,255,0.10);
+  --gold:#F5C842;
+  --rust:#E8603A;
+  --green:#2ECC71;
+  --blue:#4A90D9;
+  --text:#FFFFFF;
+  --text2:rgba(255,255,255,0.92);
+  --text3:rgba(255,255,255,0.72);
+}
+body.light{
+  --bg:#f0f9f9;
+  --bg2:#ffffff;
+  --card:#ffffff;
+  --card2:#e6f7f7;
+  --border:rgba(0,150,150,0.18);
+  --gold:#009999;
+  --rust:#E8603A;
+  --green:#00a878;
+  --blue:#3a90e8;
+  --text:#0a1f1f;
+  --text2:#1a3a3a;
+  --text3:#2d5555;
+}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif}
+
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border)}
 .top-nav-row1{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
 .nav-logo{font-size:20px;font-weight:900;color:var(--gold);text-decoration:none;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:6px}
 .nav-ikon-grup{display:flex;align-items:center;gap:18px}
@@ -20,20 +52,20 @@
 .nav-hamburger span:nth-child(1){width:20px}
 .nav-hamburger span:nth-child(2){width:14px}
 .nav-hamburger span:nth-child(3){width:20px}
-.nav-profil-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:15px;text-decoration:none;color:#1a1a1a}
+.nav-profil-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:15px;text-decoration:none;color:var(--bg)}
 .ana-kesfet-tabs{display:flex;border-top:1px solid var(--border)}
 .ana-kesfet-tabs button{flex:1;padding:10px 4px;font-size:13px;font-weight:800;border:none;background:transparent;color:var(--text3);border-bottom:2px solid transparent;cursor:pointer;font-family:'Nunito',sans-serif}
 .ana-kesfet-tabs button.aktif{color:var(--gold);border-bottom:2px solid var(--gold)}
-.icerik-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--card);position:sticky;top:93px;z-index:90}
+.icerik-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:93px;z-index:90}
 .icerik-tabs button{flex:1;padding:9px 4px;font-size:12px;font-weight:800;border:none;background:transparent;color:var(--text3);border-bottom:2px solid transparent;cursor:pointer;font-family:'Nunito',sans-serif}
 .icerik-tabs button.aktif{color:var(--gold);border-bottom:2px solid var(--gold)}
 .drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200}
 .drawer-overlay.acik{display:block}
-.drawer-panel{position:fixed;top:0;right:-270px;width:250px;height:100%;background:var(--card);border-left:1px solid var(--border);z-index:201;transition:right .25s ease;overflow-y:auto;padding-bottom:40px}
+.drawer-panel{position:fixed;top:0;right:-270px;width:250px;height:100%;background:var(--bg2);border-left:1px solid var(--border);z-index:201;transition:right .25s ease;overflow-y:auto;padding-bottom:40px}
 .drawer-panel.acik{right:0}
 .drawer-baslik{padding:14px 16px;font-size:11px;font-weight:900;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;border-bottom:1px solid var(--border)}
-.drawer-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);text-decoration:none;background:var(--card);width:100%;border-left:none;border-right:none;border-top:none;cursor:pointer;transition:background .15s}
-.drawer-item:hover{background:var(--bg)}
+.drawer-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);text-decoration:none;background:var(--bg2);width:100%;border-left:none;border-right:none;border-top:none;cursor:pointer;transition:background .15s}
+.drawer-item:hover{background:var(--card)}
 .drawer-item-metin{font-size:14px;font-weight:700;color:var(--text);font-family:'Nunito',sans-serif}
 .drawer-item-ok{font-size:18px;color:var(--text3)}
 .paylasim-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;align-items:flex-end}
@@ -50,7 +82,7 @@
 .feed-bos-emoji{font-size:52px;margin-bottom:14px}
 .feed-bos-baslik{font-size:17px;font-weight:800;color:var(--text);margin-bottom:8px;font-family:'Nunito',sans-serif}
 .feed-bos-alt{font-size:13px;color:var(--text3);font-family:'Nunito',sans-serif;line-height:1.5}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;align-items:center;padding:8px 0 12px;z-index:100}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;padding:8px 0 12px;z-index:100}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;cursor:pointer;background:transparent;border:none;font-family:'Nunito',sans-serif;position:relative}
 .bnav-label{font-size:9px;font-weight:700;color:var(--text3)}
 .bnav-item.aktif .bnav-label{color:var(--gold)}
