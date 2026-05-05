@@ -11,7 +11,6 @@
 <style>
 *{box-sizing:border-box}
 
-/* Koyu mod değişkenleri — stil.css yüklenmese bile çalışır */
 :root{
   --bg:#0F1117;
   --bg2:#181B24;
@@ -59,6 +58,8 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif}
 .icerik-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:93px;z-index:90}
 .icerik-tabs button{flex:1;padding:9px 4px;font-size:12px;font-weight:800;border:none;background:transparent;color:var(--text3);border-bottom:2px solid transparent;cursor:pointer;font-family:'Nunito',sans-serif}
 .icerik-tabs button.aktif{color:var(--gold);border-bottom:2px solid var(--gold)}
+
+/* DRAWER */
 .drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200}
 .drawer-overlay.acik{display:block}
 .drawer-panel{position:fixed;top:0;right:-270px;width:250px;height:100%;background:var(--bg2);border-left:1px solid var(--border);z-index:201;transition:right .25s ease;overflow-y:auto;padding-bottom:40px}
@@ -68,6 +69,10 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif}
 .drawer-item:hover{background:var(--card)}
 .drawer-item-metin{font-size:14px;font-weight:700;color:var(--text);font-family:'Nunito',sans-serif}
 .drawer-item-ok{font-size:18px;color:var(--text3)}
+.drawer-item-ikon{font-size:18px;width:24px;text-align:center}
+.drawer-item-sol{display:flex;align-items:center;gap:10px}
+
+/* PAYLAŞİM SHEET */
 .paylasim-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;align-items:flex-end}
 .paylasim-overlay.acik{display:flex}
 .paylasim-sheet{background:var(--card);border-radius:20px 20px 0 0;padding:16px 16px 40px;width:100%}
@@ -77,11 +82,13 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif}
 .paylasim-item{display:flex;align-items:center;gap:10px;padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--bg);cursor:pointer;text-decoration:none;transition:border-color .2s}
 .paylasim-item:hover{border-color:var(--gold)}
 .paylasim-item-metin{font-size:12px;font-weight:800;color:var(--text);font-family:'Nunito',sans-serif}
+
 .page{padding-top:93px;padding-bottom:75px;min-height:100vh;background:var(--bg)}
 .feed-bos{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center}
 .feed-bos-emoji{font-size:52px;margin-bottom:14px}
 .feed-bos-baslik{font-size:17px;font-weight:800;color:var(--text);margin-bottom:8px;font-family:'Nunito',sans-serif}
 .feed-bos-alt{font-size:13px;color:var(--text3);font-family:'Nunito',sans-serif;line-height:1.5}
+
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;padding:8px 0 12px;z-index:100}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;cursor:pointer;background:transparent;border:none;font-family:'Nunito',sans-serif;position:relative}
 .bnav-label{font-size:9px;font-weight:700;color:var(--text3)}
@@ -89,12 +96,19 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif}
 .bnav-center{flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;border:none;padding:0}
 .bnav-center-btn{width:42px;height:42px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:26px;line-height:1;color:#1a1a1a;font-weight:900;margin-top:-10px}
 .bnav-badge{position:absolute;top:-2px;right:8px;background:#e85d26;color:white;font-size:9px;font-weight:800;min-width:16px;height:16px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 3px}
-@media(min-width:900px){body{padding-bottom:0!important}.bottom-nav{display:none!important}.page{padding:105px 16px 40px!important;max-width:680px;margin:0 auto}.icerik-tabs{top:97px}}
+
+@media(min-width:900px){
+  body{padding-bottom:0!important}
+  .bottom-nav{display:none!important}
+  .page{padding:105px 16px 40px!important;max-width:680px;margin:0 auto}
+  .icerik-tabs{top:97px}
+}
 </style>
 </head>
 <body style="visibility:hidden">
 <script>(function(){if(localStorage.getItem('gotapu_tema')==='light')document.body.classList.add('light')})();</script>
 
+<!-- TOP NAV -->
 <nav class="top-nav">
   <div class="top-nav-row1">
     <a href="anasayfa.html" class="nav-logo">🏠 GoTapu</a>
@@ -118,35 +132,115 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif}
   </div>
 </nav>
 
+<!-- DRAWER OVERLAY -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="drawerKapat()"></div>
+
+<!-- DRAWER PANEL -->
 <div class="drawer-panel" id="drawerPanel">
-  <div class="drawer-baslik">İlanlar</div>
-  <a class="drawer-item" href="index.html?kategori=emlak" onclick="drawerKapat()"><span class="drawer-item-metin">Emlak</span><span class="drawer-item-ok">›</span></a>
-  <a class="drawer-item" href="index.html?kategori=vasita" onclick="drawerKapat()"><span class="drawer-item-metin">Vasıta</span><span class="drawer-item-ok">›</span></a>
-  <a class="drawer-item" href="index.html?kategori=ikinciel" onclick="drawerKapat()"><span class="drawer-item-metin">2. El & Yedek Parça</span><span class="drawer-item-ok">›</span></a>
-  <a class="drawer-item" href="index.html?kategori=alisveris" onclick="drawerKapat()"><span class="drawer-item-metin">Alışveriş</span><span class="drawer-item-ok">›</span></a>
-  <a class="drawer-item" href="index.html?kategori=yemek" onclick="drawerKapat()"><span class="drawer-item-metin">Yemek & İçecek</span><span class="drawer-item-ok">›</span></a>
-  <a class="drawer-item" href="hizmetler.html" onclick="drawerKapat()"><span class="drawer-item-metin">Hizmetler</span><span class="drawer-item-ok">›</span></a>
-  <a class="drawer-item" href="index.html?kategori=sanaözel" onclick="drawerKapat()"><span class="drawer-item-metin">Sana Özel</span><span class="drawer-item-ok">›</span></a>
-  <div class="drawer-baslik" style="margin-top:8px">Diğer</div>
-  <a class="drawer-item" href="favoriler.html" onclick="drawerKapat()"><span class="drawer-item-metin">Favorilerim</span><span class="drawer-item-ok">›</span></a>
+
+  <div class="drawer-baslik">📋 İlanlar</div>
+  <a class="drawer-item" href="ilanlar.html" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">🏷️</span><span class="drawer-item-metin">Tüm İlanlar</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+  <a class="drawer-item" href="ilanlar.html?kategori=emlak" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">🏠</span><span class="drawer-item-metin">Emlak</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+  <a class="drawer-item" href="ilanlar.html?kategori=vasita" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">🚗</span><span class="drawer-item-metin">Vasıta</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+  <a class="drawer-item" href="ilanlar.html?kategori=ikinciel" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">📦</span><span class="drawer-item-metin">İkinci El & Sıfır Alışveriş</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+  <a class="drawer-item" href="ilanlar.html?kategori=yedekparca" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">🔧</span><span class="drawer-item-metin">Yedek Parça & Aksesuar</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+  <a class="drawer-item" href="ilanlar.html?kategori=ismak" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">🏗️</span><span class="drawer-item-metin">İş Makineleri & Sanayi</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+  <a class="drawer-item" href="ilanlar.html?kategori=isilan" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">💼</span><span class="drawer-item-metin">İş İlanları</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+  <a class="drawer-item" href="ilanlar.html?kategori=sahiplendir" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">🐾</span><span class="drawer-item-metin">Sahiplendir</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+
+  <div class="drawer-baslik" style="margin-top:8px">🛍️ Alışveriş & Sipariş</div>
+  <a class="drawer-item" href="hizmetler.html" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">🔨</span><span class="drawer-item-metin">Hizmetler</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+  <a class="drawer-item" href="yemek.html" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">🍔</span><span class="drawer-item-metin">Yemek & İçecek</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+  <a class="drawer-item" href="alisveris.html" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">🛒</span><span class="drawer-item-metin">0 km Alışveriş</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+  <a class="drawer-item" href="sana-ozel.html" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">✨</span><span class="drawer-item-metin">Sana Özel</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+
+  <div class="drawer-baslik" style="margin-top:8px">👤 Hesabım</div>
+  <a class="drawer-item" href="favoriler.html" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">❤️</span><span class="drawer-item-metin">Favorilerim</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+  <a class="drawer-item" href="profil.html" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">👤</span><span class="drawer-item-metin">Profilim</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+  <a class="drawer-item" href="ilan-ver.html" onclick="drawerKapat()">
+    <div class="drawer-item-sol"><span class="drawer-item-ikon">📋</span><span class="drawer-item-metin">İlan Ver</span></div>
+    <span class="drawer-item-ok">›</span>
+  </a>
+
 </div>
 
+<!-- PAYLAŞİM SHEET -->
 <div class="paylasim-overlay" id="paylasimOverlay" onclick="paylasimKapat(event)">
   <div class="paylasim-sheet">
     <div class="paylasim-handle"></div>
     <div class="paylasim-baslik">Ne paylaşmak istersin?</div>
     <div class="paylasim-grid">
-      <a class="paylasim-item" href="#"><span style="font-size:20px">🎬</span><span class="paylasim-item-metin">Video Yükle</span></a>
-      <a class="paylasim-item" href="#"><span style="font-size:20px">📷</span><span class="paylasim-item-metin">Fotoğraf Paylaş</span></a>
-      <a class="paylasim-item" href="#"><span style="font-size:20px">✏️</span><span class="paylasim-item-metin">Yazı Yaz</span></a>
-      <a class="paylasim-item" href="ilan-ver.html"><span style="font-size:20px">📋</span><span class="paylasim-item-metin">İlan Ver</span></a>
-      <a class="paylasim-item" href="#"><span style="font-size:20px">🛒</span><span class="paylasim-item-metin">Ürün Sat</span></a>
-      <a class="paylasim-item" href="#"><span style="font-size:20px">✨</span><span class="paylasim-item-metin">Sana Özel</span></a>
+      <a class="paylasim-item" href="#">
+        <span style="font-size:20px">🎬</span>
+        <span class="paylasim-item-metin">Video Yükle</span>
+      </a>
+      <a class="paylasim-item" href="#">
+        <span style="font-size:20px">📷</span>
+        <span class="paylasim-item-metin">Fotoğraf Paylaş</span>
+      </a>
+      <a class="paylasim-item" href="#">
+        <span style="font-size:20px">✏️</span>
+        <span class="paylasim-item-metin">Yazı Yaz</span>
+      </a>
+      <a class="paylasim-item" href="ilan-ver.html">
+        <span style="font-size:20px">📋</span>
+        <span class="paylasim-item-metin">İlan Ver</span>
+      </a>
+      <a class="paylasim-item" href="alisveris.html">
+        <span style="font-size:20px">🛒</span>
+        <span class="paylasim-item-metin">Ürün Sat</span>
+      </a>
+      <a class="paylasim-item" href="sana-ozel.html">
+        <span style="font-size:20px">✨</span>
+        <span class="paylasim-item-metin">Sana Özel</span>
+      </a>
     </div>
   </div>
 </div>
 
+<!-- ANA İÇERİK -->
 <div class="page fade-up">
   <div class="icerik-tabs" id="icerikTabs">
     <button id="icerikVideo" class="aktif" onclick="icerikGec('video')">Video</button>
@@ -176,14 +270,15 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif}
   </div>
 </div>
 
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <a href="anasayfa.html" class="bnav-item aktif">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
     <span class="bnav-label" style="color:var(--gold)">Ana Sayfa</span>
   </a>
-  <a href="#" class="bnav-item" onclick="anaKesfetGec('kesfet');return false;">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <span class="bnav-label">Keşfet</span>
+  <a href="ilanlar.html" class="bnav-item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span class="bnav-label">İlanlar</span>
   </a>
   <button class="bnav-center" onclick="paylasimAc()">
     <div class="bnav-center-btn">+</div>
@@ -211,11 +306,24 @@ const{createClient}=supabase;
 const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 window._sbClient=sb;
 
-function drawerAc(){document.getElementById('drawerPanel').classList.add('acik');document.getElementById('drawerOverlay').classList.add('acik')}
-function drawerKapat(){document.getElementById('drawerPanel').classList.remove('acik');document.getElementById('drawerOverlay').classList.remove('acik')}
-function paylasimAc(){document.getElementById('paylasimOverlay').classList.add('acik')}
-function paylasimKapat(e){if(e.target===document.getElementById('paylasimOverlay'))document.getElementById('paylasimOverlay').classList.remove('acik')}
-function aramaOdakla(){window.location.href='index.html'}
+function drawerAc(){
+  document.getElementById('drawerPanel').classList.add('acik');
+  document.getElementById('drawerOverlay').classList.add('acik');
+}
+function drawerKapat(){
+  document.getElementById('drawerPanel').classList.remove('acik');
+  document.getElementById('drawerOverlay').classList.remove('acik');
+}
+function paylasimAc(){
+  document.getElementById('paylasimOverlay').classList.add('acik');
+}
+function paylasimKapat(e){
+  if(e.target===document.getElementById('paylasimOverlay'))
+    document.getElementById('paylasimOverlay').classList.remove('acik');
+}
+function aramaOdakla(){
+  window.location.href='ilanlar.html';
+}
 
 function anaKesfetGec(sekme){
   const isAna=sekme==='anasayfa';
@@ -232,10 +340,13 @@ function anaKesfetGec(sekme){
 
 function icerikGec(sekme){
   document.querySelectorAll('.icerik-tabs button').forEach(b=>b.classList.remove('aktif'));
-  const id='icerik'+sekme.charAt(0).toUpperCase()+sekme.slice(1);
-  const btn=document.getElementById(id);
-  if(btn)btn.classList.add('aktif');
-  ['bolumVideo','bolumFotograf','bolumYazi','bolumKarisik'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none'});
+  const btnId='icerik'+sekme.charAt(0).toUpperCase()+sekme.slice(1);
+  const btn=document.getElementById(btnId);
+  if(btn) btn.classList.add('aktif');
+  ['bolumVideo','bolumFotograf','bolumYazi','bolumKarisik'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display='none';
+  });
   let hedef=document.getElementById('bolum'+sekme.charAt(0).toUpperCase()+sekme.slice(1));
   if(!hedef){
     hedef=document.createElement('div');
@@ -246,30 +357,47 @@ function icerikGec(sekme){
   hedef.style.display='block';
 }
 
+// Auth kontrol
 if(window.location.hash&&window.location.hash.includes('access_token')){
   const hp=new URLSearchParams(window.location.hash.substring(1));
   const at=hp.get('access_token'),rt=hp.get('refresh_token');
-  if(at){sb.auth.setSession({access_token:at,refresh_token:rt}).then(({data,error})=>{if(error)window.location.replace('index.html');else{window.history.replaceState(null,'',window.location.pathname);init()}})}else init();
-}else if(new URLSearchParams(window.location.search).get('code')){
+  if(at){
+    sb.auth.setSession({access_token:at,refresh_token:rt}).then(({data,error})=>{
+      if(error) window.location.replace('index.html');
+      else{ window.history.replaceState(null,'',window.location.pathname); init(); }
+    });
+  } else init();
+} else if(new URLSearchParams(window.location.search).get('code')){
   window.location.replace('index.html'+window.location.search);
-}else{init()}
+} else { init(); }
 
 function init(){
   sb.auth.getSession().then(({data})=>{
-    if(!data.session){window.location.replace('index.html');return}
+    if(!data.session){ window.location.replace('index.html'); return; }
     document.body.style.visibility='visible';
     mesajSay();
-    try{const t=JSON.parse(localStorage.getItem('gotapu_tercihler')||'{}');if(t.sehir||t.minFiyat||t.oda?.length)document.getElementById('eslesmeBadge').style.display='flex'}catch(e){}
+    try{
+      const t=JSON.parse(localStorage.getItem('gotapu_tercihler')||'{}');
+      if(t.sehir||t.minFiyat||t.oda?.length)
+        document.getElementById('eslesmeBadge').style.display='flex';
+    }catch(e){}
   });
 }
 
 async function mesajSay(){
   const{data:{user}}=await sb.auth.getUser();
-  if(!user)return;
+  if(!user) return;
   const{count}=await sb.from('mesajlar').select('*',{count:'exact',head:true}).eq('alici_id',user.id).eq('okundu',false);
-  if(count>0){const b=document.getElementById('mesajBadge');b.textContent=count;b.style.display='flex'}
+  if(count>0){
+    const b=document.getElementById('mesajBadge');
+    b.textContent=count; b.style.display='flex';
+  }
   const{count:bCount}=await sb.from('bildirimler').select('*',{count:'exact',head:true}).eq('user_id',user.id).eq('okundu',false);
-  if(bCount>0){const bb=document.getElementById('bildirimBadge');bb.textContent=bCount>9?'9+':bCount;bb.style.display='flex'}
+  if(bCount>0){
+    const bb=document.getElementById('bildirimBadge');
+    bb.textContent=bCount>9?'9+':bCount;
+    bb.style.display='flex';
+  }
 }
 </script>
 </body>
