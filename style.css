@@ -15,8 +15,8 @@
   --green: #2ECC71;
   --blue: #4A90D9;
   --text: #FFFFFF;
-  --text2: rgba(255,255,255,0.92);   /* neredeyse tam beyaz */
-  --text3: rgba(255,255,255,0.72);   /* belirgin gri-beyaz */
+  --text2: rgba(255,255,255,0.92);
+  --text3: rgba(255,255,255,0.72);
   --radius: 16px;
   --radius-sm: 10px;
   --nav-h: 64px;
@@ -40,8 +40,8 @@ body.light {
   --green: #00a878;
   --blue: #3a90e8;
   --text: #0a1f1f;
-  --text2: #1a3a3a;                  /* koyu yeşil-siyah, tam okunur */
-  --text3: #2d5555;                  /* orta koyu, soluk değil */
+  --text2: #1a3a3a;
+  --text3: #2d5555;
   --shadow: 0 4px 20px rgba(0,150,150,0.1);
   --theme-icon: '🌙';
 }
@@ -156,9 +156,18 @@ body {
   font-family: 'Nunito', sans-serif;
   min-height: 100vh;
   min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* ── YENİ ANASAYFA: body padding'i kaldırıldı, her sayfa kendi yönetiyor ── */
+/* Eski sayfalar için geriye dönük uyumluluk */
+body:not(.no-body-padding) {
   padding-top: var(--nav-h);
   padding-bottom: calc(var(--bot-h) + 16px);
-  overflow-x: hidden;
+}
+body.no-body-padding {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* TOP NAV */
@@ -210,7 +219,7 @@ body {
   will-change: transform;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  bottom: env(safe-area-inset-bottom, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 .bnav-item {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -265,6 +274,7 @@ body {
     border-right: 1px solid var(--border) !important;
   }
 }
+
 /* SECTION */
 .section-head {
   display: flex; align-items: center; justify-content: space-between;
