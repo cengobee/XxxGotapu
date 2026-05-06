@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Keşfet — GoTapu</title>
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="stylesheet" href="stil.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0F1117;--bg2:#181B24;--card:#1E2130;--card2:#252A3A;
+  --border:rgba(255,255,255,0.10);--gold:#F5C842;--rust:#E8603A;
+  --green:#2ECC71;--blue:#4A90D9;--text:#FFFFFF;
+  --text2:rgba(255,255,255,0.92);--text3:rgba(255,255,255,0.72);
+}
+body.light{
+  --bg:#f0f9f9;--bg2:#ffffff;--card:#ffffff;--card2:#e6f7f7;
+  --border:rgba(0,150,150,0.18);--gold:#009999;--rust:#E8603A;
+  --green:#00a878;--blue:#3a90e8;--text:#0a1f1f;
+  --text2:#1a3a3a;--text3:#2d5555;
+}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;margin:0;min-height:100vh}
+
+/* ── TOP NAV ── */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border)}
+.top-nav-row1{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
+.nav-logo{font-size:20px;font-weight:900;color:var(--gold);text-decoration:none;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:6px}
+.nav-ikon-grup{display:flex;align-items:center;gap:18px}
+.nav-ikon-btn{background:transparent;border:none;cursor:pointer;color:var(--text2);padding:2px;display:flex;align-items:center;text-decoration:none;position:relative}
+.nav-profil-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:15px;text-decoration:none;color:var(--bg)}
+
+/* ── ARAMA BARI ── */
+.arama-wrap{padding:10px 14px 0;background:var(--bg2);position:sticky;top:58px;z-index:90;border-bottom:1px solid var(--border);padding-bottom:10px}
+.arama-input-wrap{display:flex;align-items:center;background:var(--card);border-radius:12px;padding:0 12px;gap:8px;border:1px solid var(--border)}
+.arama-input-wrap svg{color:var(--text3);flex-shrink:0}
+.arama-input{background:transparent;border:none;outline:none;font-size:14px;font-weight:600;color:var(--text);font-family:'Nunito',sans-serif;padding:10px 0;width:100%}
+.arama-input::placeholder{color:var(--text3)}
+
+/* ── FİLTRE TABs ── */
+.filtre-tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;background:var(--bg2);scrollbar-width:none;border-bottom:1px solid var(--border)}
+.filtre-tabs::-webkit-scrollbar{display:none}
+.filtre-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;font-size:12px;font-weight:800;color:var(--text3);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .18s;white-space:nowrap}
+.filtre-btn.aktif{background:var(--gold);border-color:var(--gold);color:#1a1a1a}
+
+/* ── TREND BAŞLIKLAR ── */
+.trend-section{padding:14px 14px 0}
+.section-baslik{font-size:13px;font-weight:900;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.trend-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.trend-chips::-webkit-scrollbar{display:none}
+.trend-chip{flex-shrink:0;padding:6px 12px;border-radius:20px;background:var(--card);border:1px solid var(--border);font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;transition:all .15s;font-family:'Nunito',sans-serif}
+.trend-chip:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── KEŞFET GRİD ── */
+.kesfet-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2px;
+  padding:2px;
+  margin-top:14px;
+}
+.kesfet-kart{
+  position:relative;
+  aspect-ratio:1/1;
+  overflow:hidden;
+  background:var(--card);
+  cursor:pointer;
+  border-radius:0;
+}
+.kesfet-kart.buyuk{
+  grid-column:span 2;
+  aspect-ratio:16/9;
+}
+.kesfet-kart.uzun{
+  grid-row:span 2;
+  aspect-ratio:auto;
+}
+.kesfet-kart-bg{
+  width:100%;height:100%;
+  object-fit:cover;
+  transition:transform .3s ease;
+  display:block;
+}
+.kesfet-kart:hover .kesfet-kart-bg{transform:scale(1.04)}
+.kesfet-kart-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 50%);
+  opacity:0;transition:opacity .2s;
+}
+.kesfet-kart:hover .kesfet-kart-overlay{opacity:1}
+.kesfet-kart-tip{
+  position:absolute;top:8px;left:8px;
+  padding:3px 8px;border-radius:6px;
+  font-size:10px;font-weight:900;font-family:'Nunito',sans-serif;
+  backdrop-filter:blur(8px);
+}
+.tip-video{background:rgba(232,96,58,0.85);color:#fff}
+.tip-foto{background:rgba(74,144,217,0.85);color:#fff}
+.tip-yazi{background:rgba(46,204,113,0.85);color:#fff}
+
+.kesfet-kart-bilgi{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:10px 10px 8px;
+  background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);
+  display:none;
+}
+.kesfet-kart:hover .kesfet-kart-bilgi{display:block}
+.kesfet-kart-kullanici{font-size:11px;font-weight:800;color:#fff;font-family:'Nunito',sans-serif}
+.kesfet-kart-stat{font-size:10px;color:rgba(255,255,255,0.7);font-family:'Nunito',sans-serif;margin-top:2px}
+
+/* Video play ikonu */
+.video-play{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+
+/* Yazi tipi kart */
+.kesfet-kart-yazi{
+  width:100%;height:100%;
+  padding:16px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  background:var(--card2);
+}
+.kart-yazi-metin{font-size:13px;font-weight:700;color:var(--text2);line-height:1.45;font-family:'Nunito',sans-serif;overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical}
+.kart-yazi-alt{display:flex;align-items:center;gap:6px;margin-top:8px}
+.kart-yazi-avatar{width:20px;height:20px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;color:#1a1a1a;font-weight:900;flex-shrink:0}
+.kart-yazi-isim{font-size:11px;font-weight:800;color:var(--text3);font-family:'Nunito',sans-serif}
+
+/* ── BOŞ DURUM ── */
+.bos-durum{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center}
+.bos-emoji{font-size:52px;margin-bottom:14px}
+.bos-baslik{font-size:17px;font-weight:800;color:var(--text);margin-bottom:8px;font-family:'Nunito',sans-serif}
+.bos-alt{font-size:13px;color:var(--text3);font-family:'Nunito',sans-serif;line-height:1.5}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--bg2);border-top:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:6px 0 env(safe-area-inset-bottom,10px);
+  z-index:100;
+}
+.bnav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  text-decoration:none;cursor:pointer;background:transparent;border:none;
+  font-family:'Nunito',sans-serif;position:relative;min-width:0;
+}
+.bnav-label{font-size:9px;font-weight:700;color:var(--text3);white-space:nowrap}
+.bnav-item.aktif .bnav-label{color:var(--gold)}
+.bnav-center{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;background:transparent;border:none;padding:0;
+}
+.bnav-center-btn{
+  width:46px;height:46px;border-radius:50%;
+  background:var(--gold);display:flex;align-items:center;justify-content:center;
+  font-size:28px;line-height:1;color:#1a1a1a;font-weight:900;margin-top:-14px;
+  box-shadow:0 4px 16px rgba(245,200,66,0.4);
+}
+.bnav-badge{
+  position:absolute;top:-2px;right:4px;
+  background:#e85d26;color:white;
+  font-size:8px;font-weight:800;
+  min-width:15px;height:15px;border-radius:50%;
+  display:none;align-items:center;justify-content:center;padding:0 2px;
+}
+
+/* ── PAYLASIM SHEET ── */
+.paylasim-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;align-items:flex-end}
+.paylasim-overlay.acik{display:flex}
+.paylasim-sheet{background:var(--card);border-radius:20px 20px 0 0;padding:16px 16px 40px;width:100%}
+.paylasim-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 16px}
+.paylasim-baslik{text-align:center;font-size:15px;font-weight:900;color:var(--text);margin-bottom:16px;font-family:'Nunito',sans-serif}
+.paylasim-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.paylasim-item{display:flex;align-items:center;gap:10px;padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--bg);cursor:pointer;text-decoration:none;transition:border-color .2s}
+.paylasim-item:hover{border-color:var(--gold)}
+.paylasim-item-metin{font-size:12px;font-weight:800;color:var(--text);font-family:'Nunito',sans-serif}
+
+/* ── SAYFA ── */
+.page{padding-top:58px;padding-bottom:78px;min-height:100vh}
+
+@media(min-width:900px){
+  .bottom-nav{display:none!important}
+  .page{padding:78px 16px 40px!important;max-width:680px;margin:0 auto}
+  .kesfet-grid{border-radius:12px;overflow:hidden}
+}
+
+/* Placeholder renk paleti (gerçek görseller gelene kadar) */
+.placeholder-1{background:linear-gradient(135deg,#1a2a4a,#2a4a6a)}
+.placeholder-2{background:linear-gradient(135deg,#2a1a3a,#4a2a5a)}
+.placeholder-3{background:linear-gradient(135deg,#1a3a2a,#2a5a3a)}
+.placeholder-4{background:linear-gradient(135deg,#3a2a1a,#5a4a2a)}
+.placeholder-5{background:linear-gradient(135deg,#3a1a1a,#5a2a2a)}
+.placeholder-6{background:linear-gradient(135deg,#1a1a3a,#2a2a5a)}
+.placeholder-7{background:linear-gradient(135deg,#2a3a1a,#3a5a2a)}
+.placeholder-8{background:linear-gradient(135deg,#3a3a1a,#5a5a2a)}
+</style>
+</head>
+<body style="visibility:hidden">
+<script>(function(){if(localStorage.getItem('gotapu_tema')==='light')document.body.classList.add('light')})();</script>
+
+<!-- ── TOP NAV ── -->
+<nav class="top-nav">
+  <div class="top-nav-row1">
+    <a href="home.html" class="nav-logo">🏠 GoTapu</a>
+    <div class="nav-ikon-grup">
+      <a href="bildirimler.html" class="nav-ikon-btn" title="Bildirimler">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span id="bildirimBadge" class="bnav-badge" style="top:-4px;right:-4px"></span>
+      </a>
+      <a href="profil.html" class="nav-profil-avatar" title="Profil">👤</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── ANA İÇERİK ── -->
+<div class="page">
+
+  <!-- Arama -->
+  <div class="arama-wrap">
+    <div class="arama-input-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="arama-input" type="text" placeholder="Kişi, konu veya içerik ara..." id="aramaInput">
+    </div>
+  </div>
+
+  <!-- Filtre tabları -->
+  <div class="filtre-tabs" id="filtreTabs">
+    <button class="filtre-btn aktif" onclick="filtreSec(this,'tumu')">Tümü</button>
+    <button class="filtre-btn" onclick="filtreSec(this,'video')">🎬 Video</button>
+    <button class="filtre-btn" onclick="filtreSec(this,'fotograf')">📷 Fotoğraf</button>
+    <button class="filtre-btn" onclick="filtreSec(this,'yazi')">✏️ Yazı</button>
+  </div>
+
+  <!-- Trend başlıklar -->
+  <div class="trend-section">
+    <div class="section-baslik">Trend</div>
+    <div class="trend-chips" id="trendChips">
+      <div class="trend-chip">#gayrimenkul</div>
+      <div class="trend-chip">#ikinciel</div>
+      <div class="trend-chip">#tasarim</div>
+      <div class="trend-chip">#teknoloji</div>
+      <div class="trend-chip">#dekorasyon</div>
+      <div class="trend-chip">#urunler</div>
+      <div class="trend-chip">#yasam</div>
+    </div>
+  </div>
+
+  <!-- Keşfet grid -->
+  <div class="kesfet-grid" id="kesfetGrid">
+    <!-- JS ile doldurulacak -->
+  </div>
+
+  <!-- Boş durum (içerik yokken) -->
+  <div class="bos-durum" id="bosDurum" style="display:none">
+    <div class="bos-emoji">🔍</div>
+    <div class="bos-baslik">İçerik bulunamadı</div>
+    <div class="bos-alt">Farklı bir arama dene veya filtreyi değiştir</div>
+  </div>
+
+</div>
+
+<!-- ── PAYLASIM SHEET ── -->
+<div class="paylasim-overlay" id="paylasimOverlay" onclick="paylasimKapat(event)">
+  <div class="paylasim-sheet">
+    <div class="paylasim-handle"></div>
+    <div class="paylasim-baslik">Ne paylaşmak istersin?</div>
+    <div class="paylasim-grid">
+      <a class="paylasim-item" href="#">
+        <span style="font-size:20px">🎬</span>
+        <span class="paylasim-item-metin">Video Yükle</span>
+      </a>
+      <a class="paylasim-item" href="#">
+        <span style="font-size:20px">📷</span>
+        <span class="paylasim-item-metin">Fotoğraf Paylaş</span>
+      </a>
+      <a class="paylasim-item" href="#">
+        <span style="font-size:20px">✏️</span>
+        <span class="paylasim-item-metin">Yazı Yaz</span>
+      </a>
+      <a class="paylasim-item" href="ilan-ver.html">
+        <span style="font-size:20px">📋</span>
+        <span class="paylasim-item-metin">İlan Ver</span>
+      </a>
+      <a class="paylasim-item" href="#">
+        <span style="font-size:20px">🛒</span>
+        <span class="paylasim-item-metin">Ürün Sat</span>
+      </a>
+      <a class="paylasim-item" href="sana-ozel.html">
+        <span style="font-size:20px">✨</span>
+        <span class="paylasim-item-metin">Sana Özel</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ── BOTTOM NAV ── -->
+<nav class="bottom-nav">
+  <a href="home.html" class="bnav-item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    <span class="bnav-label">Ana Sayfa</span>
+  </a>
+  <a href="kesfet.html" class="bnav-item aktif">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <span class="bnav-label" style="color:var(--gold)">Keşfet</span>
+  </a>
+  <button class="bnav-center" onclick="paylasimAc()">
+    <div class="bnav-center-btn">+</div>
+  </button>
+  <a href="eslesmeler.html" class="bnav-item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    <span class="bnav-badge" id="eslesmeBadge"></span>
+    <span class="bnav-label">Eşleşme</span>
+  </a>
+  <a href="mesajlar.html" class="bnav-item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span class="bnav-badge" id="mesajBadge"></span>
+    <span class="bnav-label">Mesajlar</span>
+  </a>
+</nav>
+
+<script>
+const SUPABASE_URL='https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const{createClient}=supabase;
+const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
+
+// Aktif filtre
+let aktifFiltre = 'tumu';
+let tumIcerikler = [];
+
+function filtreSec(btn, filtre) {
+  document.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('aktif'));
+  btn.classList.add('aktif');
+  aktifFiltre = filtre;
+  gridCiz(filtreUygula());
+}
+
+function filtreUygula() {
+  if (aktifFiltre === 'tumu') return tumIcerikler;
+  return tumIcerikler.filter(i => i.tip === aktifFiltre);
+}
+
+function paylasimAc(){document.getElementById('paylasimOverlay').classList.add('acik')}
+function paylasimKapat(e){
+  if(e.target===document.getElementById('paylasimOverlay'))
+    document.getElementById('paylasimOverlay').classList.remove('acik');
+}
+
+// Placeholder içerikler (Supabase'den çekilecek verinin şablonu)
+// Gerçek veri: posts tablosundan tip='video'|'fotograf'|'yazi', thumbnail_url, kullanici_adi, begeni_sayisi
+const PLACEHOLDER_ICERIKLER = [
+  {id:1,tip:'video',renk:'placeholder-1',kullanici:'@ahmet_k',begeni:'1.2K',yorum:'48',buyuk:true,etiket:'#tasarim'},
+  {id:2,tip:'fotograf',renk:'placeholder-2',kullanici:'@zeynep_m',begeni:'847',yorum:'23'},
+  {id:3,tip:'fotograf',renk:'placeholder-3',kullanici:'@murat_y',begeni:'512',yorum:'17'},
+  {id:4,tip:'yazi',kullanici:'@selin_a',metin:'İkinci el mobilya alırken dikkat etmeniz gereken 5 şey... Özellikle ahşap ürünlerde nem hasarına bakın.',begeni:'334',yorum:'61'},
+  {id:5,tip:'video',renk:'placeholder-5',kullanici:'@can_b',begeni:'2.1K',yorum:'89',etiket:'#yasam'},
+  {id:6,tip:'fotograf',renk:'placeholder-6',kullanici:'@ayse_d',begeni:'921',yorum:'34'},
+  {id:7,tip:'fotograf',renk:'placeholder-7',kullanici:'@emre_s',begeni:'445',yorum:'12'},
+  {id:8,tip:'yazi',kullanici:'@fatma_k',metin:'Evimi sıfırdan dekore ettim, toplam bütçem 8.500 TL. Detayları paylaşmak istiyorum...',begeni:'678',yorum:'102'},
+  {id:9,tip:'video',renk:'placeholder-8',kullanici:'@burak_t',begeni:'3.4K',yorum:'156',etiket:'#dekorasyon'},
+  {id:10,tip:'fotograf',renk:'placeholder-1',kullanici:'@naz_g',begeni:'289',yorum:'8'},
+];
+
+function gridCiz(icerikler) {
+  const grid = document.getElementById('kesfetGrid');
+  const bos = document.getElementById('bosDurum');
+
+  if (!icerikler.length) {
+    grid.innerHTML = '';
+    bos.style.display = 'flex';
+    return;
+  }
+  bos.style.display = 'none';
+
+  grid.innerHTML = icerikler.map((item, idx) => {
+    // Her 7'de bir büyük kart (span 2)
+    const buyukMu = item.buyuk || (idx % 7 === 0);
+
+    if (item.tip === 'yazi') {
+      return `
+        <div class="kesfet-kart${buyukMu?' buyuk':''}" onclick="icerikAc(${item.id})">
+          <div class="kesfet-kart-yazi">
+            <div>
+              <div class="kart-yazi-metin">${item.metin}</div>
+            </div>
+            <div class="kart-yazi-alt">
+              <div class="kart-yazi-avatar">${item.kullanici.charAt(1).toUpperCase()}</div>
+              <span class="kart-yazi-isim">${item.kullanici}</span>
+              <span style="margin-left:auto;font-size:10px;color:var(--text3);font-family:'Nunito',sans-serif">❤️ ${item.begeni}</span>
+            </div>
+          </div>
+          <div class="kesfet-kart-tip tip-yazi">Yazı</div>
+        </div>`;
+    }
+
+    if (item.tip === 'video') {
+      return `
+        <div class="kesfet-kart${buyukMu?' buyuk':''}" onclick="icerikAc(${item.id})">
+          <div class="kesfet-kart-bg ${item.renk}" style="width:100%;height:100%"></div>
+          <div class="kesfet-kart-overlay"></div>
+          <div class="video-play">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>
+          <div class="kesfet-kart-tip tip-video">Video</div>
+          ${item.etiket?`<div style="position:absolute;bottom:8px;left:8px;font-size:10px;font-weight:800;color:rgba(255,255,255,0.8);font-family:'Nunito',sans-serif">${item.etiket}</div>`:''}
+          <div class="kesfet-kart-bilgi">
+            <div class="kesfet-kart-kullanici">${item.kullanici}</div>
+            <div class="kesfet-kart-stat">▶ ${item.begeni} · 💬 ${item.yorum}</div>
+          </div>
+        </div>`;
+    }
+
+    // Fotoğraf
+    return `
+      <div class="kesfet-kart${buyukMu?' buyuk':''}" onclick="icerikAc(${item.id})">
+        <div class="kesfet-kart-bg ${item.renk}" style="width:100%;height:100%"></div>
+        <div class="kesfet-kart-overlay"></div>
+        <div class="kesfet-kart-tip tip-foto">Fotoğraf</div>
+        <div class="kesfet-kart-bilgi">
+          <div class="kesfet-kart-kullanici">${item.kullanici}</div>
+          <div class="kesfet-kart-stat">❤️ ${item.begeni} · 💬 ${item.yorum}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function icerikAc(id) {
+  // İleride icerik-detay.html?id=X sayfasına yönlendirilecek
+  console.log('İçerik açılıyor:', id);
+}
+
+// Arama
+document.getElementById('aramaInput').addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  if (!q) { gridCiz(filtreUygula()); return; }
+  const sonuc = tumIcerikler.filter(i =>
+    (i.kullanici||'').toLowerCase().includes(q) ||
+    (i.metin||'').toLowerCase().includes(q) ||
+    (i.etiket||'').toLowerCase().includes(q)
+  );
+  gridCiz(sonuc);
+});
+
+// Supabase init
+if(window.location.hash&&window.location.hash.includes('access_token')){
+  const hp=new URLSearchParams(window.location.hash.substring(1));
+  const at=hp.get('access_token'),rt=hp.get('refresh_token');
+  if(at){
+    sb.auth.setSession({access_token:at,refresh_token:rt}).then(({data,error})=>{
+      if(error)window.location.replace('index.html');
+      else{window.history.replaceState(null,'',window.location.pathname);init();}
+    });
+  }else init();
+}else if(new URLSearchParams(window.location.search).get('code')){
+  window.location.replace('index.html'+window.location.search);
+}else{init();}
+
+async function init() {
+  const {data} = await sb.auth.getSession();
+  if (!data.session) { window.location.replace('index.html'); return; }
+  document.body.style.visibility = 'visible';
+
+  // Şu an placeholder verisi göster
+  // İleride: Supabase'den posts tablosundan çekecek
+  // const {data: posts} = await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(20);
+  tumIcerikler = PLACEHOLDER_ICERIKLER;
+  gridCiz(tumIcerikler);
+
+  mesajSay();
+}
+
+async function mesajSay(){
+  const{data:{user}}=await sb.auth.getUser();
+  if(!user)return;
+  const{count}=await sb.from('mesajlar').select('*',{count:'exact',head:true}).eq('alici_id',user.id).eq('okundu',false);
+  if(count>0){const b=document.getElementById('mesajBadge');b.textContent=count;b.style.display='flex';}
+  const{count:bCount}=await sb.from('bildirimler').select('*',{count:'exact',head:true}).eq('user_id',user.id).eq('okundu',false);
+  if(bCount>0){const bb=document.getElementById('bildirimBadge');bb.textContent=bCount>9?'9+':bCount;bb.style.display='flex';}
+}
+</script>
+</body>
+</html>
