@@ -40,37 +40,44 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 /* ── DRAWER ── */
 .drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200}
 .drawer-overlay.acik{display:block}
-.drawer-panel{position:fixed;top:0;right:-290px;width:270px;height:100%;background:var(--bg2);border-left:1px solid var(--border);z-index:201;transition:right .25s ease;overflow-y:auto;padding-bottom:40px}
+.drawer-panel{position:fixed;top:0;right:-290px;width:270px;height:100%;background:var(--bg2);border-left:1px solid var(--border);z-index:201;transition:right .25s ease;overflow-y:auto;padding-bottom:60px}
 .drawer-panel.acik{right:0}
 
-.drawer-bolum-baslik{
-  padding:12px 16px 8px;
-  font-size:10px;font-weight:900;color:var(--text3);
-  text-transform:uppercase;letter-spacing:0.8px;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:6px;
+.drawer-acc-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  background:transparent;width:100%;
+  border-left:none;border-right:none;border-top:none;
+  cursor:pointer;transition:background .15s;
 }
+.drawer-acc-btn:hover{background:var(--card)}
+.drawer-acc-baslik{font-size:14px;font-weight:800;color:var(--text);font-family:'Nunito',sans-serif}
+.drawer-acc-ok{font-size:18px;color:var(--text3);transition:transform .22s;display:inline-block}
+.drawer-acc-btn.acik .drawer-acc-ok{transform:rotate(90deg)}
+
+.drawer-sub{display:none;background:var(--card)}
+.drawer-sub.acik{display:block}
+.drawer-sub-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px 11px 26px;
+  border-bottom:1px solid var(--border);
+  text-decoration:none;transition:background .15s;
+}
+.drawer-sub-item:hover{background:var(--card2)}
+.drawer-sub-metin{font-size:13px;font-weight:700;color:var(--text2);font-family:'Nunito',sans-serif}
+.drawer-sub-ok{font-size:14px;color:var(--text3)}
+
 .drawer-item{
   display:flex;align-items:center;justify-content:space-between;
-  padding:13px 16px;border-bottom:1px solid var(--border);
+  padding:14px 16px;border-bottom:1px solid var(--border);
   text-decoration:none;background:transparent;
   width:100%;border-left:none;border-right:none;border-top:none;
   cursor:pointer;transition:background .15s;
 }
 .drawer-item:hover{background:var(--card)}
-.drawer-item-sol{display:flex;align-items:center;gap:10px}
-.drawer-item-ikon{font-size:17px;width:22px;text-align:center}
 .drawer-item-metin{font-size:14px;font-weight:700;color:var(--text);font-family:'Nunito',sans-serif}
 .drawer-item-ok{font-size:16px;color:var(--text3)}
-
-/* İlanlar alt kategorileri — biraz girintili */
-.drawer-item-sub{padding-left:24px}
-
-/* Tek satır bölüm ayracı */
-.drawer-tek-bolum{
-  margin-top:4px;
-  border-top:2px solid var(--border);
-}
+.drawer-ayrac{height:6px;background:var(--bg);border-bottom:1px solid var(--border)}
 
 /* ── PAYLASIM SHEET ── */
 .paylasim-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;align-items:flex-end}
@@ -93,12 +100,12 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 .feed-bos-baslik{font-size:17px;font-weight:800;color:var(--text);margin-bottom:8px;font-family:'Nunito',sans-serif}
 .feed-bos-alt{font-size:13px;color:var(--text3);font-family:'Nunito',sans-serif;line-height:1.5}
 
-/* ── BOTTOM NAV (7 buton) ── */
+/* ── BOTTOM NAV (5 buton) ── */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;
   background:var(--bg2);border-top:1px solid var(--border);
   display:flex;align-items:center;
-  padding:6px 0 env(safe-area-inset-bottom, 10px);
+  padding:6px 0 env(safe-area-inset-bottom,10px);
   z-index:100;
 }
 .bnav-item{
@@ -106,17 +113,17 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
   text-decoration:none;cursor:pointer;background:transparent;border:none;
   font-family:'Nunito',sans-serif;position:relative;min-width:0;
 }
-.bnav-label{font-size:8px;font-weight:700;color:var(--text3);white-space:nowrap}
+.bnav-label{font-size:9px;font-weight:700;color:var(--text3);white-space:nowrap}
 .bnav-item.aktif .bnav-label{color:var(--gold)}
 .bnav-center{
   flex:1;display:flex;align-items:center;justify-content:center;
   cursor:pointer;background:transparent;border:none;padding:0;
 }
 .bnav-center-btn{
-  width:44px;height:44px;border-radius:50%;
+  width:46px;height:46px;border-radius:50%;
   background:var(--gold);display:flex;align-items:center;justify-content:center;
-  font-size:26px;line-height:1;color:#1a1a1a;font-weight:900;margin-top:-12px;
-  box-shadow:0 4px 14px rgba(245,200,66,0.4);
+  font-size:28px;line-height:1;color:#1a1a1a;font-weight:900;margin-top:-14px;
+  box-shadow:0 4px 16px rgba(245,200,66,0.4);
 }
 .bnav-badge{
   position:absolute;top:-2px;right:4px;
@@ -124,12 +131,6 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
   font-size:8px;font-weight:800;
   min-width:15px;height:15px;border-radius:50%;
   display:none;align-items:center;justify-content:center;padding:0 2px;
-}
-/* Yapay Zeka gradient ikon */
-.bnav-ai{
-  width:22px;height:22px;border-radius:7px;
-  background:linear-gradient(135deg,#a78bfa 0%,#60a5fa 50%,#34d399 100%);
-  display:flex;align-items:center;justify-content:center;
 }
 
 @media(min-width:900px){
@@ -146,7 +147,7 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 <!-- ── TOP NAV ── -->
 <nav class="top-nav">
   <div class="top-nav-row1">
-    <a href="anasayfa.html" class="nav-logo">🏠 GoTapu</a>
+    <a href="home.html" class="nav-logo">🏠 GoTapu</a>
     <div class="nav-ikon-grup">
       <button class="nav-ikon-btn" onclick="aramaOdakla()" title="Ara">
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -167,87 +168,54 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 <div class="drawer-overlay" id="drawerOverlay" onclick="drawerKapat()"></div>
 <div class="drawer-panel" id="drawerPanel">
 
-  <!-- İLANLAR bölümü -->
-  <div class="drawer-bolum-baslik">📋 İlanlar</div>
-  <a class="drawer-item drawer-item-sub" href="ilanlar.html?kategori=emlak" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">🏠</span><span class="drawer-item-metin">Emlak</span></div>
-    <span class="drawer-item-ok">›</span>
-  </a>
-  <a class="drawer-item drawer-item-sub" href="ilanlar.html?kategori=vasita" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">🚗</span><span class="drawer-item-metin">Vasıta</span></div>
-    <span class="drawer-item-ok">›</span>
-  </a>
-  <a class="drawer-item drawer-item-sub" href="ilanlar.html?kategori=ikinciel" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">📦</span><span class="drawer-item-metin">2. El Eşya</span></div>
-    <span class="drawer-item-ok">›</span>
-  </a>
-  <a class="drawer-item drawer-item-sub" href="ilanlar.html?kategori=yedekparca" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">🔧</span><span class="drawer-item-metin">Yedek Parça</span></div>
-    <span class="drawer-item-ok">›</span>
-  </a>
-  <a class="drawer-item drawer-item-sub" href="ilanlar.html?kategori=pet" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">🐾</span><span class="drawer-item-metin">Pet</span></div>
-    <span class="drawer-item-ok">›</span>
-  </a>
-  <a class="drawer-item drawer-item-sub" href="ilanlar.html?kategori=isbulma" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">💼</span><span class="drawer-item-metin">İş Bulma</span></div>
-    <span class="drawer-item-ok">›</span>
-  </a>
+  <!-- İlanlar — accordion -->
+  <button class="drawer-acc-btn" id="ilanlarBtn" onclick="ilanlarToggle()">
+    <span class="drawer-acc-baslik">İlanlar</span>
+    <span class="drawer-acc-ok">›</span>
+  </button>
+  <div class="drawer-sub" id="ilanlarSub">
+    <a class="drawer-sub-item" href="ilanlar.html?kategori=emlak" onclick="drawerKapat()">
+      <span class="drawer-sub-metin">Emlak</span><span class="drawer-sub-ok">›</span>
+    </a>
+    <a class="drawer-sub-item" href="ilanlar.html?kategori=vasita" onclick="drawerKapat()">
+      <span class="drawer-sub-metin">Vasıta</span><span class="drawer-sub-ok">›</span>
+    </a>
+    <a class="drawer-sub-item" href="ilanlar.html?kategori=ikinciel" onclick="drawerKapat()">
+      <span class="drawer-sub-metin">2. El Eşya</span><span class="drawer-sub-ok">›</span>
+    </a>
+    <a class="drawer-sub-item" href="ilanlar.html?kategori=yedekparca" onclick="drawerKapat()">
+      <span class="drawer-sub-metin">Yedek Parça</span><span class="drawer-sub-ok">›</span>
+    </a>
+    <a class="drawer-sub-item" href="ilanlar.html?kategori=pet" onclick="drawerKapat()">
+      <span class="drawer-sub-metin">Pet</span><span class="drawer-sub-ok">›</span>
+    </a>
+    <a class="drawer-sub-item" href="ilanlar.html?kategori=isbulma" onclick="drawerKapat()">
+      <span class="drawer-sub-metin">İş Bulma</span><span class="drawer-sub-ok">›</span>
+    </a>
+  </div>
 
-  <!-- 0 km Eşya -->
-  <div class="drawer-tek-bolum"></div>
-  <div class="drawer-bolum-baslik">🛒 0 km Eşya</div>
+  <div class="drawer-ayrac"></div>
+
   <a class="drawer-item" href="alisveris.html" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">🛒</span><span class="drawer-item-metin">Alışveriş</span></div>
-    <span class="drawer-item-ok">›</span>
+    <span class="drawer-item-metin">0 km Eşya</span><span class="drawer-item-ok">›</span>
   </a>
-
-  <!-- Yemek -->
-  <div class="drawer-tek-bolum"></div>
-  <div class="drawer-bolum-baslik">🍔 Yemek</div>
   <a class="drawer-item" href="yemek.html" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">🍔</span><span class="drawer-item-metin">Yemek Sipariş</span></div>
-    <span class="drawer-item-ok">›</span>
+    <span class="drawer-item-metin">Yemek</span><span class="drawer-item-ok">›</span>
   </a>
-
-  <!-- Market -->
-  <div class="drawer-tek-bolum"></div>
-  <div class="drawer-bolum-baslik">🛍️ Market</div>
   <a class="drawer-item" href="market.html" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">🛍️</span><span class="drawer-item-metin">Market</span></div>
-    <span class="drawer-item-ok">›</span>
+    <span class="drawer-item-metin">Market</span><span class="drawer-item-ok">›</span>
   </a>
-
-  <!-- Taksi -->
-  <div class="drawer-tek-bolum"></div>
-  <div class="drawer-bolum-baslik">🚕 Taksi</div>
   <a class="drawer-item" href="taksi.html" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">🚕</span><span class="drawer-item-metin">Taksi Çağır</span></div>
-    <span class="drawer-item-ok">›</span>
+    <span class="drawer-item-metin">Taksi</span><span class="drawer-item-ok">›</span>
   </a>
-
-  <!-- Müzik -->
-  <div class="drawer-tek-bolum"></div>
-  <div class="drawer-bolum-baslik">🎵 Müzik</div>
   <a class="drawer-item" href="muzik.html" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">🎵</span><span class="drawer-item-metin">Müzik</span></div>
-    <span class="drawer-item-ok">›</span>
+    <span class="drawer-item-metin">Müzik</span><span class="drawer-item-ok">›</span>
   </a>
-
-  <!-- Etkinlikler -->
-  <div class="drawer-tek-bolum"></div>
-  <div class="drawer-bolum-baslik">🎉 Etkinlikler</div>
   <a class="drawer-item" href="etkinlikler.html" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">🎉</span><span class="drawer-item-metin">Etkinlikler</span></div>
-    <span class="drawer-item-ok">›</span>
+    <span class="drawer-item-metin">Etkinlikler</span><span class="drawer-item-ok">›</span>
   </a>
-
-  <!-- Gruplar -->
-  <div class="drawer-tek-bolum"></div>
-  <div class="drawer-bolum-baslik">👥 Gruplar</div>
   <a class="drawer-item" href="gruplar.html" onclick="drawerKapat()">
-    <div class="drawer-item-sol"><span class="drawer-item-ikon">👥</span><span class="drawer-item-metin">Gruplar</span></div>
-    <span class="drawer-item-ok">›</span>
+    <span class="drawer-item-metin">Gruplar</span><span class="drawer-item-ok">›</span>
   </a>
 
 </div>
@@ -288,7 +256,7 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 
 <!-- ── ANA İÇERİK ── -->
 <div class="page">
-  <div class="icerik-tabs" id="icerikTabs">
+  <div class="icerik-tabs">
     <button id="icerikVideo" class="aktif" onclick="icerikGec('video')">Video</button>
     <button id="icerikFotograf" onclick="icerikGec('fotograf')">Fotoğraf</button>
     <button id="icerikYazi" onclick="icerikGec('yazi')">Yazı</button>
@@ -316,45 +284,28 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
   </div>
 </div>
 
-<!-- ── BOTTOM NAV (7 buton) ── -->
+<!-- ── BOTTOM NAV (5 buton) ── -->
 <nav class="bottom-nav">
-  <!-- 1: Ana Sayfa -->
-  <a href="anasayfa.html" class="bnav-item aktif">
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+  <a href="home.html" class="bnav-item aktif">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
     <span class="bnav-label" style="color:var(--gold)">Ana Sayfa</span>
   </a>
-  <!-- 2: Keşfet -->
   <a href="kesfet.html" class="bnav-item">
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <span class="bnav-label">Keşfet</span>
   </a>
-  <!-- 3: Yapay Zeka -->
-  <a href="yapay-zeka.html" class="bnav-item">
-    <div class="bnav-ai">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a7 7 0 0 1-7 7H9a7 7 0 0 1-7-7v-1H1a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73A2 2 0 0 1 10 4a2 2 0 0 1 2-2zm-3 9a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-3 4a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>
-    </div>
-    <span class="bnav-label">Yapay Zeka</span>
-  </a>
-  <!-- 4: + (Ortada) -->
   <button class="bnav-center" onclick="paylasimAc()">
     <div class="bnav-center-btn">+</div>
   </button>
-  <!-- 5: Eşleşme -->
   <a href="eslesmeler.html" class="bnav-item">
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
     <span class="bnav-badge" id="eslesmeBadge"></span>
     <span class="bnav-label">Eşleşme</span>
   </a>
-  <!-- 6: Mesajlar -->
   <a href="mesajlar.html" class="bnav-item">
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     <span class="bnav-badge" id="mesajBadge"></span>
     <span class="bnav-label">Mesajlar</span>
-  </a>
-  <!-- 7: Profil -->
-  <a href="profil.html" class="bnav-item">
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    <span class="bnav-label">Profil</span>
   </a>
 </nav>
 
@@ -373,6 +324,10 @@ function drawerKapat(){
   document.getElementById('drawerPanel').classList.remove('acik');
   document.getElementById('drawerOverlay').classList.remove('acik');
 }
+function ilanlarToggle(){
+  document.getElementById('ilanlarBtn').classList.toggle('acik');
+  document.getElementById('ilanlarSub').classList.toggle('acik');
+}
 function paylasimAc(){
   document.getElementById('paylasimOverlay').classList.add('acik');
 }
@@ -380,40 +335,35 @@ function paylasimKapat(e){
   if(e.target===document.getElementById('paylasimOverlay'))
     document.getElementById('paylasimOverlay').classList.remove('acik');
 }
-function aramaOdakla(){
-  window.location.href='ilanlar.html';
-}
+function aramaOdakla(){window.location.href='ilanlar.html'}
 
 function icerikGec(sekme){
   document.querySelectorAll('.icerik-tabs button').forEach(b=>b.classList.remove('aktif'));
-  const btnId='icerik'+sekme.charAt(0).toUpperCase()+sekme.slice(1);
-  const btn=document.getElementById(btnId);
+  const btn=document.getElementById('icerik'+sekme.charAt(0).toUpperCase()+sekme.slice(1));
   if(btn) btn.classList.add('aktif');
   ['bolumVideo','bolumFotograf','bolumYazi'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.style.display='none';
+    const el=document.getElementById(id);if(el)el.style.display='none';
   });
   const hedef=document.getElementById('bolum'+sekme.charAt(0).toUpperCase()+sekme.slice(1));
   if(hedef) hedef.style.display='block';
 }
 
-// Auth kontrol
 if(window.location.hash&&window.location.hash.includes('access_token')){
   const hp=new URLSearchParams(window.location.hash.substring(1));
   const at=hp.get('access_token'),rt=hp.get('refresh_token');
   if(at){
     sb.auth.setSession({access_token:at,refresh_token:rt}).then(({data,error})=>{
-      if(error) window.location.replace('index.html');
-      else{ window.history.replaceState(null,'',window.location.pathname); init(); }
+      if(error)window.location.replace('index.html');
+      else{window.history.replaceState(null,'',window.location.pathname);init();}
     });
-  } else init();
-} else if(new URLSearchParams(window.location.search).get('code')){
+  }else init();
+}else if(new URLSearchParams(window.location.search).get('code')){
   window.location.replace('index.html'+window.location.search);
-} else { init(); }
+}else{init();}
 
 function init(){
   sb.auth.getSession().then(({data})=>{
-    if(!data.session){ window.location.replace('index.html'); return; }
+    if(!data.session){window.location.replace('index.html');return;}
     document.body.style.visibility='visible';
     mesajSay();
     try{
@@ -426,18 +376,11 @@ function init(){
 
 async function mesajSay(){
   const{data:{user}}=await sb.auth.getUser();
-  if(!user) return;
+  if(!user)return;
   const{count}=await sb.from('mesajlar').select('*',{count:'exact',head:true}).eq('alici_id',user.id).eq('okundu',false);
-  if(count>0){
-    const b=document.getElementById('mesajBadge');
-    b.textContent=count; b.style.display='flex';
-  }
+  if(count>0){const b=document.getElementById('mesajBadge');b.textContent=count;b.style.display='flex';}
   const{count:bCount}=await sb.from('bildirimler').select('*',{count:'exact',head:true}).eq('user_id',user.id).eq('okundu',false);
-  if(bCount>0){
-    const bb=document.getElementById('bildirimBadge');
-    bb.textContent=bCount>9?'9+':bCount;
-    bb.style.display='flex';
-  }
+  if(bCount>0){const bb=document.getElementById('bildirimBadge');bb.textContent=bCount>9?'9+':bCount;bb.style.display='flex';}
 }
 </script>
 </body>
