@@ -5,231 +5,452 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Gotapu — Profil</title>
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
-<link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="kredi.js"></script>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f5c718">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GoTapu">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
-  /* ── GENEL PROFİL HEADER ── */
-  .profile-header { text-align: center; padding: 20px 0; }
-  .avatar {
-    width: 88px; height: 88px; border-radius: 50%;
-    background: var(--card2); border: 3px solid var(--gold);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 44px; margin: 0 auto 12px; overflow: hidden; position: relative; cursor: pointer;
-  }
-  .avatar.kurumsal { border-radius: 20px; border-color: #4a90d9; }
-  .avatar.freelancer { border-color: #e8603a; }
-  .avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .avatar-edit {
-    position: absolute; bottom: 0; right: 0;
-    background: var(--gold); border-radius: 50%;
-    width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
-    font-size: 12px; z-index: 2;
-  }
-  .profile-name { font-size: 20px; font-weight: 900; }
-  .profile-firma { font-size: 16px; font-weight: 900; color: #4a90d9; margin-top: 3px; }
-  .profile-email { font-size: 13px; color: var(--text3); margin-top: 3px; }
-  .verified { display: inline-flex; align-items: center; gap: 5px; background: rgba(46,204,113,0.1); color: var(--green); border-radius: 50px; padding: 4px 12px; font-size: 12px; font-weight: 700; margin-top: 8px; }
+/* ══════════════════════════════════════
+   COVER & AVATAR
+══════════════════════════════════════ */
+.prof-cover {
+  height: 130px;
+  background: linear-gradient(135deg, #1a2a3a 0%, #0e1e30 60%, #151525 100%);
+  position: relative;
+  flex-shrink: 0;
+}
+.prof-cover-badge {
+  position: absolute; top: 14px; right: 16px;
+  border-radius: 50px; padding: 5px 14px;
+  font-size: 11px; font-weight: 800; letter-spacing: .5px;
+}
+.prof-cover-badge.kurumsal { background: rgba(74,144,217,0.25); border: 1px solid rgba(74,144,217,0.5); color: #4a90d9; }
+.prof-cover-badge.freelancer { background: rgba(232,96,58,0.25); border: 1px solid rgba(232,96,58,0.5); color: #e8603a; }
+.prof-cover-badge.bireysel { background: rgba(245,197,24,0.15); border: 1px solid rgba(245,197,24,0.3); color: var(--gold); }
 
-  /* ── ROZETLEr ── */
-  .rozet-wrap { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
-  .rozet {
-    display: inline-flex; align-items: center; gap: 5px;
-    border-radius: 50px; padding: 5px 14px;
-    font-size: 12px; font-weight: 800;
-  }
-  .rozet-kurumsal { background: rgba(74,144,217,0.12); color: #4a90d9; border: 1px solid rgba(74,144,217,0.25); }
-  .rozet-freelancer { background: rgba(232,96,58,0.12); color: #e8603a; border: 1px solid rgba(232,96,58,0.25); }
-  .rozet-bireysel { background: rgba(245,200,66,0.1); color: var(--gold); border: 1px solid rgba(245,200,66,0.2); }
-  .rozet-onay { background: rgba(46,204,113,0.12); color: var(--green); border: 1px solid rgba(46,204,113,0.2); }
-  .rozet-bekliyor { background: rgba(245,200,66,0.1); color: var(--gold); border: 1px solid rgba(245,200,66,0.2); }
+.prof-avatar {
+  position: absolute; bottom: -30px; left: 18px;
+  width: 70px; height: 70px; border-radius: 50%;
+  background: var(--gold); border: 3px solid var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 900; color: #111;
+  overflow: hidden; cursor: pointer;
+}
+.prof-avatar.kurumsal { border-radius: 18px; border-color: #4a90d9; }
+.prof-avatar.freelancer { border-color: #e8603a; }
+.prof-avatar img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+.prof-avatar-edit {
+  position: absolute; bottom: 0; right: 0;
+  background: var(--gold); border-radius: 50%;
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; z-index: 2;
+}
 
-  /* ── MENU SİSTEMİ ── */
-  .menu-section { margin-bottom: 20px; }
-  .menu-label { font-size: 12px; font-weight: 800; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; padding: 0 4px; }
-  .menu-item {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px 16px; background: var(--card);
-    border-bottom: 1px solid var(--border); cursor: pointer;
-    transition: background .2s; text-decoration: none; color: var(--text);
-  }
-  .menu-item:first-of-type { border-radius: var(--radius) var(--radius) 0 0; }
-  .menu-item:last-of-type { border-radius: 0 0 var(--radius) var(--radius); border-bottom: none; }
-  .menu-item:active { background: var(--card2); }
-  .menu-icon { font-size: 20px; width: 28px; text-align: center; }
-  .menu-text { flex: 1; font-size: 15px; font-weight: 700; }
-  .menu-arrow { color: var(--text3); }
+/* ══════════════════════════════════════
+   PROFIL HEADER BODY
+══════════════════════════════════════ */
+.prof-header-body { padding: 38px 18px 0; }
 
-  /* ── İSTATİSTİKLER ── */
-  .stat-row-inline { display: flex; gap: 0; margin-bottom: 20px; background: transparent; }
-  .stat-inline-box { display: flex; align-items: center; gap: 8px; padding: 6px 16px 6px 0; }
-  .stat-inline-box + .stat-inline-box { padding-left: 16px; border-left: 1px solid var(--border); }
-  .stat-inline-num { font-size: 18px; font-weight: 900; color: var(--gold); }
-  .stat-inline-lbl { font-size: 13px; font-weight: 700; color: var(--text2); }
+.prof-top-row {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; margin-bottom: 8px; gap: 8px;
+}
+.prof-name { font-size: 19px; font-weight: 900; line-height: 1.2; }
+.prof-firma { font-size: 14px; font-weight: 800; color: #4a90d9; margin-top: 3px; }
+.prof-handle { font-size: 12px; color: var(--text3); margin-top: 2px; }
 
-  /* ── İLAN KARTLARI ── */
-  .ilanim-item {
-    display: flex; gap: 0; align-items: stretch;
-    background: var(--bg); border-bottom: 1px solid var(--border);
-    cursor: default; transition: background .15s;
-  }
-  .ilanim-item:last-child { border-bottom: none; }
-  .ilanim-item:active { background: var(--card2); }
-  .ilanim-thumb {
-    width: 110px; min-height: 90px; flex-shrink: 0;
-    background: var(--card2); display: flex; align-items: center;
-    justify-content: center; font-size: 32px; overflow: hidden;
-  }
-  .ilanim-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .ilanim-body {
-    flex: 1; min-width: 0; padding: 10px 10px 10px 12px;
-    display: flex; flex-direction: column; justify-content: space-between; gap: 4px;
-  }
-  .ilanim-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
-  .ilanim-price { font-size: 15px; font-weight: 900; color: var(--gold); }
-  .ilanim-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; margin-top: 2px; }
-  .ilanim-loc { font-size: 11px; color: var(--text3); margin-top: 2px; }
-  .onay-badge { display: inline-block; padding: 2px 8px; border-radius: 50px; font-size: 10px; font-weight: 800; white-space: nowrap; }
-  .onay-bekliyor { background: rgba(245,200,66,0.15); color: var(--gold); }
-  .onay-onaylandi { background: rgba(46,204,113,0.15); color: var(--green); }
-  .onay-reddedildi { background: rgba(232,96,58,0.15); color: var(--rust); }
-  .ilanim-actions { display: flex; gap: 6px; margin-top: 6px; }
-  .btn-duzenle, .btn-sil {
-    flex: 1; border-radius: 6px; padding: 5px 0; font-size: 11px; font-weight: 800;
-    text-align: center; cursor: pointer; font-family: Nunito, sans-serif;
-    border: none; text-decoration: none; display: block;
-  }
-  .btn-duzenle { background: var(--card2); border: 1px solid var(--border) !important; color: var(--text); }
-  .btn-sil { background: rgba(232,96,58,0.1); border: 1px solid rgba(232,96,58,0.3) !important; color: var(--rust); }
-  body.light .ilanim-item { background: #ffffff; }
-  body.light .ilanim-item:active { background: #f5f5f5; }
-  .ekspertiz-link {
-    display: block; margin-top: 6px;
-    background: linear-gradient(135deg,rgba(245,200,66,0.15),rgba(245,200,66,0.05));
-    border: 1px solid rgba(245,200,66,0.3); border-radius: 6px; padding: 5px 8px;
-    font-size: 10px; font-weight: 800; color: var(--gold); text-align: center; text-decoration: none;
-  }
+.prof-action-btns { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.btn-follow {
+  background: transparent; border: 1.5px solid var(--gold);
+  color: var(--gold); border-radius: 50px; padding: 7px 18px;
+  font-family: Nunito, sans-serif; font-size: 13px; font-weight: 800;
+  cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.btn-follow.following { background: var(--gold); color: #111; }
+.btn-mesaj-p {
+  background: var(--card2); color: var(--text);
+  border: 1.5px solid var(--border); border-radius: 50px; padding: 7px 16px;
+  font-family: Nunito, sans-serif; font-size: 13px; font-weight: 800;
+  cursor: pointer; white-space: nowrap;
+}
 
-  /* ── ALICI İLAN KARTI ── */
-  .alici-ilan-card {
-    background: rgba(74,144,217,0.06); border: 1px solid rgba(74,144,217,0.2);
-    border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
-  }
+.prof-bio {
+  font-size: 13px; color: var(--text2); line-height: 1.65;
+  margin-bottom: 14px; display: none;
+}
 
-  /* ── HİZMETLER TOGGLE ── */
-  .hizmetler-toggle-btn {
-    width: 100%; display: flex; align-items: center; justify-content: space-between;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 14px 16px;
-    font-size: 15px; font-weight: 800; color: var(--text);
-    cursor: pointer; font-family: Nunito, sans-serif; transition: background .2s;
-  }
-  .hizmetler-toggle-btn:active { background: var(--card2); }
-  .hizmetler-toggle-arrow { font-size: 18px; color: var(--text3); transition: transform .25s; }
-  .hizmetler-toggle-arrow.open { transform: rotate(180deg); }
-  .hizmetler-body { display: none; margin-top: 10px; }
-  .hizmetler-body.open { display: block; }
-  .hizmet-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
-  .hizmet-item {
-    background: var(--card); border-radius: var(--radius-sm);
-    padding: 16px 8px; text-align: center; cursor: pointer;
-    transition: border-color .2s; border: 1px solid var(--border);
-  }
-  .hizmet-item:active { border-color: var(--gold); }
-  .hizmet-em { font-size: 26px; display: block; margin-bottom: 6px; }
-  .hizmet-lbl { font-size: 11px; font-weight: 700; color: var(--text2); }
-  .hizmet-ver-btn {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px 16px; background: var(--card);
-    border-bottom: 1px solid var(--border); cursor: pointer;
-    transition: background .2s; text-decoration: none; color: var(--text);
-    border-radius: var(--radius) var(--radius) 0 0;
-  }
-  .hizmet-ver-btn:active { background: var(--card2); }
+.rozet-wrap-p { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.rozet-p {
+  display: inline-flex; align-items: center; gap: 4px;
+  border-radius: 50px; padding: 4px 12px;
+  font-size: 11px; font-weight: 800;
+}
+.rozet-kurumsal-p { background: rgba(74,144,217,0.12); color: #4a90d9; border: 1px solid rgba(74,144,217,0.25); }
+.rozet-freelancer-p { background: rgba(232,96,58,0.12); color: #e8603a; border: 1px solid rgba(232,96,58,0.25); }
+.rozet-bireysel-p { background: rgba(245,197,24,0.1); color: var(--gold); border: 1px solid rgba(245,197,24,0.2); }
+.rozet-onay-p { background: rgba(46,204,113,0.12); color: var(--green); border: 1px solid rgba(46,204,113,0.2); }
 
-  /* ── KREDİ BANNER ── */
-  .kredi-banner {
-    display: flex; align-items: center; justify-content: space-between;
-    background: linear-gradient(135deg, #1a1a2e, #0f3460);
-    border-radius: 16px; padding: 16px 20px; margin-bottom: 20px;
-    text-decoration: none; cursor: pointer;
-  }
-  .kredi-banner-sol { display: flex; align-items: center; gap: 12px; }
-  .kredi-banner-ikon { font-size: 28px; }
-  .kredi-banner-label { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-  .kredi-banner-sayi { font-size: 24px; font-weight: 900; color: #f5c518; }
-  .kredi-banner-btn { background: #f5c518; color: #1a1a1a; border-radius: 50px; padding: 8px 16px; font-size: 12px; font-weight: 900; white-space: nowrap; }
+/* ══════════════════════════════════════
+   STATS ROW
+══════════════════════════════════════ */
+.prof-stats-row { display: flex; gap: 8px; margin-bottom: 16px; }
+.prof-stat-box {
+  flex: 1; background: var(--card); border-radius: var(--radius-sm);
+  padding: 10px 6px; text-align: center; border: 1px solid var(--border);
+}
+.psb-num { font-size: 17px; font-weight: 900; color: var(--gold); display: block; }
+.psb-lbl { font-size: 10px; color: var(--text3); font-weight: 700; display: block; margin-top: 2px; }
 
-  /* ── FİRMA / UZMAN BİLGİ KARTI ── */
-  .profil-bilgi-kart {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 16px; margin-bottom: 20px;
-  }
-  .profil-bilgi-satir {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 8px 0; border-bottom: 1px solid var(--border);
-    font-size: 13px;
-  }
-  .profil-bilgi-satir:last-child { border-bottom: none; padding-bottom: 0; }
-  .profil-bilgi-ikon { font-size: 16px; width: 22px; flex-shrink: 0; }
-  .profil-bilgi-label { font-size: 11px; font-weight: 800; color: var(--text3); margin-bottom: 2px; }
-  .profil-bilgi-deger { font-size: 13px; font-weight: 700; color: var(--text); }
+/* ══════════════════════════════════════
+   TAB BAR
+══════════════════════════════════════ */
+.prof-tab-bar {
+  display: flex; border-bottom: 1px solid var(--border);
+  padding: 0 18px;
+}
+.prof-tab {
+  flex: 1; text-align: center; padding: 11px 4px;
+  font-size: 12px; font-weight: 800; color: var(--text3);
+  cursor: pointer; border-bottom: 2px solid transparent;
+  margin-bottom: -1px; transition: all .2s; white-space: nowrap;
+}
+.prof-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-  /* ── UZMAN: Uzmanlık Etiketleri ── */
-  .uzmanlik-etiket-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-  .uzmanlik-etiket {
-    background: rgba(232,96,58,0.1); border: 1px solid rgba(232,96,58,0.25);
-    color: #e8603a; border-radius: 50px; padding: 4px 12px;
-    font-size: 12px; font-weight: 700;
-  }
+.prof-tab-content { display: none; padding: 14px 18px; }
+.prof-tab-content.active { display: block; }
 
-  /* ── FORM DÜZENLE ── */
-  .form-section-title {
-    font-size: 11px; font-weight: 900; color: var(--text3);
-    letter-spacing: 1.5px; text-transform: uppercase;
-    margin: 20px 0 12px; padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-  }
-  .alan-row-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* ══════════════════════════════════════
+   PAYLAŞIM GRID (3'lü)
+══════════════════════════════════════ */
+.share-grid-p {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 3px; margin: 0 -18px;
+}
+.share-cell-p {
+  aspect-ratio: 1; position: relative; overflow: hidden; cursor: pointer;
+  background: var(--card2); transition: opacity .15s;
+}
+.share-cell-p:active { opacity: .75; }
+.share-cell-p img { width: 100%; height: 100%; object-fit: cover; }
+.share-type-badge-p {
+  position: absolute; top: 6px; left: 6px;
+  border-radius: 4px; padding: 2px 7px; font-size: 10px; font-weight: 800;
+}
+.stb-video { background: #e8603a; color: #fff; }
+.stb-foto { background: #4a90d9; color: #fff; }
+.stb-yazi { background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+.share-text-cell-p {
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 10px 8px; background: var(--card2);
+}
+.stcp-preview { font-size: 11px; color: var(--text2); line-height: 1.4; }
+.stcp-type { font-size: 10px; color: var(--text3); font-weight: 700; margin-top: 4px; }
+
+/* ══════════════════════════════════════
+   İLAN KARTLARI (ortak)
+══════════════════════════════════════ */
+.ilan-card-p {
+  background: var(--card); border-radius: var(--radius-sm);
+  border: 1px solid var(--border); margin-bottom: 10px; overflow: hidden;
+}
+.ilan-card-p:last-child { margin-bottom: 0; }
+.ilan-card-row { display: flex; }
+.ilan-thumb-p {
+  width: 90px; min-height: 84px; flex-shrink: 0;
+  background: var(--card2); display: flex; align-items: center;
+  justify-content: center; font-size: 28px; overflow: hidden;
+}
+.ilan-thumb-p img { width: 100%; height: 100%; object-fit: cover; }
+.ilan-body-p {
+  flex: 1; min-width: 0; padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.ilan-top-p { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; }
+.ilan-price-p { font-size: 14px; font-weight: 900; color: var(--gold); }
+.ilan-title-p { font-size: 12px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.ilan-loc-p { font-size: 11px; color: var(--text3); }
+.ilan-cat-badge-p {
+  display: inline-block; background: var(--card2); border: 1px solid var(--border);
+  border-radius: 50px; padding: 2px 8px; font-size: 10px; font-weight: 700; color: var(--text2);
+  margin-top: 2px;
+}
+.ilan-meta-row-p { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
+.ilan-meta-p { font-size: 11px; color: var(--text3); font-weight: 700; }
+
+/* ══════════════════════════════════════
+   ONAY BADGE
+══════════════════════════════════════ */
+.onay-b { display: inline-block; border-radius: 50px; padding: 2px 8px; font-size: 10px; font-weight: 800; white-space: nowrap; }
+.ob-ok { background: rgba(46,204,113,0.15); color: var(--green); }
+.ob-wait { background: rgba(245,197,24,0.12); color: var(--gold); }
+.ob-red { background: rgba(232,96,58,0.15); color: var(--rust); }
+
+/* ══════════════════════════════════════
+   KENDİ İLAN ALT KISIM
+══════════════════════════════════════ */
+.ilan-stats-bar {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 8px 12px; border-top: 1px solid var(--border);
+}
+.isb-stat { font-size: 11px; font-weight: 700; color: var(--text3); }
+.isb-prm {
+  background: rgba(255,107,53,0.15); color: #ff6b35;
+  border-radius: 50px; padding: 2px 8px; font-size: 10px; font-weight: 800;
+}
+.isb-std {
+  background: rgba(245,197,24,0.12); color: var(--gold);
+  border-radius: 50px; padding: 2px 8px; font-size: 10px; font-weight: 800;
+}
+.one-cikar-btn-p {
+  margin-left: auto; background: var(--gold); color: #111; border: none;
+  border-radius: 50px; padding: 4px 12px; font-size: 10px; font-weight: 900;
+  cursor: pointer; font-family: Nunito, sans-serif;
+}
+.one-cikar-btn-p.aktif {
+  background: rgba(255,107,53,0.1); color: #ff6b35;
+  border: 1px solid rgba(255,107,53,0.4);
+}
+.ilan-actions-bar {
+  display: flex; gap: 6px; padding: 8px 12px;
+  border-top: 1px solid var(--border);
+}
+.btn-duz-p, .btn-sil-p {
+  flex: 1; border-radius: 8px; padding: 6px 0;
+  font-size: 11px; font-weight: 800; text-align: center;
+  cursor: pointer; font-family: Nunito, sans-serif; border: none;
+}
+.btn-duz-p { background: var(--card2); border: 1px solid var(--border) !important; color: var(--text2); text-decoration: none; display: block; }
+.btn-sil-p { background: rgba(232,96,58,0.1); border: 1px solid rgba(232,96,58,0.3) !important; color: var(--rust); }
+.ekspertiz-btn-p {
+  display: block; margin: 0 12px 8px;
+  background: linear-gradient(135deg,rgba(245,197,24,0.12),rgba(245,197,24,0.04));
+  border: 1px solid rgba(245,197,24,0.25); border-radius: 8px;
+  padding: 6px 10px; font-size: 10px; font-weight: 800;
+  color: var(--gold); text-align: center; text-decoration: none;
+}
+
+/* ══════════════════════════════════════
+   KENDİ PROFİL: SATICI ALICI SECTION HEADER
+══════════════════════════════════════ */
+.section-label-p {
+  font-size: 11px; font-weight: 800; color: var(--text3);
+  letter-spacing: 1px; text-transform: uppercase;
+  margin: 0 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.yeni-ilan-btn-p {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 14px; border-radius: 12px;
+  background: var(--gold-dim); border: 1.5px dashed rgba(245,197,24,0.35);
+  color: var(--gold); font-family: Nunito, sans-serif; font-size: 14px; font-weight: 800;
+  cursor: pointer; margin-top: 10px; text-decoration: none;
+}
+
+/* ══════════════════════════════════════
+   KREDİ BANNER
+══════════════════════════════════════ */
+.kredi-banner-p {
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+  border-radius: 16px; padding: 14px 16px; margin-bottom: 18px;
+  text-decoration: none; cursor: pointer;
+  border: 1px solid rgba(74,144,217,0.15);
+}
+.kbp-sol { display: flex; align-items: center; gap: 12px; }
+.kbp-lbl { font-size: 10px; color: rgba(255,255,255,0.45); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.kbp-sayi { font-size: 20px; font-weight: 900; color: var(--gold); }
+.kbp-btn { background: var(--gold); color: #111; border-radius: 50px; padding: 8px 16px; font-size: 12px; font-weight: 900; white-space: nowrap; }
+
+/* ══════════════════════════════════════
+   İSTATİSTİK PANEL
+══════════════════════════════════════ */
+.stat-grid-p { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.stat-card-p {
+  background: var(--card); border-radius: var(--radius-sm);
+  border: 1px solid var(--border); padding: 14px 12px; text-align: center;
+}
+.scp-num { font-size: 22px; font-weight: 900; color: var(--gold); display: block; }
+.scp-lbl { font-size: 11px; color: var(--text3); font-weight: 700; margin-top: 4px; display: block; }
+.perf-card-p {
+  background: var(--card); border-radius: var(--radius-sm);
+  border: 1px solid var(--border); padding: 4px 14px; margin-bottom: 10px;
+}
+.perf-row-p {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.perf-row-p:last-child { border-bottom: none; }
+.perf-icon-p { font-size: 16px; width: 22px; flex-shrink: 0; }
+.perf-label-p { font-size: 10px; font-weight: 800; color: var(--text3); letter-spacing: .5px; }
+.perf-val-p { font-size: 14px; font-weight: 800; color: var(--text); margin-top: 2px; }
+.perf-change-p { margin-left: auto; font-size: 12px; font-weight: 900; }
+.pc-up { color: var(--green); }
+.pc-neutral { color: var(--gold); }
+
+/* ══════════════════════════════════════
+   YORUM KARTI
+══════════════════════════════════════ */
+.yorum-summary-p {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px; margin-bottom: 12px;
+}
+.ys-big-num { font-size: 32px; font-weight: 900; color: var(--gold); }
+.ys-stars { color: var(--gold); font-size: 14px; letter-spacing: 2px; }
+.ys-count { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.ys-bars { flex: 1; }
+.ys-bar-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.ys-bar-lbl { font-size: 10px; color: var(--text3); width: 10px; }
+.ys-bar-track { flex: 1; height: 5px; background: var(--card2); border-radius: 3px; overflow: hidden; }
+.ys-bar-fill { height: 100%; background: var(--gold); border-radius: 3px; }
+.ys-bar-count { font-size: 10px; color: var(--text3); width: 18px; text-align: right; }
+
+.yorum-card-p {
+  background: var(--card); border-radius: var(--radius-sm);
+  border: 1px solid var(--border); padding: 12px 14px; margin-bottom: 8px;
+}
+.yorum-card-p:last-child { margin-bottom: 0; }
+.yc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.yc-av {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--card2); display: flex; align-items: center;
+  justify-content: center; font-size: 14px; font-weight: 900;
+  color: var(--text2); flex-shrink: 0;
+}
+.yc-name { font-size: 13px; font-weight: 800; }
+.yc-date { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.yc-stars { color: var(--gold); font-size: 12px; letter-spacing: 1px; margin-left: auto; }
+.yc-text { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+/* ══════════════════════════════════════
+   HAKKINDA KARTI
+══════════════════════════════════════ */
+.about-card-p {
+  background: var(--card); border-radius: var(--radius-sm);
+  border: 1px solid var(--border); padding: 4px 14px; margin-bottom: 10px;
+}
+.about-row-p {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.about-row-p:last-child { border-bottom: none; }
+.arp-icon { font-size: 16px; width: 22px; flex-shrink: 0; margin-top: 1px; }
+.arp-label { font-size: 10px; font-weight: 800; color: var(--text3); letter-spacing: .5px; }
+.arp-val { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px; }
+
+/* ══════════════════════════════════════
+   HESAP MENU
+══════════════════════════════════════ */
+.hesap-menu-card {
+  background: var(--card); border-radius: var(--radius-sm);
+  border: 1px solid var(--border); padding: 4px 16px; margin-bottom: 16px;
+}
+.hmc-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 13px 0; border-bottom: 1px solid var(--border);
+  cursor: pointer; text-decoration: none; color: var(--text);
+}
+.hmc-item:last-child { border-bottom: none; }
+.hmc-icon { font-size: 18px; width: 26px; text-align: center; }
+.hmc-text { flex: 1; font-size: 14px; font-weight: 700; }
+.hmc-arrow { color: var(--text3); font-size: 16px; }
+.hmc-danger .hmc-text { color: var(--rust); }
+
+/* ══════════════════════════════════════
+   FİRMA / UZMAN BİLGİ KARTI
+══════════════════════════════════════ */
+.bilgi-kart-p {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 4px 14px; margin-bottom: 16px;
+}
+.bkp-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.bkp-row:last-child { border-bottom: none; }
+.bkp-icon { font-size: 16px; width: 22px; flex-shrink: 0; }
+.bkp-label { font-size: 10px; font-weight: 800; color: var(--text3); letter-spacing: .5px; }
+.bkp-val { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px; }
+
+/* ══════════════════════════════════════
+   ALICI İLAN KARTI
+══════════════════════════════════════ */
+.alici-card-p {
+  background: rgba(74,144,217,0.06); border: 1px solid rgba(74,144,217,0.2);
+  border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px;
+}
+.alici-card-p:last-child { margin-bottom: 0; }
+
+/* ══════════════════════════════════════
+   EV HİZMETLERİ TOGGLE
+══════════════════════════════════════ */
+.hizmet-toggle-btn-p {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 16px;
+  font-size: 14px; font-weight: 800; color: var(--text);
+  cursor: pointer; font-family: Nunito, sans-serif; transition: background .2s;
+  margin-bottom: 0;
+}
+.hizmet-toggle-btn-p:active { background: var(--card2); }
+.hizmet-arrow-p { font-size: 16px; color: var(--text3); transition: transform .25s; }
+.hizmet-arrow-p.open { transform: rotate(180deg); }
+.hizmet-body-p { display: none; margin-top: 10px; }
+.hizmet-body-p.open { display: block; }
+.hizmet-grid-p { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.hizmet-item-p {
+  background: var(--card); border-radius: var(--radius-sm);
+  padding: 14px 6px; text-align: center; cursor: pointer;
+  border: 1px solid var(--border); transition: border-color .2s;
+}
+.hizmet-item-p:active { border-color: var(--gold); }
+.hi-em { font-size: 22px; display: block; margin-bottom: 5px; }
+.hi-lbl { font-size: 10px; font-weight: 700; color: var(--text2); }
+
+/* ══════════════════════════════════════
+   PROFIL DÜZENLE MODAL
+══════════════════════════════════════ */
+.form-sec-title-p {
+  font-size: 10px; font-weight: 900; color: var(--text3);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin: 18px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+
+/* verified */
+.verified-p {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(46,204,113,0.1); color: var(--green);
+  border-radius: 50px; padding: 4px 12px; font-size: 12px; font-weight: 700;
+}
 </style>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f5c718">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="GoTapu">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
 <script>
 (function() {
-  var kaydedilenTema = localStorage.getItem('gotapu_tema');
-  if (kaydedilenTema === 'light') { document.body.classList.add('light'); }
-  function temaButonuOlustur() {
+  var t = localStorage.getItem('gotapu_tema');
+  if (t === 'light') document.body.classList.add('light');
+  function mkBtn() {
     if (document.getElementById('themeToggleBtn')) return;
     var btn = document.createElement('button');
     btn.id = 'themeToggleBtn';
     btn.className = 'theme-toggle-btn nav-icon-btn';
-    btn.style.cssText = 'flex-shrink:0;';
-    btn.setAttribute('title', 'Temayı Değiştir');
+    btn.style.cssText = 'flex-shrink:0';
     btn.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
-    btn.addEventListener('click', function() {
-      var acikMi = document.body.classList.toggle('light');
-      localStorage.setItem('gotapu_tema', acikMi ? 'light' : 'dark');
-      btn.textContent = acikMi ? '🌙' : '☀️';
-      btn.style.transform = 'scale(0.8) rotate(20deg)';
-      setTimeout(function() { btn.style.transform = ''; }, 200);
-    });
-    var navActions = document.querySelector('.nav-actions');
-    if (navActions) { navActions.insertBefore(btn, navActions.firstChild); }
+    btn.onclick = function() {
+      var l = document.body.classList.toggle('light');
+      localStorage.setItem('gotapu_tema', l ? 'light' : 'dark');
+      btn.textContent = l ? '🌙' : '☀️';
+    };
+    var na = document.querySelector('.nav-actions');
+    if (na) na.insertBefore(btn, na.firstChild);
   }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', temaButonuOlustur);
-  } else {
-    temaButonuOlustur();
-  }
+  document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', mkBtn) : mkBtn();
 })();
 </script>
 
@@ -240,167 +461,283 @@
 
 <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="avatarDegistir(this)">
 
-<!-- ═══════════════════════════════════════
+<!-- ═══════════════════════════════
      KENDİ PROFİLİM
-═══════════════════════════════════════ -->
+═══════════════════════════════ -->
 <div class="page fade-up" id="benimProfilSayfasi">
 
-  <div class="profile-header">
-    <div class="avatar" id="avatarEl" onclick="document.getElementById('avatarInput').click()">
+  <!-- COVER -->
+  <div class="prof-cover">
+    <div class="prof-cover-badge bireysel" id="coverBadge"></div>
+    <div class="prof-avatar" id="avatarEl" onclick="document.getElementById('avatarInput').click()">
       <span id="avatarEmoji">👤</span>
       <img id="avatarImg" style="display:none">
-      <div class="avatar-edit">✏️</div>
+      <div class="prof-avatar-edit">✏️</div>
     </div>
-
-    <div class="profile-name" id="profilAd">Yükleniyor...</div>
-    <div class="profile-firma" id="profilFirmaAdi" style="display:none"></div>
-    <div class="profile-email" id="profilEmail"></div>
-    <div class="profile-email" id="profilTel"></div>
-    <div class="profile-email" id="profilSehir"></div>
-
-    <div class="rozet-wrap" id="profilRozetler"></div>
-
-    <div style="font-size:13px;color:var(--text2);margin-top:8px;line-height:1.6;display:none;padding:0 8px" id="profilHakkimda"></div>
-    <div class="verified" id="verifiedBadge" style="display:none">✓ Doğrulanmış Üye</div>
   </div>
 
-  <!-- KREDİ BANNER — sadece kurumsal -->
-  <div id="krediBannerAlani" style="display:none">
-    <a href="odeme.html" class="kredi-banner">
-      <div class="kredi-banner-sol">
-        <div class="kredi-banner-ikon">💎</div>
+  <!-- HEADER BODY -->
+  <div class="prof-header-body">
+    <div class="prof-top-row">
+      <div>
+        <div class="prof-name" id="profilAd">Yükleniyor...</div>
+        <div class="prof-firma" id="profilFirmaAdi" style="display:none"></div>
+        <div class="prof-handle" id="profilEmail"></div>
+        <div class="prof-handle" id="profilTel" style="display:none"></div>
+        <div class="prof-handle" id="profilSehir" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="rozet-wrap-p" id="profilRozetler"></div>
+
+    <div class="prof-bio" id="profilBio"></div>
+    <div class="verified-p" id="verifiedBadge" style="display:none;margin-bottom:14px">✓ Doğrulanmış Üye</div>
+
+    <!-- Takipçi istatistikleri -->
+    <div class="prof-stats-row" id="profilStatsSatir">
+      <div class="prof-stat-box">
+        <span class="psb-num" id="ilanSayisi">0</span>
+        <span class="psb-lbl">İlan</span>
+      </div>
+      <div class="prof-stat-box">
+        <span class="psb-num" id="takipciSayisi">—</span>
+        <span class="psb-lbl">Takipçi</span>
+      </div>
+      <div class="prof-stat-box">
+        <span class="psb-num" id="hizmetSayisi">0</span>
+        <span class="psb-lbl">Hizmet</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- KREDİ BANNER (sadece kurumsal) -->
+  <div id="krediBannerAlani" style="display:none;padding:0 18px">
+    <a href="odeme.html" class="kredi-banner-p">
+      <div class="kbp-sol">
+        <div style="font-size:24px">💎</div>
         <div>
-          <div class="kredi-banner-label">Kredi Bakiyem</div>
-          <div class="kredi-banner-sayi" id="krediBannerSayi">—</div>
+          <div class="kbp-lbl">Kredi Bakiyem</div>
+          <div class="kbp-sayi" id="krediBannerSayi">—</div>
         </div>
       </div>
-      <div class="kredi-banner-btn">Kredi Yükle →</div>
+      <div class="kbp-btn">Kredi Yükle →</div>
     </a>
   </div>
 
-  <!-- UZMAN BİLGİ KARTI — sadece freelancer -->
-  <div id="uzmanBilgiKarti" style="display:none;margin-bottom:20px">
-    <div class="menu-label">Uzmanlık Bilgileri</div>
-    <div class="profil-bilgi-kart" id="uzmanBilgiIcerik"></div>
+  <!-- SEKME ÇUBUĞU -->
+  <div class="prof-tab-bar" id="benimTabBar">
+    <div class="prof-tab active" onclick="sekmeAc('benim','ilanlarim')">İlanlarım</div>
+    <div class="prof-tab" onclick="sekmeAc('benim','istatistik')">İstatistik</div>
+    <div class="prof-tab" onclick="sekmeAc('benim','yorumlar')">Yorumlar</div>
+    <div class="prof-tab" onclick="sekmeAc('benim','hesap')">Hesap</div>
   </div>
 
-  <!-- KURUMSAL BİLGİ KARTI — sadece kurumsal -->
-  <div id="kurumsalBilgiKarti" style="display:none;margin-bottom:20px">
-    <div class="menu-label">Firma Bilgileri</div>
-    <div class="profil-bilgi-kart" id="kurumsalBilgiIcerik"></div>
-  </div>
+  <!-- SEKME: İLANLARIM -->
+  <div class="prof-tab-content active" id="benim-ilanlarim">
 
-  <!-- İSTATİSTİKLER -->
-  <div class="stat-row-inline" style="justify-content:center;margin-bottom:20px">
-    <div class="stat-inline-box">
-      <span class="stat-inline-num" id="ilanSayisi">0</span>
-      <span class="stat-inline-lbl">İlan</span>
+    <!-- Firma/Uzman bilgi kartı -->
+    <div id="uzmanBilgiKarti" style="display:none;margin-bottom:16px">
+      <div class="section-label-p">Uzmanlık Bilgileri</div>
+      <div class="bilgi-kart-p" id="uzmanBilgiIcerik"></div>
     </div>
-    <div class="stat-inline-box">
-      <span class="stat-inline-num" id="hizmetSayisi">0</span>
-      <span class="stat-inline-lbl">Hizmet</span>
+    <div id="kurumsalBilgiKarti" style="display:none;margin-bottom:16px">
+      <div class="section-label-p">Firma Bilgileri</div>
+      <div class="bilgi-kart-p" id="kurumsalBilgiIcerik"></div>
     </div>
-  </div>
 
-  <!-- SATICI İLANLARIM -->
-  <div class="menu-section">
-    <div class="menu-label">Satıcı İlanlarım</div>
-    <div class="card" style="padding:0;overflow:hidden" id="ilanlarimCard"><div class="spinner" style="padding:24px"></div></div>
-  </div>
+    <!-- Satıcı İlanlarım -->
+    <div class="section-label-p">Satıcı İlanlarım</div>
+    <div id="ilanlarimContainer"><div class="spinner" style="padding:24px"></div></div>
 
-  <!-- ALICI ARAMALARIM -->
-  <div class="menu-section">
-    <div class="menu-label">Alıcı Aramalarım</div>
-    <div id="aliciIlanCard"><div class="spinner"></div></div>
-  </div>
+    <!-- Alıcı Aramalarım -->
+    <div class="section-label-p" style="margin-top:20px">Alıcı Aramalarım</div>
+    <div id="aliciIlanContainer"><div class="spinner"></div></div>
 
-  <!-- EV HİZMETLERİ -->
-  <div class="menu-section">
-    <button class="hizmetler-toggle-btn" id="hizmetlerToggleBtn" onclick="hizmetlerToggle()">
-      <span>🏠 Ev Hizmetleri</span>
-      <span class="hizmetler-toggle-arrow" id="hizmetlerArrow">▼</span>
-    </button>
-    <div class="hizmetler-body" id="hizmetlerBody">
-      <div class="hizmet-grid">
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=tadilat'"><span class="hizmet-em">🔧</span><div class="hizmet-lbl">Tadilat</div></div>
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=temizlik'"><span class="hizmet-em">🧹</span><div class="hizmet-lbl">Temizlik</div></div>
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=boya'"><span class="hizmet-em">🖌️</span><div class="hizmet-lbl">Boya</div></div>
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=nakliye'"><span class="hizmet-em">🚚</span><div class="hizmet-lbl">Nakliye</div></div>
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><span class="hizmet-em">🛋️</span><div class="hizmet-lbl">Dekorasyon</div></div>
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=sigorta'"><span class="hizmet-em">🛡️</span><div class="hizmet-lbl">Sigorta</div></div>
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=cilingir'"><span class="hizmet-em">🔑</span><div class="hizmet-lbl">Çilingir</div></div>
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=teknik'"><span class="hizmet-em">📱</span><div class="hizmet-lbl">Teknik Servis</div></div>
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=aracyikama'"><span class="hizmet-em">🚗</span><div class="hizmet-lbl">Araç Yıkama</div></div>
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=koltukyikama'"><span class="hizmet-em">🛋️</span><div class="hizmet-lbl">Koltuk Yıkama</div></div>
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=haliyikama'"><span class="hizmet-em">🪞</span><div class="hizmet-lbl">Halı Yıkama</div></div>
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=ilacalama'"><span class="hizmet-em">🦟</span><div class="hizmet-lbl">İlaçlama</div></div>
-        <div class="hizmet-item" onclick="location.href='hizmetler.html?kategori=petek'"><span class="hizmet-em">♨️</span><div class="hizmet-lbl">Petek & Kombi</div></div>
+    <!-- Ev Hizmetleri -->
+    <div style="margin-top:16px">
+      <button class="hizmet-toggle-btn-p" onclick="hizmetToggle()">
+        <span>🏠 Ev Hizmetleri</span>
+        <span class="hizmet-arrow-p" id="hizmetArrow">▼</span>
+      </button>
+      <div class="hizmet-body-p" id="hizmetBody">
+        <div class="hizmet-grid-p">
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=tadilat'"><span class="hi-em">🔧</span><div class="hi-lbl">Tadilat</div></div>
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=temizlik'"><span class="hi-em">🧹</span><div class="hi-lbl">Temizlik</div></div>
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=boya'"><span class="hi-em">🖌️</span><div class="hi-lbl">Boya</div></div>
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=nakliye'"><span class="hi-em">🚚</span><div class="hi-lbl">Nakliye</div></div>
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=dekorasyon'"><span class="hi-em">🛋️</span><div class="hi-lbl">Dekorasyon</div></div>
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=sigorta'"><span class="hi-em">🛡️</span><div class="hi-lbl">Sigorta</div></div>
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=cilingir'"><span class="hi-em">🔑</span><div class="hi-lbl">Çilingir</div></div>
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=teknik'"><span class="hi-em">📱</span><div class="hi-lbl">Teknik Servis</div></div>
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=aracyikama'"><span class="hi-em">🚗</span><div class="hi-lbl">Araç Yıkama</div></div>
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=koltukyikama'"><span class="hi-em">🛋️</span><div class="hi-lbl">Koltuk Yıkama</div></div>
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=haliyikama'"><span class="hi-em">🪞</span><div class="hi-lbl">Halı Yıkama</div></div>
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=ilacalama'"><span class="hi-em">🦟</span><div class="hi-lbl">İlaçlama</div></div>
+          <div class="hizmet-item-p" onclick="location.href='hizmetler.html?kategori=petek'"><span class="hi-em">♨️</span><div class="hi-lbl">Petek & Kombi</div></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- HESAP MENÜSÜ -->
-  <div class="menu-section">
-    <div class="menu-label">Hesap</div>
-    <div class="hizmet-ver-btn" onclick="hizmetVerTikla()">
-      <div class="menu-icon">🛠️</div>
-      <div class="menu-text">Hizmet Ver</div>
-      <div class="menu-arrow">›</div>
+  <!-- SEKME: İSTATİSTİK -->
+  <div class="prof-tab-content" id="benim-istatistik">
+    <div class="section-label-p">Bu Ay</div>
+    <div class="stat-grid-p">
+      <div class="stat-card-p"><span class="scp-num" id="profGorunt">—</span><span class="scp-lbl">Profil Görüntülenme</span></div>
+      <div class="stat-card-p"><span class="scp-num" id="yeniTakipci">—</span><span class="scp-lbl">Yeni Takipçi</span></div>
+      <div class="stat-card-p"><span class="scp-num" id="ilanTiklanma">—</span><span class="scp-lbl">İlan Tıklanma</span></div>
+      <div class="stat-card-p"><span class="scp-num" id="toplamBegeni">—</span><span class="scp-lbl">Toplam Beğeni</span></div>
     </div>
-    <a href="favoriler.html" class="menu-item" style="border-radius:0"><div class="menu-icon">❤️</div><div class="menu-text">Favorilerim</div><div class="menu-arrow">›</div></a>
-    <a href="eslesmeler.html" class="menu-item" style="border-radius:0"><div class="menu-icon">✨</div><div class="menu-text">Eşleşmelerim</div><div class="menu-arrow">›</div></a>
-    <a href="bildirimler.html" class="menu-item" style="border-radius:0"><div class="menu-icon">🔔</div><div class="menu-text">Bildirimler</div><div class="menu-arrow">›</div></a>
-    <div class="menu-item" onclick="profilDuzenle()" style="border-radius:0"><div class="menu-icon">⚙️</div><div class="menu-text">Profili Düzenle</div><div class="menu-arrow">›</div></div>
-    <div class="menu-item" onclick="cikisYap()" style="color:var(--rust);border-radius:0 0 var(--radius) var(--radius)"><div class="menu-icon">🚪</div><div class="menu-text" style="color:var(--rust)">Çıkış Yap</div><div class="menu-arrow">›</div></div>
+    <div class="section-label-p">İlan Performansı</div>
+    <div class="perf-card-p">
+      <div class="perf-row-p">
+        <div class="perf-icon-p">👁</div>
+        <div><div class="perf-label-p">TOPLAM GÖRÜNTÜLENME</div><div class="perf-val-p" id="toplamGorunt">—</div></div>
+        <div class="perf-change-p pc-up" id="goruntChange">—</div>
+      </div>
+      <div class="perf-row-p">
+        <div class="perf-icon-p">❤️</div>
+        <div><div class="perf-label-p">TOPLAM FAVORİ</div><div class="perf-val-p" id="toplamFav">—</div></div>
+        <div class="perf-change-p pc-up" id="favChange">—</div>
+      </div>
+      <div class="perf-row-p">
+        <div class="perf-icon-p">💬</div>
+        <div><div class="perf-label-p">GELEN MESAJ</div><div class="perf-val-p" id="toplamMesaj">—</div></div>
+        <div class="perf-change-p pc-neutral" id="mesajChange">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEKME: YORUMLAR -->
+  <div class="prof-tab-content" id="benim-yorumlar">
+    <div class="yorum-summary-p" id="yorumSummary" style="display:none">
+      <div style="text-align:center;padding-right:8px;border-right:1px solid var(--border);min-width:64px">
+        <div class="ys-big-num" id="yorumOrt">—</div>
+        <div class="ys-stars" id="yorumStars"></div>
+        <div class="ys-count" id="yorumCount">— yorum</div>
+      </div>
+      <div class="ys-bars" id="yorumBars"></div>
+    </div>
+    <div id="yorumContainer"><div class="empty" style="padding:24px"><div class="empty-icon">💬</div><div class="empty-title">Henüz yorum yok</div></div></div>
+  </div>
+
+  <!-- SEKME: HESAP -->
+  <div class="prof-tab-content" id="benim-hesap">
+    <div class="section-label-p">Profil</div>
+    <div class="hesap-menu-card">
+      <div class="hmc-item" onclick="profilDuzenle()"><div class="hmc-icon">⚙️</div><div class="hmc-text">Profili Düzenle</div><div class="hmc-arrow">›</div></div>
+      <a href="favoriler.html" class="hmc-item"><div class="hmc-icon">❤️</div><div class="hmc-text">Favorilerim</div><div class="hmc-arrow">›</div></a>
+      <a href="eslesmeler.html" class="hmc-item"><div class="hmc-icon">✨</div><div class="hmc-text">Eşleşmelerim</div><div class="hmc-arrow">›</div></a>
+      <a href="bildirimler.html" class="hmc-item"><div class="hmc-icon">🔔</div><div class="hmc-text">Bildirimler</div><div class="hmc-arrow">›</div></a>
+      <div class="hmc-item" onclick="hizmetVerTikla()"><div class="hmc-icon">🛠️</div><div class="hmc-text">Hizmet Ver</div><div class="hmc-arrow">›</div></div>
+    </div>
+    <div class="hesap-menu-card">
+      <div class="hmc-item hmc-danger" onclick="cikisYap()"><div class="hmc-icon">🚪</div><div class="hmc-text">Çıkış Yap</div><div class="hmc-arrow" style="color:var(--rust)">›</div></div>
+    </div>
   </div>
 
 </div><!-- /benimProfilSayfasi -->
 
-<!-- ═══════════════════════════════════════
+
+<!-- ═══════════════════════════════
      BAŞKASININ PROFİLİ
-═══════════════════════════════════════ -->
+═══════════════════════════════ -->
 <div class="page fade-up" id="baskaProfil" style="display:none">
-  <div style="margin-bottom:12px">
-    <button onclick="history.back()" style="background:var(--card);border:1.5px solid var(--border);border-radius:50px;padding:8px 18px;font-size:14px;font-weight:800;color:var(--text);cursor:pointer;font-family:Nunito,sans-serif">← Geri</button>
-  </div>
-  <div class="profile-header">
-    <div class="avatar" id="bAvEl" style="cursor:default">
+
+  <!-- COVER -->
+  <div class="prof-cover">
+    <div class="prof-cover-badge bireysel" id="bCoverBadge"></div>
+    <div class="prof-avatar" id="bAvEl" style="cursor:default">
       <span id="bAvEmoji">👤</span>
       <img id="bAvImg" style="display:none">
     </div>
-    <div class="profile-name" id="bAvAd">Yükleniyor...</div>
-    <div class="profile-firma" id="bAvFirma" style="display:none"></div>
-    <div class="profile-email" id="bAvSehir"></div>
-    <div class="rozet-wrap" id="bAvRozetler"></div>
-    <div style="font-size:13px;color:var(--text2);margin-top:8px;line-height:1.6;display:none;padding:0 8px" id="bAvHakkimda"></div>
-    <div class="verified" id="bAvVerified" style="display:none">✓ Doğrulanmış Üye</div>
   </div>
 
-  <div id="bAvUzmanKart" style="display:none;margin-bottom:20px">
-    <div class="menu-label">Hizmet Bilgileri</div>
-    <div class="profil-bilgi-kart" id="bAvUzmanIcerik"></div>
-  </div>
-  <div id="bAvKurumsalKart" style="display:none;margin-bottom:20px">
-    <div class="menu-label">Firma Bilgileri</div>
-    <div class="profil-bilgi-kart" id="bAvKurumsalIcerik"></div>
-  </div>
+  <!-- HEADER BODY -->
+  <div class="prof-header-body">
+    <div class="prof-top-row">
+      <div>
+        <div class="prof-name" id="bAvAd">Yükleniyor...</div>
+        <div class="prof-firma" id="bAvFirma" style="display:none"></div>
+        <div class="prof-handle" id="bAvSehir"></div>
+      </div>
+      <div class="prof-action-btns">
+        <button class="btn-follow" id="takipBtn" onclick="takipToggle()">Takip Et</button>
+        <button class="btn-mesaj-p" onclick="mesajGonder()">Mesaj</button>
+      </div>
+    </div>
 
-  <div class="stat-row-inline" style="justify-content:center;margin-bottom:24px">
-    <div class="stat-inline-box">
-      <span class="stat-inline-num" id="bAvIlanSay">0</span>
-      <span class="stat-inline-lbl">İlan</span>
+    <div class="rozet-wrap-p" id="bAvRozetler"></div>
+
+    <div class="prof-bio" id="bAvBio"></div>
+    <div class="verified-p" id="bAvVerified" style="display:none;margin-bottom:14px">✓ Doğrulanmış Üye</div>
+
+    <div class="prof-stats-row">
+      <div class="prof-stat-box">
+        <span class="psb-num" id="bAvPaylaşım">—</span>
+        <span class="psb-lbl">Paylaşım</span>
+      </div>
+      <div class="prof-stat-box">
+        <span class="psb-num" id="bAvTakipci">—</span>
+        <span class="psb-lbl">Takipçi</span>
+      </div>
+      <div class="prof-stat-box">
+        <span class="psb-num" id="bAvTakip">—</span>
+        <span class="psb-lbl">Takip</span>
+      </div>
     </div>
   </div>
-  <div style="margin-bottom:20px">
-    <button id="mesajGonderBtn" onclick="mesajGonder()" style="width:100%;padding:16px;border-radius:50px;background:var(--gold);color:var(--bg);border:none;font-family:Nunito,sans-serif;font-size:15px;font-weight:900;cursor:pointer">
-      💬 Mesaj Gönder
-    </button>
+
+  <!-- SEKME ÇUBUĞU -->
+  <div class="prof-tab-bar" id="baskaTabBar">
+    <div class="prof-tab active" onclick="sekmeAc('baska','paylasim')">Paylaşım</div>
+    <div class="prof-tab" onclick="sekmeAc('baska','ilanlar')">İlanlar</div>
+    <div class="prof-tab" onclick="sekmeAc('baska','yorumlarb')">Yorumlar</div>
+    <div class="prof-tab" onclick="sekmeAc('baska','hakkinda')">Hakkında</div>
   </div>
-  <div class="menu-section">
-    <div class="menu-label">İlanları</div>
-    <div class="card" style="padding:0;overflow:hidden" id="baskaIlanlar"><div class="spinner" style="padding:24px"></div></div>
+
+  <!-- SEKME: PAYLAŞIM -->
+  <div class="prof-tab-content active" id="baska-paylasim" style="padding:0">
+    <div class="share-grid-p" id="paylasimGrid">
+      <div style="padding:24px;color:var(--text3);font-size:13px;text-align:center;grid-column:1/-1">
+        <div class="spinner"></div>
+      </div>
+    </div>
   </div>
-</div>
+
+  <!-- SEKME: İLANLAR -->
+  <div class="prof-tab-content" id="baska-ilanlar">
+    <div id="baskaIlanlarContainer"><div class="spinner" style="padding:24px"></div></div>
+  </div>
+
+  <!-- SEKME: YORUMLAR -->
+  <div class="prof-tab-content" id="baska-yorumlarb">
+    <div class="yorum-summary-p" id="bYorumSummary" style="display:none">
+      <div style="text-align:center;padding-right:8px;border-right:1px solid var(--border);min-width:64px">
+        <div class="ys-big-num" id="bYorumOrt">—</div>
+        <div class="ys-stars" id="bYorumStars"></div>
+        <div class="ys-count" id="bYorumCount">— yorum</div>
+      </div>
+      <div class="ys-bars" id="bYorumBars"></div>
+    </div>
+    <div id="bYorumContainer"><div class="empty" style="padding:24px"><div class="empty-icon">💬</div><div class="empty-title">Henüz yorum yok</div></div></div>
+  </div>
+
+  <!-- SEKME: HAKKINDA -->
+  <div class="prof-tab-content" id="baska-hakkinda">
+    <div id="baskaHakkindaContainer"></div>
+    <div id="baskaUzmanKarti" style="display:none">
+      <div class="section-label-p">Hizmet Bilgileri</div>
+      <div class="bilgi-kart-p" id="baskaUzmanIcerik"></div>
+    </div>
+    <div id="baskaKurumsalKarti" style="display:none">
+      <div class="section-label-p">Firma Bilgileri</div>
+      <div class="bilgi-kart-p" id="baskaKurumsalIcerik"></div>
+    </div>
+  </div>
+
+</div><!-- /baskaProfil -->
+
 
 <nav class="bottom-nav">
   <a href="index.html" class="bnav-item"><div class="bnav-icon">🏠</div>Ana Sayfa</a>
@@ -410,14 +747,17 @@
   <a href="profil.html" class="bnav-item active"><div class="bnav-icon">👤</div>Profil</a>
 </nav>
 
+
 <script>
 const SUPABASE_URL = 'https://ncmzfaszaowiynzjdefb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 window._sbClient = sb;
+
 let currentUser = null;
 let currentProfil = null;
+let baskaKullaniciId = null;
 
 const urlParams = new URLSearchParams(window.location.search);
 const hedefId = urlParams.get('id');
@@ -434,167 +774,224 @@ sb.auth.getSession().then(({ data }) => {
   }
 });
 
-// ─────────────────────────────────────────
-// YARDIMCI FONKSİYONLAR
-// ─────────────────────────────────────────
-function kullaniciTipLabel(tip) {
-  const etiketler = {
-    bireysel: 'Bireysel',
-    kurumsal: '🏢 Kurumsal',
-    freelancer: '🔧 Freelancer',
-    hizmet_saglayici: '🔧 Hizmet Sağlayıcı'
+/* ══════════════════════════════════
+   SEKME SİSTEMİ
+══════════════════════════════════ */
+function sekmeAc(grup, id) {
+  const tabBar = document.getElementById(grup === 'benim' ? 'benimTabBar' : 'baskaTabBar');
+  tabBar.querySelectorAll('.prof-tab').forEach((t, i) => {
+    t.classList.toggle('active', t.textContent.trim() === tabMetin(grup, id));
+  });
+  document.querySelectorAll(`[id^="${grup}-"]`).forEach(c => {
+    c.classList.toggle('active', c.id === `${grup}-${id}`);
+  });
+}
+function tabMetin(grup, id) {
+  const map = {
+    'benim-ilanlarim':'İlanlarım','benim-istatistik':'İstatistik',
+    'benim-yorumlar':'Yorumlar','benim-hesap':'Hesap',
+    'baska-paylasim':'Paylaşım','baska-ilanlar':'İlanlar',
+    'baska-yorumlarb':'Yorumlar','baska-hakkinda':'Hakkında'
   };
-  return etiketler[tip] || tip;
+  return map[`${grup}-${id}`] || '';
 }
 
+/* ══════════════════════════════════
+   YARDIMCI FONKSİYONLAR
+══════════════════════════════════ */
 function kategoriLabel(kat) {
   const map = {
-    emlakci:'🏠 Emlakçı', temizlik:'🧹 Temizlik', boya:'🖌️ Boya & Badana',
-    nakliye:'🚚 Nakliye', cilingir:'🔑 Çilingir', tadilat:'🔧 Tadilat',
-    sigorta:'🛡️ Sigorta', teknik:'📱 Teknik Servis', dekorasyon:'🛋️ Dekorasyon',
-    aracyikama:'🚗 Araç Yıkama', koltukyikama:'🛋️ Koltuk Yıkama',
-    haliyikama:'🪞 Halı Yıkama', ilacalama:'🦟 İlaçlama', petek:'♨️ Petek & Kombi',
-    tesisat:'🔩 Tesisat', elektrik:'⚡ Elektrik', insaat:'🏗️ İnşaat',
-    galeri:'🚗 Galeri', diger:'👷 Diğer'
+    emlakci:'🏠 Emlakçı',temizlik:'🧹 Temizlik',boya:'🖌️ Boya & Badana',
+    nakliye:'🚚 Nakliye',cilingir:'🔑 Çilingir',tadilat:'🔧 Tadilat',
+    sigorta:'🛡️ Sigorta',teknik:'📱 Teknik Servis',dekorasyon:'🛋️ Dekorasyon',
+    aracyikama:'🚗 Araç Yıkama',koltukyikama:'🛋️ Koltuk Yıkama',
+    haliyikama:'🪞 Halı Yıkama',ilacalama:'🦟 İlaçlama',petek:'♨️ Petek & Kombi',
+    galeri:'🚗 Galeri',diger:'👷 Diğer'
   };
   return map[kat] || kat;
 }
 
-function rozetlerOlustur(profil, hedef) {
+function rozetOlustur(profil, hedefId) {
   const tip = profil?.kullanici_tipi || 'bireysel';
   const onay = profil?.kurumsal_onay;
   let html = '';
-
   if (tip === 'kurumsal') {
     html += onay === 'onaylandi'
-      ? '<span class="rozet rozet-kurumsal">🏢 Kurumsal</span>'
-      : '<span class="rozet rozet-bekliyor">🏢 Kurumsal — Onay Bekleniyor</span>';
-    if (profil.kategori) html += `<span class="rozet rozet-bireysel">${kategoriLabel(profil.kategori)}</span>`;
+      ? '<span class="rozet-p rozet-kurumsal-p">🏢 Kurumsal</span>'
+      : '<span class="rozet-p" style="background:rgba(245,197,24,0.1);color:var(--gold);border:1px solid rgba(245,197,24,0.2)">🏢 Kurumsal — Onay Bekleniyor</span>';
+    if (profil.kategori) html += `<span class="rozet-p rozet-bireysel-p">${kategoriLabel(profil.kategori)}</span>`;
   } else if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
     html += onay === 'onaylandi'
-      ? '<span class="rozet rozet-freelancer">🔧 Freelancer</span>'
-      : '<span class="rozet rozet-bekliyor">🔧 Freelancer — Onay Bekleniyor</span>';
-    if (profil.kategori) html += `<span class="rozet rozet-bireysel">${kategoriLabel(profil.kategori)}</span>`;
+      ? '<span class="rozet-p rozet-freelancer-p">🔧 Freelancer</span>'
+      : '<span class="rozet-p" style="background:rgba(245,197,24,0.1);color:var(--gold);border:1px solid rgba(245,197,24,0.2)">🔧 Freelancer — Onay Bekleniyor</span>';
+    if (profil.kategori) html += `<span class="rozet-p rozet-bireysel-p">${kategoriLabel(profil.kategori)}</span>`;
   } else {
-    html += '<span class="rozet rozet-bireysel">👤 Bireysel</span>';
+    html += '<span class="rozet-p rozet-bireysel-p">👤 Bireysel</span>';
   }
-
-  document.getElementById(hedef).innerHTML = html;
+  document.getElementById(hedefId).innerHTML = html;
 }
 
-function avatarYukle(avatarUrl, emojiId, imgId, tip) {
-  if (avatarUrl) {
-    const el = document.getElementById(emojiId);
+function coverBadgeAyarla(profil, badgeId, avatarId) {
+  const tip = profil?.kullanici_tipi || 'bireysel';
+  const badge = document.getElementById(badgeId);
+  badge.className = 'prof-cover-badge ' + tip;
+  const etiket = { kurumsal:'🏢 Kurumsal', freelancer:'🔧 Freelancer', bireysel:'👤 Bireysel', hizmet_saglayici:'🔧 Hizmet Sağlayıcı' };
+  badge.textContent = etiket[tip] || tip;
+
+  const avEl = document.getElementById(avatarId);
+  avEl.className = 'prof-avatar ' + (tip === 'kurumsal' ? 'kurumsal' : tip === 'freelancer' ? 'freelancer' : '');
+}
+
+function avatarGoster(url, emojiId, imgId) {
+  if (url) {
+    const em = document.getElementById(emojiId);
     const img = document.getElementById(imgId);
-    if (el) el.style.display = 'none';
-    if (img) { img.src = avatarUrl; img.style.display = 'block'; }
-  }
-  const avEl = document.getElementById(emojiId)?.closest('.avatar');
-  if (avEl) {
-    avEl.classList.remove('kurumsal', 'freelancer');
-    if (tip === 'kurumsal') avEl.classList.add('kurumsal');
-    if (tip === 'freelancer') avEl.classList.add('freelancer');
+    if (em) em.style.display = 'none';
+    if (img) { img.src = url; img.style.display = 'block'; }
   }
 }
 
 function uzmanBilgiHTML(profil) {
   let html = '';
-  if (profil.kategori) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🔧</div><div><div class="profil-bilgi-label">Uzmanlık</div><div class="profil-bilgi-deger">${kategoriLabel(profil.kategori)}</div></div></div>`;
-  if (profil.ucret) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">💰</div><div><div class="profil-bilgi-label">Ücret</div><div class="profil-bilgi-deger">${Number(profil.ucret).toLocaleString('tr-TR')} ₺</div></div></div>`;
-  if (profil.deneyim_yil) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">📅</div><div><div class="profil-bilgi-label">Deneyim</div><div class="profil-bilgi-deger">${profil.deneyim_yil} yıl</div></div></div>`;
-  if (profil.kurumsal_sehir || profil.sehir) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">📍</div><div><div class="profil-bilgi-label">Hizmet Bölgesi</div><div class="profil-bilgi-deger">${profil.kurumsal_sehir || profil.sehir}</div></div></div>`;
-  return html || '<div style="color:var(--text3);font-size:13px;padding:8px">Henüz bilgi eklenmedi.</div>';
+  if (profil.kategori) html += bilgiSatir('🔧','UZMANLIK',kategoriLabel(profil.kategori));
+  if (profil.ucret) html += bilgiSatir('💰','ÜCRET',Number(profil.ucret).toLocaleString('tr-TR') + ' ₺');
+  if (profil.deneyim_yil) html += bilgiSatir('📅','DENEYİM',profil.deneyim_yil + ' yıl');
+  if (profil.kurumsal_sehir || profil.sehir) html += bilgiSatir('📍','HİZMET BÖLGESİ',profil.kurumsal_sehir || profil.sehir);
+  return html || '<div style="color:var(--text3);font-size:13px;padding:12px">Henüz bilgi eklenmedi.</div>';
 }
 
 function kurumsalBilgiHTML(profil) {
   let html = '';
-  if (profil.kategori) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🏢</div><div><div class="profil-bilgi-label">Firma Türü</div><div class="profil-bilgi-deger">${kategoriLabel(profil.kategori)}</div></div></div>`;
-  if (profil.yetki_belge_no) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🪪</div><div><div class="profil-bilgi-label">Yetki Belge No</div><div class="profil-bilgi-deger" style="color:var(--green);font-weight:900">${profil.yetki_belge_no}</div></div></div>`;
-  if (profil.kurumsal_sehir || profil.sehir) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">📍</div><div><div class="profil-bilgi-label">Konum</div><div class="profil-bilgi-deger">${profil.kurumsal_sehir || profil.sehir}</div></div></div>`;
-  if (profil.ofis_adresi) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🗺️</div><div><div class="profil-bilgi-label">Ofis Adresi</div><div class="profil-bilgi-deger">${profil.ofis_adresi}</div></div></div>`;
-  if (profil.calisan_sayisi) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">👥</div><div><div class="profil-bilgi-label">Çalışan Sayısı</div><div class="profil-bilgi-deger">${profil.calisan_sayisi}</div></div></div>`;
-  if (profil.website_url) html += `<div class="profil-bilgi-satir"><div class="profil-bilgi-ikon">🌐</div><div><div class="profil-bilgi-label">Web Sitesi</div><div class="profil-bilgi-deger"><a href="${profil.website_url}" target="_blank" style="color:var(--gold);text-decoration:none">${profil.website_url.replace(/^https?:\/\//,'')}</a></div></div></div>`;
-  return html || '<div style="color:var(--text3);font-size:13px;padding:8px">Henüz firma bilgisi eklenmedi.</div>';
+  if (profil.kategori) html += bilgiSatir('🏢','FİRMA TÜRÜ',kategoriLabel(profil.kategori));
+  if (profil.yetki_belge_no) html += bilgiSatir('🪪','YETKİ BELGE NO','<span style="color:var(--green);font-weight:900">'+profil.yetki_belge_no+'</span>');
+  if (profil.kurumsal_sehir || profil.sehir) html += bilgiSatir('📍','KONUM',profil.kurumsal_sehir || profil.sehir);
+  if (profil.ofis_adresi) html += bilgiSatir('🗺️','OFİS ADRESİ',profil.ofis_adresi);
+  if (profil.calisan_sayisi) html += bilgiSatir('👥','ÇALIŞAN SAYISI',profil.calisan_sayisi);
+  if (profil.website_url) html += bilgiSatir('🌐','WEB SİTESİ',`<a href="${profil.website_url}" target="_blank" style="color:var(--gold);text-decoration:none">${profil.website_url.replace(/^https?:\/\//,'')}</a>`);
+  return html || '<div style="color:var(--text3);font-size:13px;padding:12px">Henüz firma bilgisi eklenmedi.</div>';
 }
 
-// ─────────────────────────────────────────
-// İLAN KARTI HTML — DÜZELTİLDİ
-// ─────────────────────────────────────────
+function bilgiSatir(icon, label, val) {
+  return `<div class="bkp-row"><div class="bkp-icon">${icon}</div><div><div class="bkp-label">${label}</div><div class="bkp-val">${val}</div></div></div>`;
+}
+
+/* ══════════════════════════════════
+   İLAN KARTI HTML
+══════════════════════════════════ */
 function ilanKartHTML(i, kendi) {
-  const onayClass = i.onay_durumu === 'onaylandi' ? 'onay-onaylandi' : i.onay_durumu === 'reddedildi' ? 'onay-reddedildi' : 'onay-bekliyor';
-  const onayText  = i.onay_durumu === 'onaylandi' ? '✅ Onaylandı' : i.onay_durumu === 'reddedildi' ? '❌ Reddedildi' : '⏳ Bekliyor';
   const fiyat = Number(i.fiyat).toLocaleString('tr-TR') + ' ₺' + (i.tip === 'kiralik' ? '/ay' : '');
-  const resim = i.foto_url ? `<img src="${i.foto_url}">` : (i.tip === 'kiralik' ? '🏘️' : '🏙️');
+  const thumb = i.foto_url
+    ? `<img src="${i.foto_url}">`
+    : (i.tip === 'kiralik' ? '🏘️' : '🏙️');
+
+  const onayClass = i.onay_durumu === 'onaylandi' ? 'ob-ok' : i.onay_durumu === 'reddedildi' ? 'ob-red' : 'ob-wait';
+  const onayText = i.onay_durumu === 'onaylandi' ? '✅ Onaylandı' : i.onay_durumu === 'reddedildi' ? '❌ Reddedildi' : '⏳ Bekliyor';
 
   const simdi = new Date();
-  const premiumAktif  = i.one_cikarma_tipi === 'premium'  && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis) > simdi;
+  const premiumAktif = i.one_cikarma_tipi === 'premium' && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis) > simdi;
   const standartAktif = i.one_cikarma_tipi === 'standart' && i.one_cikarma_bitis && new Date(i.one_cikarma_bitis) > simdi;
-  const metaAktif     = i.meta_reklam_aktif && i.meta_reklam_bitis && new Date(i.meta_reklam_bitis) > simdi;
+  const metaAktif = i.meta_reklam_aktif && i.meta_reklam_bitis && new Date(i.meta_reklam_bitis) > simdi;
 
-  let oneCikanRozet = '';
-  if (premiumAktif)  oneCikanRozet += '<span style="background:rgba(255,107,53,0.15);color:#ff6b35;border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">🌟 Premium</span>';
-  else if (standartAktif) oneCikanRozet += '<span style="background:rgba(245,200,66,0.15);color:var(--gold);border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">⭐ Öne Çıkan</span>';
-  if (metaAktif) oneCikanRozet += '<span style="background:rgba(74,144,217,0.15);color:#4a90d9;border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">📢 Meta</span>';
+  let rozet = '';
+  if (premiumAktif) rozet += '<span class="isb-prm">🌟 Premium</span>';
+  else if (standartAktif) rozet += '<span class="isb-std">⭐ Öne Çıkan</span>';
+  if (metaAktif) rozet += '<span style="background:rgba(74,144,217,0.15);color:#4a90d9;border-radius:50px;padding:2px 8px;font-size:10px;font-weight:800">📢 Meta</span>';
 
-  // Öne çıkar butonu mantığı:
-  // - Premium aktifse: hiç buton yok (Premium Aktif rozeti yeterli)
-  // - Standart aktifse: "Yükselt" butonu (premium'a yükselt)
-  // - Hiçbiri aktif değilse: "Öne Çıkar" butonu
   let oneCikarBtn = '';
-  if (premiumAktif) {
-    oneCikarBtn = '<span style="background:rgba(255,107,53,0.1);border:1px solid #ff6b35;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;color:#ff6b35">🌟 Premium Aktif</span>';
-  } else if (standartAktif) {
-    oneCikarBtn = `<button onclick="oneCikarIlan('${i.id}','${(i.baslik||'').replace(/'/g,"\\'")}','${i.one_cikarma_tipi||''}');event.stopPropagation()" style="background:var(--gold);color:var(--bg);border:none;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif">⬆️ Yükselt</button>`;
-  } else {
-    oneCikarBtn = `<button onclick="oneCikarIlan('${i.id}','${(i.baslik||'').replace(/'/g,"\\'")}','');event.stopPropagation()" style="background:var(--gold);color:var(--bg);border:none;border-radius:50px;padding:5px 12px;font-size:11px;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif">🚀 Öne Çıkar</button>`;
+  if (kendi) {
+    if (premiumAktif) {
+      oneCikarBtn = '<button class="one-cikar-btn-p aktif">🌟 Premium Aktif</button>';
+    } else if (standartAktif) {
+      oneCikarBtn = `<button class="one-cikar-btn-p" onclick="oneCikarIlan('${i.id}','${(i.baslik||'').replace(/'/g,"\\'")}','${i.one_cikarma_tipi||''}');event.stopPropagation()">⬆️ Yükselt</button>`;
+    } else {
+      oneCikarBtn = `<button class="one-cikar-btn-p" onclick="oneCikarIlan('${i.id}','${(i.baslik||'').replace(/'/g,"\\'")}','');event.stopPropagation()">🚀 Öne Çıkar</button>`;
+    }
   }
 
-  // İstatistik satırı — görüntülenme ve favori burada gösterilir
-  const istatistik = kendi ? `
-    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border);margin-top:6px;flex-wrap:wrap">
-      <span style="font-size:11px;font-weight:700;color:var(--text3)">👁 ${(i.goruntulenmesayisi || 0).toLocaleString('tr-TR')}</span>
-      <span style="font-size:11px;font-weight:700;color:var(--text3)">❤️ ${i.favori_sayisi || 0}</span>
-      ${oneCikanRozet}
-      <span style="margin-left:auto">${oneCikarBtn}</span>
-    </div>` : '';
-
-  const kendiAksiyonlar = kendi ? `
-    <div class="ilanim-actions">
-      <a href="ilan-duzenle.html?id=${i.id}" class="btn-duzenle">✏️ Düzenle</a>
-      <button onclick="ilanSil('${i.id}');event.stopPropagation()" class="btn-sil">🗑️ Sil</button>
-    </div>
-    <a href="degerleme.html?ilan_id=${i.id}" class="ekspertiz-link">📊 Ekspertiz Raporu — 800 ₺</a>
-    ${istatistik}` : '';
-
   const tikla = !kendi ? `onclick="location.href='ilan-detay.html?id=${i.id}'"` : '';
+  const style = !kendi ? 'cursor:pointer' : '';
 
   return `
-    <div class="ilanim-item" ${tikla}>
-      <div class="ilanim-thumb">${resim}</div>
-      <div class="ilanim-body">
-        <div>
-          <div class="ilanim-top">
-            <div class="ilanim-price">${fiyat}</div>
-            ${kendi ? `<span class="onay-badge ${onayClass}">${onayText}</span>` : ''}
-          </div>
-          <div class="ilanim-title">${i.baslik || ''}</div>
-          <div class="ilanim-loc">📍 ${i.konum || ''}</div>
+  <div class="ilan-card-p" ${tikla} style="${style}">
+    <div class="ilan-card-row">
+      <div class="ilan-thumb-p">${thumb}</div>
+      <div class="ilan-body-p">
+        <div class="ilan-top-p">
+          <div class="ilan-price-p">${fiyat}</div>
+          ${kendi ? `<span class="onay-b ${onayClass}">${onayText}</span>` : ''}
         </div>
-        ${kendiAksiyonlar}
+        <div class="ilan-title-p">${i.baslik || ''}</div>
+        <div class="ilan-loc-p">📍 ${i.konum || ''}</div>
+        ${!kendi ? `
+        <div class="ilan-meta-row-p">
+          <span class="ilan-cat-badge-p">Emlak</span>
+          <span class="ilan-meta-p">👁 ${(i.goruntulenmesayisi||0).toLocaleString('tr-TR')}</span>
+        </div>` : ''}
       </div>
-    </div>`;
+    </div>
+    ${kendi ? `
+    <div class="ilan-stats-bar">
+      <span class="isb-stat">👁 ${(i.goruntulenmesayisi||0).toLocaleString('tr-TR')}</span>
+      <span class="isb-stat">❤️ ${i.favori_sayisi||0}</span>
+      ${rozet}
+      ${oneCikarBtn}
+    </div>
+    <div class="ilan-actions-bar">
+      <a href="ilan-duzenle.html?id=${i.id}" class="btn-duz-p">✏️ Düzenle</a>
+      <button onclick="ilanSil('${i.id}');event.stopPropagation()" class="btn-sil-p">🗑️ Sil</button>
+    </div>
+    <a href="degerleme.html?ilan_id=${i.id}" class="ekspertiz-btn-p">📊 Ekspertiz Raporu — 800 ₺</a>
+    ` : ''}
+  </div>`;
 }
 
-// ─────────────────────────────────────────
-// BAŞKASININ PROFİLİ
-// ─────────────────────────────────────────
-let baskaKullaniciId = null;
+/* ══════════════════════════════════
+   YORUM HTML
+══════════════════════════════════ */
+function yorumKartHTML(y) {
+  const yildiz = '★'.repeat(Math.round(y.puan||5)) + '☆'.repeat(5 - Math.round(y.puan||5));
+  const initials = (y.profiles?.full_name || 'U').charAt(0).toUpperCase();
+  return `
+  <div class="yorum-card-p">
+    <div class="yc-header">
+      <div class="yc-av">${initials}</div>
+      <div>
+        <div class="yc-name">${y.profiles?.full_name || 'Kullanıcı'}</div>
+        <div class="yc-date">${new Date(y.created_at).toLocaleDateString('tr-TR')}</div>
+      </div>
+      <div class="yc-stars">${yildiz}</div>
+    </div>
+    <div class="yc-text">${y.yorum || ''}</div>
+  </div>`;
+}
+
+function yorumSummaryRender(yorumlar, ortId, starsId, countId, barsId, summaryId) {
+  if (!yorumlar || yorumlar.length === 0) return;
+  const ort = yorumlar.reduce((a,b) => a + (b.puan||5), 0) / yorumlar.length;
+  document.getElementById(ortId).textContent = ort.toFixed(1);
+  document.getElementById(starsId).textContent = '★'.repeat(Math.round(ort)) + '☆'.repeat(5 - Math.round(ort));
+  document.getElementById(countId).textContent = yorumlar.length + ' yorum';
+  const dagılım = [5,4,3,2,1].map(n => ({ n, c: yorumlar.filter(y => Math.round(y.puan||5) === n).length }));
+  document.getElementById(barsId).innerHTML = dagılım.map(d =>
+    `<div class="ys-bar-row">
+      <div class="ys-bar-lbl">${d.n}</div>
+      <div class="ys-bar-track"><div class="ys-bar-fill" style="width:${yorumlar.length ? (d.c/yorumlar.length*100) : 0}%"></div></div>
+      <div class="ys-bar-count">${d.c}</div>
+    </div>`
+  ).join('');
+  document.getElementById(summaryId).style.display = 'flex';
+}
+
+/* ══════════════════════════════════
+   BAŞKASININ PROFİLİ
+══════════════════════════════════ */
 async function baskaProfilYukle(uid) {
   baskaKullaniciId = uid;
   const { data: profil } = await sb.from('profiles').select('*').eq('id', uid).single();
   if (!profil) { document.getElementById('bAvAd').textContent = 'Kullanıcı bulunamadı'; return; }
 
   const tip = profil.kullanici_tipi || 'bireysel';
+  coverBadgeAyarla(profil, 'bCoverBadge', 'bAvEl');
 
   if (tip === 'kurumsal' && profil.firma_adi) {
     document.getElementById('bAvAd').textContent = profil.full_name || '';
@@ -605,75 +1002,98 @@ async function baskaProfilYukle(uid) {
   }
 
   const avUrl = (tip === 'kurumsal' ? profil.logo_url : null) || profil.avatar_url;
-  if (avUrl) {
-    document.getElementById('bAvEmoji').style.display = 'none';
-    const img = document.getElementById('bAvImg');
-    img.src = avUrl; img.style.display = 'block';
-  }
-  const avEl = document.getElementById('bAvEl');
-  if (tip === 'kurumsal') avEl.classList.add('kurumsal');
-  if (tip === 'freelancer') avEl.classList.add('freelancer');
+  avatarGoster(avUrl, 'bAvEmoji', 'bAvImg');
 
   if (profil.sehir) document.getElementById('bAvSehir').textContent = '📍 ' + profil.sehir;
-  rozetlerOlustur(profil, 'bAvRozetler');
+  rozetOlustur(profil, 'bAvRozetler');
+
   if (profil.hakkimda || profil.aciklama) {
-    const h = document.getElementById('bAvHakkimda');
+    const h = document.getElementById('bAvBio');
     h.textContent = profil.hakkimda || profil.aciklama; h.style.display = 'block';
   }
   if (profil.verified) document.getElementById('bAvVerified').style.display = 'inline-flex';
 
-  if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
-    document.getElementById('bAvUzmanKart').style.display = 'block';
-    document.getElementById('bAvUzmanIcerik').innerHTML = uzmanBilgiHTML(profil);
-  } else if (tip === 'kurumsal') {
-    document.getElementById('bAvKurumsalKart').style.display = 'block';
-    document.getElementById('bAvKurumsalIcerik').innerHTML = kurumsalBilgiHTML(profil);
-  }
+  // Stats (placeholder — gerçek takipçi sayısı için ayrı tablo gerekir)
+  document.getElementById('bAvPaylaşım').textContent = '—';
+  document.getElementById('bAvTakipci').textContent = '—';
+  document.getElementById('bAvTakip').textContent = '—';
 
-  const { data: ilanlar } = await sb.from('ilanlar').select('*').eq('user_id', uid).eq('onay_durumu', 'onaylandi').order('created_at', { ascending: false });
-  document.getElementById('bAvIlanSay').textContent = ilanlar?.length || 0;
-  const kart = document.getElementById('baskaIlanlar');
-  kart.innerHTML = (!ilanlar || ilanlar.length === 0)
+  // İlanlar
+  const { data: ilanlar } = await sb.from('ilanlar').select('*,goruntulenmesayisi').eq('user_id', uid).eq('onay_durumu', 'onaylandi').order('created_at', { ascending: false });
+  document.getElementById('bAvPaylaşım').textContent = ilanlar?.length || 0;
+
+  const ilanKont = document.getElementById('baskaIlanlarContainer');
+  ilanKont.innerHTML = (!ilanlar || ilanlar.length === 0)
     ? `<div class="empty" style="padding:24px"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div></div>`
     : ilanlar.map(i => ilanKartHTML(i, false)).join('');
-}
-function mesajGonder() { if (baskaKullaniciId) window.location.href = `mesajlar.html?karsi_id=${baskaKullaniciId}`; }
 
-// ─────────────────────────────────────────
-// KENDİ PROFİLİM
-// ─────────────────────────────────────────
+  // Paylaşım grid (ilanlardan üret)
+  const grid = document.getElementById('paylasimGrid');
+  if (!ilanlar || ilanlar.length === 0) {
+    grid.innerHTML = `<div style="padding:32px;text-align:center;color:var(--text3);font-size:13px;grid-column:1/-1">Henüz paylaşım yok</div>`;
+  } else {
+    grid.innerHTML = ilanlar.slice(0, 9).map(i => {
+      const thumb = i.foto_url ? `<img src="${i.foto_url}">` : '';
+      const bg = i.foto_url ? '' : 'background:var(--card2);';
+      return `<div class="share-cell-p" style="${bg}" onclick="location.href='ilan-detay.html?id=${i.id}'">
+        ${thumb}
+        <div class="share-type-badge-p stb-foto">İlan</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Yorumlar
+  const { data: yorumlar } = await sb.from('yorumlar').select('*,profiles(full_name)').eq('hedef_id', uid).order('created_at', { ascending: false });
+  if (yorumlar && yorumlar.length > 0) {
+    yorumSummaryRender(yorumlar, 'bYorumOrt', 'bYorumStars', 'bYorumCount', 'bYorumBars', 'bYorumSummary');
+    document.getElementById('bYorumContainer').innerHTML = yorumlar.map(y => yorumKartHTML(y)).join('');
+  }
+
+  // Hakkında
+  if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
+    document.getElementById('baskaUzmanKarti').style.display = 'block';
+    document.getElementById('baskaUzmanIcerik').innerHTML = uzmanBilgiHTML(profil);
+  } else if (tip === 'kurumsal') {
+    document.getElementById('baskaKurumsalKarti').style.display = 'block';
+    document.getElementById('baskaKurumsalIcerik').innerHTML = kurumsalBilgiHTML(profil);
+  }
+}
+
+function takipToggle() {
+  const btn = document.getElementById('takipBtn');
+  const f = btn.classList.toggle('following');
+  btn.textContent = f ? 'Takipte' : 'Takip Et';
+}
+function mesajGonder() {
+  if (baskaKullaniciId) window.location.href = `mesajlar.html?karsi_id=${baskaKullaniciId}`;
+}
+
+/* ══════════════════════════════════
+   KENDİ PROFİLİM
+══════════════════════════════════ */
 async function profilYukle() {
   const { data: profil } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
   currentProfil = profil;
 
   if (profil) {
     const tip = profil.kullanici_tipi || 'bireysel';
+    coverBadgeAyarla(profil, 'coverBadge', 'avatarEl');
 
     document.getElementById('profilAd').textContent = profil.full_name || 'İsimsiz';
     if (tip === 'kurumsal' && profil.firma_adi) {
       const f = document.getElementById('profilFirmaAdi');
       f.textContent = '🏢 ' + profil.firma_adi; f.style.display = 'block';
     }
-
     document.getElementById('profilEmail').textContent = profil.email || currentUser.email;
-    if (profil.phone) document.getElementById('profilTel').textContent = '📞 ' + profil.phone;
-    if (profil.sehir) document.getElementById('profilSehir').textContent = '📍 ' + profil.sehir;
+    if (profil.phone) { document.getElementById('profilTel').textContent = '📞 ' + profil.phone; document.getElementById('profilTel').style.display = 'block'; }
+    if (profil.sehir) { document.getElementById('profilSehir').textContent = '📍 ' + profil.sehir; document.getElementById('profilSehir').style.display = 'block'; }
 
     const avUrl = (tip === 'kurumsal' ? profil.logo_url : null) || profil.avatar_url;
-    if (avUrl) {
-      document.getElementById('avatarEmoji').style.display = 'none';
-      const img = document.getElementById('avatarImg');
-      img.src = avUrl; img.style.display = 'block';
-    }
-    const avEl = document.getElementById('avatarEl');
-    avEl.classList.remove('kurumsal', 'freelancer');
-    if (tip === 'kurumsal') avEl.classList.add('kurumsal');
-    if (tip === 'freelancer') avEl.classList.add('freelancer');
-
-    rozetlerOlustur(profil, 'profilRozetler');
+    avatarGoster(avUrl, 'avatarEmoji', 'avatarImg');
+    rozetOlustur(profil, 'profilRozetler');
 
     if (profil.hakkimda || profil.aciklama) {
-      const h = document.getElementById('profilHakkimda');
+      const h = document.getElementById('profilBio');
       h.textContent = profil.hakkimda || profil.aciklama; h.style.display = 'block';
     }
     if (profil.verified) document.getElementById('verifiedBadge').style.display = 'inline-flex';
@@ -693,42 +1113,71 @@ async function profilYukle() {
     document.getElementById('profilAd').textContent = currentUser.email;
   }
 
+  // İlanlar
   const { data: ilanlar } = await sb.from('ilanlar')
     .select('*,goruntulenmesayisi,favori_sayisi,one_cikarma_tipi,one_cikarma_bitis,meta_reklam_aktif,meta_reklam_bitis')
     .eq('user_id', currentUser.id)
     .order('created_at', { ascending: false });
 
-  document.getElementById('ilanSayisi').textContent = ilanlar?.filter(i => i.onay_durumu === 'onaylandi').length || 0;
-  const kart = document.getElementById('ilanlarimCard');
-  kart.innerHTML = (!ilanlar || ilanlar.length === 0)
-    ? `<div class="empty" style="padding:24px"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div><a href="ilan-ver.html" class="btn btn-gold btn-md" style="margin-top:12px;max-width:200px">+ İlan Ver</a></div>`
-    : ilanlar.map(i => ilanKartHTML(i, true)).join('');
+  const onayliSayi = ilanlar?.filter(i => i.onay_durumu === 'onaylandi').length || 0;
+  document.getElementById('ilanSayisi').textContent = onayliSayi;
 
+  const ilanKont = document.getElementById('ilanlarimContainer');
+  if (!ilanlar || ilanlar.length === 0) {
+    ilanKont.innerHTML = `<div class="empty" style="padding:24px"><div class="empty-icon">🏠</div><div class="empty-title">Henüz ilan yok</div></div><a href="ilan-ver.html" class="yeni-ilan-btn-p">+ İlan Ver</a>`;
+  } else {
+    ilanKont.innerHTML = ilanlar.map(i => ilanKartHTML(i, true)).join('') + `<a href="ilan-ver.html" class="yeni-ilan-btn-p">+ Yeni İlan Ver</a>`;
+  }
+
+  // Alıcı ilanları
   const { data: aliciIlan } = await sb.from('arayan_ilanlar').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-  const aliciEl = document.getElementById('aliciIlanCard');
+  const aliciEl = document.getElementById('aliciIlanContainer');
   if (!aliciIlan || aliciIlan.length === 0) {
-    aliciEl.innerHTML = `<div class="empty" style="padding:24px"><div class="empty-icon">🔍</div><div class="empty-title">Arama ilanı yok</div><div class="empty-desc">Tercihlerini kaydet, sana uygun ilanlar önce gelsin</div><a href="ilan-ver.html" class="btn btn-gold btn-md" style="margin-top:12px;max-width:220px">🔍 Arama Tercihi Oluştur →</a></div>`;
+    aliciEl.innerHTML = `<div class="empty" style="padding:16px"><div class="empty-icon">🔍</div><div class="empty-title">Arama ilanı yok</div><div class="empty-desc">Tercihlerini kaydet, sana uygun ilanlar önce gelsin</div></div><a href="ilan-ver.html" class="yeni-ilan-btn-p" style="margin-top:0">🔍 Arama Tercihi Oluştur →</a>`;
   } else {
     aliciEl.innerHTML = aliciIlan.map(a => {
-      const ozellikler = [
+      const etiketler = [
         a.konum ? `📍 ${a.konum}` : null,
-        a.fiyat_min || a.fiyat_max ? `💰 ${a.fiyat_min ? Number(a.fiyat_min).toLocaleString('tr-TR')+'₺' : ''} ${a.fiyat_max ? '— '+Number(a.fiyat_max).toLocaleString('tr-TR')+'₺' : ''}` : null,
+        (a.fiyat_min || a.fiyat_max) ? `💰 ${a.fiyat_min ? Number(a.fiyat_min).toLocaleString('tr-TR')+'₺' : ''} ${a.fiyat_max ? '— '+Number(a.fiyat_max).toLocaleString('tr-TR')+'₺' : ''}`.trim() : null,
         a.oda_sayisi ? `🛏 ${a.oda_sayisi}` : null,
-        a.emlak_tipi ? `🏠 ${a.emlak_tipi}` : null,
       ].filter(Boolean);
-      return `<div class="alici-ilan-card">
+      return `<div class="alici-card-p">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-          <div><div style="font-size:14px;font-weight:900">🔍 ${a.baslik||'Arama İlanı'}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${new Date(a.created_at).toLocaleDateString('tr-TR')}</div></div>
+          <div>
+            <div style="font-size:14px;font-weight:900">🔍 ${a.baslik || 'Arama İlanı'}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">${new Date(a.created_at).toLocaleDateString('tr-TR')}</div>
+          </div>
           <button onclick="aliciIlanSil('${a.id}')" style="background:rgba(232,96,58,0.1);border:1px solid rgba(232,96,58,0.3);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:800;color:var(--rust);cursor:pointer;font-family:Nunito,sans-serif">🗑️</button>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">${ozellikler.map(o=>`<span style="background:var(--card);border:1px solid var(--border);border-radius:50px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--text2)">${o}</span>`).join('')}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+          ${etiketler.map(e => `<span style="background:var(--card);border:1px solid var(--border);border-radius:50px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--text2)">${e}</span>`).join('')}
+        </div>
         <a href="ilan-ver.html?mod=alici-duzenle&arama=${a.id}" style="display:block;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;font-weight:800;color:var(--text);text-align:center;text-decoration:none">✏️ Tercihleri Düzenle</a>
       </div>`;
     }).join('');
   }
 
-  const { count } = await sb.from('teklifler').select('*', { count: 'exact', head: true }).eq('user_id', currentUser.id);
-  document.getElementById('hizmetSayisi').textContent = count || 0;
+  // Hizmet sayısı
+  const { count: hizmetCount } = await sb.from('teklifler').select('*', { count: 'exact', head: true }).eq('user_id', currentUser.id);
+  document.getElementById('hizmetSayisi').textContent = hizmetCount || 0;
+
+  // Yorumlar
+  const { data: yorumlar } = await sb.from('yorumlar').select('*,profiles(full_name)').eq('hedef_id', currentUser.id).order('created_at', { ascending: false });
+  if (yorumlar && yorumlar.length > 0) {
+    yorumSummaryRender(yorumlar, 'yorumOrt', 'yorumStars', 'yorumCount', 'yorumBars', 'yorumSummary');
+    document.getElementById('yorumContainer').innerHTML = yorumlar.map(y => yorumKartHTML(y)).join('');
+  }
+
+  // İstatistik (placeholder — gerçek analytics tablosu varsa buraya bağlanır)
+  document.getElementById('profGorunt').textContent = '—';
+  document.getElementById('yeniTakipci').textContent = '—';
+  document.getElementById('ilanTiklanma').textContent = '—';
+  document.getElementById('toplamBegeni').textContent = '—';
+  const topGorunt = ilanlar?.reduce((a, b) => a + (b.goruntulenmesayisi || 0), 0) || 0;
+  const topFav = ilanlar?.reduce((a, b) => a + (b.favori_sayisi || 0), 0) || 0;
+  document.getElementById('toplamGorunt').textContent = topGorunt.toLocaleString('tr-TR');
+  document.getElementById('toplamFav').textContent = topFav;
+  document.getElementById('toplamMesaj').textContent = '—';
 }
 
 async function aliciIlanSil(id) {
@@ -737,89 +1186,81 @@ async function aliciIlanSil(id) {
   profilYukle();
 }
 
-// ─────────────────────────────────────────
-// PROFİL DÜZENLE MODAL
-// ─────────────────────────────────────────
+/* ══════════════════════════════════
+   PROFİL DÜZENLE MODAL
+══════════════════════════════════ */
 async function profilDuzenle() {
   const p = currentProfil || {};
   const tip = p.kullanici_tipi || 'bireysel';
 
   const ortakAlanlar = `
     <div style="margin-bottom:14px">
-      <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">👤 Ad Soyad *</label>
+      <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">👤 Ad Soyad *</label>
       <input class="input" type="text" id="editAd" value="${p.full_name||''}">
     </div>
     <div style="margin-bottom:14px">
-      <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📞 Telefon</label>
+      <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📞 Telefon</label>
       <input class="input" type="tel" id="editTel" value="${p.phone||''}" placeholder="05XX XXX XX XX">
     </div>
     <div style="margin-bottom:14px">
-      <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏙️ Şehir / İlçe</label>
+      <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏙️ Şehir / İlçe</label>
       <input class="input" type="text" id="editSehir" value="${p.sehir||''}" placeholder="ör. Ankara, Çankaya">
     </div>`;
 
   let ekAlanlar = '';
-  let formBaslik = '⚙️ Profili Düzenle';
-  let formAlt = kullaniciTipLabel(tip);
-
   if (tip === 'kurumsal') {
-    formBaslik = '🏢 Kurumsal Profili Düzenle';
     ekAlanlar = `
-      <div class="form-section-title">Firma Bilgileri</div>
+      <div class="form-sec-title-p">Firma Bilgileri</div>
       <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏢 Firma Adı *</label>
+        <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏢 Firma Adı *</label>
         <input class="input" type="text" id="editFirmaAdi" value="${p.firma_adi||''}" placeholder="ör. Güven Gayrimenkul">
       </div>
       <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏛️ Vergi No</label>
-        <input class="input" type="text" id="editVergiNo" value="${p.vergi_no||''}" placeholder="10 haneli vergi numarası" maxlength="11" inputmode="numeric">
+        <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🏛️ Vergi No</label>
+        <input class="input" type="text" id="editVergiNo" value="${p.vergi_no||''}" placeholder="10 haneli" maxlength="11" inputmode="numeric">
       </div>
       <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📍 Ofis Adresi</label>
+        <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📍 Ofis Adresi</label>
         <input class="input" type="text" id="editOfisAdresi" value="${p.ofis_adresi||''}" placeholder="Tam adres">
       </div>
       <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">👥 Çalışan Sayısı</label>
+        <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">👥 Çalışan Sayısı</label>
         <select class="input" id="editCalisanSayisi" style="padding:12px">
           <option value="">Seçin</option>
           ${['1-5','6-20','21-50','51-100','100+'].map(s=>`<option value="${s}" ${p.calisan_sayisi===s?'selected':''}>${s} kişi</option>`).join('')}
         </select>
       </div>
       <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🌐 Web Sitesi</label>
+        <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🌐 Web Sitesi</label>
         <input class="input" type="url" id="editWebsite" value="${p.website_url||''}" placeholder="https://firmaniz.com">
       </div>
-      <div class="form-section-title">Tanıtım</div>
       <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Firma Hakkında</label>
-        <textarea class="input" id="editAciklama" rows="3" style="resize:none" placeholder="Firmanızı ve hizmetlerinizi tanıtın...">${p.aciklama||''}</textarea>
+        <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Firma Hakkında</label>
+        <textarea class="input" id="editAciklama" rows="3" style="resize:none">${p.aciklama||''}</textarea>
       </div>`;
   } else if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
-    formBaslik = '🔧 Hizmet Profilini Düzenle';
     ekAlanlar = `
-      <div class="form-section-title">Hizmet Bilgileri</div>
+      <div class="form-sec-title-p">Hizmet Bilgileri</div>
       <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🔧 Uzmanlık / Hizmet Türü</label>
+        <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">🔧 Uzmanlık</label>
         <input class="input" type="text" id="editUzmanlik" value="${p.uzmanlik||p.kategori||''}" placeholder="ör. Tadilat, Boya, Temizlik">
       </div>
       <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">💰 Saatlik / Günlük Ücret (₺)</label>
+        <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">💰 Ücret (₺)</label>
         <input class="input" type="number" id="editFiyat" value="${p.ucret||''}" placeholder="ör. 350">
       </div>
       <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📅 Deneyim (yıl)</label>
+        <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📅 Deneyim (yıl)</label>
         <input class="input" type="number" id="editDeneyim" value="${p.deneyim_yil||''}" placeholder="ör. 5" min="0">
       </div>
-      <div class="form-section-title">Hakkımda</div>
       <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Kendinizi Tanıtın</label>
-        <textarea class="input" id="editHakkimda" rows="3" style="resize:none" placeholder="Yaptığınız işi, deneyiminizi anlatın...">${p.hakkimda||''}</textarea>
+        <label style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Hakkımda</label>
+        <textarea class="input" id="editHakkimda" rows="3" style="resize:none">${p.hakkimda||''}</textarea>
       </div>`;
   } else {
     ekAlanlar = `
-      <div class="form-section-title">Hakkımda</div>
+      <div class="form-sec-title-p">Hakkımda</div>
       <div style="margin-bottom:14px">
-        <label style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;display:block">📝 Hakkımda</label>
         <textarea class="input" id="editHakkimda" rows="3" style="resize:none" placeholder="Kendinizi kısaca tanıtın...">${p.hakkimda||''}</textarea>
       </div>`;
   }
@@ -830,8 +1271,7 @@ async function profilDuzenle() {
   modal.innerHTML = `
     <div style="background:var(--bg2);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-height:90vh;overflow-y:auto">
       <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
-      <h3 style="font-size:18px;font-weight:900;margin-bottom:4px">${formBaslik}</h3>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:20px">${formAlt}</div>
+      <h3 style="font-size:18px;font-weight:900;margin-bottom:20px">⚙️ Profili Düzenle</h3>
       ${ortakAlanlar}
       ${ekAlanlar}
       <div id="editError" style="background:rgba(232,96,58,0.1);color:var(--rust);border-radius:10px;padding:12px;font-size:14px;font-weight:700;display:none;margin-bottom:12px"></div>
@@ -839,91 +1279,62 @@ async function profilDuzenle() {
       <button class="btn btn-outline btn-md" style="width:100%;margin-top:8px" onclick="document.getElementById('profilModal').remove()">İptal</button>
     </div>`;
   document.body.appendChild(modal);
-  modal.onclick = e => { if(e.target===modal) modal.remove(); };
+  modal.onclick = e => { if (e.target === modal) modal.remove(); };
 }
 
-// ─────────────────────────────────────────
-// PROFİL KAYDET
-// ─────────────────────────────────────────
 async function profilKaydet(tip) {
   const ad = document.getElementById('editAd').value.trim();
   if (!ad) {
-    document.getElementById('editError').textContent = '⚠️ Ad soyad zorunludur!';
-    document.getElementById('editError').style.display = 'block';
-    return;
+    const err = document.getElementById('editError');
+    err.textContent = '⚠️ Ad soyad zorunludur!'; err.style.display = 'block'; return;
   }
-
   const guncellemeler = {
     full_name: ad,
     phone: document.getElementById('editTel').value.trim() || null,
     sehir: document.getElementById('editSehir').value.trim() || null,
   };
-
   if (tip === 'kurumsal') {
     const firmaAdi = document.getElementById('editFirmaAdi').value.trim();
     if (!firmaAdi) {
-      document.getElementById('editError').textContent = '⚠️ Firma adı zorunludur!';
-      document.getElementById('editError').style.display = 'block';
-      return;
+      const err = document.getElementById('editError');
+      err.textContent = '⚠️ Firma adı zorunludur!'; err.style.display = 'block'; return;
     }
     Object.assign(guncellemeler, {
-      firma_adi:      firmaAdi,
-      vergi_no:       document.getElementById('editVergiNo').value.trim() || null,
-      ofis_adresi:    document.getElementById('editOfisAdresi').value.trim() || null,
+      firma_adi: firmaAdi,
+      vergi_no: document.getElementById('editVergiNo').value.trim() || null,
+      ofis_adresi: document.getElementById('editOfisAdresi').value.trim() || null,
       calisan_sayisi: document.getElementById('editCalisanSayisi').value || null,
-      website_url:    document.getElementById('editWebsite').value.trim() || null,
-      aciklama:       document.getElementById('editAciklama').value.trim() || null,
+      website_url: document.getElementById('editWebsite').value.trim() || null,
+      aciklama: document.getElementById('editAciklama').value.trim() || null,
     });
   } else if (tip === 'freelancer' || tip === 'hizmet_saglayici') {
     Object.assign(guncellemeler, {
-      uzmanlik:     document.getElementById('editUzmanlik').value.trim() || null,
-      ucret:        parseFloat(document.getElementById('editFiyat').value) || null,
-      deneyim_yil:  parseInt(document.getElementById('editDeneyim').value) || null,
-      hakkimda:     document.getElementById('editHakkimda').value.trim() || null,
+      uzmanlik: document.getElementById('editUzmanlik').value.trim() || null,
+      ucret: parseFloat(document.getElementById('editFiyat').value) || null,
+      deneyim_yil: parseInt(document.getElementById('editDeneyim').value) || null,
+      hakkimda: document.getElementById('editHakkimda').value.trim() || null,
     });
   } else {
     guncellemeler.hakkimda = document.getElementById('editHakkimda').value.trim() || null;
   }
-
   const { error } = await sb.from('profiles').update(guncellemeler).eq('id', currentUser.id);
   if (error) {
-    document.getElementById('editError').textContent = 'Hata: ' + error.message;
-    document.getElementById('editError').style.display = 'block';
-    return;
+    const err = document.getElementById('editError');
+    err.textContent = 'Hata: ' + error.message; err.style.display = 'block'; return;
   }
   document.getElementById('profilModal').remove();
   profilYukle();
 }
 
-// ─────────────────────────────────────────
-// DİĞER FONKSİYONLAR
-// ─────────────────────────────────────────
-function hizmetlerToggle() {
-  document.getElementById('hizmetlerBody').classList.toggle('open');
-  document.getElementById('hizmetlerArrow').classList.toggle('open');
-}
-
-function hizmetVerTikla() {
-  const modal = document.createElement('div');
-  modal.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end';
-  modal.innerHTML = `
-    <div style="background:var(--bg2);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%">
-      <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
-      <div style="font-size:32px;text-align:center;margin-bottom:12px">🛠️</div>
-      <h3 style="font-size:20px;font-weight:900;margin-bottom:12px;text-align:center">Hizmet Ver</h3>
-      <p style="font-size:14px;color:var(--text2);text-align:center;line-height:1.7;margin-bottom:20px">Bu özellik çok yakında geliyor!<br>Tadilat, temizlik, nakliye ve daha fazla hizmet kategorisinde ilan verebileceksiniz.</p>
-      <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:14px;border-radius:50px;background:var(--gold);color:var(--bg);border:none;font-family:Nunito,sans-serif;font-size:15px;font-weight:900;cursor:pointer">Tamam</button>
-    </div>`;
-  document.body.appendChild(modal);
-  modal.onclick = e => { if(e.target===modal) modal.remove(); };
-}
-
+/* ══════════════════════════════════
+   AVATAR DEĞİŞTİR
+══════════════════════════════════ */
 async function avatarDegistir(input) {
   const file = input.files[0];
   if (!file) return;
   const fileName = `avatars/${currentUser.id}`;
-  const { error: uploadError } = await sb.storage.from('avatarlar').upload(fileName, file, { upsert: true });
-  if (uploadError) { alert('Fotoğraf yüklenemedi: ' + uploadError.message); return; }
+  const { error } = await sb.storage.from('avatarlar').upload(fileName, file, { upsert: true });
+  if (error) { alert('Fotoğraf yüklenemedi: ' + error.message); return; }
   const { data } = sb.storage.from('avatarlar').getPublicUrl(fileName);
   const url = data.publicUrl + '?t=' + Date.now();
   await sb.from('profiles').update({ avatar_url: url }).eq('id', currentUser.id);
@@ -933,42 +1344,32 @@ async function avatarDegistir(input) {
   alert('✅ Profil fotoğrafı güncellendi!');
 }
 
+/* ══════════════════════════════════
+   İLAN İŞLEMLERİ
+══════════════════════════════════ */
 async function ilanSil(ilanId) {
   if (!confirm('Bu ilanı silmek istediğinizden emin misiniz?')) return;
   await sb.from('ilanlar').delete().eq('id', ilanId).eq('user_id', currentUser.id);
   profilYukle();
 }
 
-// ─────────────────────────────────────────
-// ÖNE ÇIKAR MODAL — DÜZELTİLDİ
-// ilanMevcutTip: '', 'standart', 'premium'
-// ─────────────────────────────────────────
 async function oneCikarIlan(ilanId, ilanBaslik, ilanMevcutTip) {
   event.stopPropagation();
-
-  const { data: kredi } = await sb.from('agent_credits')
-    .select('bakiye').eq('agent_id', currentUser.id).single();
+  const { data: kredi } = await sb.from('agent_credits').select('bakiye').eq('agent_id', currentUser.id).single();
   const bakiye = kredi?.bakiye ?? 0;
 
-  // Standart aktifse sadece Premium butonu göster, değilse her ikisini göster
   const standartButon = (ilanMevcutTip !== 'standart' && ilanMevcutTip !== 'premium') ? `
-    <button onclick="oneCikarSatinAl('${ilanId}','standart',this)" style="background:linear-gradient(135deg,rgba(245,200,66,0.15),rgba(245,200,66,0.05));border:2px solid var(--gold);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:Nunito,sans-serif;text-align:left;width:100%;display:block;margin-bottom:0">
+    <button onclick="oneCikarSatinAl('${ilanId}','standart',this)" style="background:linear-gradient(135deg,rgba(245,197,24,0.12),rgba(245,197,24,0.04));border:2px solid var(--gold);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:Nunito,sans-serif;text-align:left;width:100%;display:block;margin-bottom:0">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-size:14px;font-weight:900;color:var(--gold)">⭐ Standart — 7 Gün</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:3px">Üst sıralarda gösterilir, altın çerçeve</div>
-        </div>
+        <div><div style="font-size:14px;font-weight:900;color:var(--gold)">⭐ Standart — 7 Gün</div><div style="font-size:11px;color:var(--text3);margin-top:3px">Üst sıralarda gösterilir, altın çerçeve</div></div>
         <div style="font-size:16px;font-weight:900;color:var(--gold)">50 kr</div>
       </div>
     </button>` : '';
 
   const premiumButon = ilanMevcutTip !== 'premium' ? `
-    <button onclick="oneCikarSatinAl('${ilanId}','premium',this)" style="background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,107,53,0.05));border:2px solid #ff6b35;border-radius:14px;padding:14px 16px;cursor:pointer;font-family:Nunito,sans-serif;text-align:left;width:100%;display:block">
+    <button onclick="oneCikarSatinAl('${ilanId}','premium',this)" style="background:linear-gradient(135deg,rgba(255,107,53,0.12),rgba(255,107,53,0.04));border:2px solid #ff6b35;border-radius:14px;padding:14px 16px;cursor:pointer;font-family:Nunito,sans-serif;text-align:left;width:100%;display:block">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-size:14px;font-weight:900;color:#ff6b35">🌟 Premium — 30 Gün</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:3px">En üst sıra, özel çerçeve, daha fazla görünüm</div>
-        </div>
+        <div><div style="font-size:14px;font-weight:900;color:#ff6b35">🌟 Premium — 30 Gün</div><div style="font-size:11px;color:var(--text3);margin-top:3px">En üst sıra, özel çerçeve, daha fazla görünüm</div></div>
         <div style="font-size:16px;font-weight:900;color:#ff6b35">150 kr</div>
       </div>
     </button>` : '';
@@ -987,57 +1388,54 @@ async function oneCikarIlan(ilanId, ilanBaslik, ilanMevcutTip) {
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
         ${standartButon}
         ${premiumButon}
-        ${(!standartButon && !premiumButon) ? '<div style="text-align:center;padding:16px;color:var(--text3);font-size:14px;font-weight:700">✅ İlanınız zaten en yüksek seviyede öne çıkarılmış.</div>' : ''}
+        ${(!standartButon && !premiumButon) ? '<div style="text-align:center;padding:16px;color:var(--text3);font-size:14px;font-weight:700">✅ Zaten en yüksek seviyede öne çıkarılmış.</div>' : ''}
       </div>
       ${bakiye < 50 ? `<a href="odeme.html" style="display:block;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:12px;font-size:13px;font-weight:800;color:var(--text);text-decoration:none;margin-bottom:10px">💎 Kredi Yükle →</a>` : ''}
       <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:12px;border-radius:50px;background:transparent;border:1px solid var(--border);font-family:Nunito,sans-serif;font-size:14px;font-weight:800;color:var(--text3);cursor:pointer">İptal</button>
     </div>`;
   document.body.appendChild(modal);
-  modal.addEventListener('click', e => { if(e.target===modal) modal.remove(); });
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 }
 
 async function oneCikarSatinAl(ilanId, tip, btn) {
   const maliyet = tip === 'premium' ? 150 : 50;
   const gun = tip === 'premium' ? 30 : 7;
-
-  const { data: kredi } = await sb.from('agent_credits')
-    .select('bakiye').eq('agent_id', currentUser.id).single();
+  const { data: kredi } = await sb.from('agent_credits').select('bakiye').eq('agent_id', currentUser.id).single();
   const bakiye = kredi?.bakiye ?? 0;
-
-  if (bakiye < maliyet) {
-    alert(`⚠️ Yetersiz kredi! Bu işlem için ${maliyet} kredi gerekiyor, bakiyeniz: ${bakiye}`);
-    return;
-  }
-
-  btn.disabled = true;
-  btn.style.opacity = '0.6';
-
+  if (bakiye < maliyet) { alert(`⚠️ Yetersiz kredi! ${maliyet} kredi gerekiyor.`); return; }
+  btn.disabled = true; btn.style.opacity = '0.6';
   const bitis = new Date();
   bitis.setDate(bitis.getDate() + gun);
-
-  const { error: ilanHata } = await sb.from('ilanlar').update({
-    one_cikarma_tipi: tip,
-    one_cikarma_bitis: bitis.toISOString()
-  }).eq('id', ilanId).eq('user_id', currentUser.id);
-
-  if (ilanHata) { alert('Hata: ' + ilanHata.message); btn.disabled = false; btn.style.opacity = '1'; return; }
-
-  const { error: krediHata } = await sb.from('agent_credits')
-    .update({ bakiye: bakiye - maliyet })
-    .eq('agent_id', currentUser.id);
-
-  if (krediHata) { alert('Kredi güncellenemedi: ' + krediHata.message); return; }
-
-  await sb.from('kredi_islemleri').insert({
-    agent_id: currentUser.id,
-    miktar: -maliyet,
-    tip: 'harcama',
-    aciklama: `İlan öne çıkarma (${tip}) — ${gun} gün`
-  });
-
-  document.querySelector('[style*="fixed"][style*="z-index:400"]')?.remove();
-  alert(`✅ İlanınız ${gun} gün boyunca ${tip === 'premium' ? 'Premium' : 'Standart'} olarak öne çıkarıldı!`);
+  const { error: ie } = await sb.from('ilanlar').update({ one_cikarma_tipi: tip, one_cikarma_bitis: bitis.toISOString() }).eq('id', ilanId).eq('user_id', currentUser.id);
+  if (ie) { alert('Hata: ' + ie.message); btn.disabled = false; btn.style.opacity = '1'; return; }
+  await sb.from('agent_credits').update({ bakiye: bakiye - maliyet }).eq('agent_id', currentUser.id);
+  await sb.from('kredi_islemleri').insert({ agent_id: currentUser.id, miktar: -maliyet, tip: 'harcama', aciklama: `İlan öne çıkarma (${tip}) — ${gun} gün` });
+  document.querySelector('[style*="z-index:400"]')?.remove();
+  alert(`✅ ${gun} gün boyunca ${tip === 'premium' ? 'Premium' : 'Standart'} olarak öne çıkarıldı!`);
   profilYukle();
+}
+
+/* ══════════════════════════════════
+   DİĞER
+══════════════════════════════════ */
+function hizmetToggle() {
+  document.getElementById('hizmetBody').classList.toggle('open');
+  document.getElementById('hizmetArrow').classList.toggle('open');
+}
+
+function hizmetVerTikla() {
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%">
+      <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
+      <div style="font-size:32px;text-align:center;margin-bottom:12px">🛠️</div>
+      <h3 style="font-size:20px;font-weight:900;margin-bottom:12px;text-align:center">Hizmet Ver</h3>
+      <p style="font-size:14px;color:var(--text2);text-align:center;line-height:1.7;margin-bottom:20px">Bu özellik çok yakında geliyor!<br>Tadilat, temizlik, nakliye ve daha fazla hizmet kategorisinde ilan verebileceksiniz.</p>
+      <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:14px;border-radius:50px;background:var(--gold);color:var(--bg);border:none;font-family:Nunito,sans-serif;font-size:15px;font-weight:900;cursor:pointer">Tamam</button>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.onclick = e => { if (e.target === modal) modal.remove(); };
 }
 
 async function cikisYap() {
@@ -1045,6 +1443,7 @@ async function cikisYap() {
   window.location.href = 'https://gotapu.com';
 }
 </script>
+
 <script>
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/XxxGotapu/sw.js", { scope: "/XxxGotapu/" })
