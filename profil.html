@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>GoTapu — Profil</title>
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
-<link rel="stylesheet" href="style.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="kredi.js"></script>
 <link rel="manifest" href="manifest.json">
@@ -16,6 +16,25 @@
 <meta name="apple-mobile-web-app-title" content="GoTapu">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text}
+.spinner{width:40px;height:40px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--gold);animation:spin .8s linear infinite;margin:40px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-icon{font-size:60px;margin-bottom:16px}
+.empty-title{font-size:18px;font-weight:800;color:var(--text2);margin-bottom:8px}
+.empty-desc{font-size:14px;line-height:1.6;color:var(--text2)}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:50px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;text-decoration:none}
+.btn-gold{background:var(--gold);color:var(--bg)}
+.btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border)}
+.btn-lg{padding:16px 28px;font-size:16px;width:100%}
+.btn-md{padding:12px 20px;font-size:14px}
+.input{width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;padding:13px 16px;outline:none;transition:border-color .2s}
+.input:focus{border-color:var(--gold)}
+.input::placeholder{color:var(--text3)}
+
 *{box-sizing:border-box}
 :root{
   --bg:#0F1117;--bg2:#181B24;--card:#1E2130;--card2:#252A3A;
@@ -79,7 +98,7 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 .paylasim-item-metin{font-size:12px;font-weight:800;color:var(--text);font-family:'Nunito',sans-serif}
 
 /* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;padding:6px 0 env(safe-area-inset-bottom,10px);z-index:110}
+/* bottom-nav style.css'den geliyor */
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;cursor:pointer;background:transparent;border:none;font-family:'Nunito',sans-serif;position:relative;min-width:0}
 .bnav-label{font-size:9px;font-weight:700;color:var(--text3);white-space:nowrap}
 .bnav-item.aktif .bnav-label{color:var(--gold)}
@@ -261,7 +280,7 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 }
 </style>
 </head>
-<body>
+<body style="padding-top:0!important;padding-bottom:0!important">
 <script>(function(){if(localStorage.getItem('gotapu_tema')==='light')document.body.classList.add('light')})()</script>
 
 <!-- TOP NAV -->
@@ -555,7 +574,7 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 </div>
 
 <!-- BOTTOM NAV -->
-<nav class="bottom-nav" style="position:fixed!important;bottom:0!important;left:0!important;right:0!important;z-index:9999!important;background:var(--bg2)!important">
+<nav class="bottom-nav">
   <a href="home.html" class="bnav-item">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
     <span class="bnav-label">Ana Sayfa</span>
