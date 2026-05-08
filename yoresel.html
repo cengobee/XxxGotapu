@@ -75,28 +75,16 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
 #map-foot{font-size:11px;color:#bbb;text-align:center;margin-top:8px;}
 
-/* MAP IMAGE SYSTEM */
-#map-wrap{
-  position:relative;
+/* ✅ DÜZELTME: Tek SVG harita — tüm içerik aynı koordinat sisteminde */
+#tr-map-svg{
   width:100%;
-  overflow:hidden;
+  height:auto;
+  display:block;
   border-radius:14px;
-  background:#f5f0ee;
   border:1px solid #e8e0da;
   box-shadow:0 2px 12px rgba(0,0,0,0.06);
-}
-#tr-map-img{
-  width:100%;
-  display:block;
-  user-select:none;
-  pointer-events:none;
-  border-radius:14px;
-}
-#tr-svg{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
+  background:#f8f4f0;
+  overflow:visible;
 }
 
 /* TOOLTIP */
@@ -123,7 +111,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   transform:translateY(0);
 }
 
-/* CITY LABEL */
+/* ŞEHİR ETİKETİ */
 .map-city-label{
   font-size:7.5px;
   fill:#666;
@@ -369,17 +357,27 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <aside id="map-side">
     <div id="map-side-label"><span class="pulse"></span> Haritadan il seçerek filtrele</div>
 
-    <!-- ✅ YENİ: Gerçek harita + SVG katmanı -->
-    <div id="map-wrap">
-      <img
-        id="tr-map-img"
-        src="https://raw.githubusercontent.com/cengobee/XxxGotapu/main/55cddfba-38ae-4e82-978a-b31983731035.png"
-        alt="Türkiye Haritası"
+    <!--
+      ✅ ÇÖZÜM: Tek SVG — PNG harita + noktalar AYNI koordinat sisteminde
+      viewBox="0 0 700 330" → PNG de bu boyuta sığıyor, noktalar da aynı scale'de
+      preserveAspectRatio="xMidYMid meet" → responsive olurken orantı korunuyor
+    -->
+    <svg
+      id="tr-map-svg"
+      viewBox="0 0 700 330"
+      preserveAspectRatio="xMidYMid meet"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <!-- PNG harita: x=0 y=0 genişlik=700 yükseklik=330 — noktalarla TAM AYNI alan -->
+      <image
+        href="https://raw.githubusercontent.com/cengobee/XxxGotapu/main/55cddfba-38ae-4e82-978a-b31983731035.png"
+        x="0" y="0"
+        width="700" height="330"
+        preserveAspectRatio="xMidYMid meet"
       />
-      <svg id="tr-svg" viewBox="0 0 700 330" xmlns="http://www.w3.org/2000/svg">
-        <g id="map-g"></g>
-      </svg>
-    </div>
+      <!-- Noktalar JS ile buraya ekleniyor — aynı viewBox'ta -->
+      <g id="map-g"></g>
+    </svg>
 
     <p id="map-foot">Noktaya tıkla → o ilin ürünleri filtrelenir</p>
     <div id="il-box">
@@ -495,7 +493,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 </div>
 
 <div id="toast"></div>
-<!-- ✅ YENİ: Premium Tooltip -->
 <div id="map-tooltip"></div>
 
 <script>
@@ -584,62 +581,63 @@ const ILLER = [
 ];
 
 const REVIEWS_DB = {
-  1:[{name:"Ayşe K.",date:"12 Nis 2025",rating:5,text:"Gerçekten efsanevi bir baklava! Fıstığı bol, şerbeti tam kıvamında. Güllüoğlu'ndan başkası yapamaz bu tadı.","verified":true},
-     {name:"Mehmet D.",date:"3 Nis 2025",rating:5,text:"Anneme hediye gönderdim, çok beğendi. Kutu açılınca kokusu eve yayıldı. Kesinlikle tavsiye ederim.","verified":true},
-     {name:"Zeynep A.",date:"28 Mar 2025",rating:4,text:"Harika lezzet ama kargo biraz geç geldi. Ürün soğuk gelmişti yine de, bu önemli.","verified":false}],
-  2:[{name:"Hasan B.",date:"8 Nis 2025",rating:5,text:"Kars'ta 5 yıl yaşadım, Kafkas Süt'ün gravyerini çok özlemiştim. Birebir aynı lezzet, harika.","verified":true},
-     {name:"Leyla M.",date:"1 Nis 2025",rating:5,text:"Eşim için sürpriz aldım, çok sevdi. Sert yapısı ve fındıksı aroması gerçekten bambaşka.","verified":true}],
-  3:[{name:"Osman Y.",date:"15 Nis 2025",rating:5,text:"Erzurum'da cağ kebabı yedim, o tadı özlemiştim. Güzelyurt aynı lezzeti vermiş, tebrikler.","verified":true},
+  1:[{name:"Ayşe K.",date:"12 Nis 2025",rating:5,text:"Gerçekten efsanevi bir baklava! Fıstığı bol, şerbeti tam kıvamında.","verified":true},
+     {name:"Mehmet D.",date:"3 Nis 2025",rating:5,text:"Anneme hediye gönderdim, çok beğendi. Kutu açılınca kokusu eve yayıldı.","verified":true},
+     {name:"Zeynep A.",date:"28 Mar 2025",rating:4,text:"Harika lezzet ama kargo biraz geç geldi. Ürün soğuk gelmişti yine de.","verified":false}],
+  2:[{name:"Hasan B.",date:"8 Nis 2025",rating:5,text:"Kars'ta 5 yıl yaşadım, Kafkas Süt'ün gravyerini çok özlemiştim. Birebir aynı lezzet.","verified":true},
+     {name:"Leyla M.",date:"1 Nis 2025",rating:5,text:"Eşim için sürpriz aldım, çok sevdi. Sert yapısı ve fındıksı aroması bambaşka.","verified":true}],
+  3:[{name:"Osman Y.",date:"15 Nis 2025",rating:5,text:"Erzurum'da cağ kebabı yedim, o tadı özlemiştim. Güzelyurt aynı lezzeti vermiş.","verified":true},
      {name:"Fatma S.",date:"6 Nis 2025",rating:5,text:"Etle gelen baharat ve pişirme yöntemi gerçekten özel. Lavaş ile harika oluyor.","verified":true},
      {name:"Ali R.",date:"2 Nis 2025",rating:4,text:"Çok lezzetli ama porsiyon biraz küçük geldi. Bir dahaki sefere iki porsiyon alacağım.","verified":false}],
-  5:[{name:"Selin T.",date:"10 Nis 2025",rating:5,text:"Çaykur'un bu çayı başka. Demleme süresi 15 dakika, rengi koyu kırmızı, acısı yok. Rize çayının farkı hemen belli.","verified":true},
-     {name:"Bora K.",date:"5 Nis 2025",rating:4,text:"Kaliteli çay ama paketleme biraz dağınık geldi. Lezzetten şikayet yok.","verified":false}],
-  6:[{name:"Nihal D.",date:"14 Nis 2025",rating:5,text:"Kayseri pastırması başka hiçbir şeye benzemez. Çemeni mükemmel, kıvamı tam. 60 günlük bekleme buna değiyor.","verified":true},
+  5:[{name:"Selin T.",date:"10 Nis 2025",rating:5,text:"Çaykur'un bu çayı başka. Demleme 15 dakika, rengi koyu kırmızı, acısı yok.","verified":true},
+     {name:"Bora K.",date:"5 Nis 2025",rating:4,text:"Kaliteli çay ama paketleme biraz dağınık geldi.","verified":false}],
+  6:[{name:"Nihal D.",date:"14 Nis 2025",rating:5,text:"Kayseri pastırması başka hiçbir şeye benzemez. Çemeni mükemmel, kıvamı tam.","verified":true},
      {name:"Erkan S.",date:"9 Nis 2025",rating:5,text:"İstanbul'daki marketlerdeki pastırmayla aynı marka ama buradan çok daha taze geliyor.","verified":true}],
 };
 
 const PRODUCTS = [
-  {id:1,name:"Antep Baklavası",il:"Gaziantep",seller:"Güllüoğlu",price:320,unit:"kg",rating:4.9,reviews:128,cat:"tatli",emoji:"🍯",badge:"COĞ. İŞARET",hot:true,sold:82,desc:"El açması yufka, Antep fıstığı ve tereyağıyla hazırlanan efsanevi baklava. 180 yıllık Güllüoğlu ustalığıyla, Gaziantep'in coğrafi işaretli lezzeti.",sellerName:"Güllüoğlu Baklava",sellerSince:"1844",sellerRating:4.9,sellerSales:3420},
-  {id:2,name:"Kars Gravyeri",il:"Kars",seller:"Kafkas Süt",price:420,unit:"kg",rating:4.9,reviews:87,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:true,sold:74,desc:"12 ay dinlendirilmiş, sert dokulu, fındıksı aromaya sahip Kars gravyeri. Türkiye'nin en prestijli peyniri. Soğuk et tabağı ve şarapla muhteşem.",sellerName:"Kafkas Süt Ürünleri",sellerSince:"1978",sellerRating:4.8,sellerSales:1850},
-  {id:3,name:"Cağ Kebabı",il:"Erzurum",seller:"Güzelyurt",price:195,unit:"porsiyon",rating:4.9,reviews:214,cat:"kebap",emoji:"🍖",badge:"YEREL USTA",hot:true,sold:91,desc:"Yatay şişte döndürülen kuzu etinin dilim dilim kesilmesiyle hazırlanan Erzurum'a özgü kebap. Lavaş ekmek ve soğanla servis edilir.",sellerName:"Güzelyurt Cağ Kebabı",sellerSince:"1967",sellerRating:4.9,sellerSales:5600},
-  {id:4,name:"Malatya Kayısısı",il:"Malatya",seller:"Kayısı Bahçesi",price:120,unit:"kg",rating:4.9,reviews:163,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",hot:false,sold:65,desc:"Dünya kayısı üretiminin %20'sini karşılayan Malatya'nın güneşte doğal kurutulmuş kayısısı. Çekirdeksiz ve organik.",sellerName:"Malatya Kayısı Bahçeleri",sellerSince:"1995",sellerRating:4.8,sellerSales:2100},
-  {id:5,name:"Rize Çayı",il:"Rize",seller:"Çaykur",price:180,unit:"kg",rating:4.8,reviews:342,cat:"icecek",emoji:"🍵",badge:"COĞ. İŞARET",hot:false,sold:88,desc:"Karadeniz yağmurlarıyla yetişen, derin demli, tok aromalı siyah çay. Türkiye çayının anavatanı Rize'den gelen en kaliteli ürün.",sellerName:"Çaykur Rize Çay Fabrikası",sellerSince:"1947",sellerRating:4.9,sellerSales:9800},
-  {id:6,name:"Kayseri Pastırması",il:"Kayseri",seller:"Oğuzhan Et",price:680,unit:"kg",rating:4.9,reviews:97,cat:"kebap",emoji:"🥩",badge:"COĞ. İŞARET",hot:true,sold:55,desc:"60 günlük kuruma süreciyle hazırlanan, çemenli Kayseri pastırması. Türkiye'nin en ünlü et ürünü. Yumurtayla veya börek içinde tüketin.",sellerName:"Oğuzhan Pastırma",sellerSince:"1953",sellerRating:4.9,sellerSales:1200},
-  {id:7,name:"Van Otlu Peyniri",il:"Van",seller:"Divan Peynir",price:280,unit:"kg",rating:4.8,reviews:76,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:false,sold:48,desc:"Bahar otlarıyla hazırlanan, Van'a özgü salamura beyaz peynir. Her bahar taze Munzur otlarıyla yenilenir. Kahvaltı sofralarının yıldızı.",sellerName:"Divan Peynircilik",sellerSince:"1985",sellerRating:4.8,sellerSales:890},
-  {id:8,name:"Hatay Künefesi",il:"Hatay",seller:"Antakya Tatlıcısı",price:95,unit:"porsiyon",rating:4.9,reviews:289,cat:"tatli",emoji:"🍰",badge:"TAŞ FIRIN",hot:true,sold:93,desc:"Taş fırında pişirilen, Hatay usulü tel kadayıf ve eriyen peynirle hazırlanan efsane tatlı. Ilık servis, soğuk çay eşliğinde tüketin.",sellerName:"Antakya Tatlıcısı",sellerSince:"1922",sellerRating:4.9,sellerSales:4300},
-  {id:9,name:"Afyon Kaymağı",il:"Afyonkarahisar",seller:"Afyon Lezzet",price:240,unit:"kg",rating:4.8,reviews:118,cat:"peynir",emoji:"🥛",badge:"GÜNLÜK TAZE",hot:false,sold:71,desc:"Manda sütünden elde edilen, kaymak katmanlarıyla ünlü Afyon kaymağı. Bal ve tereyağlı ekmekle, sabah kahvaltısının en değerli lezzeti.",sellerName:"Afyon Lezzet",sellerSince:"2001",sellerRating:4.7,sellerSales:730},
-  {id:10,name:"İskender Kebap",il:"Bursa",seller:"İskender",price:175,unit:"porsiyon",rating:4.9,reviews:456,cat:"kebap",emoji:"🍖",badge:"ORİJİNAL",hot:false,sold:79,desc:"1867'den bu yana aynı tarifle hazırlanan döner kebabın tereyağı ve domates sosuyla pide üzerinde buluşması. 150 yıllık tarif.",sellerName:"İskender Kebap A.Ş.",sellerSince:"1867",sellerRating:5.0,sellerSales:12000},
-  {id:11,name:"Adana Kebabı",il:"Adana",seller:"Adana Ocakbaşı",price:180,unit:"porsiyon",rating:4.9,reviews:334,cat:"kebap",emoji:"🍖",badge:"COĞ. İŞARET",hot:true,sold:87,desc:"Kıyma ve iç yağından hazırlanan, acı isot biberli Adana kebabı. Türkiye'nin en tanınmış kebabı, dünyada bilinir. Piyazla servis edilir.",sellerName:"Adana Ocakbaşı",sellerSince:"1975",sellerRating:4.9,sellerSales:6700},
-  {id:12,name:"Giresun Fındığı",il:"Giresun",seller:"Karadeniz Fındık",price:160,unit:"kg",rating:4.8,reviews:201,cat:"meyve",emoji:"🌰",badge:"COĞ. İŞARET",hot:false,sold:66,desc:"Dünyanın en kaliteli fındığı olarak bilinen Giresun tombul fındığı. Çikolata sektörünün tercihi. Çiğ, kavrulmuş veya ballı.",sellerName:"Karadeniz Fındık",sellerSince:"1990",sellerRating:4.8,sellerSales:3400},
-  {id:13,name:"Siirt Büryan Kebabı",il:"Siirt",seller:"Büryan Ustası",price:245,unit:"porsiyon",rating:4.9,reviews:142,cat:"kebap",emoji:"🍖",badge:"KUYU KEBABI",hot:true,sold:83,desc:"Toprak kuyuda 6 saat pişirilen kuzu but kebabı. Kemiğinden düşen et, gerçek büryan ustasının işareti. Pide ekmeği ile servis.",sellerName:"Siirt Büryan Ustası",sellerSince:"1960",sellerRating:4.9,sellerSales:2800},
-  {id:14,name:"Maraş Dondurması",il:"Kahramanmaraş",seller:"Mado",price:85,unit:"top",rating:4.9,reviews:523,cat:"tatli",emoji:"🍦",badge:"DÖVME",hot:false,sold:95,desc:"Keçi sütü ve salep ile hazırlanan, uzayan ve donmayan Maraş dondurması. Özel tokmakla dövülerek yapılır. Dünyada eşsiz bir tat.",sellerName:"Mado Dondurma",sellerSince:"1850",sellerRating:4.9,sellerSales:15000},
-  {id:15,name:"Kastamonu Sucuğu",il:"Kastamonu",seller:"Kastamonu Et",price:340,unit:"kg",rating:4.8,reviews:167,cat:"kebap",emoji:"🌭",badge:"COĞ. İŞARET",hot:false,sold:61,desc:"Sarımsaklı, baharatlı, doğal bağırsakta hazırlanan Kastamonu sucuğu. Türkiye'nin en ünlü sucuğu. Mangal ve sabah kahvaltıları için.",sellerName:"Kastamonu Et",sellerSince:"1971",sellerRating:4.8,sellerSales:2100},
-  {id:16,name:"Tunceli Balı",il:"Tunceli",seller:"Munzur Arı",price:480,unit:"kg",rating:5.0,reviews:94,cat:"tatli",emoji:"🍯",badge:"ÇIÇEK BALI",hot:true,sold:78,desc:"Munzur dağlarının yabani çiçeklerinden elde edilen, Türkiye'nin en değerli balı. Yılda sınırlı miktarda üretilir. %100 doğal.",sellerName:"Munzur Arıcılık",sellerSince:"2005",sellerRating:5.0,sellerSales:420},
-  {id:17,name:"Urfa Kebabı",il:"Şanlıurfa",seller:"Urfa Ocakbaşı",price:165,unit:"porsiyon",rating:4.8,reviews:278,cat:"kebap",emoji:"🍖",badge:"ACI",hot:false,sold:69,desc:"İsot biberli, yoğun baharatlı Urfa kebabı. Adana'dan farklı olarak daha çok baharat ve isot. Ayran ile harika uyum sağlar.",sellerName:"Urfa Ocakbaşı",sellerSince:"1980",sellerRating:4.8,sellerSales:3900},
-  {id:18,name:"Ezine Peyniri",il:"Çanakkale",seller:"Ezine Peynircilik",price:290,unit:"kg",rating:4.8,reviews:131,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:false,sold:57,desc:"Koyun, keçi ve inek sütünün karışımından yapılan, salamurada yıllandırılan Ezine beyaz peyniri. Meze sofralarının vazgeçilmezi.",sellerName:"Ezine Peynircilik",sellerSince:"1930",sellerRating:4.8,sellerSales:1760},
-  {id:19,name:"Zeytinyağı",il:"Aydın",seller:"Aydın Zeytin",price:220,unit:"litre",rating:4.7,reviews:89,cat:"zeytinyagi",emoji:"🫒",badge:"ORGANIK",hot:false,sold:52,desc:"Erken hasat, soğuk sıkım naturel sızma zeytinyağı. Asitlik oranı %0.3'ün altında. Salata ve kahvaltılar için ideal.",sellerName:"Aydın Zeytin Bahçeleri",sellerSince:"1968",sellerRating:4.7,sellerSales:950},
-  {id:20,name:"İğdır Kayısısı",il:"Iğdır",seller:"Aras Meyve",price:95,unit:"kg",rating:4.8,reviews:112,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",hot:false,sold:63,desc:"Ağrı Dağı'nın eteklerinde Aras nehri kıyısında yetişen, dünyaca ünlü Iğdır kayısısı. Malatya'dan farklı aroması ile özel.",sellerName:"Aras Meyve",sellerSince:"1997",sellerRating:4.8,sellerSales:680},
-  {id:21,name:"Antep Katmeri",il:"Gaziantep",seller:"Tahmis",price:45,unit:"adet",rating:4.9,reviews:387,cat:"tatli",emoji:"🥞",badge:"KAHVALTILIK",hot:true,sold:96,desc:"El açması yufkanın içine fıstıklı kaymak konularak tavada pişirilen Gaziantep'e özgü kahvaltı tatlısı. Sıcak servis zorunlu!",sellerName:"Tahmis Katmer",sellerSince:"1901",sellerRating:4.9,sellerSales:7800},
-  {id:22,name:"Çorum Leblebisi",il:"Çorum",seller:"Çorum Kuruyemiş",price:85,unit:"kg",rating:4.7,reviews:203,cat:"meyve",emoji:"🫘",badge:"COĞ. İŞARET",hot:false,sold:58,desc:"Özel fırınlama yöntemiyle hazırlanan, Türkiye'nin en ünlü çerezidir. Sarı ve beyaz olmak üzere iki çeşidi bulunur.",sellerName:"Çorum Kuruyemiş",sellerSince:"1955",sellerRating:4.7,sellerSales:1900},
+  {id:1,name:"Antep Baklavası",il:"Gaziantep",seller:"Güllüoğlu",price:320,unit:"kg",rating:4.9,reviews:128,cat:"tatli",emoji:"🍯",badge:"COĞ. İŞARET",hot:true,sold:82,desc:"El açması yufka, Antep fıstığı ve tereyağıyla hazırlanan efsanevi baklava. 180 yıllık Güllüoğlu ustalığıyla.",sellerName:"Güllüoğlu Baklava",sellerSince:"1844",sellerRating:4.9,sellerSales:3420},
+  {id:2,name:"Kars Gravyeri",il:"Kars",seller:"Kafkas Süt",price:420,unit:"kg",rating:4.9,reviews:87,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:true,sold:74,desc:"12 ay dinlendirilmiş, sert dokulu, fındıksı aromaya sahip Kars gravyeri. Türkiye'nin en prestijli peyniri.",sellerName:"Kafkas Süt Ürünleri",sellerSince:"1978",sellerRating:4.8,sellerSales:1850},
+  {id:3,name:"Cağ Kebabı",il:"Erzurum",seller:"Güzelyurt",price:195,unit:"porsiyon",rating:4.9,reviews:214,cat:"kebap",emoji:"🍖",badge:"YEREL USTA",hot:true,sold:91,desc:"Yatay şişte döndürülen kuzu etinin dilim dilim kesilmesiyle hazırlanan Erzurum'a özgü kebap.",sellerName:"Güzelyurt Cağ Kebabı",sellerSince:"1967",sellerRating:4.9,sellerSales:5600},
+  {id:4,name:"Malatya Kayısısı",il:"Malatya",seller:"Kayısı Bahçesi",price:120,unit:"kg",rating:4.9,reviews:163,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",hot:false,sold:65,desc:"Dünya kayısı üretiminin %20'sini karşılayan Malatya'nın güneşte doğal kurutulmuş kayısısı.",sellerName:"Malatya Kayısı Bahçeleri",sellerSince:"1995",sellerRating:4.8,sellerSales:2100},
+  {id:5,name:"Rize Çayı",il:"Rize",seller:"Çaykur",price:180,unit:"kg",rating:4.8,reviews:342,cat:"icecek",emoji:"🍵",badge:"COĞ. İŞARET",hot:false,sold:88,desc:"Karadeniz yağmurlarıyla yetişen, derin demli, tok aromalı siyah çay.",sellerName:"Çaykur Rize Çay Fabrikası",sellerSince:"1947",sellerRating:4.9,sellerSales:9800},
+  {id:6,name:"Kayseri Pastırması",il:"Kayseri",seller:"Oğuzhan Et",price:680,unit:"kg",rating:4.9,reviews:97,cat:"kebap",emoji:"🥩",badge:"COĞ. İŞARET",hot:true,sold:55,desc:"60 günlük kuruma süreciyle hazırlanan, çemenli Kayseri pastırması.",sellerName:"Oğuzhan Pastırma",sellerSince:"1953",sellerRating:4.9,sellerSales:1200},
+  {id:7,name:"Van Otlu Peyniri",il:"Van",seller:"Divan Peynir",price:280,unit:"kg",rating:4.8,reviews:76,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:false,sold:48,desc:"Bahar otlarıyla hazırlanan, Van'a özgü salamura beyaz peynir.",sellerName:"Divan Peynircilik",sellerSince:"1985",sellerRating:4.8,sellerSales:890},
+  {id:8,name:"Hatay Künefesi",il:"Hatay",seller:"Antakya Tatlıcısı",price:95,unit:"porsiyon",rating:4.9,reviews:289,cat:"tatli",emoji:"🍰",badge:"TAŞ FIRIN",hot:true,sold:93,desc:"Taş fırında pişirilen, Hatay usulü tel kadayıf ve eriyen peynirle hazırlanan efsane tatlı.",sellerName:"Antakya Tatlıcısı",sellerSince:"1922",sellerRating:4.9,sellerSales:4300},
+  {id:9,name:"Afyon Kaymağı",il:"Afyonkarahisar",seller:"Afyon Lezzet",price:240,unit:"kg",rating:4.8,reviews:118,cat:"peynir",emoji:"🥛",badge:"GÜNLÜK TAZE",hot:false,sold:71,desc:"Manda sütünden elde edilen kaymak katmanlarıyla ünlü Afyon kaymağı.",sellerName:"Afyon Lezzet",sellerSince:"2001",sellerRating:4.7,sellerSales:730},
+  {id:10,name:"İskender Kebap",il:"Bursa",seller:"İskender",price:175,unit:"porsiyon",rating:4.9,reviews:456,cat:"kebap",emoji:"🍖",badge:"ORİJİNAL",hot:false,sold:79,desc:"1867'den bu yana aynı tarifle hazırlanan döner kebabının tereyağı ve domates sosuyla buluşması.",sellerName:"İskender Kebap A.Ş.",sellerSince:"1867",sellerRating:5.0,sellerSales:12000},
+  {id:11,name:"Adana Kebabı",il:"Adana",seller:"Adana Ocakbaşı",price:180,unit:"porsiyon",rating:4.9,reviews:334,cat:"kebap",emoji:"🍖",badge:"COĞ. İŞARET",hot:true,sold:87,desc:"Kıyma ve iç yağından hazırlanan, acı isot biberli Adana kebabı.",sellerName:"Adana Ocakbaşı",sellerSince:"1975",sellerRating:4.9,sellerSales:6700},
+  {id:12,name:"Giresun Fındığı",il:"Giresun",seller:"Karadeniz Fındık",price:160,unit:"kg",rating:4.8,reviews:201,cat:"meyve",emoji:"🌰",badge:"COĞ. İŞARET",hot:false,sold:66,desc:"Dünyanın en kaliteli fındığı olarak bilinen Giresun tombul fındığı.",sellerName:"Karadeniz Fındık",sellerSince:"1990",sellerRating:4.8,sellerSales:3400},
+  {id:13,name:"Siirt Büryan Kebabı",il:"Siirt",seller:"Büryan Ustası",price:245,unit:"porsiyon",rating:4.9,reviews:142,cat:"kebap",emoji:"🍖",badge:"KUYU KEBABI",hot:true,sold:83,desc:"Toprak kuyuda 6 saat pişirilen kuzu but kebabı.",sellerName:"Siirt Büryan Ustası",sellerSince:"1960",sellerRating:4.9,sellerSales:2800},
+  {id:14,name:"Maraş Dondurması",il:"Kahramanmaraş",seller:"Mado",price:85,unit:"top",rating:4.9,reviews:523,cat:"tatli",emoji:"🍦",badge:"DÖVME",hot:false,sold:95,desc:"Keçi sütü ve salep ile hazırlanan, uzayan ve donmayan Maraş dondurması.",sellerName:"Mado Dondurma",sellerSince:"1850",sellerRating:4.9,sellerSales:15000},
+  {id:15,name:"Kastamonu Sucuğu",il:"Kastamonu",seller:"Kastamonu Et",price:340,unit:"kg",rating:4.8,reviews:167,cat:"kebap",emoji:"🌭",badge:"COĞ. İŞARET",hot:false,sold:61,desc:"Sarımsaklı, baharatlı, doğal bağırsakta hazırlanan Kastamonu sucuğu.",sellerName:"Kastamonu Et",sellerSince:"1971",sellerRating:4.8,sellerSales:2100},
+  {id:16,name:"Tunceli Balı",il:"Tunceli",seller:"Munzur Arı",price:480,unit:"kg",rating:5.0,reviews:94,cat:"tatli",emoji:"🍯",badge:"ÇIÇEK BALI",hot:true,sold:78,desc:"Munzur dağlarının yabani çiçeklerinden elde edilen Türkiye'nin en değerli balı.",sellerName:"Munzur Arıcılık",sellerSince:"2005",sellerRating:5.0,sellerSales:420},
+  {id:17,name:"Urfa Kebabı",il:"Şanlıurfa",seller:"Urfa Ocakbaşı",price:165,unit:"porsiyon",rating:4.8,reviews:278,cat:"kebap",emoji:"🍖",badge:"ACI",hot:false,sold:69,desc:"İsot biberli, yoğun baharatlı Urfa kebabı.",sellerName:"Urfa Ocakbaşı",sellerSince:"1980",sellerRating:4.8,sellerSales:3900},
+  {id:18,name:"Ezine Peyniri",il:"Çanakkale",seller:"Ezine Peynircilik",price:290,unit:"kg",rating:4.8,reviews:131,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:false,sold:57,desc:"Koyun, keçi ve inek sütünün karışımından yapılan, salamurada yıllandırılan Ezine beyaz peyniri.",sellerName:"Ezine Peynircilik",sellerSince:"1930",sellerRating:4.8,sellerSales:1760},
+  {id:19,name:"Zeytinyağı",il:"Aydın",seller:"Aydın Zeytin",price:220,unit:"litre",rating:4.7,reviews:89,cat:"zeytinyagi",emoji:"🫒",badge:"ORGANIK",hot:false,sold:52,desc:"Erken hasat, soğuk sıkım naturel sızma zeytinyağı.",sellerName:"Aydın Zeytin Bahçeleri",sellerSince:"1968",sellerRating:4.7,sellerSales:950},
+  {id:20,name:"İğdır Kayısısı",il:"Iğdır",seller:"Aras Meyve",price:95,unit:"kg",rating:4.8,reviews:112,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",hot:false,sold:63,desc:"Ağrı Dağı'nın eteklerinde Aras nehri kıyısında yetişen, dünyaca ünlü Iğdır kayısısı.",sellerName:"Aras Meyve",sellerSince:"1997",sellerRating:4.8,sellerSales:680},
+  {id:21,name:"Antep Katmeri",il:"Gaziantep",seller:"Tahmis",price:45,unit:"adet",rating:4.9,reviews:387,cat:"tatli",emoji:"🥞",badge:"KAHVALTILIK",hot:true,sold:96,desc:"El açması yufkanın içine fıstıklı kaymak konularak tavada pişirilen Gaziantep'e özgü kahvaltı tatlısı.",sellerName:"Tahmis Katmer",sellerSince:"1901",sellerRating:4.9,sellerSales:7800},
+  {id:22,name:"Çorum Leblebisi",il:"Çorum",seller:"Çorum Kuruyemiş",price:85,unit:"kg",rating:4.7,reviews:203,cat:"meyve",emoji:"🫘",badge:"COĞ. İŞARET",hot:false,sold:58,desc:"Özel fırınlama yöntemiyle hazırlanan Türkiye'nin en ünlü çerezidir.",sellerName:"Çorum Kuruyemiş",sellerSince:"1955",sellerRating:4.7,sellerSales:1900},
 ];
 
 let activeIl=null, activeCat="all", activeFoodFilter=null;
 let cart=[], favs=new Set(), openProdId=null;
 
-function scaleX(x){return x*(700/530);}
-function scaleY(y){return y*(330/285);}
+// ✅ DÜZELTME: scaleX/scaleY artık KULLANILMIYOR
+// Koordinatlar doğrudan viewBox="0 0 700 330" içinde kullanılıyor
+// PNG de tam bu alan içinde — mükemmel hizalama
 
-// ✅ YENİ renderMap — gerçek harita + glow + pulse + tooltip
 function renderMap(){
   const g=document.getElementById("map-g");
   const tooltip=document.getElementById("map-tooltip");
   g.innerHTML="";
 
   ILLER.forEach(il=>{
-    const cx=scaleX(il.x);
-    const cy=scaleY(il.y);
-    const isActive=activeIl && activeIl.id===il.id;
-    const hasProds=PRODUCTS.some(p=>p.il===il.n);
+    // ✅ Artık scale yok — x,y değerleri direkt SVG koordinatı
+    const cx = il.x;
+    const cy = il.y;
+    const isActive = activeIl && activeIl.id === il.id;
+    const hasProds = PRODUCTS.some(p=>p.il===il.n);
 
     const group=document.createElementNS("http://www.w3.org/2000/svg","g");
 
@@ -647,8 +645,8 @@ function renderMap(){
     const glow=document.createElementNS("http://www.w3.org/2000/svg","circle");
     glow.setAttribute("cx",cx);
     glow.setAttribute("cy",cy);
-    glow.setAttribute("r",isActive ? 18 : hasProds ? 12 : 8);
-    glow.setAttribute("fill",isActive ? "rgba(178,34,34,0.20)" : hasProds ? "rgba(200,57,43,0.10)" : "rgba(220,180,170,0.08)");
+    glow.setAttribute("r", isActive ? 14 : hasProds ? 9 : 6);
+    glow.setAttribute("fill", isActive ? "rgba(178,34,34,0.22)" : hasProds ? "rgba(200,57,43,0.12)" : "rgba(220,180,170,0.08)");
     group.appendChild(glow);
 
     // PULSE ANİMASYONU — sadece aktif il
@@ -656,13 +654,12 @@ function renderMap(){
       const pulse=document.createElementNS("http://www.w3.org/2000/svg","circle");
       pulse.setAttribute("cx",cx);
       pulse.setAttribute("cy",cy);
-      pulse.setAttribute("r","10");
+      pulse.setAttribute("r","8");
       pulse.setAttribute("fill","none");
       pulse.setAttribute("stroke","#B22222");
       pulse.setAttribute("stroke-width","1.5");
-      pulse.setAttribute("opacity","1");
       pulse.innerHTML=`
-        <animate attributeName="r" from="10" to="26" dur="1.6s" repeatCount="indefinite"/>
+        <animate attributeName="r" from="8" to="22" dur="1.6s" repeatCount="indefinite"/>
         <animate attributeName="opacity" from="0.8" to="0" dur="1.6s" repeatCount="indefinite"/>
       `;
       group.appendChild(pulse);
@@ -672,16 +669,15 @@ function renderMap(){
     const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
     c.setAttribute("cx",cx);
     c.setAttribute("cy",cy);
-    c.setAttribute("r", isActive ? 7 : hasProds ? 5 : 3.5);
+    c.setAttribute("r", isActive ? 6 : hasProds ? 4.5 : 3);
     c.setAttribute("fill", isActive ? "#B22222" : hasProds ? "#C8392B" : "#d8b0a0");
     c.setAttribute("stroke","#fff");
-    c.setAttribute("stroke-width", isActive ? "2" : "1.5");
+    c.setAttribute("stroke-width", isActive ? "1.5" : "1");
     c.style.cursor="pointer";
     c.style.transition="r .18s ease, fill .18s ease";
 
-    // HOVER
     c.addEventListener("mouseenter",()=>{
-      if(!isActive) c.setAttribute("r","8");
+      if(!isActive) c.setAttribute("r","7");
       c.setAttribute("fill","#B22222");
       tooltip.classList.add("show");
       const prodCount=PRODUCTS.filter(p=>p.il===il.n).length;
@@ -703,7 +699,7 @@ function renderMap(){
     c.addEventListener("mouseleave",()=>{
       tooltip.classList.remove("show");
       if(!isActive){
-        c.setAttribute("r", hasProds ? "5" : "3.5");
+        c.setAttribute("r", hasProds ? "4.5" : "3");
         c.setAttribute("fill", hasProds ? "#C8392B" : "#d8b0a0");
       }
     });
@@ -711,11 +707,11 @@ function renderMap(){
     c.addEventListener("click",()=>selectIl(il));
     group.appendChild(c);
 
-    // ŞEHİR ETIKETI — sadece ürünü olan ya da aktif iller
+    // ŞEHİR ETİKETİ — sadece ürünü olan ya da aktif iller
     if(hasProds || isActive){
       const t=document.createElementNS("http://www.w3.org/2000/svg","text");
       t.setAttribute("x",cx);
-      t.setAttribute("y",cy-11);
+      t.setAttribute("y",cy-9);
       t.setAttribute("text-anchor","middle");
       t.setAttribute("class", isActive ? "map-city-label active" : "map-city-label");
       t.textContent=il.n;
@@ -855,14 +851,13 @@ function openProd(id){
   document.getElementById("modal-il").textContent=p.il.toUpperCase()+" · "+p.seller;
   document.getElementById("modal-name").textContent=p.name;
   document.getElementById("modal-seller").textContent=p.seller+" — Güvenilir Üretici";
-  const isFav=favs.has(id);
   document.getElementById("modal-stars").innerHTML=`${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))} <span>${p.rating} · ${p.reviews} değerlendirme</span>`;
   document.getElementById("modal-desc").textContent=p.desc;
   document.getElementById("modal-price").textContent="₺"+p.price.toLocaleString('tr-TR');
   document.getElementById("modal-unit").textContent="/ "+p.unit;
   document.getElementById("modal-sold-fill").style.width=p.sold+"%";
   document.getElementById("modal-sold-text").textContent=`Bu ürün son 30 günde ${p.sold} kez satıldı`;
-  document.getElementById("modal-fav").textContent=isFav?"♥ Favorilendi":"♡ Favorile";
+  document.getElementById("modal-fav").textContent=favs.has(id)?"♥ Favorilendi":"♡ Favorile";
   const initials=p.sellerName.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
   document.getElementById("modal-seller-box").innerHTML=`
     <div class="seller-head">
