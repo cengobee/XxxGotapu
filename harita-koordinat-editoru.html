@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Türkiye Haritası Koordinat Editörü</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f2ec;
+      --panel: #fffaf3;
+      --ink: #2c2621;
+      --muted: #74685d;
+      --line: #ddd1c3;
+      --accent: #1f7a5a;
+      --accent-2: #c73a2f;
+      --shadow: 0 16px 44px rgba(50, 38, 27, .12);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: #fffdf8;
+      color: var(--ink);
+      border-radius: 7px;
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+
+    button:hover {
+      border-color: #b8a99a;
+      transform: translateY(-1px);
+    }
+
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    button.danger {
+      background: #fff4f1;
+      border-color: #e7b6ac;
+      color: #9b2a21;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fffdf8;
+      color: var(--ink);
+      padding: 9px 10px;
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(31, 122, 90, .12);
+    }
+
+    textarea {
+      min-height: 154px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      min-height: 100vh;
+    }
+
+    .workspace {
+      min-width: 0;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      min-width: 260px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .hint {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 8px 10px;
+      background: #fffdf8;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .toggle input {
+      width: auto;
+      accent-color: var(--accent);
+    }
+
+    .map-shell {
+      min-height: 0;
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: auto;
+      background: #efe7dd;
+      box-shadow: var(--shadow);
+    }
+
+    .map-stage {
+      position: relative;
+      width: min(100%, 1400px);
+      margin: 0 auto;
+      user-select: none;
+    }
+
+    .map-stage img {
+      display: block;
+      width: 100%;
+      height: auto;
+      pointer-events: none;
+    }
+
+    .point {
+      position: absolute;
+      left: calc(var(--x) * 1%);
+      top: calc(var(--y) * 1%);
+      transform: translate(-50%, -50%);
+      display: grid;
+      grid-template-columns: 14px max-content;
+      align-items: center;
+      gap: 4px;
+      z-index: 5;
+      cursor: grab;
+    }
+
+    .point:active {
+      cursor: grabbing;
+    }
+
+    .pin {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-2);
+      border: 2px solid white;
+      box-shadow: 0 2px 7px rgba(36, 20, 12, .35);
+    }
+
+    .point.selected .pin {
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(31, 122, 90, .25), 0 3px 9px rgba(36, 20, 12, .35);
+    }
+
+    .label {
+      padding: 3px 5px;
+      border-radius: 5px;
+      background: rgba(255, 253, 248, .94);
+      border: 1px solid rgba(90, 75, 60, .2);
+      box-shadow: 0 4px 12px rgba(30, 20, 12, .12);
+      font-size: 11px;
+      font-weight: 700;
+      color: #31271f;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .labels-hidden .label {
+      display: none;
+    }
+
+    .grid-on .map-stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(0,0,0,.14) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,.14) 1px, transparent 1px);
+      background-size: 10% 10%;
+    }
+
+    aside {
+      border-left: 1px solid var(--line);
+      background: var(--panel);
+      padding: 16px;
+      overflow: auto;
+    }
+
+    .panel {
+      display: grid;
+      gap: 14px;
+    }
+
+    .section {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 14px;
+    }
+
+    .section:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .section-title {
+      margin: 0 0 9px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .fields .wide {
+      grid-column: 1 / -1;
+    }
+
+    label span {
+      display: block;
+      margin: 0 0 5px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .table-wrap {
+      max-height: 230px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdf8;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #eadfd3;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #fff8ee;
+      z-index: 1;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    tr {
+      cursor: pointer;
+    }
+
+    tr.active {
+      background: rgba(31, 122, 90, .1);
+    }
+
+    .coord {
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      color: #50473f;
+    }
+
+    .status {
+      min-height: 18px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .file-row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .file-row input[type="file"] {
+      padding: 7px;
+    }
+
+    @media (max-width: 1040px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" id="app">
+    <section class="workspace">
+      <header class="topbar">
+        <div class="title">
+          <h1>Türkiye Haritası Koordinat Editörü</h1>
+          <div class="hint">Haritaya tıkla, noktayı sürükle, il ve ürün bilgisini düzenle.</div>
+        </div>
+        <div class="toolbar">
+          <label class="toggle"><input id="gridToggle" type="checkbox"> Izgara</label>
+          <label class="toggle"><input id="labelToggle" type="checkbox" checked> Etiketler</label>
+          <button id="clearSelectionBtn" type="button">Seçimi bırak</button>
+        </div>
+      </header>
+
+      <div class="map-shell" id="mapShell">
+        <div class="map-stage" id="mapStage">
+          <img id="mapImage" alt="Türkiye haritası" src="https://raw.githubusercontent.com/cengobee/XxxGotapu/main/9a310694-860c-493b-9cb1-a454e0a6bcf8.png">
+        </div>
+      </div>
+    </section>
+
+    <aside>
+      <div class="panel">
+        <section class="section">
+          <p class="section-title">Seçili Nokta</p>
+          <div class="fields">
+            <label class="wide">
+              <span>İl adı</span>
+              <input id="cityInput" placeholder="Örn. Gaziantep">
+            </label>
+            <label class="wide">
+              <span>Ürün / not</span>
+              <input id="productInput" placeholder="Örn. Baklava, fıstık">
+            </label>
+            <label>
+              <span>X (%)</span>
+              <input id="xInput" type="number" step="0.01" min="0" max="100">
+            </label>
+            <label>
+              <span>Y (%)</span>
+              <input id="yInput" type="number" step="0.01" min="0" max="100">
+            </label>
+            <label>
+              <span>X (px)</span>
+              <input id="pxInput" readonly>
+            </label>
+            <label>
+              <span>Y (px)</span>
+              <input id="pyInput" readonly>
+            </label>
+          </div>
+          <div class="actions">
+            <button id="updateBtn" class="primary" type="button">Güncelle</button>
+            <button id="deleteBtn" class="danger" type="button">Sil</button>
+          </div>
+          <div class="status" id="status"></div>
+        </section>
+
+        <section class="section">
+          <p class="section-title">Noktalar</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>İl</th>
+                  <th>Ürün</th>
+                  <th>X</th>
+                  <th>Y</th>
+                </tr>
+              </thead>
+              <tbody id="pointsTable"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="section-title">Dışa Aktar</p>
+          <textarea id="exportOutput" spellcheck="false"></textarea>
+          <div class="actions">
+            <button id="jsonBtn" type="button">JSON</button>
+            <button id="htmlBtn" type="button">HTML noktaları</button>
+            <button id="copyBtn" class="primary" type="button">Kopyala</button>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="section-title">İçe Aktar / Görsel</p>
+          <div class="file-row">
+            <label>
+              <span>Farklı harita görseli seç</span>
+              <input id="imageFile" type="file" accept="image/*">
+            </label>
+            <label>
+              <span>JSON yapıştır</span>
+              <textarea id="importInput" placeholder='[{"city":"İzmir","product":"Boyoz","x":14.2,"y":61.4}]' spellcheck="false"></textarea>
+            </label>
+            <button id="importBtn" type="button">JSON içe aktar</button>
+          </div>
+        </section>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const state = {
+      points: [],
+      selectedId: null,
+      exportMode: "json",
+      dragId: null
+    };
+
+    const app = document.getElementById("app");
+    const mapStage = document.getElementById("mapStage");
+    const mapImage = document.getElementById("mapImage");
+    const pointsTable = document.getElementById("pointsTable");
+    const cityInput = document.getElementById("cityInput");
+    const productInput = document.getElementById("productInput");
+    const xInput = document.getElementById("xInput");
+    const yInput = document.getElementById("yInput");
+    const pxInput = document.getElementById("pxInput");
+    const pyInput = document.getElementById("pyInput");
+    const exportOutput = document.getElementById("exportOutput");
+    const importInput = document.getElementById("importInput");
+    const statusEl = document.getElementById("status");
+
+    function uid() {
+      return Math.random().toString(36).slice(2, 9);
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function fixed(value) {
+      return Number(value).toFixed(2);
+    }
+
+    function naturalSize() {
+      return {
+        width: mapImage.naturalWidth || mapImage.clientWidth || 1,
+        height: mapImage.naturalHeight || mapImage.clientHeight || 1
+      };
+    }
+
+    function clientToPercent(clientX, clientY) {
+      const rect = mapStage.getBoundingClientRect();
+      return {
+        x: clamp(((clientX - rect.left) / rect.width) * 100, 0, 100),
+        y: clamp(((clientY - rect.top) / rect.height) * 100, 0, 100)
+      };
+    }
+
+    function pointPixels(point) {
+      const size = naturalSize();
+      return {
+        px: Math.round((point.x / 100) * size.width),
+        py: Math.round((point.y / 100) * size.height)
+      };
+    }
+
+    function selectedPoint() {
+      return state.points.find(point => point.id === state.selectedId) || null;
+    }
+
+    function showStatus(text) {
+      statusEl.textContent = text;
+      window.clearTimeout(showStatus.timer);
+      showStatus.timer = window.setTimeout(() => statusEl.textContent = "", 1800);
+    }
+
+    function addPoint(x, y) {
+      const nextNumber = state.points.length + 1;
+      const point = {
+        id: uid(),
+        city: `İl ${nextNumber}`,
+        product: "",
+        x: Number(fixed(x)),
+        y: Number(fixed(y))
+      };
+      state.points.push(point);
+      state.selectedId = point.id;
+      render();
+      showStatus("Nokta eklendi.");
+    }
+
+    function setSelected(id) {
+      state.selectedId = id;
+      render();
+    }
+
+    function updateSelectedFromInputs() {
+      const point = selectedPoint();
+      if (!point) return;
+      point.city = cityInput.value.trim() || "İsimsiz";
+      point.product = productInput.value.trim();
+      point.x = Number(fixed(clamp(Number(xInput.value), 0, 100)));
+      point.y = Number(fixed(clamp(Number(yInput.value), 0, 100)));
+      render();
+      showStatus("Nokta güncellendi.");
+    }
+
+    function deleteSelected() {
+      if (!state.selectedId) return;
+      state.points = state.points.filter(point => point.id !== state.selectedId);
+      state.selectedId = state.points[0]?.id || null;
+      render();
+      showStatus("Nokta silindi.");
+    }
+
+    function renderPoints() {
+      mapStage.querySelectorAll(".point").forEach(node => node.remove());
+      for (const point of state.points) {
+        const marker = document.createElement("div");
+        marker.className = `point${point.id === state.selectedId ? " selected" : ""}`;
+        marker.style.setProperty("--x", point.x);
+        marker.style.setProperty("--y", point.y);
+        marker.dataset.id = point.id;
+        marker.innerHTML = `<span class="pin"></span><span class="label">${escapeHtml(point.city)}</span>`;
+        marker.addEventListener("pointerdown", event => {
+          event.preventDefault();
+          event.stopPropagation();
+          state.dragId = point.id;
+          state.selectedId = point.id;
+          marker.setPointerCapture(event.pointerId);
+          render();
+        });
+        marker.addEventListener("pointermove", event => {
+          if (state.dragId !== point.id) return;
+          const coords = clientToPercent(event.clientX, event.clientY);
+          point.x = Number(fixed(coords.x));
+          point.y = Number(fixed(coords.y));
+          fillForm(point);
+          marker.style.setProperty("--x", point.x);
+          marker.style.setProperty("--y", point.y);
+          renderTable();
+          renderExport();
+        });
+        marker.addEventListener("pointerup", () => {
+          if (state.dragId === point.id) showStatus("Konum güncellendi.");
+          state.dragId = null;
+        });
+        mapStage.appendChild(marker);
+      }
+    }
+
+    function renderTable() {
+      pointsTable.innerHTML = "";
+      for (const point of state.points) {
+        const row = document.createElement("tr");
+        row.className = point.id === state.selectedId ? "active" : "";
+        row.innerHTML = `
+          <td>${escapeHtml(point.city)}</td>
+          <td>${escapeHtml(point.product || "-")}</td>
+          <td class="coord">${fixed(point.x)}</td>
+          <td class="coord">${fixed(point.y)}</td>
+        `;
+        row.addEventListener("click", () => setSelected(point.id));
+        pointsTable.appendChild(row);
+      }
+    }
+
+    function fillForm(point) {
+      if (!point) {
+        cityInput.value = "";
+        productInput.value = "";
+        xInput.value = "";
+        yInput.value = "";
+        pxInput.value = "";
+        pyInput.value = "";
+        return;
+      }
+      const pixels = pointPixels(point);
+      cityInput.value = point.city;
+      productInput.value = point.product || "";
+      xInput.value = fixed(point.x);
+      yInput.value = fixed(point.y);
+      pxInput.value = pixels.px;
+      pyInput.value = pixels.py;
+    }
+
+    function renderExport() {
+      if (state.exportMode === "html") {
+        exportOutput.value = state.points.map(point => {
+          const title = [point.city, point.product].filter(Boolean).join(" - ");
+          return `<button class="map-point" style="left:${fixed(point.x)}%;top:${fixed(point.y)}%;" data-city="${escapeAttr(point.city)}" data-product="${escapeAttr(point.product || "")}" aria-label="${escapeAttr(title)}"></button>`;
+        }).join("\n");
+        return;
+      }
+      exportOutput.value = JSON.stringify(state.points.map(({ city, product, x, y }) => ({
+        city,
+        product,
+        x: Number(fixed(x)),
+        y: Number(fixed(y))
+      })), null, 2);
+    }
+
+    function render() {
+      fillForm(selectedPoint());
+      renderPoints();
+      renderTable();
+      renderExport();
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/`/g, "&#096;");
+    }
+
+    mapStage.addEventListener("click", event => {
+      if (event.target.closest(".point")) return;
+      const coords = clientToPercent(event.clientX, event.clientY);
+      addPoint(coords.x, coords.y);
+    });
+
+    document.getElementById("updateBtn").addEventListener("click", updateSelectedFromInputs);
+    document.getElementById("deleteBtn").addEventListener("click", deleteSelected);
+    document.getElementById("clearSelectionBtn").addEventListener("click", () => {
+      state.selectedId = null;
+      render();
+    });
+
+    [cityInput, productInput, xInput, yInput].forEach(input => {
+      input.addEventListener("keydown", event => {
+        if (event.key === "Enter") updateSelectedFromInputs();
+      });
+    });
+
+    document.getElementById("gridToggle").addEventListener("change", event => {
+      app.classList.toggle("grid-on", event.target.checked);
+    });
+
+    document.getElementById("labelToggle").addEventListener("change", event => {
+      app.classList.toggle("labels-hidden", !event.target.checked);
+    });
+
+    document.getElementById("jsonBtn").addEventListener("click", () => {
+      state.exportMode = "json";
+      renderExport();
+    });
+
+    document.getElementById("htmlBtn").addEventListener("click", () => {
+      state.exportMode = "html";
+      renderExport();
+    });
+
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      await navigator.clipboard.writeText(exportOutput.value);
+      showStatus("Çıktı panoya kopyalandı.");
+    });
+
+    document.getElementById("importBtn").addEventListener("click", () => {
+      try {
+        const parsed = JSON.parse(importInput.value);
+        if (!Array.isArray(parsed)) throw new Error("JSON bir dizi olmalı.");
+        state.points = parsed.map((item, index) => ({
+          id: uid(),
+          city: String(item.city || item.il || `İl ${index + 1}`),
+          product: String(item.product || item.urun || ""),
+          x: Number(fixed(clamp(Number(item.x), 0, 100))),
+          y: Number(fixed(clamp(Number(item.y), 0, 100)))
+        }));
+        state.selectedId = state.points[0]?.id || null;
+        render();
+        showStatus("JSON içe aktarıldı.");
+      } catch (error) {
+        showStatus(error.message || "JSON okunamadı.");
+      }
+    });
+
+    document.getElementById("imageFile").addEventListener("change", event => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      mapImage.src = URL.createObjectURL(file);
+      showStatus("Harita görseli değişti.");
+    });
+
+    mapImage.addEventListener("load", render);
+    render();
+  </script>
+</body>
+</html>
