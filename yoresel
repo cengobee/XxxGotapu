@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yöresel Market — Anadolu'nun 81 İlinden Sofranıza</title>
+<meta name="description" content="81 ilden yöresel lezzetler. Üreticiden direkt sipariş. Coğrafi işaretli ürünler.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0D0908;--surface:#160D0A;--card:#1E1210;
+  --red:#B22222;--red2:#D4342A;--red3:#8B1A1A;
+  --gold:#C8922A;--gold2:#E8B84B;
+  --cream:#F5ECD7;--cream2:#E8D5B0;
+  --text:#F0E6D3;--muted:#8A7260;--faint:#3A2820;
+  --border:#2A1A12;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--red3);border-radius:3px;}
+
+/* NAV */
+#nav{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:90;}
+#nav-logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--cream);letter-spacing:1px;cursor:pointer;text-decoration:none;}
+#nav-logo span{color:var(--gold);}
+#nav-links{display:flex;gap:28px;align-items:center;}
+.nav-link{font-size:13px;color:var(--muted);cursor:pointer;transition:color 0.15s;text-decoration:none;}
+.nav-link:hover{color:var(--cream);}
+#nav-actions{display:flex;gap:10px;align-items:center;}
+.btn-outline{padding:7px 16px;border:1px solid var(--faint);border-radius:6px;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;}
+.btn-outline:hover{border-color:var(--red);color:var(--cream);}
+.btn-primary{padding:7px 18px;border:none;border-radius:6px;background:var(--red);color:#fff;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;}
+.btn-primary:hover{background:var(--red2);}
+#cart-icon{margin-left:8px;cursor:pointer;color:var(--muted);font-size:13px;transition:color 0.15s;}
+#cart-icon:hover{color:var(--cream);}
+
+/* HERO */
+#hero{padding:60px 40px 40px;text-align:center;position:relative;overflow:hidden;}
+#hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%, rgba(178,34,34,0.08) 0%, transparent 70%);pointer-events:none;}
+#hero-eyebrow{font-size:11px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+#hero-title{font-family:'Cormorant Garamond',serif;font-size:58px;font-weight:700;color:var(--cream);line-height:1.1;margin-bottom:16px;}
+#hero-title span{color:var(--gold);}
+#hero-sub{font-size:15px;color:var(--muted);max-width:500px;margin:0 auto 32px;line-height:1.7;}
+
+/* SEARCH */
+#search-bar{display:flex;max-width:560px;margin:0 auto 44px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.2s;}
+#search-bar:focus-within{border-color:var(--red);}
+#search-bar input{flex:1;background:transparent;border:none;padding:15px 20px;font-size:14px;color:var(--text);outline:none;font-family:'Inter',sans-serif;}
+#search-bar input::placeholder{color:var(--muted);}
+#search-bar button{background:var(--red);border:none;padding:0 26px;color:#fff;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;white-space:nowrap;}
+#search-bar button:hover{background:var(--red2);}
+
+/* STATS */
+#stats{display:flex;justify-content:center;gap:48px;margin-bottom:56px;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--gold);}
+.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+/* MAIN LAYOUT */
+#main{display:flex;gap:0;min-height:640px;border-top:1px solid var(--border);}
+
+/* MAP SECTION */
+#map-section{width:380px;flex-shrink:0;padding:24px;border-right:1px solid var(--border);background:var(--surface);}
+#map-label{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--red2);display:inline-block;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.8);}}
+#tr-svg{width:100%;height:auto;display:block;border-radius:8px;border:1px solid var(--border);}
+#map-hint{font-size:11px;color:var(--faint);margin-top:8px;text-align:center;}
+#selected-il-info{margin-top:16px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:8px;display:none;}
+#sil-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+#sil-name{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--cream);}
+#sil-clear{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:0;}
+#sil-foods{display:flex;flex-wrap:wrap;gap:5px;}
+.sil-food{padding:4px 11px;border-radius:20px;font-size:11px;border:1px solid var(--faint);color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.sil-food:hover{background:var(--red3);border-color:var(--red);color:var(--cream);}
+
+/* RIGHT SECTION */
+#right-section{flex:1;padding:24px;min-width:0;background:var(--bg);}
+
+/* CATEGORIES */
+#cat-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.cat-btn{padding:7px 15px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;white-space:nowrap;}
+.cat-btn:hover{border-color:var(--red);color:var(--cream2);}
+.cat-btn.active{background:var(--red3);border-color:var(--red);color:var(--cream);}
+
+/* FILTER BAR */
+#filter-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
+#filter-info{font-size:13px;color:var(--muted);}
+#filter-info strong{color:var(--cream);}
+#filter-right{display:flex;align-items:center;gap:10px;}
+#active-filter{font-size:11px;color:var(--gold);background:var(--faint);border:1px solid var(--red3);border-radius:20px;padding:3px 10px;display:none;align-items:center;gap:5px;}
+#active-filter button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0;}
+#sort-sel{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;outline:none;}
+#sort-sel:focus{border-color:var(--red);}
+
+/* PRODUCT GRID */
+#prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:14px;}
+.prod-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color 0.2s,transform 0.2s;}
+.prod-card:hover{border-color:var(--red);transform:translateY(-3px);}
+.pc-img{height:115px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;}
+.pc-badge2{position:absolute;top:7px;left:7px;background:var(--red3);color:var(--cream2);font-size:9px;padding:2px 7px;border-radius:4px;letter-spacing:0.5px;font-weight:500;}
+.pc-body{padding:11px 13px;}
+.pc-il{font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
+.pc-name{font-size:13px;font-weight:500;color:var(--cream);margin-bottom:2px;line-height:1.3;}
+.pc-seller{font-size:11px;color:var(--muted);margin-bottom:9px;}
+.pc-bottom{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.pc-price2{font-size:15px;font-weight:500;color:var(--gold);}
+.pc-unit2{font-size:10px;color:var(--muted);}
+.btn-cart{background:var(--red);border:none;border-radius:5px;padding:5px 11px;color:#fff;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;}
+.btn-cart:hover{background:var(--red2);}
+.pc-star{font-size:11px;color:var(--gold);}
+.pc-star span{color:var(--muted);font-size:10px;}
+
+/* EMPTY STATE */
+.empty-state{color:var(--muted);font-size:14px;grid-column:1/-1;padding:60px 0;text-align:center;line-height:1.8;}
+.empty-state button{margin-top:12px;padding:8px 20px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;}
+.empty-state button:hover{border-color:var(--red);color:var(--cream);}
+
+/* POPUP */
+#popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:20px;}
+#popup-overlay.show{display:flex;}
+#popup-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:400px;max-width:100%;padding:28px;position:relative;animation:slideUp 0.2s ease;max-height:90vh;overflow-y:auto;}
+@keyframes slideUp{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+#pop-close{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:4px;transition:color 0.15s;}
+#pop-close:hover{color:var(--cream);}
+#pop-emoji{font-size:52px;text-align:center;margin-bottom:14px;display:block;}
+#pop-il-badge{font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:5px;}
+#pop-name{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--cream);margin-bottom:4px;line-height:1.2;}
+#pop-seller2{font-size:12px;color:var(--muted);margin-bottom:16px;}
+#pop-desc{font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:18px;padding:14px;background:var(--card);border-radius:8px;border-left:2px solid var(--red3);}
+#pop-price-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:12px;background:var(--card);border-radius:8px;}
+#pop-price{font-size:24px;font-weight:500;color:var(--gold);font-family:'Cormorant Garamond',serif;}
+#pop-rating{font-size:14px;color:var(--gold);}
+#pop-actions{display:flex;gap:10px;}
+#pop-actions button{flex:1;padding:11px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;}
+#pop-fav{background:transparent;border:1px solid var(--border);color:var(--muted);}
+#pop-fav:hover{border-color:var(--red);color:var(--cream);}
+#pop-buy{background:var(--red);border:none;color:#fff;}
+#pop-buy:hover{background:var(--red2);}
+
+/* CART TOAST */
+#cart-toast{position:fixed;bottom:28px;right:28px;background:var(--red);color:#fff;padding:13px 22px;border-radius:8px;font-size:13px;z-index:300;display:none;animation:toastIn 0.2s ease;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+@keyframes toastIn{from{transform:translateY(12px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+/* FOOTER */
+#footer{padding:32px 40px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:auto;}
+#footer-logo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--faint);}
+#footer-logo span{color:var(--gold);}
+#footer-links{display:flex;gap:20px;flex-wrap:wrap;}
+.footer-link{font-size:12px;color:var(--faint);cursor:pointer;text-decoration:none;transition:color 0.15s;}
+.footer-link:hover{color:var(--muted);}
+#footer-copy{font-size:12px;color:var(--faint);}
+
+/* MOBILE */
+@media(max-width:768px){
+  #nav{padding:12px 16px;}
+  #nav-links{display:none;}
+  #hero{padding:36px 16px 24px;}
+  #hero-title{font-size:36px;}
+  #stats{gap:24px;}
+  #main{flex-direction:column;}
+  #map-section{width:100%;border-right:none;border-bottom:1px solid var(--border);}
+  #right-section{padding:16px;}
+  #prod-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+  #footer{padding:20px 16px;flex-direction:column;align-items:flex-start;}
+  #search-bar{margin-bottom:28px;}
+  #stats{margin-bottom:32px;}
+}
+@media(max-width:480px){
+  #hero-title{font-size:28px;}
+  #nav-actions .btn-outline{display:none;}
+  #prod-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a id="nav-logo" href="#">Yöresel<span>.</span>Market</a>
+  <div id="nav-links">
+    <a class="nav-link" href="#main">Keşfet</a>
+    <a class="nav-link" href="#">Üreticiler</a>
+    <a class="nav-link" href="#map-section">Harita</a>
+    <a class="nav-link" href="#">Hakkımızda</a>
+  </div>
+  <div id="nav-actions">
+    <button class="btn-outline" onclick="alert('Giriş sayfası yakında!')">Giriş Yap</button>
+    <button class="btn-primary" onclick="alert('Üretici başvuru formu yakında!')">Üretici Ol</button>
+    <span id="cart-icon">🛒 <span id="cart-count">0</span></span>
+  </div>
+</nav>
+
+<section id="hero">
+  <div id="hero-eyebrow">Anadolu'nun 81 İlinden</div>
+  <h1 id="hero-title">Yöresel Lezzetler<br><span>Sofranıza Geliyor</span></h1>
+  <p id="hero-sub">Üreticiden direkt sipariş. Coğrafi işaretli ürünler. Gerçek yöresel tatlar.</p>
+  <div id="search-bar">
+    <input id="search-input" type="text" placeholder="Ürün, il veya üretici ara..." />
+    <button onclick="doSearch()">Ara</button>
+  </div>
+  <div id="stats">
+    <div class="stat"><div class="stat-n">81</div><div class="stat-l">İl</div></div>
+    <div class="stat"><div class="stat-n">340+</div><div class="stat-l">Üretici</div></div>
+    <div class="stat"><div class="stat-n">1.200+</div><div class="stat-l">Ürün</div></div>
+    <div class="stat"><div class="stat-n">48s</div><div class="stat-l">Kargo</div></div>
+  </div>
+</section>
+
+<div id="main">
+  <aside id="map-section">
+    <div id="map-label"><span class="pulse"></span> Haritadan il seç</div>
+    <svg id="tr-svg" viewBox="0 0 560 260" xmlns="http://www.w3.org/2000/svg">
+      <rect width="560" height="260" fill="#120A07" rx="6"/>
+      <g id="map-dots"></g>
+    </svg>
+    <p id="map-hint">Kırmızı noktaya tıkla → lezzetleri gör</p>
+    <div id="selected-il-info">
+      <div id="sil-header">
+        <div id="sil-name"></div>
+        <button id="sil-clear" onclick="clearIl()" title="Temizle">✕</button>
+      </div>
+      <div id="sil-foods"></div>
+    </div>
+  </aside>
+
+  <main id="right-section">
+    <div id="cat-row">
+      <button class="cat-btn active" data-cat="all">Tümü</button>
+      <button class="cat-btn" data-cat="peynir">🧀 Peynir</button>
+      <button class="cat-btn" data-cat="kebap">🍖 Kebap</button>
+      <button class="cat-btn" data-cat="tatli">🍯 Tatlı</button>
+      <button class="cat-btn" data-cat="meyve">🍑 Meyve & Kuruyemiş</button>
+      <button class="cat-btn" data-cat="icecek">🍵 İçecek</button>
+      <button class="cat-btn" data-cat="et">🥩 Et Ürünleri</button>
+    </div>
+    <div id="filter-bar">
+      <div id="filter-info">Gösterilen: <strong id="prod-count">0</strong> ürün</div>
+      <div id="filter-right">
+        <div id="active-filter"><span id="active-filter-text"></span><button onclick="clearIl()">✕</button></div>
+        <select id="sort-sel" onchange="sortProds()">
+          <option value="pop">En Popüler</option>
+          <option value="price_asc">Fiyat: Düşük → Yüksek</option>
+          <option value="price_desc">Fiyat: Yüksek → Düşük</option>
+          <option value="rating">En Yüksek Puan</option>
+        </select>
+      </div>
+    </div>
+    <div id="prod-grid"></div>
+  </main>
+</div>
+
+<footer id="footer">
+  <div id="footer-logo">Yöresel<span>.</span>Market</div>
+  <div id="footer-links">
+    <a class="footer-link" href="#">Hakkımızda</a>
+    <a class="footer-link" href="#">Üretici Ol</a>
+    <a class="footer-link" href="#">Kargo & İade</a>
+    <a class="footer-link" href="#">KVKK</a>
+    <a class="footer-link" href="#">İletişim</a>
+  </div>
+  <div id="footer-copy">© 2025 Yöresel Market</div>
+</footer>
+
+<!-- POPUP -->
+<div id="popup-overlay" role="dialog" aria-modal="true">
+  <div id="popup-box">
+    <button id="pop-close" onclick="closePopup()" aria-label="Kapat">✕</button>
+    <span id="pop-emoji"></span>
+    <div id="pop-il-badge"></div>
+    <div id="pop-name"></div>
+    <div id="pop-seller2"></div>
+    <div id="pop-desc"></div>
+    <div id="pop-price-row">
+      <div id="pop-price"></div>
+      <div id="pop-rating"></div>
+    </div>
+    <div id="pop-actions">
+      <button id="pop-fav">♡ Favorile</button>
+      <button id="pop-buy" onclick="addToCart()">Sepete Ekle 🛒</button>
+    </div>
+  </div>
+</div>
+
+<div id="cart-toast" role="status">✓ Ürün sepete eklendi!</div>
+
+<script>
+const ILLER = [
+  {id:"istanbul",n:"İstanbul",x:88,y:52,foods:["Balık Ekmek","Midye Dolma","Kokoreç"]},
+  {id:"edirne",n:"Edirne",x:48,y:40,foods:["Tava Ciğeri","Badem Ezmesi","Kavun"]},
+  {id:"tekirdag",n:"Tekirdağ",x:68,y:50,foods:["Tekirdağ Köftesi","Kavurma","Peynir"]},
+  {id:"kirklareli",n:"Kırklareli",x:76,y:34,foods:["Kapuska","Pestil","Kavurma"]},
+  {id:"canakkale",n:"Çanakkale",x:52,y:72,foods:["Ezine Peyniri","Bozcaada Şarabı","Domates"]},
+  {id:"balikesir",n:"Balıkesir",x:74,y:90,foods:["Gömeç Balığı","Susamlı Gevrek","Sucuk"]},
+  {id:"bursa",n:"Bursa",x:104,y:84,foods:["İskender Kebap","Kestane Şekeri","İnegöl Köftesi"]},
+  {id:"kocaeli",n:"Kocaeli",x:122,y:58,foods:["İzmit Pişmaniyesi","Tahini Pide","Köfte"]},
+  {id:"yalova",n:"Yalova",x:112,y:70,foods:["Bal","Çilek","Kestane Şekeri"]},
+  {id:"sakarya",n:"Sakarya",x:136,y:57,foods:["Kaz Kavurması","Mısır Ekmeği","Fındık"]},
+  {id:"bolu",n:"Bolu",x:152,y:66,foods:["Köy Tereyağı","Mudurnu Tavuğu","Abant Balığı"]},
+  {id:"duzce",n:"Düzce",x:144,y:60,foods:["Fındık","Taze Fasulye"]},
+  {id:"bilecik",n:"Bilecik",x:130,y:78,foods:["Pestil","Köy Peyniri","Lokum"]},
+  {id:"eskisehir",n:"Eskişehir",x:156,y:96,foods:["Çibörek","Balaban Sarması"]},
+  {id:"kutahya",n:"Kütahya",x:130,y:108,foods:["Kütahya Mantısı","Pastırmalı Börek"]},
+  {id:"afyon",n:"Afyonkarahisar",x:136,y:130,foods:["Afyon Kaymağı","Sucuk","Lokum"]},
+  {id:"manisa",n:"Manisa",x:76,y:116,foods:["Mesir Macunu","Balık"]},
+  {id:"izmir",n:"İzmir",x:60,y:126,foods:["Boyoz","Kumru","Gevrek","İncir"]},
+  {id:"usak",n:"Uşak",x:106,y:128,foods:["Tarhana","Keklik"]},
+  {id:"aydin",n:"Aydın",x:80,y:148,foods:["İncir","Kestane","Zeytinyağlı Yemek"]},
+  {id:"denizli",n:"Denizli",x:104,y:148,foods:["Honaz Elması","Sarayköy Peyniri"]},
+  {id:"mugla",n:"Muğla",x:88,y:170,foods:["Marmaris Balığı","Organik Bal"]},
+  {id:"burdur",n:"Burdur",x:128,y:166,foods:["Pelte","Keş Peyniri"]},
+  {id:"isparta",n:"Isparta",x:148,y:162,foods:["Gül Lokumu","Elma","Gülsuyu"]},
+  {id:"antalya",n:"Antalya",x:162,y:188,foods:["Hibeş","Piyaz","Kabak Tatlısı"]},
+  {id:"konya",n:"Konya",x:172,y:158,foods:["Etli Ekmek","Fırın Kebabı","Höşmerim"]},
+  {id:"karaman",n:"Karaman",x:186,y:174,foods:["Tahinli","Sucuk","Vişne"]},
+  {id:"ankara",n:"Ankara",x:180,y:106,foods:["Beypazarı Kurusu","Ankara Tavası"]},
+  {id:"kirsehir",n:"Kırşehir",x:208,y:116,foods:["Tarhana","Cücük Salatası"]},
+  {id:"aksaray",n:"Aksaray",x:198,y:146,foods:["Tulum Peyniri","Pastırma","Sucuk"]},
+  {id:"nevsehir",n:"Nevşehir",x:212,y:148,foods:["Testi Kebabı","Ürgüp Şarabı"]},
+  {id:"nigde",n:"Niğde",x:216,y:166,foods:["Niğde Peyniri","Patates"]},
+  {id:"kayseri",n:"Kayseri",x:236,y:142,foods:["Pastırma","Sucuk","Mantı"]},
+  {id:"sivas",n:"Sivas",x:258,y:114,foods:["Sivas Köftesi","Divriği Üzümü"]},
+  {id:"tokat",n:"Tokat",x:246,y:96,foods:["Tokat Kebabı"]},
+  {id:"yozgat",n:"Yozgat",x:228,y:108,foods:["Yozgat Çorbası","Keşkek"]},
+  {id:"kirikkale",n:"Kırıkkale",x:196,y:104,foods:["Keşkek","Gözleme"]},
+  {id:"corum",n:"Çorum",x:216,y:90,foods:["Çorum Leblebisi","Simidi"]},
+  {id:"amasya",n:"Amasya",x:230,y:78,foods:["Amasya Elması","Elma Şekeri"]},
+  {id:"sinop",n:"Sinop",x:218,y:58,foods:["Kalkan Balığı","Midye"]},
+  {id:"samsun",n:"Samsun",x:240,y:58,foods:["Samsun Pide","Hamsi"]},
+  {id:"ordu",n:"Ordu",x:256,y:60,foods:["Fındık","Mıhlama"]},
+  {id:"giresun",n:"Giresun",x:272,y:58,foods:["Giresun Fındığı","Laz Böreği"]},
+  {id:"trabzon",n:"Trabzon",x:292,y:56,foods:["Trabzon Ekmeği","Hamsili Pilav","Akçaabat Köftesi"]},
+  {id:"rize",n:"Rize",x:310,y:50,foods:["Rize Çayı","Muhlama"]},
+  {id:"artvin",n:"Artvin",x:328,y:44,foods:["Karalahana Çorbası","Muhlama"]},
+  {id:"gumushane",n:"Gümüşhane",x:300,y:72,foods:["Pestil","Kuskus"]},
+  {id:"bayburt",n:"Bayburt",x:316,y:70,foods:["Bez Ayran","Tarhana"]},
+  {id:"erzincan",n:"Erzincan",x:296,y:92,foods:["Tulum Peyniri","Şehriye"]},
+  {id:"erzurum",n:"Erzurum",x:330,y:90,foods:["Cağ Kebabı","Kadayıf Dolması","Pastırma"]},
+  {id:"kars",n:"Kars",x:358,y:66,foods:["Kars Gravyeri","Kaz Eti","Bal"]},
+  {id:"ardahan",n:"Ardahan",x:360,y:48,foods:["Ardahan Balı","Peynir"]},
+  {id:"agri",n:"Ağrı",x:376,y:80,foods:["Bandırma","Kavut"]},
+  {id:"igdir",n:"Iğdır",x:390,y:82,foods:["Iğdır Kayısısı","Bal"]},
+  {id:"van",n:"Van",x:382,y:118,foods:["Van Kahvaltısı","Otlu Peynir","Van Balığı"]},
+  {id:"hakkari",n:"Hakkari",x:376,y:150,foods:["Hakkari Balı","Kavut"]},
+  {id:"bingol",n:"Bingöl",x:334,y:112,foods:["Bingöl Balı","Tulum Peyniri"]},
+  {id:"tunceli",n:"Tunceli",x:310,y:118,foods:["Tunceli Balı","Kavut"]},
+  {id:"mus",n:"Muş",x:352,y:118,foods:["Muş Peyniri","Tandır Ekmeği"]},
+  {id:"bitlis",n:"Bitlis",x:360,y:132,foods:["Bitlis Balı","Peynir"]},
+  {id:"siirt",n:"Siirt",x:358,y:156,foods:["Büryan Kebabı","Perde Pilavı"]},
+  {id:"batman",n:"Batman",x:340,y:160,foods:["Kavurma","Tarhana"]},
+  {id:"mardin",n:"Mardin",x:326,y:172,foods:["Kaburga Dolması","Kibe","Reyhan Şerbeti"]},
+  {id:"sirnak",n:"Şırnak",x:366,y:168,foods:["Şırnak Cevizi","Köy Peyniri"]},
+  {id:"diyarbakir",n:"Diyarbakır",x:306,y:162,foods:["Diyarbakır Karpuzu","Kaburga Dolması"]},
+  {id:"sanliurfa",n:"Şanlıurfa",x:282,y:186,foods:["Urfa Kebabı","Çiğ Köfte","Lahmacun"]},
+  {id:"gaziantep",n:"Gaziantep",x:258,y:196,foods:["Antep Baklavası","Antep Kebabı","Katmer","Beyran"]},
+  {id:"kilis",n:"Kilis",x:244,y:210,foods:["Kilis Tava","Zeytin"]},
+  {id:"hatay",n:"Hatay",x:236,y:210,foods:["Künefe","Humus","Zahter"]},
+  {id:"kahramanmaras",n:"Kahramanmaraş",x:234,y:184,foods:["Maraş Dondurması"]},
+  {id:"adiyaman",n:"Adıyaman",x:264,y:176,foods:["Patlıcan Kebabı","Katmer"]},
+  {id:"adana",n:"Adana",x:210,y:200,foods:["Adana Kebabı","Şalgam","Bici Bici"]},
+  {id:"osmaniye",n:"Osmaniye",x:220,y:200,foods:["Osmaniye Köftesi","Portakal"]},
+  {id:"mersin",n:"Mersin",x:196,y:202,foods:["Tantuni","Taş Kebabı","Cezerye"]},
+  {id:"zonguldak",n:"Zonguldak",x:164,y:60,foods:["Zonguldak Böreği","Firikik"]},
+  {id:"karabuk",n:"Karabük",x:174,y:68,foods:["Safranbolu Safranı","Lokum"]},
+  {id:"bartin",n:"Bartın",x:160,y:54,foods:["Bartın Elması","Bal"]},
+  {id:"kastamonu",n:"Kastamonu",x:190,y:68,foods:["Kastamonu Sucuğu","Taşköprü Sarımsağı"]},
+  {id:"cankiri",n:"Çankırı",x:192,y:84,foods:["Çankırı Şekeri","Tuz"]},
+  {id:"malatya",n:"Malatya",x:280,y:148,foods:["Malatya Kayısısı","Tarhana"]},
+  {id:"elazig",n:"Elazığ",x:294,y:132,foods:["Hardaliye","Harput Köftesi"]},
+];
+
+const PRODUCTS = [
+  {id:1,name:"Antep Baklavası",il:"Gaziantep",seller:"Güllüoğlu",price:320,unit:"kg",rating:4.9,cat:"tatli",emoji:"🍯",badge:"COĞ. İŞARET",desc:"El açması yufka, antep fıstığı ve tereyağıyla hazırlanan efsanevi baklava. 180 yıllık Güllüoğlu ustalığı ile hazırlanmaktadır."},
+  {id:2,name:"Kars Gravyeri",il:"Kars",seller:"Kafkas Süt",price:420,unit:"kg",rating:4.9,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",desc:"12 ay dinlendirilmiş, sert dokulu, fındıksı aromaya sahip Kars gravyeri. Türkiye'nin en prestijli peyniri olarak kabul edilir."},
+  {id:3,name:"Cağ Kebabı",il:"Erzurum",seller:"Güzelyurt",price:195,unit:"porsiyon",rating:4.9,cat:"kebap",emoji:"🍖",badge:"YEREL USTA",desc:"Yatay şişte döndürülen kuzu etinin dilim dilim kesilmesiyle hazırlanan Erzurum'a özgü kebap. Lavaş ekmekle servis edilir."},
+  {id:4,name:"Malatya Kayısısı",il:"Malatya",seller:"Kayısı Bahçesi",price:120,unit:"kg",rating:4.9,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",desc:"Dünya kayısı üretiminin yüzde yirmisini karşılayan Malatya'nın güneşte doğal kurutulmuş kayısısı. Çekirdeksiz veya çekirdekli."},
+  {id:5,name:"Rize Çayı",il:"Rize",seller:"Çaykur Rize",price:180,unit:"kg",rating:4.8,cat:"icecek",emoji:"🍵",badge:"COĞ. İŞARET",desc:"Karadeniz yağmurlarıyla yetişen, derin demli, tok aromalı siyah çay. Türkiye çayının anavatanı Rize'den geliyor."},
+  {id:6,name:"Pastırma",il:"Kayseri",seller:"Oğuzhan",price:680,unit:"kg",rating:4.9,cat:"et",emoji:"🥩",badge:"COĞ. İŞARET",desc:"60 günlük kuruma süreciyle hazırlanan, çemenli Kayseri pastırması. Türkiye'nin en ünlü et ürünü olarak coğrafi işaretlidir."},
+  {id:7,name:"Van Otlu Peyniri",il:"Van",seller:"Divan Peynir",price:280,unit:"kg",rating:4.8,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",desc:"Bahar otlarıyla hazırlanan, Van'a özgü salamura beyaz peynir. Her bahar taze Munzur otlarıyla yenilenir."},
+  {id:8,name:"Künefe",il:"Hatay",seller:"Antakya Tatlıcısı",price:95,unit:"porsiyon",rating:4.9,cat:"tatli",emoji:"🍰",badge:"TAŞ FIRIN",desc:"Taş fırında pişirilen, Hatay usulü tel kadayıf ve eriyen peynirle hazırlanan efsanevi tatlı. Ilık servis edilir."},
+  {id:9,name:"Afyon Kaymağı",il:"Afyonkarahisar",seller:"Afyon Lezzet",price:240,unit:"kg",rating:4.8,cat:"peynir",emoji:"🥛",badge:"GÜNLÜK TAZE",desc:"Manda sütünden elde edilen, kaymak katmanlarıyla ünlü Afyon kaymağı. Sabah ekmeğinin ve balın vazgeçilmez eşlikçisi."},
+  {id:10,name:"İskender Kebap",il:"Bursa",seller:"İskender Kebapçısı",price:175,unit:"porsiyon",rating:4.9,cat:"kebap",emoji:"🍖",badge:"ORİJİNAL",desc:"1867'den bu yana aynı tarifle hazırlanan döner kebabın tereyağı ve domates sosuyla pide üzerinde buluşması."},
+  {id:11,name:"Adana Kebabı",il:"Adana",seller:"Adana Ocakbaşı",price:180,unit:"porsiyon",rating:4.9,cat:"kebap",emoji:"🍖",badge:"COĞ. İŞARET",desc:"Kıyma ve iç yağından hazırlanan, acı isot biberli Adana kebabı. Türkiye'nin en tanınmış kebabı olarak dünyada bilinir."},
+  {id:12,name:"Giresun Fındığı",il:"Giresun",seller:"Karadeniz Fındık",price:160,unit:"kg",rating:4.8,cat:"meyve",emoji:"🌰",badge:"COĞ. İŞARET",desc:"Dünyanın en kaliteli fındığı olarak bilinen Giresun tombul fındığı. Çikolata sektörünün en çok tercih ettiği fındık çeşidi."},
+  {id:13,name:"Siirt Büryan Kebabı",il:"Siirt",seller:"Büryan Ustası",price:245,unit:"porsiyon",rating:4.9,cat:"kebap",emoji:"🍖",badge:"KUYU KEBABI",desc:"Toprak kuyuda 6 saat pişirilen kuzu but kebabı. Kemiğinden düşen et, gerçek büryan ustasının işareti."},
+  {id:14,name:"Maraş Dondurması",il:"Kahramanmaraş",seller:"Mado",price:85,unit:"top",rating:4.9,cat:"tatli",emoji:"🍦",badge:"DÖVME",desc:"Keçi sütü ve salep ile hazırlanan, uzayan ve donmayan Maraş dondurması. Özel tokmakla dövülerek yapılır."},
+  {id:15,name:"Kastamonu Sucuğu",il:"Kastamonu",seller:"Kastamonu Et",price:340,unit:"kg",rating:4.8,cat:"et",emoji:"🥩",badge:"COĞ. İŞARET",desc:"Sarımsaklı, baharatlı, doğal bağırsakta hazırlanan Kastamonu sucuğu. Türkiye'nin en ünlü sucuğu olarak coğrafi işaretlidir."},
+  {id:16,name:"Tunceli Balı",il:"Tunceli",seller:"Munzur Arı",price:480,unit:"kg",rating:5.0,cat:"tatli",emoji:"🍯",badge:"ÇIÇEK BALI",desc:"Munzur dağlarının yabani çiçeklerinden elde edilen, Türkiye'nin en değerli balı. Yılda sınırlı miktarda üretilir."},
+  {id:17,name:"Urfa Kebabı",il:"Şanlıurfa",seller:"Urfa Ocakbaşı",price:165,unit:"porsiyon",rating:4.8,cat:"kebap",emoji:"🍖",badge:"ACI",desc:"İsot biberli, yoğun baharatlı Urfa kebabı. Adana'dan farklı olarak daha çok baharat ve isot kullanılır."},
+  {id:18,name:"Ezine Peyniri",il:"Çanakkale",seller:"Ezine Peynircilik",price:290,unit:"kg",rating:4.8,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",desc:"Koyun, keçi ve inek sütünün karışımından yapılan, salamurada yıllandırılan Ezine beyaz peyniri."},
+  {id:19,name:"Trabzon Ekmeği",il:"Trabzon",seller:"Akçaabat Fırını",price:45,unit:"adet",rating:4.7,cat:"et",emoji:"🍞",badge:"TAŞFIRIN",desc:"Özel mayalı hamurdan taş fırında pişirilen, Trabzon'un simgesi somun ekmek. Karadeniz sofralarının vazgeçilmezi."},
+  {id:20,name:"Iğdır Kayısısı",il:"Iğdır",seller:"Aras Meyve",price:95,unit:"kg",rating:4.8,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",desc:"Ağrı Dağı'nın eteklerinde Aras nehri kıyısında yetişen, dünyaca ünlü Iğdır kayısısı. Taze veya kurutulmuş."},
+  {id:21,name:"Antep Katmeri",il:"Gaziantep",seller:"Tahmis Katmer",price:45,unit:"adet",rating:4.9,cat:"tatli",emoji:"🥞",badge:"KAHVALTILIK",desc:"El açması yufkanın içine fıstıklı kaymak konularak tavada pişirilen Gaziantep'e özgü kahvaltı tatlısı."},
+  {id:22,name:"Çorum Leblebisi",il:"Çorum",seller:"Çorum Kuruyemiş",price:85,unit:"kg",rating:4.7,cat:"meyve",emoji:"🫘",badge:"COĞ. İŞARET",desc:"Özel fırınlama yöntemiyle hazırlanan, Türkiye'nin en ünlü çerezidir. Sarı ve beyaz olmak üzere iki çeşidi bulunur."},
+];
+
+let activeIl=null, activeCat="all", cartCount=0, filteredProds=[...PRODUCTS];
+
+function scaleX(x){return x*(560/420);}
+function scaleY(y){return y*(260/230);}
+
+function renderMap(){
+  const g=document.getElementById("map-dots");
+  g.innerHTML="";
+  ILLER.forEach(il=>{
+    const cx=scaleX(il.x), cy=scaleY(il.y);
+    const isActive=activeIl&&activeIl.id===il.id;
+    if(isActive){
+      const halo=document.createElementNS("http://www.w3.org/2000/svg","circle");
+      halo.setAttribute("cx",cx);halo.setAttribute("cy",cy);
+      halo.setAttribute("r",9);halo.setAttribute("fill","none");
+      halo.setAttribute("stroke","#C8922A");halo.setAttribute("stroke-width","1.5");
+      halo.setAttribute("opacity","0.6");
+      g.appendChild(halo);
+    }
+    const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    c.setAttribute("cx",cx);c.setAttribute("cy",cy);
+    c.setAttribute("r",isActive?6:3.5);
+    c.setAttribute("fill",isActive?"#E8B84B":"#B22222");
+    c.style.cursor="pointer";c.style.transition="all 0.15s";
+    c.addEventListener("click",()=>selectIl(il));
+    c.addEventListener("mouseenter",()=>{if(!isActive){c.setAttribute("fill","#D4342A");c.setAttribute("r","5");}});
+    c.addEventListener("mouseleave",()=>{if(!isActive){c.setAttribute("fill","#B22222");c.setAttribute("r","3.5");}});
+    g.appendChild(c);
+    const t=document.createElementNS("http://www.w3.org/2000/svg","text");
+    t.setAttribute("x",cx);t.setAttribute("y",cy-6);
+    t.setAttribute("text-anchor","middle");t.setAttribute("font-size","6.5");
+    t.setAttribute("fill",isActive?"#E8B84B":"#6A3020");
+    t.style.pointerEvents="none";t.style.fontFamily="Inter,sans-serif";
+    t.textContent=il.n;
+    g.appendChild(t);
+  });
+}
+
+function selectIl(il){
+  if(activeIl&&activeIl.id===il.id){clearIl();return;}
+  activeIl=il;renderMap();showIlInfo(il);filterProds();
+}
+
+function showIlInfo(il){
+  const box=document.getElementById("selected-il-info");
+  box.style.display="block";
+  document.getElementById("sil-name").textContent=il.n+" İli";
+  const sf=document.getElementById("sil-foods");
+  sf.innerHTML="";
+  il.foods.forEach(f=>{
+    const btn=document.createElement("span");
+    btn.className="sil-food";btn.textContent=f;
+    btn.onclick=()=>{document.getElementById("search-input").value=f;doSearch();};
+    sf.appendChild(btn);
+  });
+  const af=document.getElementById("active-filter");
+  document.getElementById("active-filter-text").textContent=il.n;
+  af.style.display="flex";
+}
+
+function clearIl(){
+  activeIl=null;
+  document.getElementById("selected-il-info").style.display="none";
+  document.getElementById("active-filter").style.display="none";
+  renderMap();filterProds();
+}
+
+function filterProds(){
+  let prods=[...PRODUCTS];
+  if(activeCat!=="all") prods=prods.filter(p=>p.cat===activeCat);
+  if(activeIl) prods=prods.filter(p=>p.il===activeIl.n);
+  const q=document.getElementById("search-input").value.trim().toLowerCase();
+  if(q) prods=prods.filter(p=>p.name.toLowerCase().includes(q)||p.il.toLowerCase().includes(q)||p.seller.toLowerCase().includes(q));
+  filteredProds=prods;
+  renderProds();
+}
+
+function sortProds(){
+  const s=document.getElementById("sort-sel").value;
+  if(s==="price_asc") filteredProds.sort((a,b)=>a.price-b.price);
+  else if(s==="price_desc") filteredProds.sort((a,b)=>b.price-a.price);
+  else if(s==="rating") filteredProds.sort((a,b)=>b.rating-a.rating);
+  renderProds();
+}
+
+function renderProds(){
+  document.getElementById("prod-count").textContent=filteredProds.length;
+  const grid=document.getElementById("prod-grid");
+  if(filteredProds.length===0){
+    grid.innerHTML='<div class="empty-state">Bu kriterlerde ürün bulunamadı.<br><button onclick="resetFilters()">Filtreleri Temizle</button></div>';
+    return;
+  }
+  grid.innerHTML=filteredProds.map(p=>`
+    <article class="prod-card" onclick="openProduct(${p.id})">
+      <div class="pc-img">${p.emoji}<span class="pc-badge2">${p.badge}</span></div>
+      <div class="pc-body">
+        <div class="pc-il">${p.il}</div>
+        <div class="pc-name">${p.name}</div>
+        <div class="pc-seller">${p.seller}</div>
+        <div class="pc-bottom">
+          <div><span class="pc-price2">₺${p.price.toLocaleString('tr-TR')}</span><span class="pc-unit2"> / ${p.unit}</span></div>
+          <button class="btn-cart" onclick="event.stopPropagation();quickAdd(${p.id})">+ Sepet</button>
+        </div>
+        <div class="pc-star">${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))} <span>${p.rating.toFixed(1)}</span></div>
+      </div>
+    </article>
+  `).join("");
+}
+
+function resetFilters(){
+  activeIl=null;activeCat="all";
+  document.getElementById("search-input").value="";
+  document.querySelectorAll(".cat-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelector('.cat-btn[data-cat="all"]').classList.add("active");
+  document.getElementById("selected-il-info").style.display="none";
+  document.getElementById("active-filter").style.display="none";
+  renderMap();filterProds();
+}
+
+function openProduct(id){
+  const p=PRODUCTS.find(x=>x.id===id);if(!p)return;
+  window._openProd=p;
+  document.getElementById("pop-emoji").textContent=p.emoji;
+  document.getElementById("pop-il-badge").textContent=p.il.toUpperCase()+" · "+p.seller;
+  document.getElementById("pop-name").textContent=p.name;
+  document.getElementById("pop-seller2").textContent=p.badge;
+  document.getElementById("pop-desc").textContent=p.desc;
+  document.getElementById("pop-price").textContent="₺"+p.price.toLocaleString('tr-TR')+" / "+p.unit;
+  document.getElementById("pop-rating").textContent="★".repeat(Math.floor(p.rating))+" "+p.rating.toFixed(1);
+  document.getElementById("popup-overlay").classList.add("show");
+  document.body.style.overflow="hidden";
+}
+
+function closePopup(){
+  document.getElementById("popup-overlay").classList.remove("show");
+  document.body.style.overflow="";
+}
+
+function addToCart(){
+  cartCount++;document.getElementById("cart-count").textContent=cartCount;
+  closePopup();showToast();
+}
+
+function quickAdd(id){
+  cartCount++;document.getElementById("cart-count").textContent=cartCount;showToast();
+}
+
+function showToast(){
+  const t=document.getElementById("cart-toast");
+  t.style.display="block";
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>t.style.display="none",2200);
+}
+
+function doSearch(){filterProds();}
+
+document.getElementById("search-input").addEventListener("keydown",e=>{if(e.key==="Enter")doSearch();});
+document.getElementById("search-input").addEventListener("input",()=>{if(document.getElementById("search-input").value==="")filterProds();});
+
+document.querySelectorAll(".cat-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".cat-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    activeCat=btn.dataset.cat;
+    filterProds();
+  });
+});
+
+document.getElementById("popup-overlay").addEventListener("click",e=>{
+  if(e.target===document.getElementById("popup-overlay"))closePopup();
+});
+
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closePopup();});
+
+renderMap();
+filterProds();
+</script>
+</body>
+</html>
