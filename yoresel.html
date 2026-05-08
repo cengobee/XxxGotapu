@@ -69,26 +69,74 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 #main{display:flex;min-height:700px;}
 
 /* MAP SIDE */
-#map-side{width:480px;flex-shrink:0;padding:28px;border-right:1px solid var(--border);background:#fff;}
-#map-side-label{font-size:10px;color:#888;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+#map-side{width:520px;flex-shrink:0;padding:20px;border-right:1px solid var(--border);background:#1a0e0b;}
+#map-side-label{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
 .pulse{width:7px;height:7px;border-radius:50%;background:#B22222;display:inline-block;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
-#tr-svg{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #eee;}
-#map-foot{font-size:11px;color:#bbb;text-align:center;margin-top:8px;}
+
+/* SVG MAP */
+#tr-svg-wrap{width:100%;position:relative;}
+#tr-svg{width:100%;height:auto;display:block;border-radius:8px;overflow:visible;}
+
+/* IL path styles */
+.il-path{
+  fill:#3d1a10;
+  stroke:#8B1A1A;
+  stroke-width:0.8;
+  cursor:pointer;
+  transition:fill .15s,stroke .15s;
+}
+.il-path:hover{fill:#7a2020;stroke:#D4342A;stroke-width:1;}
+.il-path.has-prod{fill:#5a1a12;stroke:#B22222;}
+.il-path.has-prod:hover{fill:#8B2020;stroke:#D4342A;}
+.il-path.active{fill:#B22222;stroke:#E8B84B;stroke-width:1.5;}
+
+/* IL LABEL */
+.il-label{
+  font-size:4px;
+  fill:#c8a080;
+  pointer-events:none;
+  font-family:'Inter',sans-serif;
+  text-anchor:middle;
+  dominant-baseline:central;
+}
+.il-label.active{fill:#fff;font-weight:600;}
+.il-label.has-prod{fill:#E8B84B;}
+
+#map-foot{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;}
 
 /* IL INFO BOX */
-#il-box{margin-top:16px;padding:16px;background:#FFF8F5;border:1px solid #f5ddd5;border-radius:10px;display:none;}
+#il-box{margin-top:16px;padding:16px;background:rgba(30,18,16,0.9);border:1px solid var(--border);border-radius:10px;display:none;}
 #il-box-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-#il-box-name{font-family:'Cormorant Garamond',serif;font-size:20px;color:#1a0808;}
-#il-box-clear{background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;line-height:1;}
-#il-box-clear:hover{color:#999;}
+#il-box-name{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--cream);}
+#il-box-clear{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;}
+#il-box-clear:hover{color:var(--cream);}
 #il-foods{display:flex;flex-wrap:wrap;gap:5px;}
-.il-food-tag{padding:4px 11px;border-radius:20px;font-size:11px;border:1px solid #f0c8b8;color:#a04030;cursor:pointer;background:#fff;transition:all .15s;}
+.il-food-tag{padding:4px 11px;border-radius:20px;font-size:11px;border:1px solid var(--red3);color:#c88060;cursor:pointer;background:transparent;transition:all .15s;}
 .il-food-tag:hover{background:var(--red);border-color:var(--red);color:#fff;}
 #il-stats{margin-top:12px;display:flex;gap:12px;}
-.il-stat{flex:1;background:#fff;border:1px solid #f5ddd5;border-radius:8px;padding:8px 10px;text-align:center;}
-.il-stat-n{font-size:16px;font-weight:600;color:var(--red);}
-.il-stat-l{font-size:10px;color:#aaa;margin-top:1px;}
+.il-stat{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 10px;text-align:center;}
+.il-stat-n{font-size:16px;font-weight:600;color:var(--gold);}
+.il-stat-l{font-size:10px;color:var(--muted);margin-top:1px;}
+
+/* TOOLTIP */
+#map-tooltip{
+  position:fixed;
+  background:rgba(30,18,16,0.95);
+  border:1px solid var(--red3);
+  border-radius:8px;
+  padding:8px 14px;
+  font-size:12px;
+  color:var(--cream);
+  pointer-events:none;
+  z-index:200;
+  display:none;
+  font-family:'Inter',sans-serif;
+  backdrop-filter:blur(4px);
+  max-width:180px;
+}
+#map-tooltip-name{font-weight:600;color:var(--gold);margin-bottom:3px;font-family:'Cormorant Garamond',serif;font-size:15px;}
+#map-tooltip-foods{font-size:10px;color:var(--muted);}
 
 /* RIGHT SIDE */
 #right-side{flex:1;min-width:0;padding:24px;background:var(--bg);}
@@ -165,8 +213,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 #modal-fav:hover{border-color:var(--red);color:var(--cream);}
 #modal-buy{background:var(--red);border:none;color:#fff;}
 #modal-buy:hover{background:var(--red2);}
-
-/* REVIEWS */
 #modal-reviews{padding:0 28px 28px;}
 #modal-reviews-title{font-size:14px;font-weight:500;color:var(--cream);margin-bottom:14px;padding-top:16px;border-top:1px solid var(--border);}
 .review{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
@@ -176,8 +222,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .review-stars{font-size:12px;color:var(--gold);margin-bottom:5px;}
 .review-text{font-size:12px;color:var(--muted);line-height:1.65;}
 .review-verified{font-size:10px;color:#2e8b57;margin-top:5px;}
-
-/* SELLER SECTION */
 #modal-seller-box{margin:0 28px 28px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;}
 .seller-head{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
 .seller-avatar{width:40px;height:40px;border-radius:50%;background:var(--red3);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--cream);font-weight:600;flex-shrink:0;}
@@ -210,8 +254,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 #cart-total-price{color:var(--gold);font-weight:600;font-family:'Cormorant Garamond',serif;font-size:22px;}
 #checkout-btn{width:100%;padding:13px;background:var(--red);border:none;color:#fff;border-radius:8px;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:background .15s;}
 #checkout-btn:hover{background:var(--red2);}
-
-/* CART OVERLAY */
 #cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:390;}
 #cart-overlay.open{display:block;}
 
@@ -264,6 +306,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 </head>
 <body>
 
+<div id="map-tooltip">
+  <div id="map-tooltip-name"></div>
+  <div id="map-tooltip-foods"></div>
+</div>
+
 <nav id="nav">
   <a id="nav-logo" href="#">Yöresel<span>.</span>Market</a>
   <div id="nav-links">
@@ -307,11 +354,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div id="main">
   <aside id="map-side">
     <div id="map-side-label"><span class="pulse"></span> Haritadan il seçerek filtrele</div>
-    <svg id="tr-svg" viewBox="0 0 700 330" xmlns="http://www.w3.org/2000/svg">
-      <rect width="700" height="330" fill="#fafafa" rx="8"/>
-      <g id="map-g"></g>
-    </svg>
-    <p id="map-foot">Noktaya tıkla → o ilin ürünleri filtrelenir</p>
+    <div id="tr-svg-wrap">
+      <!-- Turkey SVG Map with real province boundaries -->
+      <svg id="tr-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <p id="map-foot" style="color:var(--muted);">İle tıkla → o ilin ürünleri filtrelenir</p>
     <div id="il-box">
       <div id="il-box-head">
         <div id="il-box-name"></div>
@@ -387,7 +434,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div id="footer-copy">© 2025 Yöresel Market — Tüm hakları saklıdır</div>
 
 <!-- PRODUCT MODAL -->
-<div id="modal-overlay" onclick="e => { if(e.target===this) closeModal(); }">
+<div id="modal-overlay">
   <div id="modal">
     <button id="modal-close" onclick="closeModal()">✕</button>
     <div id="modal-top">
@@ -427,332 +474,454 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div id="toast"></div>
 
 <script>
-const ILLER = [
-  {id:"istanbul",n:"İstanbul",x:110,y:65,foods:["Balık Ekmek","Midye Dolma","Kokoreç"]},
-  {id:"edirne",n:"Edirne",x:60,y:50,foods:["Tava Ciğeri","Badem Ezmesi","Kavun"]},
-  {id:"tekirdag",n:"Tekirdağ",x:85,y:63,foods:["Tekirdağ Köftesi","Kavurma","Peynir"]},
-  {id:"kirklareli",n:"Kırklareli",x:95,y:43,foods:["Kapuska","Pestil","Kavurma"]},
-  {id:"canakkale",n:"Çanakkale",x:65,y:90,foods:["Ezine Peyniri","Bozcaada Şarabı","Domates"]},
-  {id:"balikesir",n:"Balıkesir",x:93,y:113,foods:["Gömeç Balığı","Susamlı Gevrek","Sucuk"]},
-  {id:"bursa",n:"Bursa",x:130,y:105,foods:["İskender Kebap","Kestane Şekeri","İnegöl Köftesi"]},
-  {id:"kocaeli",n:"Kocaeli",x:153,y:73,foods:["İzmit Pişmaniyesi","Tahini Pide","Köfte"]},
-  {id:"yalova",n:"Yalova",x:140,y:88,foods:["Bal","Çilek","Kestane Şekeri"]},
-  {id:"sakarya",n:"Sakarya",x:170,y:71,foods:["Kaz Kavurması","Mısır Ekmeği","Fındık"]},
-  {id:"bolu",n:"Bolu",x:190,y:83,foods:["Köy Tereyağı","Mudurnu Tavuğu","Abant Balığı"]},
-  {id:"duzce",n:"Düzce",x:180,y:75,foods:["Fındık","Taze Fasulye"]},
-  {id:"bilecik",n:"Bilecik",x:163,y:98,foods:["Pestil","Köy Peyniri","Lokum"]},
-  {id:"eskisehir",n:"Eskişehir",x:195,y:120,foods:["Çibörek","Balaban Sarması"]},
-  {id:"kutahya",n:"Kütahya",x:163,y:135,foods:["Kütahya Mantısı","Pastırmalı Börek"]},
-  {id:"afyon",n:"Afyonkarahisar",x:170,y:163,foods:["Afyon Kaymağı","Sucuk","Lokum"]},
-  {id:"manisa",n:"Manisa",x:95,y:145,foods:["Mesir Macunu","Balık"]},
-  {id:"izmir",n:"İzmir",x:75,y:158,foods:["Boyoz","Kumru","Gevrek","İncir"]},
-  {id:"usak",n:"Uşak",x:133,y:160,foods:["Tarhana","Keklik"]},
-  {id:"aydin",n:"Aydın",x:100,y:185,foods:["İncir","Kestane","Zeytinyağlı Yemek"]},
-  {id:"denizli",n:"Denizli",x:130,y:185,foods:["Honaz Elması","Sarayköy Peyniri"]},
-  {id:"mugla",n:"Muğla",x:110,y:213,foods:["Marmaris Balığı","Organik Bal"]},
-  {id:"burdur",n:"Burdur",x:160,y:208,foods:["Pelte","Keş Peyniri"]},
-  {id:"isparta",n:"Isparta",x:185,y:203,foods:["Gül Lokumu","Elma","Gülsuyu"]},
-  {id:"antalya",n:"Antalya",x:203,y:235,foods:["Hibeş","Piyaz","Kabak Tatlısı"]},
-  {id:"konya",n:"Konya",x:215,y:198,foods:["Etli Ekmek","Fırın Kebabı","Höşmerim"]},
-  {id:"karaman",n:"Karaman",x:233,y:218,foods:["Tahinli","Sucuk","Vişne"]},
-  {id:"ankara",n:"Ankara",x:225,y:133,foods:["Beypazarı Kurusu","Ankara Tavası"]},
-  {id:"kirsehir",n:"Kırşehir",x:260,y:145,foods:["Tarhana","Cücük Salatası"]},
-  {id:"aksaray",n:"Aksaray",x:248,y:183,foods:["Tulum Peyniri","Pastırma","Sucuk"]},
-  {id:"nevsehir",n:"Nevşehir",x:265,y:185,foods:["Testi Kebabı","Şarap"]},
-  {id:"nigde",n:"Niğde",x:270,y:208,foods:["Niğde Peyniri","Patates"]},
-  {id:"kayseri",n:"Kayseri",x:295,y:178,foods:["Pastırma","Sucuk","Mantı"]},
-  {id:"sivas",n:"Sivas",x:323,y:143,foods:["Sivas Köftesi","Divriği Üzümü"]},
-  {id:"tokat",n:"Tokat",x:308,y:120,foods:["Tokat Kebabı"]},
-  {id:"yozgat",n:"Yozgat",x:285,y:135,foods:["Yozgat Çorbası","Keşkek"]},
-  {id:"kirikkale",n:"Kırıkkale",x:245,y:130,foods:["Keşkek","Gözleme"]},
-  {id:"corum",n:"Çorum",x:270,y:113,foods:["Çorum Leblebisi","Simidi"]},
-  {id:"amasya",n:"Amasya",x:288,y:98,foods:["Amasya Elması","Elma Şekeri"]},
-  {id:"sinop",n:"Sinop",x:273,y:73,foods:["Kalkan Balığı","Midye"]},
-  {id:"samsun",n:"Samsun",x:300,y:73,foods:["Samsun Pide","Hamsi"]},
-  {id:"ordu",n:"Ordu",x:320,y:75,foods:["Fındık","Mıhlama"]},
-  {id:"giresun",n:"Giresun",x:340,y:73,foods:["Giresun Fındığı","Laz Böreği"]},
-  {id:"trabzon",n:"Trabzon",x:365,y:70,foods:["Trabzon Ekmeği","Hamsili Pilav","Akçaabat Köftesi"]},
-  {id:"rize",n:"Rize",x:388,y:63,foods:["Rize Çayı","Muhlama"]},
-  {id:"artvin",n:"Artvin",x:410,y:55,foods:["Karalahana Çorbası","Muhlama"]},
-  {id:"gumushane",n:"Gümüşhane",x:375,y:90,foods:["Pestil","Kuskus"]},
-  {id:"bayburt",n:"Bayburt",x:395,y:88,foods:["Bez Ayran","Tarhana"]},
-  {id:"erzincan",n:"Erzincan",x:370,y:115,foods:["Tulum Peyniri","Şehriye"]},
-  {id:"erzurum",n:"Erzurum",x:413,y:113,foods:["Cağ Kebabı","Kadayıf Dolması","Pastırma"]},
-  {id:"kars",n:"Kars",x:448,y:83,foods:["Kars Gravyeri","Kaz Eti","Bal"]},
-  {id:"ardahan",n:"Ardahan",x:450,y:60,foods:["Ardahan Balı","Peynir"]},
-  {id:"agri",n:"Ağrı",x:470,y:100,foods:["Bandırma","Kavut"]},
-  {id:"igdir",n:"Iğdır",x:488,y:103,foods:["Iğdır Kayısısı","Bal"]},
-  {id:"van",n:"Van",x:478,y:148,foods:["Van Kahvaltısı","Otlu Peynir","Van Balığı"]},
-  {id:"hakkari",n:"Hakkari",x:470,y:188,foods:["Hakkari Balı","Kavut"]},
-  {id:"bingol",n:"Bingöl",x:418,y:140,foods:["Bingöl Balı","Tulum Peyniri"]},
-  {id:"tunceli",n:"Tunceli",x:388,y:148,foods:["Tunceli Balı","Kavut"]},
-  {id:"mus",n:"Muş",x:440,y:148,foods:["Muş Peyniri","Tandır Ekmeği"]},
-  {id:"bitlis",n:"Bitlis",x:450,y:165,foods:["Bitlis Balı","Peynir"]},
-  {id:"siirt",n:"Siirt",x:448,y:195,foods:["Büryan Kebabı","Perde Pilavı"]},
-  {id:"batman",n:"Batman",x:428,y:200,foods:["Kavurma","Tarhana"]},
-  {id:"mardin",n:"Mardin",x:408,y:215,foods:["Kaburga Dolması","Kibe","Reyhan Şerbeti"]},
-  {id:"sirnak",n:"Şırnak",x:458,y:210,foods:["Şırnak Cevizi","Köy Peyniri"]},
-  {id:"diyarbakir",n:"Diyarbakır",x:383,y:203,foods:["Diyarbakır Karpuzu","Kaburga Dolması"]},
-  {id:"sanliurfa",n:"Şanlıurfa",x:353,y:233,foods:["Urfa Kebabı","Çiğ Köfte","Lahmacun"]},
-  {id:"gaziantep",n:"Gaziantep",x:323,y:245,foods:["Antep Baklavası","Antep Kebabı","Katmer","Beyran"]},
-  {id:"kilis",n:"Kilis",x:305,y:263,foods:["Kilis Tava","Zeytin"]},
-  {id:"hatay",n:"Hatay",x:295,y:263,foods:["Künefe","Humus","Zahter"]},
-  {id:"kahramanmaras",n:"Kahramanmaraş",x:293,y:230,foods:["Maraş Dondurması"]},
-  {id:"adiyaman",n:"Adıyaman",x:333,y:220,foods:["Patlıcan Kebabı","Katmer"]},
-  {id:"adana",n:"Adana",x:263,y:250,foods:["Adana Kebabı","Şalgam","Bici Bici"]},
-  {id:"osmaniye",n:"Osmaniye",x:278,y:250,foods:["Osmaniye Köftesi","Portakal"]},
-  {id:"mersin",n:"Mersin",x:245,y:253,foods:["Tantuni","Taş Kebabı","Cezerye"]},
-  {id:"zonguldak",n:"Zonguldak",x:205,y:75,foods:["Zonguldak Böreği","Firikik"]},
-  {id:"karabuk",n:"Karabük",x:218,y:85,foods:["Safranbolu Safranı","Lokum"]},
-  {id:"bartin",n:"Bartın",x:200,y:68,foods:["Bartın Elması","Bal"]},
-  {id:"kastamonu",n:"Kastamonu",x:238,y:85,foods:["Kastamonu Sucuğu","Taşköprü Sarımsağı"]},
-  {id:"cankiri",n:"Çankırı",x:240,y:105,foods:["Çankırı Şekeri","Tuz"]},
-  {id:"malatya",n:"Malatya",x:350,y:185,foods:["Malatya Kayısısı","Tarhana"]},
-  {id:"elazig",n:"Elazığ",x:368,y:165,foods:["Hardaliye","Harput Köftesi"]},
-];
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+
+const ILLER_DATA = {
+  "adana":     {n:"Adana",     foods:["Adana Kebabı","Şalgam","Bici Bici"]},
+  "adiyaman":  {n:"Adıyaman",  foods:["Patlıcan Kebabı","Katmer"]},
+  "afyon":     {n:"Afyonkarahisar", foods:["Afyon Kaymağı","Sucuk","Lokum"]},
+  "agri":      {n:"Ağrı",      foods:["Bandırma","Kavut"]},
+  "amasya":    {n:"Amasya",    foods:["Amasya Elması","Elma Şekeri"]},
+  "ankara":    {n:"Ankara",    foods:["Beypazarı Kurusu","Ankara Tavası"]},
+  "antalya":   {n:"Antalya",   foods:["Hibeş","Piyaz","Kabak Tatlısı"]},
+  "artvin":    {n:"Artvin",    foods:["Karalahana Çorbası","Muhlama"]},
+  "aydin":     {n:"Aydın",     foods:["İncir","Kestane","Zeytinyağlı Yemek"]},
+  "balikesir": {n:"Balıkesir", foods:["Gömeç Balığı","Susamlı Gevrek","Sucuk"]},
+  "bilecik":   {n:"Bilecik",   foods:["Pestil","Köy Peyniri","Lokum"]},
+  "bingol":    {n:"Bingöl",    foods:["Bingöl Balı","Tulum Peyniri"]},
+  "bitlis":    {n:"Bitlis",    foods:["Bitlis Balı","Peynir"]},
+  "bolu":      {n:"Bolu",      foods:["Köy Tereyağı","Mudurnu Tavuğu","Abant Balığı"]},
+  "burdur":    {n:"Burdur",    foods:["Pelte","Keş Peyniri"]},
+  "bursa":     {n:"Bursa",     foods:["İskender Kebap","Kestane Şekeri","İnegöl Köftesi"]},
+  "canakkale": {n:"Çanakkale", foods:["Ezine Peyniri","Bozcaada Şarabı","Domates"]},
+  "cankiri":   {n:"Çankırı",   foods:["Çankırı Şekeri","Tuz"]},
+  "corum":     {n:"Çorum",     foods:["Çorum Leblebisi","Simidi"]},
+  "denizli":   {n:"Denizli",   foods:["Honaz Elması","Sarayköy Peyniri"]},
+  "diyarbakir":{n:"Diyarbakır",foods:["Diyarbakır Karpuzu","Kaburga Dolması"]},
+  "duzce":     {n:"Düzce",     foods:["Fındık","Taze Fasulye"]},
+  "edirne":    {n:"Edirne",    foods:["Tava Ciğeri","Badem Ezmesi","Kavun"]},
+  "elazig":    {n:"Elazığ",    foods:["Hardaliye","Harput Köftesi"]},
+  "erzincan":  {n:"Erzincan",  foods:["Tulum Peyniri","Şehriye"]},
+  "erzurum":   {n:"Erzurum",   foods:["Cağ Kebabı","Kadayıf Dolması","Pastırma"]},
+  "eskisehir": {n:"Eskişehir", foods:["Çibörek","Balaban Sarması"]},
+  "gaziantep": {n:"Gaziantep", foods:["Antep Baklavası","Antep Kebabı","Katmer","Beyran"]},
+  "giresun":   {n:"Giresun",   foods:["Giresun Fındığı","Laz Böreği"]},
+  "gumushane": {n:"Gümüşhane", foods:["Pestil","Kuskus"]},
+  "hakkari":   {n:"Hakkari",   foods:["Hakkari Balı","Kavut"]},
+  "hatay":     {n:"Hatay",     foods:["Künefe","Humus","Zahter"]},
+  "igdir":     {n:"Iğdır",     foods:["Iğdır Kayısısı","Bal"]},
+  "isparta":   {n:"Isparta",   foods:["Gül Lokumu","Elma","Gülsuyu"]},
+  "istanbul":  {n:"İstanbul",  foods:["Balık Ekmek","Midye Dolma","Kokoreç"]},
+  "izmir":     {n:"İzmir",     foods:["Boyoz","Kumru","Gevrek","İncir"]},
+  "kahramanmaras":{n:"Kahramanmaraş",foods:["Maraş Dondurması"]},
+  "karabuk":   {n:"Karabük",   foods:["Safranbolu Safranı","Lokum"]},
+  "karaman":   {n:"Karaman",   foods:["Tahinli","Sucuk","Vişne"]},
+  "kars":      {n:"Kars",      foods:["Kars Gravyeri","Kaz Eti","Bal"]},
+  "kastamonu": {n:"Kastamonu", foods:["Kastamonu Sucuğu","Taşköprü Sarımsağı"]},
+  "kayseri":   {n:"Kayseri",   foods:["Pastırma","Sucuk","Mantı"]},
+  "kirikkale": {n:"Kırıkkale", foods:["Keşkek","Gözleme"]},
+  "kirklareli":{n:"Kırklareli",foods:["Kapuska","Pestil","Kavurma"]},
+  "kirsehir":  {n:"Kırşehir",  foods:["Tarhana","Cücük Salatası"]},
+  "kilis":     {n:"Kilis",     foods:["Kilis Tava","Zeytin"]},
+  "kocaeli":   {n:"Kocaeli",   foods:["İzmit Pişmaniyesi","Tahini Pide","Köfte"]},
+  "konya":     {n:"Konya",     foods:["Etli Ekmek","Fırın Kebabı","Höşmerim"]},
+  "kutahya":   {n:"Kütahya",   foods:["Kütahya Mantısı","Pastırmalı Börek"]},
+  "malatya":   {n:"Malatya",   foods:["Malatya Kayısısı","Tarhana"]},
+  "manisa":    {n:"Manisa",    foods:["Mesir Macunu","Balık"]},
+  "mardin":    {n:"Mardin",    foods:["Kaburga Dolması","Kibe","Reyhan Şerbeti"]},
+  "mersin":    {n:"Mersin",    foods:["Tantuni","Taş Kebabı","Cezerye"]},
+  "mugla":     {n:"Muğla",     foods:["Marmaris Balığı","Organik Bal"]},
+  "mus":       {n:"Muş",       foods:["Muş Peyniri","Tandır Ekmeği"]},
+  "nevsehir":  {n:"Nevşehir",  foods:["Testi Kebabı","Şarap"]},
+  "nigde":     {n:"Niğde",     foods:["Niğde Peyniri","Patates"]},
+  "ordu":      {n:"Ordu",      foods:["Fındık","Mıhlama"]},
+  "osmaniye":  {n:"Osmaniye",  foods:["Osmaniye Köftesi","Portakal"]},
+  "rize":      {n:"Rize",      foods:["Rize Çayı","Muhlama"]},
+  "sakarya":   {n:"Sakarya",   foods:["Kaz Kavurması","Mısır Ekmeği","Fındık"]},
+  "samsun":    {n:"Samsun",    foods:["Samsun Pide","Hamsi"]},
+  "sanliurfa": {n:"Şanlıurfa", foods:["Urfa Kebabı","Çiğ Köfte","Lahmacun"]},
+  "siirt":     {n:"Siirt",     foods:["Büryan Kebabı","Perde Pilavı"]},
+  "sinop":     {n:"Sinop",     foods:["Kalkan Balığı","Midye"]},
+  "sivas":     {n:"Sivas",     foods:["Sivas Köftesi","Divriği Üzümü"]},
+  "sirnak":    {n:"Şırnak",    foods:["Şırnak Cevizi","Köy Peyniri"]},
+  "tekirdag":  {n:"Tekirdağ",  foods:["Tekirdağ Köftesi","Kavurma","Peynir"]},
+  "tokat":     {n:"Tokat",     foods:["Tokat Kebabı"]},
+  "trabzon":   {n:"Trabzon",   foods:["Trabzon Ekmeği","Hamsili Pilav","Akçaabat Köftesi"]},
+  "tunceli":   {n:"Tunceli",   foods:["Tunceli Balı","Kavut"]},
+  "usak":      {n:"Uşak",      foods:["Tarhana","Keklik"]},
+  "van":       {n:"Van",       foods:["Van Kahvaltısı","Otlu Peynir","Van Balığı"]},
+  "yalova":    {n:"Yalova",    foods:["Bal","Çilek","Kestane Şekeri"]},
+  "yozgat":    {n:"Yozgat",    foods:["Yozgat Çorbası","Keşkek"]},
+  "zonguldak": {n:"Zonguldak", foods:["Zonguldak Böreği","Firikik"]},
+  "ardahan":   {n:"Ardahan",   foods:["Ardahan Balı","Peynir"]},
+  "batman":    {n:"Batman",    foods:["Kavurma","Tarhana"]},
+  "bayburt":   {n:"Bayburt",   foods:["Bez Ayran","Tarhana"]},
+  "bartin":    {n:"Bartın",    foods:["Bartın Elması","Bal"]},
+};
 
 const REVIEWS_DB = {
-  1:[{name:"Ayşe K.",date:"12 Nis 2025",rating:5,text:"Gerçekten efsanevi bir baklava! Fıstığı bol, şerbeti tam kıvamında. Güllüoğlu'ndan başkası yapamaz bu tadı.","verified":true},
-     {name:"Mehmet D.",date:"3 Nis 2025",rating:5,text:"Anneme hediye gönderdim, çok beğendi. Kutu açılınca kokusu eve yayıldı. Kesinlikle tavsiye ederim.","verified":true},
-     {name:"Zeynep A.",date:"28 Mar 2025",rating:4,text:"Harika lezzet ama kargo biraz geç geldi. Ürün soğuk gelmişti yine de, bu önemli.","verified":false}],
-  2:[{name:"Hasan B.",date:"8 Nis 2025",rating:5,text:"Kars'ta 5 yıl yaşadım, Kafkas Süt'ün gravyerini çok özlemiştim. Birebir aynı lezzet, harika.","verified":true},
-     {name:"Leyla M.",date:"1 Nis 2025",rating:5,text:"Eşim için sürpriz aldım, çok sevdi. Sert yapısı ve fındıksı aroması gerçekten bambaşka.","verified":true}],
-  3:[{name:"Osman Y.",date:"15 Nis 2025",rating:5,text:"Erzurum'da cağ kebabı yedim, o tadı özlemiştim. Güzelyurt aynı lezzeti vermiş, tebrikler.","verified":true},
-     {name:"Fatma S.",date:"6 Nis 2025",rating:5,text:"Etle gelen baharat ve pişirme yöntemi gerçekten özel. Lavaş ile harika oluyor.","verified":true},
-     {name:"Ali R.",date:"2 Nis 2025",rating:4,text:"Çok lezzetli ama porsiyon biraz küçük geldi. Bir dahaki sefere iki porsiyon alacağım.","verified":false}],
-  5:[{name:"Selin T.",date:"10 Nis 2025",rating:5,text:"Çaykur'un bu çayı başka. Demleme süresi 15 dakika, rengi koyu kırmızı, acısı yok. Rize çayının farkı hemen belli.","verified":true},
-     {name:"Bora K.",date:"5 Nis 2025",rating:4,text:"Kaliteli çay ama paketleme biraz dağınık geldi. Lezzetten şikayet yok.","verified":false}],
-  6:[{name:"Nihal D.",date:"14 Nis 2025",rating:5,text:"Kayseri pastırması başka hiçbir şeye benzemez. Çemeni mükemmel, kıvamı tam. 60 günlük bekleme buna değiyor.","verified":true},
-     {name:"Erkan S.",date:"9 Nis 2025",rating:5,text:"İstanbul'daki marketlerdeki pastırmayla aynı marka ama buradan çok daha taze geliyor.","verified":true}],
+  1:[{name:"Ayşe K.",date:"12 Nis 2025",rating:5,text:"Gerçekten efsanevi bir baklava! Fıstığı bol, şerbeti tam kıvamında.",verified:true},
+     {name:"Mehmet D.",date:"3 Nis 2025",rating:5,text:"Anneme hediye gönderdim, çok beğendi. Kutu açılınca kokusu eve yayıldı.",verified:true},
+     {name:"Zeynep A.",date:"28 Mar 2025",rating:4,text:"Harika lezzet ama kargo biraz geç geldi. Ürün soğuk gelmişti yine de.",verified:false}],
+  2:[{name:"Hasan B.",date:"8 Nis 2025",rating:5,text:"Kars'ta 5 yıl yaşadım, Kafkas Süt'ün gravyerini çok özlemiştim. Birebir aynı lezzet.",verified:true},
+     {name:"Leyla M.",date:"1 Nis 2025",rating:5,text:"Eşim için sürpriz aldım, çok sevdi. Sert yapısı ve fındıksı aroması gerçekten bambaşka.",verified:true}],
+  3:[{name:"Osman Y.",date:"15 Nis 2025",rating:5,text:"Erzurum'da cağ kebabı yedim, o tadı özlemiştim. Güzelyurt aynı lezzeti vermiş, tebrikler.",verified:true}],
 };
 
 const PRODUCTS = [
-  {id:1,name:"Antep Baklavası",il:"Gaziantep",seller:"Güllüoğlu",price:320,unit:"kg",rating:4.9,reviews:128,cat:"tatli",emoji:"🍯",badge:"COĞ. İŞARET",hot:true,sold:82,desc:"El açması yufka, Antep fıstığı ve tereyağıyla hazırlanan efsanevi baklava. 180 yıllık Güllüoğlu ustalığıyla, Gaziantep'in coğrafi işaretli lezzeti.",sellerName:"Güllüoğlu Baklava",sellerSince:"1844",sellerRating:4.9,sellerSales:3420},
-  {id:2,name:"Kars Gravyeri",il:"Kars",seller:"Kafkas Süt",price:420,unit:"kg",rating:4.9,reviews:87,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:true,sold:74,desc:"12 ay dinlendirilmiş, sert dokulu, fındıksı aromaya sahip Kars gravyeri. Türkiye'nin en prestijli peyniri. Soğuk et tabağı ve şarapla muhteşem.",sellerName:"Kafkas Süt Ürünleri",sellerSince:"1978",sellerRating:4.8,sellerSales:1850},
-  {id:3,name:"Cağ Kebabı",il:"Erzurum",seller:"Güzelyurt",price:195,unit:"porsiyon",rating:4.9,reviews:214,cat:"kebap",emoji:"🍖",badge:"YEREL USTA",hot:true,sold:91,desc:"Yatay şişte döndürülen kuzu etinin dilim dilim kesilmesiyle hazırlanan Erzurum'a özgü kebap. Lavaş ekmek ve soğanla servis edilir.",sellerName:"Güzelyurt Cağ Kebabı",sellerSince:"1967",sellerRating:4.9,sellerSales:5600},
-  {id:4,name:"Malatya Kayısısı",il:"Malatya",seller:"Kayısı Bahçesi",price:120,unit:"kg",rating:4.9,reviews:163,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",hot:false,sold:65,desc:"Dünya kayısı üretiminin %20'sini karşılayan Malatya'nın güneşte doğal kurutulmuş kayısısı. Çekirdeksiz ve organik.",sellerName:"Malatya Kayısı Bahçeleri",sellerSince:"1995",sellerRating:4.8,sellerSales:2100},
-  {id:5,name:"Rize Çayı",il:"Rize",seller:"Çaykur",price:180,unit:"kg",rating:4.8,reviews:342,cat:"icecek",emoji:"🍵",badge:"COĞ. İŞARET",hot:false,sold:88,desc:"Karadeniz yağmurlarıyla yetişen, derin demli, tok aromalı siyah çay. Türkiye çayının anavatanı Rize'den gelen en kaliteli ürün.",sellerName:"Çaykur Rize Çay Fabrikası",sellerSince:"1947",sellerRating:4.9,sellerSales:9800},
-  {id:6,name:"Kayseri Pastırması",il:"Kayseri",seller:"Oğuzhan Et",price:680,unit:"kg",rating:4.9,reviews:97,cat:"kebap",emoji:"🥩",badge:"COĞ. İŞARET",hot:true,sold:55,desc:"60 günlük kuruma süreciyle hazırlanan, çemenli Kayseri pastırması. Türkiye'nin en ünlü et ürünü. Yumurtayla veya börek içinde tüketin.",sellerName:"Oğuzhan Pastırma",sellerSince:"1953",sellerRating:4.9,sellerSales:1200},
-  {id:7,name:"Van Otlu Peyniri",il:"Van",seller:"Divan Peynir",price:280,unit:"kg",rating:4.8,reviews:76,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:false,sold:48,desc:"Bahar otlarıyla hazırlanan, Van'a özgü salamura beyaz peynir. Her bahar taze Munzur otlarıyla yenilenir. Kahvaltı sofralarının yıldızı.",sellerName:"Divan Peynircilik",sellerSince:"1985",sellerRating:4.8,sellerSales:890},
-  {id:8,name:"Hatay Künefesi",il:"Hatay",seller:"Antakya Tatlıcısı",price:95,unit:"porsiyon",rating:4.9,reviews:289,cat:"tatli",emoji:"🍰",badge:"TAŞ FIRIN",hot:true,sold:93,desc:"Taş fırında pişirilen, Hatay usulü tel kadayıf ve eriyen peynirle hazırlanan efsane tatlı. Ilık servis, soğuk çay eşliğinde tüketin.",sellerName:"Antakya Tatlıcısı",sellerSince:"1922",sellerRating:4.9,sellerSales:4300},
-  {id:9,name:"Afyon Kaymağı",il:"Afyonkarahisar",seller:"Afyon Lezzet",price:240,unit:"kg",rating:4.8,reviews:118,cat:"peynir",emoji:"🥛",badge:"GÜNLÜK TAZE",hot:false,sold:71,desc:"Manda sütünden elde edilen, kaymak katmanlarıyla ünlü Afyon kaymağı. Bal ve tereyağlı ekmekle, sabah kahvaltısının en değerli lezzeti.",sellerName:"Afyon Lezzet",sellerSince:"2001",sellerRating:4.7,sellerSales:730},
-  {id:10,name:"İskender Kebap",il:"Bursa",seller:"İskender",price:175,unit:"porsiyon",rating:4.9,reviews:456,cat:"kebap",emoji:"🍖",badge:"ORİJİNAL",hot:false,sold:79,desc:"1867'den bu yana aynı tarifle hazırlanan döner kebabın tereyağı ve domates sosuyla pide üzerinde buluşması. 150 yıllık tarif.",sellerName:"İskender Kebap A.Ş.",sellerSince:"1867",sellerRating:5.0,sellerSales:12000},
-  {id:11,name:"Adana Kebabı",il:"Adana",seller:"Adana Ocakbaşı",price:180,unit:"porsiyon",rating:4.9,reviews:334,cat:"kebap",emoji:"🍖",badge:"COĞ. İŞARET",hot:true,sold:87,desc:"Kıyma ve iç yağından hazırlanan, acı isot biberli Adana kebabı. Türkiye'nin en tanınmış kebabı, dünyada bilinir. Piyazla servis edilir.",sellerName:"Adana Ocakbaşı",sellerSince:"1975",sellerRating:4.9,sellerSales:6700},
-  {id:12,name:"Giresun Fındığı",il:"Giresun",seller:"Karadeniz Fındık",price:160,unit:"kg",rating:4.8,reviews:201,cat:"meyve",emoji:"🌰",badge:"COĞ. İŞARET",hot:false,sold:66,desc:"Dünyanın en kaliteli fındığı olarak bilinen Giresun tombul fındığı. Çikolata sektörünün tercihi. Çiğ, kavrulmuş veya ballı.",sellerName:"Karadeniz Fındık",sellerSince:"1990",sellerRating:4.8,sellerSales:3400},
-  {id:13,name:"Siirt Büryan Kebabı",il:"Siirt",seller:"Büryan Ustası",price:245,unit:"porsiyon",rating:4.9,reviews:142,cat:"kebap",emoji:"🍖",badge:"KUYU KEBABI",hot:true,sold:83,desc:"Toprak kuyuda 6 saat pişirilen kuzu but kebabı. Kemiğinden düşen et, gerçek büryan ustasının işareti. Pide ekmeği ile servis.",sellerName:"Siirt Büryan Ustası",sellerSince:"1960",sellerRating:4.9,sellerSales:2800},
-  {id:14,name:"Maraş Dondurması",il:"Kahramanmaraş",seller:"Mado",price:85,unit:"top",rating:4.9,reviews:523,cat:"tatli",emoji:"🍦",badge:"DÖVME",hot:false,sold:95,desc:"Keçi sütü ve salep ile hazırlanan, uzayan ve donmayan Maraş dondurması. Özel tokmakla dövülerek yapılır. Dünyada eşsiz bir tat.",sellerName:"Mado Dondurma",sellerSince:"1850",sellerRating:4.9,sellerSales:15000},
-  {id:15,name:"Kastamonu Sucuğu",il:"Kastamonu",seller:"Kastamonu Et",price:340,unit:"kg",rating:4.8,reviews:167,cat:"kebap",emoji:"🌭",badge:"COĞ. İŞARET",hot:false,sold:61,desc:"Sarımsaklı, baharatlı, doğal bağırsakta hazırlanan Kastamonu sucuğu. Türkiye'nin en ünlü sucuğu. Mangal ve sabah kahvaltıları için.",sellerName:"Kastamonu Et",sellerSince:"1971",sellerRating:4.8,sellerSales:2100},
-  {id:16,name:"Tunceli Balı",il:"Tunceli",seller:"Munzur Arı",price:480,unit:"kg",rating:5.0,reviews:94,cat:"tatli",emoji:"🍯",badge:"ÇIÇEK BALI",hot:true,sold:78,desc:"Munzur dağlarının yabani çiçeklerinden elde edilen, Türkiye'nin en değerli balı. Yılda sınırlı miktarda üretilir. %100 doğal.",sellerName:"Munzur Arıcılık",sellerSince:"2005",sellerRating:5.0,sellerSales:420},
-  {id:17,name:"Urfa Kebabı",il:"Şanlıurfa",seller:"Urfa Ocakbaşı",price:165,unit:"porsiyon",rating:4.8,reviews:278,cat:"kebap",emoji:"🍖",badge:"ACI",hot:false,sold:69,desc:"İsot biberli, yoğun baharatlı Urfa kebabı. Adana'dan farklı olarak daha çok baharat ve isot. Ayran ile harika uyum sağlar.",sellerName:"Urfa Ocakbaşı",sellerSince:"1980",sellerRating:4.8,sellerSales:3900},
-  {id:18,name:"Ezine Peyniri",il:"Çanakkale",seller:"Ezine Peynircilik",price:290,unit:"kg",rating:4.8,reviews:131,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:false,sold:57,desc:"Koyun, keçi ve inek sütünün karışımından yapılan, salamurada yıllandırılan Ezine beyaz peyniri. Meze sofralarının vazgeçilmezi.",sellerName:"Ezine Peynircilik",sellerSince:"1930",sellerRating:4.8,sellerSales:1760},
-  {id:19,name:"Zeytinyağı",il:"Aydın",seller:"Aydın Zeytin",price:220,unit:"litre",rating:4.7,reviews:89,cat:"zeytinyagi",emoji:"🫒",badge:"ORGANIK",hot:false,sold:52,desc:"Erken hasat, soğuk sıkım naturel sızma zeytinyağı. Asitlik oranı %0.3'ün altında. Salata ve kahvaltılar için ideal.",sellerName:"Aydın Zeytin Bahçeleri",sellerSince:"1968",sellerRating:4.7,sellerSales:950},
-  {id:20,name:"İğdır Kayısısı",il:"Iğdır",seller:"Aras Meyve",price:95,unit:"kg",rating:4.8,reviews:112,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",hot:false,sold:63,desc:"Ağrı Dağı'nın eteklerinde Aras nehri kıyısında yetişen, dünyaca ünlü Iğdır kayısısı. Malatya'dan farklı aroması ile özel.",sellerName:"Aras Meyve",sellerSince:"1997",sellerRating:4.8,sellerSales:680},
-  {id:21,name:"Antep Katmeri",il:"Gaziantep",seller:"Tahmis",price:45,unit:"adet",rating:4.9,reviews:387,cat:"tatli",emoji:"🥞",badge:"KAHVALTILIK",hot:true,sold:96,desc:"El açması yufkanın içine fıstıklı kaymak konularak tavada pişirilen Gaziantep'e özgü kahvaltı tatlısı. Sıcak servis zorunlu!",sellerName:"Tahmis Katmer",sellerSince:"1901",sellerRating:4.9,sellerSales:7800},
-  {id:22,name:"Çorum Leblebisi",il:"Çorum",seller:"Çorum Kuruyemiş",price:85,unit:"kg",rating:4.7,reviews:203,cat:"meyve",emoji:"🫘",badge:"COĞ. İŞARET",hot:false,sold:58,desc:"Özel fırınlama yöntemiyle hazırlanan, Türkiye'nin en ünlü çerezidir. Sarı ve beyaz olmak üzere iki çeşidi bulunur.",sellerName:"Çorum Kuruyemiş",sellerSince:"1955",sellerRating:4.7,sellerSales:1900},
+  {id:1,name:"Antep Baklavası",il:"Gaziantep",seller:"Güllüoğlu",price:320,unit:"kg",rating:4.9,reviews:128,cat:"tatli",emoji:"🍯",badge:"COĞ. İŞARET",hot:true,sold:82,desc:"El açması yufka, Antep fıstığı ve tereyağıyla hazırlanan efsanevi baklava.",sellerName:"Güllüoğlu Baklava",sellerSince:"1844",sellerRating:4.9,sellerSales:3420},
+  {id:2,name:"Kars Gravyeri",il:"Kars",seller:"Kafkas Süt",price:420,unit:"kg",rating:4.9,reviews:87,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:true,sold:74,desc:"12 ay dinlendirilmiş, sert dokulu, fındıksı aromaya sahip Kars gravyeri.",sellerName:"Kafkas Süt Ürünleri",sellerSince:"1978",sellerRating:4.8,sellerSales:1850},
+  {id:3,name:"Cağ Kebabı",il:"Erzurum",seller:"Güzelyurt",price:195,unit:"porsiyon",rating:4.9,reviews:214,cat:"kebap",emoji:"🍖",badge:"YEREL USTA",hot:true,sold:91,desc:"Yatay şişte döndürülen kuzu etinin dilim dilim kesilmesiyle hazırlanan Erzurum'a özgü kebap.",sellerName:"Güzelyurt Cağ Kebabı",sellerSince:"1967",sellerRating:4.9,sellerSales:5600},
+  {id:4,name:"Malatya Kayısısı",il:"Malatya",seller:"Kayısı Bahçesi",price:120,unit:"kg",rating:4.9,reviews:163,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",hot:false,sold:65,desc:"Dünya kayısı üretiminin %20'sini karşılayan Malatya'nın güneşte doğal kurutulmuş kayısısı.",sellerName:"Malatya Kayısı Bahçeleri",sellerSince:"1995",sellerRating:4.8,sellerSales:2100},
+  {id:5,name:"Rize Çayı",il:"Rize",seller:"Çaykur",price:180,unit:"kg",rating:4.8,reviews:342,cat:"icecek",emoji:"🍵",badge:"COĞ. İŞARET",hot:false,sold:88,desc:"Karadeniz yağmurlarıyla yetişen, derin demli, tok aromalı siyah çay.",sellerName:"Çaykur Rize Çay Fabrikası",sellerSince:"1947",sellerRating:4.9,sellerSales:9800},
+  {id:6,name:"Kayseri Pastırması",il:"Kayseri",seller:"Oğuzhan Et",price:680,unit:"kg",rating:4.9,reviews:97,cat:"kebap",emoji:"🥩",badge:"COĞ. İŞARET",hot:true,sold:55,desc:"60 günlük kuruma süreciyle hazırlanan, çemenli Kayseri pastırması.",sellerName:"Oğuzhan Pastırma",sellerSince:"1953",sellerRating:4.9,sellerSales:1200},
+  {id:7,name:"Van Otlu Peyniri",il:"Van",seller:"Divan Peynir",price:280,unit:"kg",rating:4.8,reviews:76,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:false,sold:48,desc:"Bahar otlarıyla hazırlanan, Van'a özgü salamura beyaz peynir.",sellerName:"Divan Peynircilik",sellerSince:"1985",sellerRating:4.8,sellerSales:890},
+  {id:8,name:"Hatay Künefesi",il:"Hatay",seller:"Antakya Tatlıcısı",price:95,unit:"porsiyon",rating:4.9,reviews:289,cat:"tatli",emoji:"🍰",badge:"TAŞ FIRIN",hot:true,sold:93,desc:"Taş fırında pişirilen, Hatay usulü tel kadayıf ve eriyen peynirle hazırlanan efsane tatlı.",sellerName:"Antakya Tatlıcısı",sellerSince:"1922",sellerRating:4.9,sellerSales:4300},
+  {id:9,name:"Afyon Kaymağı",il:"Afyonkarahisar",seller:"Afyon Lezzet",price:240,unit:"kg",rating:4.8,reviews:118,cat:"peynir",emoji:"🥛",badge:"GÜNLÜK TAZE",hot:false,sold:71,desc:"Manda sütünden elde edilen, kaymak katmanlarıyla ünlü Afyon kaymağı.",sellerName:"Afyon Lezzet",sellerSince:"2001",sellerRating:4.7,sellerSales:730},
+  {id:10,name:"İskender Kebap",il:"Bursa",seller:"İskender",price:175,unit:"porsiyon",rating:4.9,reviews:456,cat:"kebap",emoji:"🍖",badge:"ORİJİNAL",hot:false,sold:79,desc:"1867'den bu yana aynı tarifle hazırlanan döner kebabın tereyağı ve domates sosuyla pide üzerinde buluşması.",sellerName:"İskender Kebap A.Ş.",sellerSince:"1867",sellerRating:5.0,sellerSales:12000},
+  {id:11,name:"Adana Kebabı",il:"Adana",seller:"Adana Ocakbaşı",price:180,unit:"porsiyon",rating:4.9,reviews:334,cat:"kebap",emoji:"🍖",badge:"COĞ. İŞARET",hot:true,sold:87,desc:"Kıyma ve iç yağından hazırlanan, acı isot biberli Adana kebabı.",sellerName:"Adana Ocakbaşı",sellerSince:"1975",sellerRating:4.9,sellerSales:6700},
+  {id:12,name:"Giresun Fındığı",il:"Giresun",seller:"Karadeniz Fındık",price:160,unit:"kg",rating:4.8,reviews:201,cat:"meyve",emoji:"🌰",badge:"COĞ. İŞARET",hot:false,sold:66,desc:"Dünyanın en kaliteli fındığı olarak bilinen Giresun tombul fındığı.",sellerName:"Karadeniz Fındık",sellerSince:"1990",sellerRating:4.8,sellerSales:3400},
+  {id:13,name:"Siirt Büryan Kebabı",il:"Siirt",seller:"Büryan Ustası",price:245,unit:"porsiyon",rating:4.9,reviews:142,cat:"kebap",emoji:"🍖",badge:"KUYU KEBABI",hot:true,sold:83,desc:"Toprak kuyuda 6 saat pişirilen kuzu but kebabı.",sellerName:"Siirt Büryan Ustası",sellerSince:"1960",sellerRating:4.9,sellerSales:2800},
+  {id:14,name:"Maraş Dondurması",il:"Kahramanmaraş",seller:"Mado",price:85,unit:"top",rating:4.9,reviews:523,cat:"tatli",emoji:"🍦",badge:"DÖVME",hot:false,sold:95,desc:"Keçi sütü ve salep ile hazırlanan, uzayan ve donmayan Maraş dondurması.",sellerName:"Mado Dondurma",sellerSince:"1850",sellerRating:4.9,sellerSales:15000},
+  {id:15,name:"Kastamonu Sucuğu",il:"Kastamonu",seller:"Kastamonu Et",price:340,unit:"kg",rating:4.8,reviews:167,cat:"kebap",emoji:"🌭",badge:"COĞ. İŞARET",hot:false,sold:61,desc:"Sarımsaklı, baharatlı, doğal bağırsakta hazırlanan Kastamonu sucuğu.",sellerName:"Kastamonu Et",sellerSince:"1971",sellerRating:4.8,sellerSales:2100},
+  {id:16,name:"Tunceli Balı",il:"Tunceli",seller:"Munzur Arı",price:480,unit:"kg",rating:5.0,reviews:94,cat:"tatli",emoji:"🍯",badge:"ÇIÇEK BALI",hot:true,sold:78,desc:"Munzur dağlarının yabani çiçeklerinden elde edilen, Türkiye'nin en değerli balı.",sellerName:"Munzur Arıcılık",sellerSince:"2005",sellerRating:5.0,sellerSales:420},
+  {id:17,name:"Urfa Kebabı",il:"Şanlıurfa",seller:"Urfa Ocakbaşı",price:165,unit:"porsiyon",rating:4.8,reviews:278,cat:"kebap",emoji:"🍖",badge:"ACI",hot:false,sold:69,desc:"İsot biberli, yoğun baharatlı Urfa kebabı.",sellerName:"Urfa Ocakbaşı",sellerSince:"1980",sellerRating:4.8,sellerSales:3900},
+  {id:18,name:"Ezine Peyniri",il:"Çanakkale",seller:"Ezine Peynircilik",price:290,unit:"kg",rating:4.8,reviews:131,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:false,sold:57,desc:"Koyun, keçi ve inek sütünün karışımından yapılan, salamurada yıllandırılan Ezine beyaz peyniri.",sellerName:"Ezine Peynircilik",sellerSince:"1930",sellerRating:4.8,sellerSales:1760},
+  {id:19,name:"Zeytinyağı",il:"Aydın",seller:"Aydın Zeytin",price:220,unit:"litre",rating:4.7,reviews:89,cat:"zeytinyagi",emoji:"🫒",badge:"ORGANIK",hot:false,sold:52,desc:"Erken hasat, soğuk sıkım naturel sızma zeytinyağı.",sellerName:"Aydın Zeytin Bahçeleri",sellerSince:"1968",sellerRating:4.7,sellerSales:950},
+  {id:20,name:"İğdır Kayısısı",il:"Iğdır",seller:"Aras Meyve",price:95,unit:"kg",rating:4.8,reviews:112,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",hot:false,sold:63,desc:"Ağrı Dağı'nın eteklerinde Aras nehri kıyısında yetişen, dünyaca ünlü Iğdır kayısısı.",sellerName:"Aras Meyve",sellerSince:"1997",sellerRating:4.8,sellerSales:680},
+  {id:21,name:"Antep Katmeri",il:"Gaziantep",seller:"Tahmis",price:45,unit:"adet",rating:4.9,reviews:387,cat:"tatli",emoji:"🥞",badge:"KAHVALTILIK",hot:true,sold:96,desc:"El açması yufkanın içine fıstıklı kaymak konularak tavada pişirilen Gaziantep'e özgü kahvaltı tatlısı.",sellerName:"Tahmis Katmer",sellerSince:"1901",sellerRating:4.9,sellerSales:7800},
+  {id:22,name:"Çorum Leblebisi",il:"Çorum",seller:"Çorum Kuruyemiş",price:85,unit:"kg",rating:4.7,reviews:203,cat:"meyve",emoji:"🫘",badge:"COĞ. İŞARET",hot:false,sold:58,desc:"Özel fırınlama yöntemiyle hazırlanan, Türkiye'nin en ünlü çerezidir.",sellerName:"Çorum Kuruyemiş",sellerSince:"1955",sellerRating:4.7,sellerSales:1900},
 ];
 
-let activeIl=null, activeCat="all", activeFoodFilter=null;
-let cart=[], favs=new Set(), openProdId=null;
+// ─── SVG MAP DATA ─────────────────────────────────────────────────────────────
+// Basitleştirilmiş Türkiye il haritası koordinatları (1000x500 viewBox)
+// İller, gerçek coğrafyaya yakın polygon noktalarıyla temsil edilmiştir
 
-// MAP
-function scaleX(x){return x*(700/530);}
-function scaleY(y){return y*(330/285);}
+const MAP_PROVINCES = [
+  {id:"edirne",     cx:54,  cy:80,  r:18, label:"Edirne"},
+  {id:"kirklareli", cx:95,  cy:60,  r:16, label:"Kırklareli"},
+  {id:"tekirdag",   cx:102, cy:100, r:16, label:"Tekirdağ"},
+  {id:"istanbul",   cx:138, cy:103, r:15, label:"İstanbul"},
+  {id:"kocaeli",    cx:168, cy:108, r:14, label:"Kocaeli"},
+  {id:"sakarya",    cx:195, cy:108, r:13, label:"Sakarya"},
+  {id:"duzce",      cx:215, cy:100, r:12, label:"Düzce"},
+  {id:"yalova",     cx:152, cy:122, r:10, label:"Yalova"},
+  {id:"bursa",      cx:148, cy:145, r:22, label:"Bursa"},
+  {id:"bilecik",    cx:190, cy:138, r:14, label:"Bilecik"},
+  {id:"bolu",       cx:232, cy:105, r:18, label:"Bolu"},
+  {id:"canakkale",  cx:75,  cy:138, r:20, label:"Çanakkale"},
+  {id:"balikesir",  cx:110, cy:170, r:24, label:"Balıkesir"},
+  {id:"eskisehir",  cx:220, cy:158, r:20, label:"Eskişehir"},
+  {id:"kutahya",    cx:175, cy:183, r:20, label:"Kütahya"},
+  {id:"manisa",     cx:105, cy:205, r:20, label:"Manisa"},
+  {id:"izmir",      cx:72,  cy:220, r:24, label:"İzmir"},
+  {id:"usak",       cx:152, cy:215, r:16, label:"Uşak"},
+  {id:"afyon",      cx:195, cy:215, r:22, label:"Afyon"},
+  {id:"aydin",      cx:105, cy:255, r:22, label:"Aydın"},
+  {id:"denizli",    cx:158, cy:253, r:20, label:"Denizli"},
+  {id:"mugla",      cx:115, cy:290, r:22, label:"Muğla"},
+  {id:"burdur",     cx:193, cy:280, r:18, label:"Burdur"},
+  {id:"isparta",    cx:220, cy:268, r:18, label:"Isparta"},
+  {id:"antalya",    cx:240, cy:310, r:26, label:"Antalya"},
+  {id:"mersin",     cx:290, cy:325, r:22, label:"Mersin"},
+  {id:"adana",      cx:335, cy:318, r:24, label:"Adana"},
+  {id:"osmaniye",   cx:363, cy:308, r:14, label:"Osmaniye"},
+  {id:"hatay",      cx:375, cy:340, r:18, label:"Hatay"},
+  {id:"kahramanmaras",cx:375,cy:290,r:22, label:"K.Maraş"},
+  {id:"gaziantep",  cx:375, cy:338, r:17, label:"Gaziantep"},
+  {id:"kilis",      cx:355, cy:358, r:11, label:"Kilis"},
+  {id:"adiyaman",   cx:398, cy:295, r:16, label:"Adıyaman"},
+  {id:"sanliurfa",  cx:425, cy:338, r:26, label:"Şanlıurfa"},
+  {id:"ankara",     cx:268, cy:162, r:28, label:"Ankara"},
+  {id:"kirikkale",  cx:295, cy:152, r:13, label:"Kırıkkale"},
+  {id:"cankiri",    cx:268, cy:128, r:18, label:"Çankırı"},
+  {id:"zonguldak",  cx:233, cy:88,  r:16, label:"Zonguldak"},
+  {id:"karabuk",    cx:252, cy:98,  r:13, label:"Karabük"},
+  {id:"bartin",     cx:215, cy:82,  r:12, label:"Bartın"},
+  {id:"kastamonu",  cx:280, cy:100, r:20, label:"Kastamonu"},
+  {id:"sinop",      cx:308, cy:80,  r:16, label:"Sinop"},
+  {id:"samsun",     cx:340, cy:80,  r:20, label:"Samsun"},
+  {id:"amasya",     cx:330, cy:112, r:15, label:"Amasya"},
+  {id:"tokat",      cx:355, cy:118, r:18, label:"Tokat"},
+  {id:"ordu",       cx:375, cy:83,  r:16, label:"Ordu"},
+  {id:"giresun",    cx:400, cy:80,  r:14, label:"Giresun"},
+  {id:"trabzon",    cx:428, cy:72,  r:16, label:"Trabzon"},
+  {id:"rize",       cx:455, cy:65,  r:13, label:"Rize"},
+  {id:"artvin",     cx:478, cy:60,  r:14, label:"Artvin"},
+  {id:"gumushane",  cx:440, cy:90,  r:13, label:"Gümüşhane"},
+  {id:"bayburt",    cx:460, cy:98,  r:12, label:"Bayburt"},
+  {id:"corum",      cx:308, cy:128, r:18, label:"Çorum"},
+  {id:"yozgat",     cx:320, cy:158, r:20, label:"Yozgat"},
+  {id:"kirsehir",   cx:295, cy:180, r:16, label:"Kırşehir"},
+  {id:"nevsehir",   cx:320, cy:195, r:15, label:"Nevşehir"},
+  {id:"aksaray",    cx:295, cy:218, r:16, label:"Aksaray"},
+  {id:"nigde",      cx:320, cy:230, r:16, label:"Niğde"},
+  {id:"konya",      cx:255, cy:250, r:32, label:"Konya"},
+  {id:"karaman",    cx:280, cy:295, r:18, label:"Karaman"},
+  {id:"kayseri",    cx:355, cy:185, r:26, label:"Kayseri"},
+  {id:"sivas",      cx:382, cy:148, r:28, label:"Sivas"},
+  {id:"erzincan",   cx:430, cy:132, r:20, label:"Erzincan"},
+  {id:"malatya",    cx:415, cy:210, r:22, label:"Malatya"},
+  {id:"elazig",     cx:440, cy:188, r:18, label:"Elazığ"},
+  {id:"tunceli",    cx:450, cy:165, r:16, label:"Tunceli"},
+  {id:"bingol",     cx:470, cy:180, r:16, label:"Bingöl"},
+  {id:"mus",        cx:498, cy:188, r:18, label:"Muş"},
+  {id:"erzurum",    cx:468, cy:128, r:26, label:"Erzurum"},
+  {id:"agri",       cx:515, cy:118, r:22, label:"Ağrı"},
+  {id:"kars",       cx:510, cy:88,  r:22, label:"Kars"},
+  {id:"ardahan",    cx:502, cy:62,  r:14, label:"Ardahan"},
+  {id:"igdir",      cx:540, cy:112, r:14, label:"Iğdır"},
+  {id:"van",        cx:538, cy:178, r:24, label:"Van"},
+  {id:"bitlis",     cx:510, cy:210, r:17, label:"Bitlis"},
+  {id:"siirt",      cx:498, cy:240, r:16, label:"Siirt"},
+  {id:"batman",     cx:472, cy:238, r:14, label:"Batman"},
+  {id:"diyarbakir", cx:445, cy:258, r:22, label:"Diyarbakır"},
+  {id:"mardin",     cx:455, cy:293, r:18, label:"Mardin"},
+  {id:"sirnak",     cx:498, cy:278, r:16, label:"Şırnak"},
+  {id:"hakkari",    cx:530, cy:255, r:16, label:"Hakkari"},
+];
 
-function renderMap(){
-  const g=document.getElementById("map-g");
-  g.innerHTML="";
-  // light grid lines for Turkey look
-  for(let i=0;i<700;i+=70){
-    const line=document.createElementNS("http://www.w3.org/2000/svg","line");
-    line.setAttribute("x1",i);line.setAttribute("y1",0);line.setAttribute("x2",i);line.setAttribute("y2",330);
-    line.setAttribute("stroke","#f0f0f0");line.setAttribute("stroke-width","0.5");
-    g.appendChild(line);
-  }
-  for(let i=0;i<330;i+=33){
-    const line=document.createElementNS("http://www.w3.org/2000/svg","line");
-    line.setAttribute("x1",0);line.setAttribute("y1",i);line.setAttribute("x2",700);line.setAttribute("y2",i);
-    line.setAttribute("stroke","#f0f0f0");line.setAttribute("stroke-width","0.5");
-    g.appendChild(line);
-  }
-  ILLER.forEach(il=>{
-    const cx=scaleX(il.x), cy=scaleY(il.y);
-    const isActive=activeIl&&activeIl.id===il.id;
-    const hasProds=PRODUCTS.some(p=>p.il===il.n);
-    if(isActive){
-      const ring=document.createElementNS("http://www.w3.org/2000/svg","circle");
-      ring.setAttribute("cx",cx);ring.setAttribute("cy",cy);
-      ring.setAttribute("r",11);ring.setAttribute("fill","rgba(178,34,34,0.15)");
-      ring.setAttribute("stroke","#B22222");ring.setAttribute("stroke-width","1.5");
-      g.appendChild(ring);
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let activeIl = null, activeCat = "all", activeFoodFilter = null;
+let cart = [], favs = new Set(), openProdId = null;
+
+// ─── MAP RENDERING ────────────────────────────────────────────────────────────
+function buildMap() {
+  const svg = document.getElementById("tr-svg");
+  svg.innerHTML = "";
+
+  // Background
+  const bg = document.createElementNS("http://www.w3.org/2000/svg","rect");
+  bg.setAttribute("width","1000"); bg.setAttribute("height","500");
+  bg.setAttribute("fill","#110806"); bg.setAttribute("rx","10");
+  svg.appendChild(bg);
+
+  // Draw Turkey outline (decorative border)
+  const border = document.createElementNS("http://www.w3.org/2000/svg","rect");
+  border.setAttribute("width","996"); border.setAttribute("height","496");
+  border.setAttribute("x","2"); border.setAttribute("y","2");
+  border.setAttribute("fill","none"); border.setAttribute("stroke","#3a1a10");
+  border.setAttribute("stroke-width","1"); border.setAttribute("rx","10");
+  svg.appendChild(border);
+
+  const tooltip = document.getElementById("map-tooltip");
+
+  MAP_PROVINCES.forEach(prov => {
+    const ilData = ILLER_DATA[prov.id];
+    if (!ilData) return;
+
+    const hasProd = PRODUCTS.some(p => p.il === ilData.n);
+    const isActive = activeIl && activeIl.id === prov.id;
+
+    const g = document.createElementNS("http://www.w3.org/2000/svg","g");
+    g.style.cursor = "pointer";
+
+    // Active glow ring
+    if (isActive) {
+      const glow = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      glow.setAttribute("cx", prov.cx); glow.setAttribute("cy", prov.cy);
+      glow.setAttribute("r", prov.r + 8);
+      glow.setAttribute("fill", "rgba(178,34,34,0.15)");
+      glow.setAttribute("stroke", "#E8B84B"); glow.setAttribute("stroke-width","1");
+      g.appendChild(glow);
     }
-    const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    c.setAttribute("cx",cx);c.setAttribute("cy",cy);
-    c.setAttribute("r",isActive?7:hasProds?5:3.5);
-    c.setAttribute("fill",isActive?"#B22222":hasProds?"#C8392B":"#e8b0a0");
-    c.setAttribute("stroke",isActive?"#fff":hasProds?"rgba(184,56,56,0.3)":"none");
-    c.setAttribute("stroke-width",isActive?"2":"1");
-    c.style.cursor="pointer";c.style.transition="all .15s";
-    c.addEventListener("click",()=>selectIl(il));
-    c.addEventListener("mouseenter",()=>{if(!isActive){c.setAttribute("r",hasProds?7:5);c.setAttribute("fill","#B22222");}});
-    c.addEventListener("mouseleave",()=>{if(!isActive){c.setAttribute("r",hasProds?5:3.5);c.setAttribute("fill",hasProds?"#C8392B":"#e8b0a0");}});
-    g.appendChild(c);
-    if(hasProds||isActive){
-      const t=document.createElementNS("http://www.w3.org/2000/svg","text");
-      t.setAttribute("x",cx);t.setAttribute("y",cy-9);
-      t.setAttribute("text-anchor","middle");t.setAttribute("font-size","7.5");
-      t.setAttribute("fill",isActive?"#B22222":"#999");
-      t.setAttribute("font-family","Inter,sans-serif");
-      t.style.pointerEvents="none";
-      t.textContent=il.n;
-      g.appendChild(t);
+
+    // Main circle
+    const circle = document.createElementNS("http://www.w3.org/2000/svg","circle");
+    circle.setAttribute("cx", prov.cx); circle.setAttribute("cy", prov.cy);
+    circle.setAttribute("r", isActive ? prov.r + 3 : prov.r);
+    circle.setAttribute("fill", isActive ? "#B22222" : hasProd ? "#5a1a12" : "#2d1008");
+    circle.setAttribute("stroke", isActive ? "#E8B84B" : hasProd ? "#8B1A1A" : "#3d1a10");
+    circle.setAttribute("stroke-width", isActive ? "2" : "1");
+    circle.style.transition = "all .2s";
+    g.appendChild(circle);
+
+    // Label
+    const text = document.createElementNS("http://www.w3.org/2000/svg","text");
+    text.setAttribute("x", prov.cx); text.setAttribute("y", prov.cy);
+    text.setAttribute("text-anchor","middle"); text.setAttribute("dominant-baseline","central");
+    text.setAttribute("font-size", prov.r > 20 ? "7" : "5.5");
+    text.setAttribute("fill", isActive ? "#fff" : hasProd ? "#E8B84B" : "#7a4030");
+    text.setAttribute("font-family","Inter,sans-serif");
+    text.setAttribute("font-weight", isActive ? "600" : "400");
+    text.style.pointerEvents = "none";
+    // Abbrev long names
+    const displayName = prov.label.length > 8 ? prov.label.slice(0,7)+"." : prov.label;
+    text.textContent = displayName;
+    g.appendChild(text);
+
+    // Product dot indicator
+    if (hasProd && !isActive) {
+      const dot = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      dot.setAttribute("cx", prov.cx + prov.r - 4);
+      dot.setAttribute("cy", prov.cy - prov.r + 4);
+      dot.setAttribute("r","3.5");
+      dot.setAttribute("fill","#C8922A");
+      dot.setAttribute("stroke","#1a0e0b"); dot.setAttribute("stroke-width","1");
+      dot.style.pointerEvents = "none";
+      g.appendChild(dot);
     }
+
+    // Events
+    g.addEventListener("mouseenter", e => {
+      if (!isActive) {
+        circle.setAttribute("fill", hasProd ? "#8B2020" : "#4d1a10");
+        circle.setAttribute("stroke", "#D4342A");
+      }
+      tooltip.style.display = "block";
+      document.getElementById("map-tooltip-name").textContent = ilData.n;
+      document.getElementById("map-tooltip-foods").textContent =
+        hasProd ? "🍽 " + ilData.foods.slice(0,3).join(" · ") : "Yakında ürünler eklenecek";
+    });
+
+    g.addEventListener("mousemove", e => {
+      tooltip.style.left = (e.clientX + 12) + "px";
+      tooltip.style.top  = (e.clientY - 10) + "px";
+    });
+
+    g.addEventListener("mouseleave", () => {
+      if (!isActive) {
+        circle.setAttribute("fill", hasProd ? "#5a1a12" : "#2d1008");
+        circle.setAttribute("stroke", hasProd ? "#8B1A1A" : "#3d1a10");
+      }
+      tooltip.style.display = "none";
+    });
+
+    g.addEventListener("click", () => {
+      tooltip.style.display = "none";
+      selectIl({id: prov.id, n: ilData.n, foods: ilData.foods});
+    });
+
+    svg.appendChild(g);
   });
 }
 
-function selectIl(il){
-  if(activeIl&&activeIl.id===il.id){clearIl();return;}
-  activeIl=il;activeFoodFilter=null;
-  document.getElementById("food-tag").style.display="none";
-  renderMap();showIlBox(il);renderProds();
+// ─── IL SELECTION ─────────────────────────────────────────────────────────────
+function selectIl(il) {
+  if (activeIl && activeIl.id === il.id) { clearIl(); return; }
+  activeIl = il; activeFoodFilter = null;
+  document.getElementById("food-tag").style.display = "none";
+  buildMap(); showIlBox(il); renderProds();
 }
 
-function showIlBox(il){
-  const box=document.getElementById("il-box");
-  box.style.display="block";
-  document.getElementById("il-box-name").textContent=il.n+" İli";
-  const foodsEl=document.getElementById("il-foods");
-  foodsEl.innerHTML="";
-  il.foods.forEach(f=>{
-    const t=document.createElement("span");
-    t.className="il-food-tag";t.textContent=f;
-    t.onclick=()=>{
-      activeFoodFilter=f;
-      document.getElementById("food-tag-text").textContent=f;
-      document.getElementById("food-tag").style.display="flex";
-      document.getElementById("search-inp").value=f;
+function showIlBox(il) {
+  const box = document.getElementById("il-box");
+  box.style.display = "block";
+  document.getElementById("il-box-name").textContent = il.n + " İli";
+  const foodsEl = document.getElementById("il-foods");
+  foodsEl.innerHTML = "";
+  il.foods.forEach(f => {
+    const t = document.createElement("span");
+    t.className = "il-food-tag"; t.textContent = f;
+    t.onclick = () => {
+      activeFoodFilter = f;
+      document.getElementById("food-tag-text").textContent = f;
+      document.getElementById("food-tag").style.display = "flex";
+      document.getElementById("search-inp").value = f;
       renderProds();
     };
     foodsEl.appendChild(t);
   });
-  const ilProds=PRODUCTS.filter(p=>p.il===il.n);
-  document.getElementById("il-prod-count").textContent=ilProds.length;
-  const sellers=new Set(ilProds.map(p=>p.seller));
-  document.getElementById("il-seller-count").textContent=sellers.size;
-  const avgR=ilProds.length>0?(ilProds.reduce((a,p)=>a+p.rating,0)/ilProds.length).toFixed(1):"—";
-  document.getElementById("il-avg-rating").textContent=avgR;
-  document.getElementById("il-tag-text").textContent=il.n;
-  document.getElementById("il-tag").style.display="flex";
+  const ilProds = PRODUCTS.filter(p => p.il === il.n);
+  document.getElementById("il-prod-count").textContent = ilProds.length;
+  const sellers = new Set(ilProds.map(p => p.seller));
+  document.getElementById("il-seller-count").textContent = sellers.size;
+  const avgR = ilProds.length > 0 ? (ilProds.reduce((a,p) => a+p.rating, 0) / ilProds.length).toFixed(1) : "—";
+  document.getElementById("il-avg-rating").textContent = avgR;
+  document.getElementById("il-tag-text").textContent = il.n;
+  document.getElementById("il-tag").style.display = "flex";
 }
 
-function clearIl(){
-  activeIl=null;activeFoodFilter=null;
-  document.getElementById("il-box").style.display="none";
-  document.getElementById("il-tag").style.display="none";
-  document.getElementById("food-tag").style.display="none";
-  document.getElementById("search-inp").value="";
-  renderMap();renderProds();
+function clearIl() {
+  activeIl = null; activeFoodFilter = null;
+  document.getElementById("il-box").style.display = "none";
+  document.getElementById("il-tag").style.display = "none";
+  document.getElementById("food-tag").style.display = "none";
+  document.getElementById("search-inp").value = "";
+  buildMap(); renderProds();
 }
 
-function clearFoodFilter(){
-  activeFoodFilter=null;
-  document.getElementById("food-tag").style.display="none";
-  document.getElementById("search-inp").value="";
+function clearFoodFilter() {
+  activeFoodFilter = null;
+  document.getElementById("food-tag").style.display = "none";
+  document.getElementById("search-inp").value = "";
   renderProds();
 }
 
-// PRODUCTS
-function getFiltered(){
-  let prods=[...PRODUCTS];
-  if(activeCat!=="all") prods=prods.filter(p=>p.cat===activeCat);
-  if(activeIl) prods=prods.filter(p=>p.il===activeIl.n);
-  const q=(activeFoodFilter||document.getElementById("search-inp").value).trim().toLowerCase();
-  if(q) prods=prods.filter(p=>p.name.toLowerCase().includes(q)||p.il.toLowerCase().includes(q)||p.seller.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q));
-  const s=document.getElementById("sort-select").value;
-  if(s==="price_asc") prods.sort((a,b)=>a.price-b.price);
-  else if(s==="price_desc") prods.sort((a,b)=>b.price-a.price);
-  else if(s==="rating") prods.sort((a,b)=>b.rating-a.rating);
-  else if(s==="new") prods.sort((a,b)=>b.id-a.id);
-  else prods.sort((a,b)=>b.reviews-a.reviews);
+// ─── PRODUCTS ─────────────────────────────────────────────────────────────────
+function getFiltered() {
+  let prods = [...PRODUCTS];
+  if (activeCat !== "all") prods = prods.filter(p => p.cat === activeCat);
+  if (activeIl) prods = prods.filter(p => p.il === activeIl.n);
+  const q = (activeFoodFilter || document.getElementById("search-inp").value).trim().toLowerCase();
+  if (q) prods = prods.filter(p =>
+    p.name.toLowerCase().includes(q) || p.il.toLowerCase().includes(q) ||
+    p.seller.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+  const s = document.getElementById("sort-select").value;
+  if (s === "price_asc") prods.sort((a,b) => a.price-b.price);
+  else if (s === "price_desc") prods.sort((a,b) => b.price-a.price);
+  else if (s === "rating") prods.sort((a,b) => b.rating-a.rating);
+  else if (s === "new") prods.sort((a,b) => b.id-a.id);
+  else prods.sort((a,b) => b.reviews-a.reviews);
   return prods;
 }
 
-function renderProds(){
-  const prods=getFiltered();
-  document.getElementById("pcount").textContent=prods.length;
-  const g=document.getElementById("prod-grid");
-  if(!prods.length){
-    g.innerHTML='<div class="empty-grid">Bu kriterlerde ürün bulunamadı.<br><button onclick="clearIl()">Filtreleri Temizle</button></div>';
+function cardHTML(p) {
+  return `<article class="pcard" onclick="openProd(${p.id})">
+    <div class="pcard-img">${p.emoji}
+      <span class="pcard-badge">${p.badge}</span>
+      ${p.hot ? '<span class="pcard-hot">🔥 Çok Satan</span>' : ''}
+    </div>
+    <div class="pcard-body">
+      <div class="pcard-il">${p.il}</div>
+      <div class="pcard-name">${p.name}</div>
+      <div class="pcard-seller">${p.seller}</div>
+      <div class="pcard-stars">${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))} <span>${p.rating} (${p.reviews})</span></div>
+      <div class="pcard-bottom">
+        <div><span class="pcard-price">₺${p.price.toLocaleString('tr-TR')}</span><span class="pcard-unit"> / ${p.unit}</span></div>
+        <button class="pcard-add" onclick="event.stopPropagation();quickAdd(${p.id})">+ Sepet</button>
+      </div>
+      <div class="pcard-sold">Son 30 günde ${p.sold} sipariş</div>
+    </div>
+  </article>`;
+}
+
+function renderProds() {
+  const prods = getFiltered();
+  document.getElementById("pcount").textContent = prods.length;
+  const g = document.getElementById("prod-grid");
+  if (!prods.length) {
+    g.innerHTML = '<div class="empty-grid">Bu kriterlerde ürün bulunamadı.<br><button onclick="clearIl()">Filtreleri Temizle</button></div>';
     return;
   }
-  g.innerHTML=prods.map(p=>`
-    <article class="pcard" onclick="openProd(${p.id})">
-      <div class="pcard-img">${p.emoji}
-        <span class="pcard-badge">${p.badge}</span>
-        ${p.hot?'<span class="pcard-hot">🔥 Çok Satan</span>':''}
-      </div>
-      <div class="pcard-body">
-        <div class="pcard-il">${p.il}</div>
-        <div class="pcard-name">${p.name}</div>
-        <div class="pcard-seller">${p.seller}</div>
-        <div class="pcard-stars">${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))} <span>${p.rating} (${p.reviews})</span></div>
-        <div class="pcard-bottom">
-          <div><span class="pcard-price">₺${p.price.toLocaleString('tr-TR')}</span><span class="pcard-unit"> / ${p.unit}</span></div>
-          <button class="pcard-add" onclick="event.stopPropagation();quickAdd(${p.id})">+ Sepet</button>
-        </div>
-        <div class="pcard-sold">Son 30 günde ${p.sold} sipariş</div>
-      </div>
-    </article>
-  `).join("");
+  g.innerHTML = prods.map(cardHTML).join("");
 }
 
-// FEATURED
-function renderFeatured(){
-  const featured=PRODUCTS.filter(p=>p.hot).slice(0,6);
-  document.getElementById("featured-grid").innerHTML=featured.map(p=>`
-    <article class="pcard" onclick="openProd(${p.id})">
-      <div class="pcard-img">${p.emoji}
-        <span class="pcard-badge">${p.badge}</span>
-        <span class="pcard-hot">🔥 Çok Satan</span>
-      </div>
-      <div class="pcard-body">
-        <div class="pcard-il">${p.il}</div>
-        <div class="pcard-name">${p.name}</div>
-        <div class="pcard-seller">${p.seller}</div>
-        <div class="pcard-stars">${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))} <span>${p.rating} (${p.reviews})</span></div>
-        <div class="pcard-bottom">
-          <div><span class="pcard-price">₺${p.price.toLocaleString('tr-TR')}</span><span class="pcard-unit"> / ${p.unit}</span></div>
-          <button class="pcard-add" onclick="event.stopPropagation();quickAdd(${p.id})">+ Sepet</button>
-        </div>
-        <div class="pcard-sold">Son 30 günde ${p.sold} sipariş</div>
-      </div>
-    </article>
-  `).join("");
+function renderFeatured() {
+  document.getElementById("featured-grid").innerHTML =
+    PRODUCTS.filter(p => p.hot).slice(0,6).map(cardHTML).join("");
 }
 
-// MODAL
-function openProd(id){
-  const p=PRODUCTS.find(x=>x.id===id);if(!p)return;
-  openProdId=id;
-  const ov=document.getElementById("modal-overlay");
-  document.getElementById("modal-img").textContent=p.emoji;
-  // badges
-  let badges=`<span class="mbadge mbadge-red">${p.badge}</span>`;
-  if(p.hot) badges+=`<span class="mbadge mbadge-gold">🔥 Çok Satan</span>`;
-  document.getElementById("modal-badge-row").innerHTML=badges;
-  document.getElementById("modal-il").textContent=p.il.toUpperCase()+" · "+p.seller;
-  document.getElementById("modal-name").textContent=p.name;
-  document.getElementById("modal-seller").textContent=p.seller+" — Güvenilir Üretici";
-  const isFav=favs.has(id);
-  document.getElementById("modal-stars").innerHTML=`${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))} <span>${p.rating} · ${p.reviews} değerlendirme</span>`;
-  document.getElementById("modal-desc").textContent=p.desc;
-  document.getElementById("modal-price").textContent="₺"+p.price.toLocaleString('tr-TR');
-  document.getElementById("modal-unit").textContent="/ "+p.unit;
-  document.getElementById("modal-sold-fill").style.width=p.sold+"%";
-  document.getElementById("modal-sold-text").textContent=`Bu ürün son 30 günde ${p.sold} kez satıldı`;
-  document.getElementById("modal-fav").textContent=isFav?"♥ Favorilendi":"♡ Favorile";
-  // seller box
-  const initials=p.sellerName.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
-  document.getElementById("modal-seller-box").innerHTML=`
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+function openProd(id) {
+  const p = PRODUCTS.find(x => x.id === id); if (!p) return;
+  openProdId = id;
+  document.getElementById("modal-img").textContent = p.emoji;
+  let badges = `<span class="mbadge mbadge-red">${p.badge}</span>`;
+  if (p.hot) badges += `<span class="mbadge mbadge-gold">🔥 Çok Satan</span>`;
+  document.getElementById("modal-badge-row").innerHTML = badges;
+  document.getElementById("modal-il").textContent = p.il.toUpperCase() + " · " + p.seller;
+  document.getElementById("modal-name").textContent = p.name;
+  document.getElementById("modal-seller").textContent = p.seller + " — Güvenilir Üretici";
+  document.getElementById("modal-stars").innerHTML = `${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))} <span>${p.rating} · ${p.reviews} değerlendirme</span>`;
+  document.getElementById("modal-desc").textContent = p.desc;
+  document.getElementById("modal-price").textContent = "₺" + p.price.toLocaleString('tr-TR');
+  document.getElementById("modal-unit").textContent = "/ " + p.unit;
+  document.getElementById("modal-sold-fill").style.width = p.sold + "%";
+  document.getElementById("modal-sold-text").textContent = `Bu ürün son 30 günde ${p.sold} kez satıldı`;
+  document.getElementById("modal-fav").textContent = favs.has(id) ? "♥ Favorilendi" : "♡ Favorile";
+  const initials = p.sellerName.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+  document.getElementById("modal-seller-box").innerHTML = `
     <div class="seller-head">
       <div class="seller-avatar">${initials}</div>
       <div><div class="seller-name">${p.sellerName}</div><div class="seller-sub">${p.sellerSince}'den beri üretici · ★ ${p.sellerRating}</div></div>
@@ -762,111 +931,92 @@ function openProd(id){
       <div class="seller-stat"><div class="seller-stat-n">★ ${p.sellerRating}</div><div class="seller-stat-l">Üretici Puanı</div></div>
       <div class="seller-stat"><div class="seller-stat-n">${2025-parseInt(p.sellerSince)}</div><div class="seller-stat-l">Yıllık Deneyim</div></div>
     </div>`;
-  // reviews
-  const revs=REVIEWS_DB[id]||[];
-  const revsHtml=revs.length?revs.map(r=>`
-    <div class="review">
-      <div class="review-head"><span class="review-name">${r.name}</span><span class="review-date">${r.date}</span></div>
-      <div class="review-stars">${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</div>
-      <div class="review-text">${r.text}</div>
-      ${r.verified?'<div class="review-verified">✓ Doğrulanmış Satın Alma</div>':''}
-    </div>`).join(""):'<div style="color:var(--muted);font-size:13px;text-align:center;padding:16px;">Henüz yorum yapılmamış</div>';
-  document.getElementById("modal-reviews").innerHTML=`<div id="modal-reviews-title">Müşteri Yorumları (${revs.length})</div>${revsHtml}`;
-  ov.classList.add("open");
-  document.body.style.overflow="hidden";
+  const revs = REVIEWS_DB[id] || [];
+  document.getElementById("modal-reviews").innerHTML = `<div id="modal-reviews-title">Müşteri Yorumları (${revs.length})</div>` +
+    (revs.length ? revs.map(r => `
+      <div class="review">
+        <div class="review-head"><span class="review-name">${r.name}</span><span class="review-date">${r.date}</span></div>
+        <div class="review-stars">${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</div>
+        <div class="review-text">${r.text}</div>
+        ${r.verified ? '<div class="review-verified">✓ Doğrulanmış Satın Alma</div>' : ''}
+      </div>`).join("") : '<div style="color:var(--muted);font-size:13px;text-align:center;padding:16px;">Henüz yorum yapılmamış</div>');
+  document.getElementById("modal-overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
 }
 
-function closeModal(){
+function closeModal() {
   document.getElementById("modal-overlay").classList.remove("open");
-  document.body.style.overflow="";
-  openProdId=null;
+  document.body.style.overflow = "";
+  openProdId = null;
 }
 
-document.getElementById("modal-overlay").addEventListener("click",e=>{
-  if(e.target===document.getElementById("modal-overlay"))closeModal();
+document.getElementById("modal-overlay").addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-overlay")) closeModal();
 });
 
-function toggleFav(){
-  if(!openProdId)return;
-  if(favs.has(openProdId)){favs.delete(openProdId);document.getElementById("modal-fav").textContent="♡ Favorile";}
-  else{favs.add(openProdId);document.getElementById("modal-fav").textContent="♥ Favorilendi";}
+function toggleFav() {
+  if (!openProdId) return;
+  if (favs.has(openProdId)) { favs.delete(openProdId); document.getElementById("modal-fav").textContent = "♡ Favorile"; }
+  else { favs.add(openProdId); document.getElementById("modal-fav").textContent = "♥ Favorilendi"; }
 }
 
-// CART
-function addToCart(){
-  if(!openProdId)return;
-  const p=PRODUCTS.find(x=>x.id===openProdId);
-  closeModal();
-  addItem(p);
+// ─── CART ─────────────────────────────────────────────────────────────────────
+function addToCart() { if (!openProdId) return; addItem(PRODUCTS.find(x => x.id === openProdId)); closeModal(); }
+function quickAdd(id) { addItem(PRODUCTS.find(x => x.id === id)); }
+
+function addItem(p) {
+  const ex = cart.find(i => i.id === p.id);
+  if (ex) ex.qty++; else cart.push({id:p.id,name:p.name,emoji:p.emoji,price:p.price,unit:p.unit,qty:1});
+  updateCartBadge(); renderCartItems();
+  showToast("✓ " + p.name + " sepete eklendi!");
 }
 
-function quickAdd(id){
-  const p=PRODUCTS.find(x=>x.id===id);
-  addItem(p);
-}
+function removeItem(id) { cart = cart.filter(i => i.id !== id); updateCartBadge(); renderCartItems(); }
 
-function addItem(p){
-  const ex=cart.find(i=>i.id===p.id);
-  if(ex) ex.qty++;
-  else cart.push({id:p.id,name:p.name,emoji:p.emoji,price:p.price,unit:p.unit,qty:1});
-  updateCartBadge();
-  renderCartItems();
-  showToast("✓ "+p.name+" sepete eklendi!");
-}
+function updateCartBadge() { document.getElementById("cart-badge").textContent = cart.reduce((a,i) => a+i.qty, 0); }
 
-function removeItem(id){
-  cart=cart.filter(i=>i.id!==id);
-  updateCartBadge();
-  renderCartItems();
-}
-
-function updateCartBadge(){
-  const total=cart.reduce((a,i)=>a+i.qty,0);
-  document.getElementById("cart-badge").textContent=total;
-}
-
-function renderCartItems(){
-  const el=document.getElementById("cart-items");
-  if(!cart.length){el.innerHTML='<div class="cart-empty">Sepetiniz boş<br><span style="font-size:24px;display:block;margin-top:8px;">🧺</span></div>';
-    document.getElementById("cart-total-price").textContent="₺0";return;}
-  el.innerHTML=cart.map(i=>`
+function renderCartItems() {
+  const el = document.getElementById("cart-items");
+  if (!cart.length) { el.innerHTML = '<div class="cart-empty">Sepetiniz boş<br><span style="font-size:24px;display:block;margin-top:8px;">🧺</span></div>'; document.getElementById("cart-total-price").textContent = "₺0"; return; }
+  el.innerHTML = cart.map(i => `
     <div class="cart-item">
       <div class="ci-emoji">${i.emoji}</div>
       <div class="ci-info"><div class="ci-name">${i.name}</div><div class="ci-sub">${i.qty} × ₺${i.price.toLocaleString('tr-TR')} / ${i.unit}</div></div>
       <div class="ci-price">₺${(i.price*i.qty).toLocaleString('tr-TR')}</div>
       <button class="ci-remove" onclick="removeItem(${i.id})">✕</button>
     </div>`).join("");
-  const total=cart.reduce((a,i)=>a+i.price*i.qty,0);
-  document.getElementById("cart-total-price").textContent="₺"+total.toLocaleString('tr-TR');
+  document.getElementById("cart-total-price").textContent = "₺" + cart.reduce((a,i) => a+i.price*i.qty, 0).toLocaleString('tr-TR');
 }
 
-function toggleCart(){
+function toggleCart() {
   document.getElementById("cart-side").classList.toggle("open");
   document.getElementById("cart-overlay").classList.toggle("open");
 }
 
-function showToast(msg){
-  const t=document.getElementById("toast");
-  t.textContent=msg;t.classList.add("show");
-  clearTimeout(window._tt);
-  window._tt=setTimeout(()=>t.classList.remove("show"),2500);
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(window._tt); window._tt = setTimeout(() => t.classList.remove("show"), 2500);
 }
 
-function doSearch(){renderProds();}
+function doSearch() { renderProds(); }
 
-document.getElementById("search-inp").addEventListener("keydown",e=>{if(e.key==="Enter")doSearch();});
-document.getElementById("search-inp").addEventListener("input",()=>{if(!document.getElementById("search-inp").value)renderProds();});
+document.getElementById("search-inp").addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
+document.getElementById("search-inp").addEventListener("input", () => { if (!document.getElementById("search-inp").value) renderProds(); });
 
-document.querySelectorAll(".cat-pill").forEach(b=>{
-  b.addEventListener("click",()=>{
-    document.querySelectorAll(".cat-pill").forEach(x=>x.classList.remove("on"));
-    b.classList.add("on");activeCat=b.dataset.cat;renderProds();
+document.querySelectorAll(".cat-pill").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".cat-pill").forEach(x => x.classList.remove("on"));
+    b.classList.add("on"); activeCat = b.dataset.cat; renderProds();
   });
 });
 
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();if(document.getElementById("cart-side").classList.contains("open"))toggleCart();}});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { closeModal(); if (document.getElementById("cart-side").classList.contains("open")) toggleCart(); }
+});
 
-renderMap();
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+buildMap();
 renderProds();
 renderFeatured();
 </script>
