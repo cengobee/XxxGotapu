@@ -73,8 +73,69 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 #map-side-label{font-size:10px;color:#888;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:7px;}
 .pulse{width:7px;height:7px;border-radius:50%;background:#B22222;display:inline-block;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
-#tr-svg{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #eee;}
 #map-foot{font-size:11px;color:#bbb;text-align:center;margin-top:8px;}
+
+/* MAP IMAGE SYSTEM */
+#map-wrap{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+  border-radius:14px;
+  background:#f5f0ee;
+  border:1px solid #e8e0da;
+  box-shadow:0 2px 12px rgba(0,0,0,0.06);
+}
+#tr-map-img{
+  width:100%;
+  display:block;
+  user-select:none;
+  pointer-events:none;
+  border-radius:14px;
+}
+#tr-svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+
+/* TOOLTIP */
+#map-tooltip{
+  position:fixed;
+  background:rgba(10,5,5,0.96);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:10px;
+  font-size:12px;
+  line-height:1.6;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .15s, transform .15s;
+  z-index:9999;
+  border:1px solid rgba(178,34,34,0.25);
+  backdrop-filter:blur(10px);
+  transform:translateY(6px);
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+  min-width:130px;
+}
+#map-tooltip.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* CITY LABEL */
+.map-city-label{
+  font-size:7.5px;
+  fill:#666;
+  font-family:Inter,sans-serif;
+  font-weight:600;
+  pointer-events:none;
+  letter-spacing:.2px;
+}
+.map-city-label.active{
+  fill:#B22222;
+  font-weight:700;
+}
 
 /* IL INFO BOX */
 #il-box{margin-top:16px;padding:16px;background:#FFF8F5;border:1px solid #f5ddd5;border-radius:10px;display:none;}
@@ -307,10 +368,19 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div id="main">
   <aside id="map-side">
     <div id="map-side-label"><span class="pulse"></span> Haritadan il seçerek filtrele</div>
-    <svg id="tr-svg" viewBox="0 0 700 330" xmlns="http://www.w3.org/2000/svg">
-      <rect width="700" height="330" fill="#fafafa" rx="8"/>
-      <g id="map-g"></g>
-    </svg>
+
+    <!-- ✅ YENİ: Gerçek harita + SVG katmanı -->
+    <div id="map-wrap">
+      <img
+        id="tr-map-img"
+        src="https://raw.githubusercontent.com/cengobee/XxxGotapu/main/55cddfba-38ae-4e82-978a-b31983731035.png"
+        alt="Türkiye Haritası"
+      />
+      <svg id="tr-svg" viewBox="0 0 700 330" xmlns="http://www.w3.org/2000/svg">
+        <g id="map-g"></g>
+      </svg>
+    </div>
+
     <p id="map-foot">Noktaya tıkla → o ilin ürünleri filtrelenir</p>
     <div id="il-box">
       <div id="il-box-head">
@@ -425,6 +495,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 </div>
 
 <div id="toast"></div>
+<!-- ✅ YENİ: Premium Tooltip -->
+<div id="map-tooltip"></div>
 
 <script>
 const ILLER = [
@@ -554,58 +626,103 @@ const PRODUCTS = [
 let activeIl=null, activeCat="all", activeFoodFilter=null;
 let cart=[], favs=new Set(), openProdId=null;
 
-// MAP
 function scaleX(x){return x*(700/530);}
 function scaleY(y){return y*(330/285);}
 
+// ✅ YENİ renderMap — gerçek harita + glow + pulse + tooltip
 function renderMap(){
   const g=document.getElementById("map-g");
+  const tooltip=document.getElementById("map-tooltip");
   g.innerHTML="";
-  // light grid lines for Turkey look
-  for(let i=0;i<700;i+=70){
-    const line=document.createElementNS("http://www.w3.org/2000/svg","line");
-    line.setAttribute("x1",i);line.setAttribute("y1",0);line.setAttribute("x2",i);line.setAttribute("y2",330);
-    line.setAttribute("stroke","#f0f0f0");line.setAttribute("stroke-width","0.5");
-    g.appendChild(line);
-  }
-  for(let i=0;i<330;i+=33){
-    const line=document.createElementNS("http://www.w3.org/2000/svg","line");
-    line.setAttribute("x1",0);line.setAttribute("y1",i);line.setAttribute("x2",700);line.setAttribute("y2",i);
-    line.setAttribute("stroke","#f0f0f0");line.setAttribute("stroke-width","0.5");
-    g.appendChild(line);
-  }
+
   ILLER.forEach(il=>{
-    const cx=scaleX(il.x), cy=scaleY(il.y);
-    const isActive=activeIl&&activeIl.id===il.id;
+    const cx=scaleX(il.x);
+    const cy=scaleY(il.y);
+    const isActive=activeIl && activeIl.id===il.id;
     const hasProds=PRODUCTS.some(p=>p.il===il.n);
+
+    const group=document.createElementNS("http://www.w3.org/2000/svg","g");
+
+    // GLOW RING
+    const glow=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    glow.setAttribute("cx",cx);
+    glow.setAttribute("cy",cy);
+    glow.setAttribute("r",isActive ? 18 : hasProds ? 12 : 8);
+    glow.setAttribute("fill",isActive ? "rgba(178,34,34,0.20)" : hasProds ? "rgba(200,57,43,0.10)" : "rgba(220,180,170,0.08)");
+    group.appendChild(glow);
+
+    // PULSE ANİMASYONU — sadece aktif il
     if(isActive){
-      const ring=document.createElementNS("http://www.w3.org/2000/svg","circle");
-      ring.setAttribute("cx",cx);ring.setAttribute("cy",cy);
-      ring.setAttribute("r",11);ring.setAttribute("fill","rgba(178,34,34,0.15)");
-      ring.setAttribute("stroke","#B22222");ring.setAttribute("stroke-width","1.5");
-      g.appendChild(ring);
+      const pulse=document.createElementNS("http://www.w3.org/2000/svg","circle");
+      pulse.setAttribute("cx",cx);
+      pulse.setAttribute("cy",cy);
+      pulse.setAttribute("r","10");
+      pulse.setAttribute("fill","none");
+      pulse.setAttribute("stroke","#B22222");
+      pulse.setAttribute("stroke-width","1.5");
+      pulse.setAttribute("opacity","1");
+      pulse.innerHTML=`
+        <animate attributeName="r" from="10" to="26" dur="1.6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" from="0.8" to="0" dur="1.6s" repeatCount="indefinite"/>
+      `;
+      group.appendChild(pulse);
     }
+
+    // ANA NOKTA
     const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    c.setAttribute("cx",cx);c.setAttribute("cy",cy);
-    c.setAttribute("r",isActive?7:hasProds?5:3.5);
-    c.setAttribute("fill",isActive?"#B22222":hasProds?"#C8392B":"#e8b0a0");
-    c.setAttribute("stroke",isActive?"#fff":hasProds?"rgba(184,56,56,0.3)":"none");
-    c.setAttribute("stroke-width",isActive?"2":"1");
-    c.style.cursor="pointer";c.style.transition="all .15s";
+    c.setAttribute("cx",cx);
+    c.setAttribute("cy",cy);
+    c.setAttribute("r", isActive ? 7 : hasProds ? 5 : 3.5);
+    c.setAttribute("fill", isActive ? "#B22222" : hasProds ? "#C8392B" : "#d8b0a0");
+    c.setAttribute("stroke","#fff");
+    c.setAttribute("stroke-width", isActive ? "2" : "1.5");
+    c.style.cursor="pointer";
+    c.style.transition="r .18s ease, fill .18s ease";
+
+    // HOVER
+    c.addEventListener("mouseenter",()=>{
+      if(!isActive) c.setAttribute("r","8");
+      c.setAttribute("fill","#B22222");
+      tooltip.classList.add("show");
+      const prodCount=PRODUCTS.filter(p=>p.il===il.n).length;
+      tooltip.innerHTML=`
+        <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:3px;">${il.n}</div>
+        <div style="color:#e8b88b;font-size:11px;margin-bottom:5px;">${il.foods[0]}</div>
+        ${prodCount > 0
+          ? `<div style="color:#aaa;font-size:10px;">🛒 ${prodCount} ürün mevcut</div>`
+          : `<div style="color:#666;font-size:10px;">Henüz ürün yok</div>`
+        }
+      `;
+    });
+
+    c.addEventListener("mousemove",(e)=>{
+      tooltip.style.left=e.clientX+16+"px";
+      tooltip.style.top=e.clientY+16+"px";
+    });
+
+    c.addEventListener("mouseleave",()=>{
+      tooltip.classList.remove("show");
+      if(!isActive){
+        c.setAttribute("r", hasProds ? "5" : "3.5");
+        c.setAttribute("fill", hasProds ? "#C8392B" : "#d8b0a0");
+      }
+    });
+
     c.addEventListener("click",()=>selectIl(il));
-    c.addEventListener("mouseenter",()=>{if(!isActive){c.setAttribute("r",hasProds?7:5);c.setAttribute("fill","#B22222");}});
-    c.addEventListener("mouseleave",()=>{if(!isActive){c.setAttribute("r",hasProds?5:3.5);c.setAttribute("fill",hasProds?"#C8392B":"#e8b0a0");}});
-    g.appendChild(c);
-    if(hasProds||isActive){
+    group.appendChild(c);
+
+    // ŞEHİR ETIKETI — sadece ürünü olan ya da aktif iller
+    if(hasProds || isActive){
       const t=document.createElementNS("http://www.w3.org/2000/svg","text");
-      t.setAttribute("x",cx);t.setAttribute("y",cy-9);
-      t.setAttribute("text-anchor","middle");t.setAttribute("font-size","7.5");
-      t.setAttribute("fill",isActive?"#B22222":"#999");
-      t.setAttribute("font-family","Inter,sans-serif");
-      t.style.pointerEvents="none";
+      t.setAttribute("x",cx);
+      t.setAttribute("y",cy-11);
+      t.setAttribute("text-anchor","middle");
+      t.setAttribute("class", isActive ? "map-city-label active" : "map-city-label");
       t.textContent=il.n;
-      g.appendChild(t);
+      group.appendChild(t);
     }
+
+    g.appendChild(group);
   });
 }
 
@@ -660,7 +777,6 @@ function clearFoodFilter(){
   renderProds();
 }
 
-// PRODUCTS
 function getFiltered(){
   let prods=[...PRODUCTS];
   if(activeCat!=="all") prods=prods.filter(p=>p.cat===activeCat);
@@ -705,7 +821,6 @@ function renderProds(){
   `).join("");
 }
 
-// FEATURED
 function renderFeatured(){
   const featured=PRODUCTS.filter(p=>p.hot).slice(0,6);
   document.getElementById("featured-grid").innerHTML=featured.map(p=>`
@@ -729,13 +844,11 @@ function renderFeatured(){
   `).join("");
 }
 
-// MODAL
 function openProd(id){
   const p=PRODUCTS.find(x=>x.id===id);if(!p)return;
   openProdId=id;
   const ov=document.getElementById("modal-overlay");
   document.getElementById("modal-img").textContent=p.emoji;
-  // badges
   let badges=`<span class="mbadge mbadge-red">${p.badge}</span>`;
   if(p.hot) badges+=`<span class="mbadge mbadge-gold">🔥 Çok Satan</span>`;
   document.getElementById("modal-badge-row").innerHTML=badges;
@@ -750,7 +863,6 @@ function openProd(id){
   document.getElementById("modal-sold-fill").style.width=p.sold+"%";
   document.getElementById("modal-sold-text").textContent=`Bu ürün son 30 günde ${p.sold} kez satıldı`;
   document.getElementById("modal-fav").textContent=isFav?"♥ Favorilendi":"♡ Favorile";
-  // seller box
   const initials=p.sellerName.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
   document.getElementById("modal-seller-box").innerHTML=`
     <div class="seller-head">
@@ -762,7 +874,6 @@ function openProd(id){
       <div class="seller-stat"><div class="seller-stat-n">★ ${p.sellerRating}</div><div class="seller-stat-l">Üretici Puanı</div></div>
       <div class="seller-stat"><div class="seller-stat-n">${2025-parseInt(p.sellerSince)}</div><div class="seller-stat-l">Yıllık Deneyim</div></div>
     </div>`;
-  // reviews
   const revs=REVIEWS_DB[id]||[];
   const revsHtml=revs.length?revs.map(r=>`
     <div class="review">
@@ -792,32 +903,27 @@ function toggleFav(){
   else{favs.add(openProdId);document.getElementById("modal-fav").textContent="♥ Favorilendi";}
 }
 
-// CART
 function addToCart(){
   if(!openProdId)return;
   const p=PRODUCTS.find(x=>x.id===openProdId);
-  closeModal();
-  addItem(p);
+  closeModal();addItem(p);
 }
 
 function quickAdd(id){
-  const p=PRODUCTS.find(x=>x.id===id);
-  addItem(p);
+  const p=PRODUCTS.find(x=>x.id===id);addItem(p);
 }
 
 function addItem(p){
   const ex=cart.find(i=>i.id===p.id);
   if(ex) ex.qty++;
   else cart.push({id:p.id,name:p.name,emoji:p.emoji,price:p.price,unit:p.unit,qty:1});
-  updateCartBadge();
-  renderCartItems();
+  updateCartBadge();renderCartItems();
   showToast("✓ "+p.name+" sepete eklendi!");
 }
 
 function removeItem(id){
   cart=cart.filter(i=>i.id!==id);
-  updateCartBadge();
-  renderCartItems();
+  updateCartBadge();renderCartItems();
 }
 
 function updateCartBadge(){
@@ -827,8 +933,10 @@ function updateCartBadge(){
 
 function renderCartItems(){
   const el=document.getElementById("cart-items");
-  if(!cart.length){el.innerHTML='<div class="cart-empty">Sepetiniz boş<br><span style="font-size:24px;display:block;margin-top:8px;">🧺</span></div>';
-    document.getElementById("cart-total-price").textContent="₺0";return;}
+  if(!cart.length){
+    el.innerHTML='<div class="cart-empty">Sepetiniz boş<br><span style="font-size:24px;display:block;margin-top:8px;">🧺</span></div>';
+    document.getElementById("cart-total-price").textContent="₺0";return;
+  }
   el.innerHTML=cart.map(i=>`
     <div class="cart-item">
       <div class="ci-emoji">${i.emoji}</div>
@@ -853,17 +961,14 @@ function showToast(msg){
 }
 
 function doSearch(){renderProds();}
-
 document.getElementById("search-inp").addEventListener("keydown",e=>{if(e.key==="Enter")doSearch();});
 document.getElementById("search-inp").addEventListener("input",()=>{if(!document.getElementById("search-inp").value)renderProds();});
-
 document.querySelectorAll(".cat-pill").forEach(b=>{
   b.addEventListener("click",()=>{
     document.querySelectorAll(".cat-pill").forEach(x=>x.classList.remove("on"));
     b.classList.add("on");activeCat=b.dataset.cat;renderProds();
   });
 });
-
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();if(document.getElementById("cart-side").classList.contains("open"))toggleCart();}});
 
 renderMap();
