@@ -1322,12 +1322,26 @@ function toast(msg) {
   setTimeout(() => el.classList.remove('show'), 2200);
 }
 
-// ─── MOBİL KONTROL ───────────────────────────────────────
-if (window.innerWidth < 768) {
-  document.getElementById('mobile-msg').style.display = 'flex';
-} else {
-  init();
-}
+// ─── BAŞLAT ───────────────────────────────────────────────
+// URL'den oda verisi al (AR'dan geliyor)
+const urlParams = new URLSearchParams(window.location.search);
+const arW = parseFloat(urlParams.get('w'));
+const arD = parseFloat(urlParams.get('d'));
+const arH = parseFloat(urlParams.get('h'));
+if (arW) roomParams.w = arW;
+if (arD) roomParams.d = arD;
+if (arH) roomParams.h = arH;
+
+// WebView veya masaüstü — her zaman başlat
+init();
+
+// Dışarıdan oda verisi enjeksiyonu için (WebView JS inject)
+window.setOdaVerisi = function(veri) {
+  if (veri.genislik) roomParams.w = veri.genislik;
+  if (veri.derinlik) roomParams.d = veri.derinlik;
+  if (veri.yukseklik) roomParams.h = veri.yukseklik;
+  buildRoom();
+};
 </script>
 </body>
 </html>
