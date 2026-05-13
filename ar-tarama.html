@@ -163,10 +163,10 @@ async function arBaslat() {
 
   try {
     xrSession = await navigator.xr.requestSession('immersive-ar', {
-      requiredFeatures: ['hit-testing', 'dom-overlay'],
-      optionalFeatures: ['depth-sensing', 'light-estimation'],
-      domOverlay: { root: document.getElementById('overlay') },
-    });
+  requiredFeatures: ['hit-testing'],
+  optionalFeatures: ['dom-overlay', 'depth-sensing', 'light-estimation'],
+  domOverlay: { root: document.getElementById('overlay') },
+});
 
     renderer.xr.setReferenceSpaceType('local');
     await renderer.xr.setSession(xrSession);
