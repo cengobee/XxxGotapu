@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>GoTapu — AR Oda Tarama</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0F1117; color: #F0F2FF; font-family: system-ui, sans-serif; overflow: hidden; height: 100vh; }
+
+  #overlay {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-end;
+    padding-bottom: 40px; pointer-events: none;
+  }
+
+  #panel {
+    background: rgba(15,17,23,0.92);
+    backdrop-filter: blur(12px);
+    border: 1px solid #2E3248;
+    border-radius: 20px;
+    padding: 20px;
+    width: calc(100% - 32px);
+    max-width: 420px;
+    pointer-events: all;
+  }
+
+  #durum {
+    font-size: 14px; font-weight: 700;
+    color: #F5C842; text-align: center;
+    margin-bottom: 8px;
+  }
+
+  #aciklama {
+    font-size: 12px; color: #8B90B0;
+    text-align: center; line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  #ilerleme-bg {
+    height: 4px; background: #2E3248;
+    border-radius: 2px; overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  #ilerleme-dolum {
+    height: 100%; background: #F5C842;
+    border-radius: 2px; width: 0%;
+    transition: width 0.3s;
+  }
+
+  .btn {
+    width: 100%; padding: 14px;
+    border-radius: 12px; border: none;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+    margin-bottom: 8px;
+  }
+  .btn-primary { background: #F5C842; color: #0F1117; }
+  .btn-primary:hover { background: #ffd55a; }
+  .btn-secondary {
+    background: #1A1D27; color: #8B90B0;
+    border: 1px solid #2E3248;
+  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  #yuzey-bilgi {
+    display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+  }
+
+  .badge {
+    background: rgba(245,200,66,0.1);
+    border: 1px solid rgba(245,200,66,0.3);
+    color: #F5C842; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px;
+  }
+
+  #canvas { position: fixed; inset: 0; z-index: 1; }
+
+  #ust {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 101; padding: 16px;
+    display: flex; align-items: center; gap: 10px;
+    background: linear-gradient(to bottom, rgba(15,17,23,0.8), transparent);
+  }
+
+  #geri-btn {
+    width: 36px; height: 36px; border-radius: 18px;
+    background: rgba(15,17,23,0.8);
+    border: 1px solid #2E3248;
+    color: #F0F2FF; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+
+  #baslik { font-size: 14px; font-weight: 700; color: #F0F2FF; }
+
+  /* Tarama animasyonu */
+  #tarama-cerceve {
+    position: fixed; inset: 0; z-index: 99;
+    display: none; pointer-events: none;
+  }
+  #tarama-cerceve.aktif { display: block; }
+
+  .kose {
+    position: absolute; width: 28px; height: 28px;
+    border-color: #F5C842; border-width: 3px;
+  }
+  .kose-msol { top: 30%; left: 15%; border-top-style: solid; border-left-style: solid; }
+  .kose-msag { top: 30%; right: 15%; border-top-style: solid; border-right-style: solid; }
+  .kose-asol { bottom: 35%; left: 15%; border-bottom-style: solid; border-left-style: solid; }
+  .kose-asag { bottom: 35%; right: 15%; border-bottom-style: solid; border-right-style: solid; }
+
+  .tarama-cizgisi {
+    position: absolute; left: 15%; right: 15%;
+    height: 2px; background: linear-gradient(to right, transparent, #F5C842, transparent);
+    animation: tara 2s ease-in-out infinite;
+    top: 30%;
+  }
+  @keyframes tara {
+    0% { top: 30%; opacity: 1; }
+    100% { top: 65%; opacity: 0.3; }
+  }
+
+  #hata {
+    position: fixed; inset: 0; z-index: 200;
+    background: #0F1117;
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px; text-align: center; gap: 12px;
+  }
+  #hata.goster { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- Üst bar -->
+<div id="ust">
+  <div id="geri-btn" onclick="geriDon()">←</div>
+  <span id="baslik">AR Oda Tarama</span>
+</div>
+
+<!-- Three.js canvas -->
+<canvas id="canvas"></canvas>
+
+<!-- Tarama çerçevesi -->
+<div id="tarama-cerceve">
+  <div class="kose kose-msol"></div>
+  <div class="kose kose-msag"></div>
+  <div class="kose kose-asol"></div>
+  <div class="kose kose-asag"></div>
+  <div class="tarama-cizgisi"></div>
+</div>
+
+<!-- Alt panel -->
+<div id="overlay">
+  <div id="panel">
+    <div id="durum">AR Hazırlanıyor...</div>
+    <div id="aciklama">Kameranı odana doğrult ve başlat butonuna bas</div>
+    <div id="ilerleme-bg"><div id="ilerleme-dolum"></div></div>
+    <div id="yuzey-bilgi"></div>
+    <button class="btn btn-primary" id="basla-btn" onclick="arBaslat()">📡 AR Taramayı Başlat</button>
+    <button class="btn btn-secondary" id="tamamla-btn" onclick="taramayi Tamamla()" disabled>✅ Taramayı Tamamla</button>
+  </div>
+</div>
+
+<!-- Hata ekranı -->
+<div id="hata">
+  <div style="font-size:44px">⚠️</div>
+  <div style="font-size:18px;font-weight:800;color:#F5C842">WebXR Desteklenmiyor</div>
+  <div style="font-size:13px;color:#8B90B0;line-height:1.6" id="hata-mesaj"></div>
+  <button class="btn btn-primary" style="margin-top:8px" onclick="geriDon()">← Geri Dön</button>
+</div>
+
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+// ─── GLOBAL DEĞİŞKENLER ──────────────────────────────────
+let renderer, scene, camera, xrSession;
+let reticle, hitTestSource, hitTestSourceRequested = false;
+let yuzeyler = []; // Tespit edilen yüzeyler
+let odaVerisi = {
+  duvarlar: [],
+  zemin: null,
+  tavan: null,
+  kapılar: [],
+  pencereler: [],
+  texturelar: {}
+};
+
+let taramaAktif = false;
+let frameCount = 0;
+let textureFrame = null;
+
+// ─── THREE.JS KURULUM ────────────────────────────────────
+function threeKurulum() {
+  const canvas = document.getElementById('canvas');
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.xr.enabled = true;
+
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+  // Reticle — zemin noktası göstergesi
+  const reticleGeo = new THREE.RingGeometry(0.1, 0.12, 32).rotateX(-Math.PI / 2);
+  const reticleMat = new THREE.MeshBasicMaterial({ color: 0xF5C842 });
+  reticle = new THREE.Mesh(reticleGeo, reticleMat);
+  reticle.matrixAutoUpdate = false;
+  reticle.visible = false;
+  scene.add(reticle);
+
+  // Işık
+  scene.add(new THREE.AmbientLight(0xffffff, 1));
+
+  window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  });
+}
+
+// ─── WebXR BAŞLAT ─────────────────────────────────────────
+async function arBaslat() {
+  document.getElementById('basla-btn').disabled = true;
+  durumGuncelle('AR başlatılıyor...', 'Kamera izni vermeyi unutma');
+
+  // WebXR desteği kontrol
+  if (!navigator.xr) {
+    hataGoster('Bu tarayıcı WebXR desteklemiyor. Chrome 79+ gerekli.');
+    return;
+  }
+
+  const destekleniyor = await navigator.xr.isSessionSupported('immersive-ar');
+  if (!destekleniyor) {
+    hataGoster('Bu cihaz AR desteklemiyor. ARCore destekli Android ve Chrome gerekli.');
+    return;
+  }
+
+  try {
+    xrSession = await navigator.xr.requestSession('immersive-ar', {
+      requiredFeatures: ['hit-testing', 'dom-overlay', 'camera-access'],
+      optionalFeatures: ['depth-sensing', 'light-estimation', 'anchors'],
+      domOverlay: { root: document.getElementById('overlay') },
+      depthSensing: {
+        usagePreference: ['cpu-optimized', 'gpu-optimized'],
+        dataFormatPreference: ['luminance-alpha', 'float32'],
+      }
+    });
+
+    renderer.xr.setReferenceSpaceType('local');
+    await renderer.xr.setSession(xrSession);
+
+    xrSession.addEventListener('end', arBitti);
+
+    taramaAktif = true;
+    document.getElementById('tarama-cerceve').classList.add('aktif');
+    document.getElementById('tamamla-btn').disabled = false;
+    durumGuncelle('Taranıyor...', 'Telefonu yavaşça odanın her köşesine doğrult');
+    ilerleme(10);
+
+    renderer.setAnimationLoop(render);
+
+  } catch (err) {
+    hataGoster('AR başlatılamadı: ' + err.message);
+    document.getElementById('basla-btn').disabled = false;
+  }
+}
+
+// ─── RENDER DÖNGÜSÜ ───────────────────────────────────────
+function render(timestamp, frame) {
+  if (!frame) return;
+
+  frameCount++;
+
+  const referenceSpace = renderer.xr.getReferenceSpace();
+  const session = renderer.xr.getSession();
+
+  // Hit test source al
+  if (!hitTestSourceRequested) {
+    session.requestReferenceSpace('viewer').then(viewerSpace => {
+      session.requestHitTestSource({ space: viewerSpace }).then(source => {
+        hitTestSource = source;
+      });
+    });
+    hitTestSourceRequested = true;
+  }
+
+  // Hit test sonuçları — zemin tespiti
+  if (hitTestSource) {
+    const hits = frame.getHitTestResults(hitTestSource);
+    if (hits.length > 0) {
+      const hit = hits[0];
+      const pose = hit.getPose(referenceSpace);
+      reticle.visible = true;
+      reticle.matrix.fromArray(pose.transform.matrix);
+
+      // Yüzey bilgisini kaydet
+      if (frameCount % 30 === 0) { // Her 30 frame'de bir
+        yuzeyKaydet(pose.transform.matrix);
+      }
+    } else {
+      reticle.visible = false;
+    }
+  }
+
+  // Derinlik verisi (destekleniyorsa)
+  if (frame.getDepthInformation) {
+    const views = frame.getViewerPose(referenceSpace)?.views;
+    if (views) {
+      for (const view of views) {
+        const depthInfo = frame.getDepthInformation(view);
+        if (depthInfo && frameCount % 60 === 0) {
+          derinlikIsle(depthInfo, view);
+        }
+      }
+    }
+  }
+
+  // Kamera frame'inden texture al (her 90 frame'de bir)
+  if (frameCount % 90 === 0) {
+    kameraTextureAl(frame, referenceSpace);
+  }
+
+  // İlerleme güncelle
+  if (frameCount % 60 === 0) {
+    ilerlemeGuncelle();
+  }
+
+  renderer.render(scene, camera);
+}
+
+// ─── YÜZEY KAYDET ─────────────────────────────────────────
+function yuzeyKaydet(matrix) {
+  const pozisyon = {
+    x: parseFloat(matrix[12].toFixed(2)),
+    y: parseFloat(matrix[13].toFixed(2)),
+    z: parseFloat(matrix[14].toFixed(2)),
+  };
+
+  // Benzer pozisyon var mı kontrol et
+  const benzer = yuzeyler.find(y =>
+    Math.abs(y.x - pozisyon.x) < 0.2 &&
+    Math.abs(y.z - pozisyon.z) < 0.2
+  );
+
+  if (!benzer) {
+    yuzeyler.push(pozisyon);
+    yuzeyBilgiGuncelle();
+  }
+}
+
+// ─── DERİNLİK İŞLE ───────────────────────────────────────
+function derinlikIsle(depthInfo, view) {
+  // Derinlik verisinden duvar/zemin tespiti
+  const width = depthInfo.width;
+  const height = depthInfo.height;
+
+  // Zemin tespiti — alt bölgedeki ortalama mesafe
+  let zeminMesafe = 0;
+  let zeminSayac = 0;
+
+  for (let y = height * 0.7; y < height; y += 4) {
+    for (let x = 0; x < width; x += 4) {
+      const derinlik = depthInfo.getDepthInMeters(x / width, y / height);
+      if (derinlik > 0 && derinlik < 5) {
+        zeminMesafe += derinlik;
+        zeminSayac++;
+      }
+    }
+  }
+
+  if (zeminSayac > 0) {
+    odaVerisi.zemin = {
+      mesafe: zeminMesafe / zeminSayac,
+      timestamp: Date.now()
+    };
+  }
+
+  // Duvar tespiti — sağ/sol/üst bölgeler
+  const bolgelerin = ['sol', 'sag', 'ust', 'on'];
+  const bolgeAraliklari = [
+    { x1: 0, x2: 0.2, y1: 0.2, y2: 0.8 },   // sol
+    { x1: 0.8, x2: 1, y1: 0.2, y2: 0.8 },    // sağ
+    { x1: 0.2, x2: 0.8, y1: 0, y2: 0.2 },    // üst
+    { x1: 0.3, x2: 0.7, y1: 0.3, y2: 0.7 },  // ön
+  ];
+
+  bolgeAraliklari.forEach((bolge, i) => {
+    let mesafe = 0;
+    let sayac = 0;
+
+    for (let y = height * bolge.y1; y < height * bolge.y2; y += 4) {
+      for (let x = width * bolge.x1; x < width * bolge.x2; x += 4) {
+        const d = depthInfo.getDepthInMeters(x / width, y / height);
+        if (d > 0 && d < 8) { mesafe += d; sayac++; }
+      }
+    }
+
+    if (sayac > 0) {
+      odaVerisi.duvarlar[i] = {
+        yon: bolgelerin[i],
+        mesafe: parseFloat((mesafe / sayac).toFixed(2)),
+      };
+    }
+  });
+}
+
+// ─── KAMERA TEXTURE AL ────────────────────────────────────
+function kameraTextureAl(frame, referenceSpace) {
+  // Kamera görüntüsünden texture çıkar
+  // Bu gerçek duvar/zemin dokusunu verecek
+  const gl = renderer.getContext();
+  if (!gl) return;
+
+  try {
+    const pose = frame.getViewerPose(referenceSpace);
+    if (!pose) return;
+
+    // Texture bilgisini kaydet — Three.js'e gönderilecek
+    textureFrame = {
+      timestamp: Date.now(),
+      yuzeyler: yuzeyler.length,
+    };
+  } catch (e) { /* devam */ }
+}
+
+// ─── TARAMAYI TAMAMLA ─────────────────────────────────────
+function taramayiTamamla() {
+  if (xrSession) {
+    xrSession.end();
+  }
+}
+
+function arBitti() {
+  taramaAktif = false;
+  renderer.setAnimationLoop(null);
+  document.getElementById('tarama-cerceve').classList.remove('aktif');
+
+  // Oda verisini hesapla
+  const hesaplanan = odaHesapla();
+
+  durumGuncelle('✅ Tarama Tamamlandı!', `${yuzeyler.length} yüzey tespit edildi`);
+  ilerleme(100);
+
+  // Veriyi ana uygulamaya gönder
+  setTimeout(() => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        tip: 'TARAMA_TAMAMLANDI',
+        veri: hesaplanan,
+      }));
+    } else {
+      // Web'de test için
+      console.log('Oda verisi:', hesaplanan);
+      alert('Tarama tamamlandı!\n' + JSON.stringify(hesaplanan, null, 2));
+    }
+  }, 1000);
+}
+
+// ─── ODA HESAPLA ──────────────────────────────────────────
+function odaHesapla() {
+  // Yüzeylerden oda boyutunu hesapla
+  let minX = Infinity, maxX = -Infinity;
+  let minZ = Infinity, maxZ = -Infinity;
+  let minY = Infinity, maxY = -Infinity;
+
+  yuzeyler.forEach(y => {
+    minX = Math.min(minX, y.x); maxX = Math.max(maxX, y.x);
+    minZ = Math.min(minZ, y.z); maxZ = Math.max(maxZ, y.z);
+    minY = Math.min(minY, y.y); maxY = Math.max(maxY, y.y);
+  });
+
+  const genislik = parseFloat(Math.abs(maxX - minX).toFixed(1)) || 4.0;
+  const derinlik = parseFloat(Math.abs(maxZ - minZ).toFixed(1)) || 3.5;
+
+  // Duvar mesafelerinden yükseklik
+  const yukseklik = odaVerisi.zemin?.mesafe
+    ? parseFloat((odaVerisi.zemin.mesafe * 1.2).toFixed(1))
+    : 2.7;
+
+  // Duvar mesafeleri
+  const duvarMesafeleri = {};
+  odaVerisi.duvarlar.forEach(d => {
+    if (d) duvarMesafeleri[d.yon] = d.mesafe;
+  });
+
+  return {
+    genislik: Math.max(2.5, Math.min(12, genislik)),
+    derinlik: Math.max(2.5, Math.min(12, derinlik)),
+    yukseklik: Math.max(2.2, Math.min(4.5, yukseklik)),
+    duvarMesafeleri,
+    yuzeySayisi: yuzeyler.length,
+    koordinatlar: yuzeyler,
+  };
+}
+
+// ─── UI YARDIMCILARI ──────────────────────────────────────
+function durumGuncelle(baslik, aciklama) {
+  document.getElementById('durum').textContent = baslik;
+  document.getElementById('aciklama').textContent = aciklama;
+}
+
+function ilerleme(yuzde) {
+  document.getElementById('ilerleme-dolum').style.width = yuzde + '%';
+}
+
+function ilerlemeGuncelle() {
+  const hedef = Math.min(90, 10 + yuzeyler.length * 3);
+  ilerleme(hedef);
+
+  if (yuzeyler.length > 5) {
+    durumGuncelle('Taranıyor...', `${yuzeyler.length} nokta tespit edildi — devam et`);
+  }
+  if (yuzeyler.length > 20) {
+    durumGuncelle('Harika! 🎯', 'Yeterli veri toplandı, tamamlayabilirsin');
+  }
+}
+
+function yuzeyBilgiGuncelle() {
+  const container = document.getElementById('yuzey-bilgi');
+  container.innerHTML = '';
+
+  const bilgiler = [
+    `📍 ${yuzeyler.length} nokta`,
+    odaVerisi.zemin ? `⬇️ Zemin: ${odaVerisi.zemin.mesafe.toFixed(1)}m` : null,
+    odaVerisi.duvarlar[3] ? `⬆️ Ön: ${odaVerisi.duvarlar[3].mesafe}m` : null,
+    odaVerisi.duvarlar[0] ? `⬅️ Sol: ${odaVerisi.duvarlar[0].mesafe}m` : null,
+    odaVerisi.duvarlar[1] ? `➡️ Sağ: ${odaVerisi.duvarlar[1].mesafe}m` : null,
+  ].filter(Boolean);
+
+  bilgiler.forEach(b => {
+    const badge = document.createElement('span');
+    badge.className = 'badge';
+    badge.textContent = b;
+    container.appendChild(badge);
+  });
+}
+
+function hataGoster(mesaj) {
+  document.getElementById('hata-mesaj').textContent = mesaj;
+  document.getElementById('hata').classList.add('goster');
+}
+
+function geriDon() {
+  if (xrSession) xrSession.end();
+  if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({ tip: 'GERI' }));
+  } else {
+    history.back();
+  }
+}
+
+// ─── BAŞLAT ───────────────────────────────────────────────
+threeKurulum();
+
+// WebXR desteği kontrol
+if (!navigator.xr) {
+  durumGuncelle('⚠️ WebXR Yok', 'Chrome tarayıcısı ile aç');
+  document.getElementById('basla-btn').disabled = true;
+} else {
+  navigator.xr.isSessionSupported('immersive-ar').then(destekleniyor => {
+    if (!destekleniyor) {
+      durumGuncelle('⚠️ AR Desteklenmiyor', 'ARCore destekli cihaz gerekli');
+      document.getElementById('basla-btn').disabled = true;
+    } else {
+      durumGuncelle('✅ AR Hazır', 'Başlat butonuna bas');
+    }
+  });
+}
+</script>
+</body>
+</html>
