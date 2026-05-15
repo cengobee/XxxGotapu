@@ -147,27 +147,38 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 }
 .mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .mega-kart{
-  background:var(--card);border-radius:14px;
-  padding:14px 10px 12px;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  text-decoration:none;border:1px solid var(--border);
-  transition:transform .15s,border-color .15s;
+  background:var(--card);
+  border-radius:16px;
+  padding:16px 10px 14px;
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  text-decoration:none;
+  border:1px solid var(--border2,rgba(255,255,255,0.13));
+  box-shadow:0 2px 12px rgba(0,0,0,0.28);
+  transition:transform .15s,box-shadow .15s;
   cursor:pointer;
+  position:relative;overflow:hidden;
 }
-.mega-kart:active{transform:scale(0.96)}
+.mega-kart::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(160deg,rgba(255,255,255,0.04) 0%,transparent 55%);
+  pointer-events:none;
+}
+.mega-kart:active{transform:scale(0.93);box-shadow:0 1px 6px rgba(0,0,0,0.2)}
 .mega-kart-ikon{
-  width:52px;height:52px;border-radius:50%;
+  width:54px;height:54px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:24px;
+  font-size:25px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.3);
+  flex-shrink:0;
 }
-.mega-kart-ad{font-size:12px;font-weight:800;color:var(--text);text-align:center;font-family:'Nunito',sans-serif;line-height:1.2}
-.mega-kart-alt{font-size:10px;color:var(--text3);text-align:center;font-weight:600;line-height:1.3;margin-top:-2px}
+.mega-kart-ad{font-size:12px;font-weight:800;color:var(--text);text-align:center;font-family:'Nunito',sans-serif;line-height:1.25}
+.mega-kart-alt{font-size:10px;color:var(--text3);text-align:center;font-weight:600;line-height:1.35;margin-top:-3px}
 
-/* Renk paletleri */
-.ikon-pazar{background:linear-gradient(135deg,#ff6b35,#f7931e)}
-.ikon-hizmet{background:linear-gradient(135deg,#00b4d8,#0077b6)}
-.ikon-sosyal{background:linear-gradient(135deg,#9b5de5,#f15bb5)}
-.ikon-yasam{background:linear-gradient(135deg,#06d6a0,#118ab2)}
+/* Renk paletleri — stil.css'ten geliyor, burada fallback */
+.ikon-pazar{background:var(--grad-pazar,linear-gradient(135deg,#ff6b35,#f7931e))}
+.ikon-hizmet{background:var(--grad-hizmet,linear-gradient(135deg,#00b4d8,#0077b6))}
+.ikon-sosyal{background:var(--grad-sosyal,linear-gradient(135deg,#9b5de5,#f15bb5))}
+.ikon-yasam{background:var(--grad-yasam,linear-gradient(135deg,#06d6a0,#118ab2))}
 
 .mega-alt-bilgi{
   margin:16px 0 4px;
