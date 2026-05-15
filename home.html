@@ -27,21 +27,36 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 /* ── TOP NAV ── */
 .top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border)}
 .top-nav-row1{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
-.nav-logo{font-size:20px;font-weight:900;color:var(--gold);text-decoration:none;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:6px}
-.nav-ikon-grup{display:flex;align-items:center;gap:18px}
+.nav-logo{font-size:22px;font-weight:900;color:var(--rust);text-decoration:none;font-family:'Nunito',sans-serif;letter-spacing:-0.5px}
+.nav-ikon-grup{display:flex;align-items:center;gap:14px}
 .nav-ikon-btn{background:transparent;border:none;cursor:pointer;color:var(--text2);padding:2px;display:flex;align-items:center;text-decoration:none;position:relative}
-.nav-hamburger{display:flex;flex-direction:column;gap:5px;cursor:pointer;background:transparent;border:none;padding:2px}
+.nav-hamburger{display:flex;flex-direction:column;gap:5px;cursor:pointer;background:transparent;border:none;padding:4px}
 .nav-hamburger span{display:block;height:2px;border-radius:2px;background:var(--text2)}
-.nav-hamburger span:nth-child(1){width:20px}
-.nav-hamburger span:nth-child(2){width:14px}
-.nav-hamburger span:nth-child(3){width:20px}
-.nav-profil-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:15px;text-decoration:none;color:var(--bg)}
+.nav-hamburger span:nth-child(1){width:22px}
+.nav-hamburger span:nth-child(2){width:15px}
+.nav-hamburger span:nth-child(3){width:22px}
 
 /* ── DRAWER ── */
 .drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200}
 .drawer-overlay.acik{display:block}
 .drawer-panel{position:fixed;top:0;right:-290px;width:270px;height:100%;background:var(--bg2);border-left:1px solid var(--border);z-index:201;transition:right .25s ease;overflow-y:auto;padding-bottom:60px}
 .drawer-panel.acik{right:0}
+
+/* Drawer header */
+.drawer-header{
+  background:linear-gradient(135deg,var(--rust) 0%,#ff8c42 100%);
+  padding:20px 16px 16px;
+  position:relative;
+}
+.drawer-header-logo{font-size:20px;font-weight:900;color:white;letter-spacing:-0.5px}
+.drawer-header-sub{font-size:11px;color:rgba(255,255,255,0.8);margin-top:2px;font-weight:600}
+.drawer-kapat-btn{
+  position:absolute;top:14px;right:14px;
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,0.2);border:none;
+  color:white;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
 
 .drawer-acc-btn{
   display:flex;align-items:center;justify-content:space-between;
@@ -79,6 +94,90 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 .drawer-item-ok{font-size:16px;color:var(--text3)}
 .drawer-ayrac{height:6px;background:var(--bg);border-bottom:1px solid var(--border)}
 
+/* ── MEGA APP MODAL ── */
+.mega-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;align-items:flex-end}
+.mega-overlay.acik{display:flex}
+.mega-sheet{
+  background:var(--bg2);
+  border-radius:24px 24px 0 0;
+  width:100%;
+  max-height:92vh;
+  overflow-y:auto;
+  padding-bottom:env(safe-area-inset-bottom,16px);
+}
+.mega-header{
+  background:linear-gradient(135deg,var(--rust) 0%,#ff8c42 100%);
+  padding:20px 20px 18px;
+  border-radius:24px 24px 0 0;
+  position:sticky;top:0;z-index:2;
+}
+.mega-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mega-header-logo{font-size:20px;font-weight:900;color:white;letter-spacing:-0.5px}
+.mega-header-sub{font-size:11px;color:rgba(255,255,255,0.85);font-weight:600}
+.mega-kapat{
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(255,255,255,0.2);border:none;
+  color:white;font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.mega-arama{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.2);border-radius:12px;
+  padding:10px 14px;
+}
+.mega-arama-input{
+  background:transparent;border:none;outline:none;
+  color:white;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;
+  flex:1;
+}
+.mega-arama-input::placeholder{color:rgba(255,255,255,0.7)}
+
+.mega-body{padding:0 16px 16px}
+.mega-kategori-baslik{
+  font-size:11px;font-weight:900;color:var(--text3);
+  letter-spacing:1.5px;text-transform:uppercase;
+  padding:18px 0 10px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.mega-kategori-badge{
+  background:var(--rust);color:white;
+  font-size:10px;font-weight:800;
+  padding:2px 7px;border-radius:50px;
+  letter-spacing:0;text-transform:none;
+}
+.mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mega-kart{
+  background:var(--card);border-radius:14px;
+  padding:14px 10px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  text-decoration:none;border:1px solid var(--border);
+  transition:transform .15s,border-color .15s;
+  cursor:pointer;
+}
+.mega-kart:active{transform:scale(0.96)}
+.mega-kart-ikon{
+  width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;
+}
+.mega-kart-ad{font-size:12px;font-weight:800;color:var(--text);text-align:center;font-family:'Nunito',sans-serif;line-height:1.2}
+.mega-kart-alt{font-size:10px;color:var(--text3);text-align:center;font-weight:600;line-height:1.3;margin-top:-2px}
+
+/* Renk paletleri */
+.ikon-pazar{background:linear-gradient(135deg,#ff6b35,#f7931e)}
+.ikon-hizmet{background:linear-gradient(135deg,#00b4d8,#0077b6)}
+.ikon-sosyal{background:linear-gradient(135deg,#9b5de5,#f15bb5)}
+.ikon-yasam{background:linear-gradient(135deg,#06d6a0,#118ab2)}
+
+.mega-alt-bilgi{
+  margin:16px 0 4px;
+  background:var(--card);border-radius:14px;
+  padding:14px 16px;
+  text-align:center;font-size:12px;color:var(--text3);font-weight:600;
+  border:1px solid var(--border);
+}
+.mega-alt-bilgi strong{color:var(--rust)}
+
 /* ── PAYLASIM SHEET ── */
 .paylasim-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;align-items:flex-end}
 .paylasim-overlay.acik{display:flex}
@@ -92,9 +191,43 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 
 /* ── İÇERİK ── */
 .page{padding-top:58px;padding-bottom:78px;min-height:100vh;background:var(--bg)}
-.icerik-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:58px;z-index:90}
-.icerik-tabs button{flex:1;padding:9px 4px;font-size:12px;font-weight:800;border:none;background:transparent;color:var(--text3);border-bottom:2px solid transparent;cursor:pointer;font-family:'Nunito',sans-serif}
-.icerik-tabs button.aktif{color:var(--gold);border-bottom:2px solid var(--gold)}
+
+/* Sekme bar — Video / Foto / Yazı */
+.icerik-tabs{
+  display:flex;
+  background:var(--bg2);
+  position:sticky;top:58px;z-index:90;
+  padding:10px 16px 0;
+  gap:4px;
+  border-bottom:1px solid var(--border);
+}
+.icerik-tab-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 16px 10px;
+  font-size:13px;font-weight:800;
+  border:none;background:transparent;
+  color:var(--text3);cursor:pointer;
+  font-family:'Nunito',sans-serif;
+  border-bottom:2px solid transparent;
+  border-radius:0;
+  transition:color .2s;
+  white-space:nowrap;
+}
+.icerik-tab-btn.aktif{
+  color:var(--text);
+  border-bottom:2px solid var(--rust);
+}
+.icerik-tab-btn svg{opacity:0.6}
+.icerik-tab-btn.aktif svg{opacity:1}
+
+.tab-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--rust);color:white;
+  border-radius:50px;padding:7px 16px;
+  font-size:13px;font-weight:800;
+  border:none;cursor:pointer;font-family:'Nunito',sans-serif;
+}
+
 .feed-bos{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center}
 .feed-bos-emoji{font-size:52px;margin-bottom:14px}
 .feed-bos-baslik{font-size:17px;font-weight:800;color:var(--text);margin-bottom:8px;font-family:'Nunito',sans-serif}
@@ -114,16 +247,16 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
   font-family:'Nunito',sans-serif;position:relative;min-width:0;
 }
 .bnav-label{font-size:9px;font-weight:700;color:var(--text3);white-space:nowrap}
-.bnav-item.aktif .bnav-label{color:var(--gold)}
+.bnav-item.aktif .bnav-label{color:var(--rust)}
 .bnav-center{
   flex:1;display:flex;align-items:center;justify-content:center;
   cursor:pointer;background:transparent;border:none;padding:0;
 }
 .bnav-center-btn{
   width:46px;height:46px;border-radius:50%;
-  background:var(--gold);display:flex;align-items:center;justify-content:center;
-  font-size:28px;line-height:1;color:#1a1a1a;font-weight:900;margin-top:-14px;
-  box-shadow:0 4px 16px rgba(245,200,66,0.4);
+  background:var(--rust);display:flex;align-items:center;justify-content:center;
+  font-size:28px;line-height:1;color:white;font-weight:900;margin-top:-14px;
+  box-shadow:0 4px 16px rgba(232,96,58,0.45);
 }
 .bnav-badge{
   position:absolute;top:-2px;right:4px;
@@ -132,6 +265,14 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
   min-width:15px;height:15px;border-radius:50%;
   display:none;align-items:center;justify-content:center;padding:0 2px;
 }
+
+/* Aktif ikon rengi bottom nav */
+.bnav-item.aktif svg path,
+.bnav-item.aktif svg circle,
+.bnav-item.aktif svg rect{
+  stroke:var(--rust) !important;
+}
+.bnav-item.aktif .bnav-fill-icon{fill:var(--rust) !important}
 
 @media(min-width:900px){
   body{padding-bottom:0!important}
@@ -147,19 +288,18 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 <!-- ── TOP NAV ── -->
 <nav class="top-nav">
   <div class="top-nav-row1">
-    <a href="home.html" class="nav-logo">🏠 GoTapu</a>
+    <button class="nav-hamburger" onclick="drawerAc()" title="Menü">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="home.html" class="nav-logo">GoTapu</a>
     <div class="nav-ikon-grup">
       <button class="nav-ikon-btn" onclick="aramaOdakla()" title="Ara">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       </button>
-      <a href="bildirimler.html" class="nav-ikon-btn" title="Bildirimler">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <a href="bildirimler.html" class="nav-ikon-btn" title="Bildirimler" style="position:relative">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span id="bildirimBadge" class="bnav-badge" style="top:-4px;right:-4px"></span>
       </a>
-      <button class="nav-hamburger" onclick="drawerAc()" title="Menü">
-        <span></span><span></span><span></span>
-      </button>
-      <a href="profil.html" class="nav-profil-avatar" title="Profil">👤</a>
     </div>
   </div>
 </nav>
@@ -167,6 +307,12 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 <!-- ── DRAWER ── -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="drawerKapat()"></div>
 <div class="drawer-panel" id="drawerPanel">
+
+  <div class="drawer-header">
+    <div class="drawer-header-logo">GoTapu</div>
+    <div class="drawer-header-sub">Mega App — tek çatı altında</div>
+    <button class="drawer-kapat-btn" onclick="drawerKapat()">✕</button>
+  </div>
 
   <!-- İlanlar — accordion -->
   <button class="drawer-acc-btn" id="ilanlarBtn" onclick="ilanlarToggle()">
@@ -220,6 +366,165 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 
 </div>
 
+<!-- ── MEGA APP MODAL ── -->
+<div class="mega-overlay" id="megaOverlay" onclick="megaKapatDis(event)">
+  <div class="mega-sheet" id="megaSheet">
+    <div class="mega-header">
+      <div class="mega-header-row">
+        <div>
+          <div class="mega-header-logo">GoTapu</div>
+          <div class="mega-header-sub">Tüm uygulamalar tek çatı altında — site içi, üyeden üyeye.</div>
+        </div>
+        <button class="mega-kapat" onclick="megaKapat()">✕</button>
+      </div>
+      <div class="mega-arama">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="mega-arama-input" id="megaAramaInput" placeholder="Uygulamalarda ara..." oninput="megaFiltrele(this.value)">
+      </div>
+    </div>
+
+    <div class="mega-body" id="megaBody">
+
+      <!-- PAZAR -->
+      <div class="mega-kategori-baslik">
+        Pazar
+        <span class="mega-kategori-badge">5</span>
+      </div>
+      <div class="mega-grid" id="gridPazar">
+        <a class="mega-kart" href="ilanlar.html">
+          <div class="mega-kart-ikon ikon-pazar">🏷️</div>
+          <div class="mega-kart-ad">İlanlar</div>
+          <div class="mega-kart-alt">Emlak, vasıta, 2.el...</div>
+        </a>
+        <a class="mega-kart" href="alisveris.html">
+          <div class="mega-kart-ikon ikon-pazar">🛍️</div>
+          <div class="mega-kart-ad">Alışveriş</div>
+          <div class="mega-kart-alt">%1 komisyonla mağaza</div>
+        </a>
+        <a class="mega-kart" href="ilanlar.html?kategori=ikinciel">
+          <div class="mega-kart-ikon ikon-pazar">♻️</div>
+          <div class="mega-kart-ad">2. El</div>
+          <div class="mega-kart-alt">Garantili 2. el ürünler</div>
+        </a>
+        <a class="mega-kart" href="mobilya.html">
+          <div class="mega-kart-ikon ikon-pazar">🛋️</div>
+          <div class="mega-kart-ad">Mobilya</div>
+          <div class="mega-kart-alt">Evine özel tasarım</div>
+        </a>
+        <a class="mega-kart" href="ilanlar.html?kategori=isbulma">
+          <div class="mega-kart-ikon ikon-pazar">💼</div>
+          <div class="mega-kart-ad">İş İlanları</div>
+          <div class="mega-kart-alt">Tam zamanlı, freelance</div>
+        </a>
+      </div>
+
+      <!-- HİZMET -->
+      <div class="mega-kategori-baslik">
+        Hizmet
+        <span class="mega-kategori-badge">7</span>
+      </div>
+      <div class="mega-grid" id="gridHizmet">
+        <a class="mega-kart" href="taksi.html">
+          <div class="mega-kart-ikon ikon-hizmet">🚕</div>
+          <div class="mega-kart-ad">Taksi</div>
+          <div class="mega-kart-alt">Şoför çağır, üye...</div>
+        </a>
+        <a class="mega-kart" href="yemek.html">
+          <div class="mega-kart-ikon ikon-hizmet">🍔</div>
+          <div class="mega-kart-ad">Yemek</div>
+          <div class="mega-kart-alt">Komşu mutfağından...</div>
+        </a>
+        <a class="mega-kart" href="yoresel.html">
+          <div class="mega-kart-ikon ikon-hizmet">🍽️</div>
+          <div class="mega-kart-ad">Yöresel Lezzetler</div>
+          <div class="mega-kart-alt">Şehirden şehre, ev...</div>
+        </a>
+        <a class="mega-kart" href="kurye.html">
+          <div class="mega-kart-ikon ikon-hizmet">🛵</div>
+          <div class="mega-kart-ad">Kurye</div>
+          <div class="mega-kart-alt">Aynı gün teslimat</div>
+        </a>
+        <a class="mega-kart" href="nakliyat.html">
+          <div class="mega-kart-ikon ikon-hizmet">📦</div>
+          <div class="mega-kart-ad">Nakliyat</div>
+          <div class="mega-kart-alt">Şehir içi & şehirler arası</div>
+        </a>
+        <a class="mega-kart" href="hizmetler.html">
+          <div class="mega-kart-ikon ikon-hizmet">🔧</div>
+          <div class="mega-kart-ad">Usta</div>
+          <div class="mega-kart-alt">Tesisat, elektrik, boya</div>
+        </a>
+        <a class="mega-kart" href="temizlik.html">
+          <div class="mega-kart-ikon ikon-hizmet">🧹</div>
+          <div class="mega-kart-ad">Temizlik</div>
+          <div class="mega-kart-alt">Ev & ofis temizliği</div>
+        </a>
+      </div>
+
+      <!-- SOSYAL -->
+      <div class="mega-kategori-baslik">
+        Sosyal
+        <span class="mega-kategori-badge">3</span>
+      </div>
+      <div class="mega-grid" id="gridSosyal">
+        <a class="mega-kart" href="eslesmeler.html">
+          <div class="mega-kart-ikon ikon-sosyal">❤️</div>
+          <div class="mega-kart-ad">Eşleşme</div>
+          <div class="mega-kart-alt">Ev, araba, usta, insan</div>
+        </a>
+        <a class="mega-kart" href="etkinlikler.html">
+          <div class="mega-kart-ikon ikon-sosyal">🎫</div>
+          <div class="mega-kart-ad">Etkinlikler</div>
+          <div class="mega-kart-alt">Konser, buluşma, gece</div>
+        </a>
+        <a class="mega-kart" href="gruplar.html">
+          <div class="mega-kart-ikon ikon-sosyal">👥</div>
+          <div class="mega-kart-ad">Topluluklar</div>
+          <div class="mega-kart-alt">İlgi alanına göre...</div>
+        </a>
+      </div>
+
+      <!-- YAŞAM -->
+      <div class="mega-kategori-baslik">
+        Yaşam
+        <span class="mega-kategori-badge">5</span>
+      </div>
+      <div class="mega-grid" id="gridYasam">
+        <a class="mega-kart" href="sana-ozel.html">
+          <div class="mega-kart-ikon ikon-yasam">🏠</div>
+          <div class="mega-kart-ad">Senin Evin</div>
+          <div class="mega-kart-alt">3D ev tasarla, mobilya...</div>
+        </a>
+        <a class="mega-kart" href="saglik.html">
+          <div class="mega-kart-ikon ikon-yasam">🩺</div>
+          <div class="mega-kart-ad">Sağlık</div>
+          <div class="mega-kart-alt">Doktor, randevu, ilaç</div>
+        </a>
+        <a class="mega-kart" href="egitim.html">
+          <div class="mega-kart-ikon ikon-yasam">🎓</div>
+          <div class="mega-kart-ad">Eğitim</div>
+          <div class="mega-kart-alt">Özel ders, kurslar</div>
+        </a>
+        <a class="mega-kart" href="ilanlar.html?kategori=pet">
+          <div class="mega-kart-ikon ikon-yasam">🐾</div>
+          <div class="mega-kart-ad">Evcil Dostlar</div>
+          <div class="mega-kart-alt">Veteriner, bakım...</div>
+        </a>
+        <a class="mega-kart" href="profil.html#cuzdan">
+          <div class="mega-kart-ikon ikon-yasam">💳</div>
+          <div class="mega-kart-ad">Cüzdan</div>
+          <div class="mega-kart-alt">Ödeme, kredi, referans</div>
+        </a>
+      </div>
+
+      <div class="mega-alt-bilgi">
+        Komisyon <strong>%1</strong> · Referans linkin <strong>%1/yıl</strong>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- ── PAYLASIM SHEET ── -->
 <div class="paylasim-overlay" id="paylasimOverlay" onclick="paylasimKapat(event)">
   <div class="paylasim-sheet">
@@ -256,11 +561,22 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 
 <!-- ── ANA İÇERİK ── -->
 <div class="page">
-  <div class="icerik-tabs">
-    <button id="icerikVideo" class="aktif" onclick="icerikGec('video')">Video</button>
-    <button id="icerikFotograf" onclick="icerikGec('fotograf')">Fotoğraf</button>
-    <button id="icerikYazi" onclick="icerikGec('yazi')">Yazı</button>
+  <!-- Sekme bar -->
+  <div class="icerik-tabs" id="icerikTabs">
+    <button id="tabVideo" class="icerik-tab-btn aktif" onclick="icerikGec('Video')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="15" height="15" rx="2"/><polygon points="17 8 22 12 17 16 17 8"/></svg>
+      Video
+    </button>
+    <button id="tabFoto" class="icerik-tab-btn" onclick="icerikGec('Foto')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Foto
+    </button>
+    <button id="tabYazi" class="icerik-tab-btn" onclick="icerikGec('Yazi')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+      Yazı
+    </button>
   </div>
+
   <div id="bolumVideo">
     <div class="feed-bos">
       <div class="feed-bos-emoji">🎬</div>
@@ -268,7 +584,7 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
       <div class="feed-bos-alt">Takip ettiğin kişilerin videoları burada akacak</div>
     </div>
   </div>
-  <div id="bolumFotograf" style="display:none">
+  <div id="bolumFoto" style="display:none">
     <div class="feed-bos">
       <div class="feed-bos-emoji">📷</div>
       <div class="feed-bos-baslik">Fotoğraf akışı yakında</div>
@@ -287,8 +603,8 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;marg
 <!-- ── BOTTOM NAV (5 buton) ── -->
 <nav class="bottom-nav">
   <a href="home.html" class="bnav-item aktif">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-    <span class="bnav-label" style="color:var(--gold)">Ana Sayfa</span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--rust)" stroke="none" class="bnav-fill-icon"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    <span class="bnav-label" style="color:var(--rust)">Ana Sayfa</span>
   </a>
   <a href="kesfet.html" class="bnav-item">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -328,6 +644,28 @@ function ilanlarToggle(){
   document.getElementById('ilanlarBtn').classList.toggle('acik');
   document.getElementById('ilanlarSub').classList.toggle('acik');
 }
+
+// Mega App
+function megaAc(){
+  document.getElementById('megaOverlay').classList.add('acik');
+  document.getElementById('megaAramaInput').value='';
+  megaFiltrele('');
+}
+function megaKapat(){
+  document.getElementById('megaOverlay').classList.remove('acik');
+}
+function megaKapatDis(e){
+  if(e.target===document.getElementById('megaOverlay')) megaKapat();
+}
+function megaFiltrele(q){
+  q=q.toLowerCase().trim();
+  document.querySelectorAll('.mega-kart').forEach(k=>{
+    const ad=k.querySelector('.mega-kart-ad').textContent.toLowerCase();
+    const alt=k.querySelector('.mega-kart-alt').textContent.toLowerCase();
+    k.style.display=(q===''||ad.includes(q)||alt.includes(q))?'flex':'none';
+  });
+}
+
 function paylasimAc(){
   document.getElementById('paylasimOverlay').classList.add('acik');
 }
@@ -338,13 +676,16 @@ function paylasimKapat(e){
 function aramaOdakla(){window.location.href='ilanlar.html'}
 
 function icerikGec(sekme){
-  document.querySelectorAll('.icerik-tabs button').forEach(b=>b.classList.remove('aktif'));
-  const btn=document.getElementById('icerik'+sekme.charAt(0).toUpperCase()+sekme.slice(1));
+  // Tab butonları
+  document.querySelectorAll('.icerik-tab-btn').forEach(b=>b.classList.remove('aktif'));
+  const btn=document.getElementById('tab'+sekme);
   if(btn) btn.classList.add('aktif');
-  ['bolumVideo','bolumFotograf','bolumYazi'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.style.display='none';
+  // Bölümler
+  ['Video','Foto','Yazi'].forEach(id=>{
+    const el=document.getElementById('bolum'+id);
+    if(el) el.style.display='none';
   });
-  const hedef=document.getElementById('bolum'+sekme.charAt(0).toUpperCase()+sekme.slice(1));
+  const hedef=document.getElementById('bolum'+sekme);
   if(hedef) hedef.style.display='block';
 }
 
