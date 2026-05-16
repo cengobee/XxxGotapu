@@ -2,195 +2,207 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Keşfet — GoTapu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
+<title>Mesajlar — GoTapu</title>
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
 <link rel="stylesheet" href="stil.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0d14">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 
-/* ── ARAMA ── */
-.arama-wrap{
-  padding:10px 14px;
-  background:var(--bg2);
-  position:sticky;top:var(--nav-h,58px);z-index:90;
+/* ── SOHBET LİSTESİ ── */
+.chat-item{
+  display:flex;gap:12px;align-items:center;
+  padding:14px 16px;
   border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background .15s;
 }
-.arama-input-wrap{
-  display:flex;align-items:center;
-  background:var(--card);border-radius:14px;
-  padding:0 14px;gap:10px;
-  border:1px solid var(--border);
-}
-.arama-input-wrap svg{color:var(--text3);flex-shrink:0}
-.arama-input{
-  background:transparent;border:none;outline:none;
-  font-size:14px;font-weight:600;color:var(--text);
-  font-family:'Nunito',sans-serif;padding:12px 0;width:100%;
-}
-.arama-input::placeholder{color:var(--text3)}
-
-/* ── FİLTRE ── */
-.filtre-bar{
-  display:flex;gap:8px;overflow-x:auto;
-  padding:10px 14px;
-  background:var(--bg2);
-  border-bottom:1px solid var(--border);
-  scrollbar-width:none;
-}
-.filtre-bar::-webkit-scrollbar{display:none}
-.filtre-btn{
-  flex-shrink:0;padding:7px 16px;border-radius:50px;
-  border:1.5px solid var(--border2);
-  background:var(--card);
-  font-size:12px;font-weight:800;color:var(--text3);
-  cursor:pointer;font-family:'Nunito',sans-serif;
-  transition:all .18s;white-space:nowrap;
-}
-.filtre-btn.aktif{
-  background:var(--rust);border-color:var(--rust);color:#fff;
-}
-
-/* ── TREND ── */
-.trend-section{padding:16px 14px 0}
-.section-baslik{
-  font-size:11px;font-weight:900;color:var(--text3);
-  letter-spacing:1.4px;text-transform:uppercase;margin-bottom:10px;
-}
-.trend-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
-.trend-chips::-webkit-scrollbar{display:none}
-.trend-chip{
-  flex-shrink:0;padding:6px 14px;border-radius:50px;
-  background:var(--card);border:1px solid var(--border);
-  font-size:12px;font-weight:700;color:var(--text2);
-  cursor:pointer;transition:all .15s;font-family:'Nunito',sans-serif;
-}
-.trend-chip:active{border-color:var(--rust);color:var(--rust)}
-
-/* ── KEŞFET GRİD ── */
-.kesfet-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:3px;padding:3px;margin-top:14px;
-}
-.kesfet-kart{
-  position:relative;aspect-ratio:1/1;
-  overflow:hidden;background:var(--card);
-  cursor:pointer;border-radius:4px;
-}
-.kesfet-kart.buyuk{grid-column:span 2;aspect-ratio:16/9}
-.kesfet-kart-bg{
-  width:100%;height:100%;object-fit:cover;
-  transition:transform .3s ease;display:block;
-}
-.kesfet-kart:active .kesfet-kart-bg{transform:scale(1.04)}
-.kesfet-kart-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 55%);
-}
-.kesfet-kart-tip{
-  position:absolute;top:8px;left:8px;
-  padding:3px 8px;border-radius:6px;
-  font-size:10px;font-weight:900;font-family:'Nunito',sans-serif;
-  backdrop-filter:blur(8px);
-}
-.tip-video{background:rgba(232,96,58,0.9);color:#fff}
-.tip-foto{background:rgba(74,144,217,0.9);color:#fff}
-.tip-yazi{background:rgba(46,204,113,0.9);color:#fff}
-.kesfet-kart-bilgi{
-  position:absolute;bottom:0;left:0;right:0;
-  padding:10px 10px 8px;
-  background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);
-}
-.kesfet-kart-kullanici{font-size:11px;font-weight:800;color:#fff;font-family:'Nunito',sans-serif}
-.kesfet-kart-stat{font-size:10px;color:rgba(255,255,255,0.7);font-family:'Nunito',sans-serif;margin-top:2px}
-.video-play{
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:36px;height:36px;border-radius:50%;
-  background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);
-  display:flex;align-items:center;justify-content:center;pointer-events:none;
-}
-.kesfet-kart-yazi{
-  width:100%;height:100%;padding:16px;
-  display:flex;flex-direction:column;justify-content:space-between;
+.chat-item:active{background:var(--card2)}
+.chat-avatar{
+  width:50px;height:50px;border-radius:50%;
   background:var(--card2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;overflow:hidden;
+  border:2px solid var(--border);
 }
-.kart-yazi-metin{
-  font-size:13px;font-weight:700;color:var(--text2);
-  line-height:1.45;font-family:'Nunito',sans-serif;
-  overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;
+.chat-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.chat-info{flex:1;min-width:0}
+.chat-name{font-size:15px;font-weight:800;color:var(--text)}
+.chat-ilan{font-size:11px;color:var(--rust);font-weight:700;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-preview{font-size:13px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-meta{text-align:right;flex-shrink:0}
+.chat-time{font-size:11px;color:var(--text3);margin-bottom:5px}
+.chat-unread{
+  background:var(--rust);color:#fff;
+  width:20px;height:20px;border-radius:50%;
+  font-size:11px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;margin-left:auto;
 }
-.kart-yazi-alt{display:flex;align-items:center;gap:6px;margin-top:8px}
-.kart-yazi-avatar{
-  width:22px;height:22px;border-radius:50%;
-  background:var(--rust);display:flex;align-items:center;
-  justify-content:center;font-size:10px;color:#fff;font-weight:900;flex-shrink:0;
-}
-.kart-yazi-isim{font-size:11px;font-weight:800;color:var(--text3);font-family:'Nunito',sans-serif}
 
-/* ── BOŞ ── */
-.bos-durum{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 24px;text-align:center}
-.bos-emoji{font-size:54px;margin-bottom:14px;line-height:1}
-.bos-baslik{font-size:17px;font-weight:800;color:var(--text);margin-bottom:8px;font-family:'Nunito',sans-serif}
-.bos-alt{font-size:13px;color:var(--text3);font-family:'Nunito',sans-serif;line-height:1.55}
-
-/* Placeholder renkler */
-.placeholder-1{background:linear-gradient(135deg,#1a2a4a,#2a4a6a)}
-.placeholder-2{background:linear-gradient(135deg,#2a1a3a,#4a2a5a)}
-.placeholder-3{background:linear-gradient(135deg,#1a3a2a,#2a5a3a)}
-.placeholder-4{background:linear-gradient(135deg,#3a2a1a,#5a4a2a)}
-.placeholder-5{background:linear-gradient(135deg,#3a1a1a,#5a2a2a)}
-.placeholder-6{background:linear-gradient(135deg,#1a1a3a,#2a2a5a)}
-.placeholder-7{background:linear-gradient(135deg,#2a3a1a,#3a5a2a)}
-.placeholder-8{background:linear-gradient(135deg,#3a3a1a,#5a5a2a)}
-
-@media(min-width:900px){
-  .kesfet-grid{border-radius:12px;overflow:hidden}
+/* ── SOHBET EKRANI ── */
+.chat-screen{
+  display:none;flex-direction:column;
+  position:fixed;top:var(--nav-h,58px);
+  left:0;right:0;bottom:0;
+  background:var(--bg);z-index:250;overflow:hidden;
 }
+.chat-screen.open{display:flex}
+.chat-header{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg2);flex-shrink:0;
+  backdrop-filter:blur(12px);
+}
+.chat-back-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--card);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;cursor:pointer;color:var(--text);flex-shrink:0;
+}
+.chat-header-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--card2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;overflow:hidden;cursor:pointer;flex-shrink:0;
+  border:2px solid var(--border);
+}
+.chat-header-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.chat-header-info{flex:1;cursor:pointer;min-width:0}
+.chat-header-name{font-size:16px;font-weight:800;color:var(--text)}
+.chat-header-ilan{font-size:12px;color:var(--rust);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-actions{display:flex;gap:4px;align-items:center;flex-shrink:0}
+.header-icon-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--card);border:none;
+  font-size:17px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ── MESAJLAR ── */
+.chat-messages{
+  flex:1;overflow-y:auto;
+  padding:16px;display:flex;
+  flex-direction:column;gap:8px;
+  padding-bottom:8px;
+}
+.chat-messages::-webkit-scrollbar{display:none}
+.msg-row{display:flex;align-items:flex-end;gap:8px}
+.msg-row.me{flex-direction:row-reverse}
+.msg-bubble-wrap{display:flex;flex-direction:column;max-width:75%}
+.msg-row.me .msg-bubble-wrap{align-items:flex-end}
+.msg-row.them .msg-bubble-wrap{align-items:flex-start}
+.msg{padding:10px 14px;border-radius:18px;font-size:15px;line-height:1.5;word-break:break-word}
+.msg-them{background:var(--card);border-bottom-left-radius:4px}
+.msg-me{background:var(--rust);color:#fff;border-bottom-right-radius:4px;font-weight:700}
+.msg-time{font-size:10px;opacity:.6;margin-top:4px}
+.msg-mini-avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--card2);display:flex;align-items:center;
+  justify-content:center;font-size:13px;flex-shrink:0;overflow:hidden;
+}
+.msg-mini-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+
+/* ── GİRİŞ ── */
+.chat-input-row{
+  display:flex;gap:10px;
+  padding:12px 16px;
+  padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));
+  border-top:1px solid var(--border);
+  background:var(--bg2);flex-shrink:0;
+}
+.chat-input-row input{
+  flex:1;background:var(--card);
+  border:1.5px solid var(--border);
+  border-radius:50px;padding:12px 16px;
+  color:var(--text);font-family:'Nunito',sans-serif;
+  font-size:15px;outline:none;
+  transition:border-color .2s;
+}
+.chat-input-row input:focus{border-color:var(--rust)}
+.chat-input-row input::placeholder{color:var(--text3)}
+.send-btn{
+  width:46px;height:46px;border-radius:50%;
+  background:var(--rust);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:18px;flex-shrink:0;
+  box-shadow:0 3px 12px rgba(232,96,58,0.4);
+}
+
+/* ── ŞİKAYET ── */
+.sikayet-btn{
+  width:100%;padding:14px 16px;border-radius:var(--radius-sm,10px);
+  background:var(--card);border:1.5px solid var(--border);
+  color:var(--text);font-family:'Nunito',sans-serif;
+  font-size:14px;font-weight:700;cursor:pointer;text-align:left;
+  transition:all .15s;
+}
+.sikayet-btn.selected{border-color:var(--rust);background:rgba(232,96,58,0.08);color:var(--rust)}
 </style>
 </head>
-<body data-page="kesfet" style="visibility:hidden">
+<body data-page="mesajlar" style="visibility:hidden">
 <script>(function(){if(localStorage.getItem('gotapu_tema')==='light')document.body.classList.add('light')})();</script>
 
-<!-- ARAMA -->
-<div class="arama-wrap">
-  <div class="arama-input-wrap">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input class="arama-input" type="text" placeholder="Kişi, konu veya içerik ara…" id="aramaInput">
+<!-- MESAJLAR LİSTESİ -->
+<div class="page fade-up" id="chatList">
+  <div class="section-head" style="padding:16px 16px 8px">
+    <div class="section-title">Mesajlar</div>
+    <span class="tag tag-rust" id="okunmamisSay" style="display:none">0 Okunmamış</span>
+  </div>
+  <div class="card" id="konusmalar" style="border-radius:0;border-left:none;border-right:none">
+    <div class="spinner"></div>
   </div>
 </div>
 
-<!-- FİLTRE -->
-<div class="filtre-bar" id="filtreTabs">
-  <button class="filtre-btn aktif" onclick="filtreSec(this,'tumu')">Tümü</button>
-  <button class="filtre-btn" onclick="filtreSec(this,'video')">🎬 Video</button>
-  <button class="filtre-btn" onclick="filtreSec(this,'fotograf')">📷 Fotoğraf</button>
-  <button class="filtre-btn" onclick="filtreSec(this,'yazi')">✏️ Yazı</button>
-</div>
-
-<!-- TREND -->
-<div class="trend-section">
-  <div class="section-baslik">Trend</div>
-  <div class="trend-chips">
-    <div class="trend-chip">#gayrimenkul</div>
-    <div class="trend-chip">#ikinciel</div>
-    <div class="trend-chip">#tasarim</div>
-    <div class="trend-chip">#teknoloji</div>
-    <div class="trend-chip">#dekorasyon</div>
-    <div class="trend-chip">#urunler</div>
-    <div class="trend-chip">#yasam</div>
+<!-- SOHBET EKRANI -->
+<div class="chat-screen" id="chatScreen">
+  <div class="chat-header">
+    <button class="chat-back-btn" onclick="kapat()">←</button>
+    <div class="chat-header-avatar" id="chatHeaderAvatar" onclick="profileGit()">👤</div>
+    <div class="chat-header-info" onclick="profileGit()">
+      <div class="chat-header-name" id="chatName">Kullanıcı</div>
+      <div class="chat-header-ilan" id="chatIlan"></div>
+    </div>
+    <div class="header-actions">
+      <button class="header-icon-btn" onclick="silModuToggle()" title="Sil">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </button>
+      <button class="header-icon-btn" onclick="mesajSikayetAc()" title="Şikayet">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="chat-messages" id="chatMessages"><div class="spinner"></div></div>
+  <div class="chat-input-row">
+    <input type="text" placeholder="Mesaj yazın…" id="msgInput" onkeydown="if(event.key==='Enter')gonder()">
+    <button class="send-btn" onclick="gonder()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
   </div>
 </div>
 
-<!-- GRİD -->
-<div class="kesfet-grid" id="kesfetGrid"></div>
-<div class="bos-durum" id="bosDurum" style="display:none">
-  <div class="bos-emoji">🔍</div>
-  <div class="bos-baslik">İçerik bulunamadı</div>
-  <div class="bos-alt">Farklı bir arama dene veya filtreyi değiştir</div>
+<!-- ŞİKAYET MODAL -->
+<div class="modal-overlay" id="sikayetModal" onclick="if(event.target===this)sikayetKapat()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 style="font-size:18px;font-weight:900;margin-bottom:6px">Kullanıcıyı Şikayet Et</h3>
+    <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Şikayet sebebini seçin</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+      <button class="sikayet-btn" onclick="mSikayetSec(this,'Spam')">📧 Spam</button>
+      <button class="sikayet-btn" onclick="mSikayetSec(this,'Dolandırıcılık')">💸 Dolandırıcılık</button>
+      <button class="sikayet-btn" onclick="mSikayetSec(this,'Hakaret/Küfür')">🤬 Hakaret/Küfür</button>
+      <button class="sikayet-btn" onclick="mSikayetSec(this,'Taciz')">🚫 Taciz</button>
+      <button class="sikayet-btn" onclick="mSikayetSec(this,'Diğer')">📝 Diğer</button>
+    </div>
+    <textarea class="input" id="mSikayetAciklama" rows="3" placeholder="Ek açıklama (isteğe bağlı)…" style="resize:none;margin-bottom:12px"></textarea>
+    <button class="btn btn-rust btn-lg" onclick="mesajSikayetGonder()">Şikayeti Gönder</button>
+  </div>
 </div>
 
 <script>
@@ -200,104 +212,173 @@ const{createClient}=supabase;
 const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 window._sbClient=sb;
 
-let aktifFiltre='tumu';
-let tumIcerikler=[];
+let currentUser=null,aktifIlanId=null,aktifKarsiId=null,mesajKanal=null,karsiAvatarUrl=null;
 
-function filtreSec(btn,filtre){
-  document.querySelectorAll('.filtre-btn').forEach(b=>b.classList.remove('aktif'));
-  btn.classList.add('aktif');
-  aktifFiltre=filtre;
-  gridCiz(filtreUygula());
+const params=new URLSearchParams(window.location.search);
+const urlIlanId=params.get('ilan_id');
+const urlKarsiId=params.get('karsi_id');
+
+sb.auth.getSession().then(({data})=>{
+  if(!data.session){window.location.href='index.html';return;}
+  currentUser=data.session.user;
+  konusmalariYukle();
+  if(urlKarsiId){
+    history.pushState({chat:true},'',location.href);
+    if(urlIlanId)ilanBilgisiAl(urlIlanId,urlKarsiId);
+    else adminMesajAc(urlKarsiId);
+  }
+  document.body.style.visibility='visible';
+});
+
+window.addEventListener('popstate',()=>{
+  if(document.getElementById('chatScreen').classList.contains('open'))kapatSessiz();
+});
+
+async function adminMesajAc(karsiId){
+  const{data:profil}=await sb.from('profiles').select('full_name,avatar_url').eq('id',karsiId).single();
+  acKonusma(karsiId,null,profil?.full_name||'Kullanıcı','GoTapu Mesajı',profil?.avatar_url||null);
 }
-function filtreUygula(){
-  if(aktifFiltre==='tumu')return tumIcerikler;
-  return tumIcerikler.filter(i=>i.tip===aktifFiltre);
+async function ilanBilgisiAl(ilanId,karsiId){
+  const{data:ilan}=await sb.from('ilanlar').select('baslik').eq('id',ilanId).single();
+  const{data:profil}=await sb.from('profiles').select('full_name,avatar_url').eq('id',karsiId).single();
+  acKonusma(karsiId,ilanId,profil?.full_name||'Kullanıcı',ilan?.baslik||'İlan',profil?.avatar_url||null);
 }
 
-const PLACEHOLDER_ICERIKLER=[
-  {id:1,tip:'video',renk:'placeholder-1',kullanici:'@ahmet_k',begeni:'1.2K',yorum:'48',buyuk:true,etiket:'#tasarim'},
-  {id:2,tip:'fotograf',renk:'placeholder-2',kullanici:'@zeynep_m',begeni:'847',yorum:'23'},
-  {id:3,tip:'fotograf',renk:'placeholder-3',kullanici:'@murat_y',begeni:'512',yorum:'17'},
-  {id:4,tip:'yazi',kullanici:'@selin_a',metin:'İkinci el mobilya alırken dikkat etmeniz gereken 5 şey... Özellikle ahşap ürünlerde nem hasarına bakın.',begeni:'334',yorum:'61'},
-  {id:5,tip:'video',renk:'placeholder-5',kullanici:'@can_b',begeni:'2.1K',yorum:'89',etiket:'#yasam'},
-  {id:6,tip:'fotograf',renk:'placeholder-6',kullanici:'@ayse_d',begeni:'921',yorum:'34'},
-  {id:7,tip:'fotograf',renk:'placeholder-7',kullanici:'@emre_s',begeni:'445',yorum:'12'},
-  {id:8,tip:'yazi',kullanici:'@fatma_k',metin:'Evimi sıfırdan dekore ettim, toplam bütçem 8.500 TL. Detayları paylaşmak istiyorum...',begeni:'678',yorum:'102'},
-  {id:9,tip:'video',renk:'placeholder-8',kullanici:'@burak_t',begeni:'3.4K',yorum:'156',etiket:'#dekorasyon'},
-  {id:10,tip:'fotograf',renk:'placeholder-1',kullanici:'@naz_g',begeni:'289',yorum:'8'},
-];
-
-function gridCiz(icerikler){
-  const grid=document.getElementById('kesfetGrid');
-  const bos=document.getElementById('bosDurum');
-  if(!icerikler.length){grid.innerHTML='';bos.style.display='flex';return;}
-  bos.style.display='none';
-  grid.innerHTML=icerikler.map((item,idx)=>{
-    const buyukMu=item.buyuk||(idx%7===0);
-    if(item.tip==='yazi'){return `
-      <div class="kesfet-kart${buyukMu?' buyuk':''}" onclick="icerikAc(${item.id})">
-        <div class="kesfet-kart-yazi">
-          <div class="kart-yazi-metin">${item.metin}</div>
-          <div class="kart-yazi-alt">
-            <div class="kart-yazi-avatar">${item.kullanici.charAt(1).toUpperCase()}</div>
-            <span class="kart-yazi-isim">${item.kullanici}</span>
-            <span style="margin-left:auto;font-size:10px;color:var(--text3);font-family:'Nunito',sans-serif">❤️ ${item.begeni}</span>
-          </div>
-        </div>
-        <div class="kesfet-kart-tip tip-yazi">Yazı</div>
-      </div>`;}
-    if(item.tip==='video'){return `
-      <div class="kesfet-kart${buyukMu?' buyuk':''}" onclick="icerikAc(${item.id})">
-        <div class="kesfet-kart-bg ${item.renk}" style="width:100%;height:100%"></div>
-        <div class="kesfet-kart-overlay"></div>
-        <div class="video-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
-        <div class="kesfet-kart-tip tip-video">Video</div>
-        ${item.etiket?`<div style="position:absolute;bottom:8px;left:8px;font-size:10px;font-weight:800;color:rgba(255,255,255,0.8);font-family:'Nunito',sans-serif">${item.etiket}</div>`:''}
-        <div class="kesfet-kart-bilgi">
-          <div class="kesfet-kart-kullanici">${item.kullanici}</div>
-          <div class="kesfet-kart-stat">▶ ${item.begeni} · 💬 ${item.yorum}</div>
-        </div>
-      </div>`;}
-    return `
-      <div class="kesfet-kart${buyukMu?' buyuk':''}" onclick="icerikAc(${item.id})">
-        <div class="kesfet-kart-bg ${item.renk}" style="width:100%;height:100%"></div>
-        <div class="kesfet-kart-overlay"></div>
-        <div class="kesfet-kart-tip tip-foto">Fotoğraf</div>
-        <div class="kesfet-kart-bilgi">
-          <div class="kesfet-kart-kullanici">${item.kullanici}</div>
-          <div class="kesfet-kart-stat">❤️ ${item.begeni} · 💬 ${item.yorum}</div>
-        </div>
-      </div>`;
+async function konusmalariYukle(){
+  const{data}=await sb.from('mesajlar').select('*').or(`gonderen_id.eq.${currentUser.id},alici_id.eq.${currentUser.id}`).order('created_at',{ascending:false});
+  const el=document.getElementById('konusmalar');
+  if(!data||!data.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">💬</div><div class="empty-title">Henüz mesajınız yok</div><div class="empty-desc">İlan sahipleriyle iletişime geçin</div></div>`;
+    return;
+  }
+  const konusmalar={};
+  data.forEach(m=>{
+    const karsId=m.gonderen_id===currentUser.id?m.alici_id:m.gonderen_id;
+    const key=`${karsId}_${m.ilan_id||'direct'}`;
+    if(!konusmalar[key])konusmalar[key]={...m,karsId,okunmamis:0};
+    if(!m.okundu&&m.alici_id===currentUser.id)konusmalar[key].okunmamis++;
+  });
+  const liste=Object.values(konusmalar);
+  const toplamOkunmamis=liste.reduce((s,k)=>s+k.okunmamis,0);
+  if(toplamOkunmamis>0){const b=document.getElementById('okunmamisSay');b.textContent=`${toplamOkunmamis} Okunmamış`;b.style.display='inline-flex';}
+  const ilanIds=[...new Set(liste.map(k=>k.ilan_id).filter(Boolean))];
+  const karsiIds=[...new Set(liste.map(k=>k.karsId).filter(Boolean))];
+  const[ilanlar,profiller]=await Promise.all([
+    ilanIds.length?sb.from('ilanlar').select('id,baslik').in('id',ilanIds):{data:[]},
+    karsiIds.length?sb.from('profiles').select('id,full_name,avatar_url').in('id',karsiIds):{data:[]}
+  ]);
+  const ilanMap={};(ilanlar.data||[]).forEach(i=>ilanMap[i.id]=i);
+  const profilMap={};(profiller.data||[]).forEach(p=>profilMap[p.id]=p);
+  el.innerHTML=liste.map(k=>{
+    const isim=profilMap[k.karsId]?.full_name||'Kullanıcı';
+    const avatarUrl=profilMap[k.karsId]?.avatar_url||'';
+    const avatarHtml=avatarUrl?`<img src="${avatarUrl}" alt="${isim}" onerror="this.parentElement.innerHTML='👤'">`:(isim==='GoTapu'?'🏠':'👤');
+    const ilanBaslik=k.ilan_id?(ilanMap[k.ilan_id]?.baslik||'İlan'):'GoTapu Mesajı';
+    const zaman=new Date(k.created_at).toLocaleDateString('tr-TR');
+    const isimEsc=isim.replace(/'/g,"\\'");
+    const ilanEsc=ilanBaslik.replace(/'/g,"\\'");
+    const avatarEsc=avatarUrl.replace(/'/g,"\\'");
+    return `<div class="chat-item" onclick="acKonusma('${k.karsId}','${k.ilan_id||''}','${isimEsc}','${ilanEsc}','${avatarEsc}')">
+      <div class="chat-avatar">${avatarHtml}</div>
+      <div class="chat-info">
+        <div class="chat-name">${isim}</div>
+        <div class="chat-ilan">${k.ilan_id?'🏠':'📢'} ${ilanBaslik}</div>
+        <div class="chat-preview">${k.icerik}</div>
+      </div>
+      <div class="chat-meta">
+        <div class="chat-time">${zaman}</div>
+        ${k.okunmamis>0?`<div class="chat-unread">${k.okunmamis}</div>`:''}
+      </div>
+    </div>`;
   }).join('');
 }
 
-function icerikAc(id){console.log('İçerik:',id);}
-
-document.getElementById('aramaInput').addEventListener('input',function(){
-  const q=this.value.toLowerCase().trim();
-  if(!q){gridCiz(filtreUygula());return;}
-  const s=tumIcerikler.filter(i=>(i.kullanici||'').toLowerCase().includes(q)||(i.metin||'').toLowerCase().includes(q)||(i.etiket||'').toLowerCase().includes(q));
-  gridCiz(s);
-});
-
-if(window.location.hash&&window.location.hash.includes('access_token')){
-  const hp=new URLSearchParams(window.location.hash.substring(1));
-  const at=hp.get('access_token'),rt=hp.get('refresh_token');
-  if(at){sb.auth.setSession({access_token:at,refresh_token:rt}).then(({data,error})=>{if(error)window.location.replace('index.html');else{window.history.replaceState(null,'',window.location.pathname);init();}});}
-  else init();
-}else if(new URLSearchParams(window.location.search).get('code')){
-  window.location.replace('index.html'+window.location.search);
-}else{init();}
-
-async function init(){
-  const{data}=await sb.auth.getSession();
-  if(!data.session){window.location.replace('index.html');return;}
-  document.body.style.visibility='visible';
-  tumIcerikler=PLACEHOLDER_ICERIKLER;
-  gridCiz(tumIcerikler);
+async function acKonusma(karsId,ilanId,isim,ilanBaslik,avatarUrl){
+  aktifKarsiId=karsId;aktifIlanId=ilanId||null;karsiAvatarUrl=avatarUrl||null;
+  document.getElementById('chatName').textContent=isim;
+  document.getElementById('chatIlan').textContent=ilanId?'🏠 '+ilanBaslik:'📢 '+ilanBaslik;
+  const avatarEl=document.getElementById('chatHeaderAvatar');
+  if(avatarUrl)avatarEl.innerHTML=`<img src="${avatarUrl}" alt="${isim}" onerror="this.parentElement.innerHTML='👤'">`;
+  else avatarEl.innerHTML=isim==='GoTapu'?'🏠':'👤';
+  document.getElementById('chatScreen').classList.add('open');
+  history.pushState({chat:true},'',location.href);
+  mesajlariYukle();
+  if(mesajKanal)sb.removeChannel(mesajKanal);
+  const kanalAd='mesaj_'+(ilanId||karsId);
+  mesajKanal=sb.channel(kanalAd).on('postgres_changes',{event:'INSERT',schema:'public',table:'mesajlar'},payload=>{
+    if(payload.new.gonderen_id!==currentUser.id&&(payload.new.gonderen_id===aktifKarsiId||payload.new.alici_id===aktifKarsiId))mesajEkle(payload.new,true);
+  }).subscribe();
 }
+
+function profileGit(){if(aktifKarsiId)window.location.href=`profil.html?id=${aktifKarsiId}`;}
+
+async function mesajlariYukle(){
+  const el=document.getElementById('chatMessages');
+  el.innerHTML='<div class="spinner"></div>';
+  let query=sb.from('mesajlar').select('*');
+  if(aktifIlanId){query=query.eq('ilan_id',aktifIlanId).or(`and(gonderen_id.eq.${currentUser.id},alici_id.eq.${aktifKarsiId}),and(gonderen_id.eq.${aktifKarsiId},alici_id.eq.${currentUser.id})`);}
+  else{query=query.or(`and(gonderen_id.eq.${currentUser.id},alici_id.eq.${aktifKarsiId}),and(gonderen_id.eq.${aktifKarsiId},alici_id.eq.${currentUser.id})`);}
+  const{data}=await query.order('created_at',{ascending:true});
+  el.innerHTML='';if(data)data.forEach(m=>mesajEkle(m,false));
+  el.scrollTop=el.scrollHeight;
+  await sb.from('mesajlar').update({okundu:true}).eq('alici_id',currentUser.id).eq('gonderen_id',aktifKarsiId);
+}
+
+function mesajEkle(m,scroll=true){
+  const el=document.getElementById('chatMessages');
+  const benMi=m.gonderen_id===currentUser.id;
+  const row=document.createElement('div');
+  row.className=`msg-row ${benMi?'me':'them'}`;
+  row.dataset.id=m.id||'';
+  if(!benMi){
+    const miniAv=document.createElement('div');
+    miniAv.className='msg-mini-avatar';
+    miniAv.innerHTML=karsiAvatarUrl?`<img src="${karsiAvatarUrl}" onerror="this.parentElement.innerHTML='👤'">`:'👤';
+    row.appendChild(miniAv);
+  }
+  const wrap=document.createElement('div');
+  wrap.className='msg-bubble-wrap';
+  const div=document.createElement('div');
+  div.className=`msg ${benMi?'msg-me':'msg-them'}`;
+  div.innerHTML=`${m.icerik}<div class="msg-time">${new Date(m.created_at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</div>`;
+  wrap.appendChild(div);row.appendChild(wrap);el.appendChild(row);
+  if(scroll)el.scrollTop=el.scrollHeight;
+}
+
+async function silModuToggle(){
+  if(!confirm('Bu konuşmayı tamamen silmek istiyor musunuz?'))return;
+  let query=sb.from('mesajlar').delete().or(`and(gonderen_id.eq.${currentUser.id},alici_id.eq.${aktifKarsiId}),and(gonderen_id.eq.${aktifKarsiId},alici_id.eq.${currentUser.id})`);
+  if(aktifIlanId){query=sb.from('mesajlar').delete().eq('ilan_id',aktifIlanId).or(`and(gonderen_id.eq.${currentUser.id},alici_id.eq.${aktifKarsiId}),and(gonderen_id.eq.${aktifKarsiId},alici_id.eq.${currentUser.id})`);}
+  const{error}=await query;
+  if(!error)kapat();else alert('Konuşma silinemedi!');
+}
+
+async function gonder(){
+  const inp=document.getElementById('msgInput');
+  const icerik=inp.value.trim();
+  if(!icerik||!aktifKarsiId)return;
+  inp.value='';
+  const yeniMesaj={gonderen_id:currentUser.id,alici_id:aktifKarsiId,ilan_id:aktifIlanId||null,icerik,okundu:false,created_at:new Date().toISOString()};
+  const{data}=await sb.from('mesajlar').insert(yeniMesaj).select().single();
+  mesajEkle(data||yeniMesaj);
+}
+
+let seciliMSikayet=null;
+function mesajSikayetAc(){seciliMSikayet=null;document.querySelectorAll('.sikayet-btn').forEach(b=>b.classList.remove('selected'));document.getElementById('mSikayetAciklama').value='';document.getElementById('sikayetModal').classList.add('open');}
+function sikayetKapat(){document.getElementById('sikayetModal').classList.remove('open');}
+function mSikayetSec(el,sebep){seciliMSikayet=sebep;document.querySelectorAll('.sikayet-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');}
+async function mesajSikayetGonder(){
+  if(!seciliMSikayet){alert('Lütfen bir şikayet sebebi seçin!');return;}
+  const aciklama=document.getElementById('mSikayetAciklama').value.trim();
+  await sb.from('sikayetler').insert({user_id:currentUser.id,tip:'mesaj',sebep:seciliMSikayet,hedef_id:aktifKarsiId,hedef_tip:'kullanici',aciklama:aciklama||null,durum:'bekliyor'});
+  sikayetKapat();alert('✅ Şikayetiniz alındı.');
+}
+
+function kapatSessiz(){document.getElementById('chatScreen').classList.remove('open');if(mesajKanal)sb.removeChannel(mesajKanal);konusmalariYukle();}
+function kapat(){history.back();}
 </script>
 
 <script src="navbar.js"></script>
+<script>if("serviceWorker"in navigator)navigator.serviceWorker.register("/XxxGotapu/sw.js",{scope:"/XxxGotapu/"}).catch(e=>console.log("SW error:",e));</script>
 </body>
 </html>
