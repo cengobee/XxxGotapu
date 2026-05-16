@@ -393,13 +393,17 @@
     <a class="gt-drawer-item" href="etkinlikler.html"><span class="gt-drawer-item-metin">🎟️ Etkinlikler</span><span class="gt-drawer-item-ok">›</span></a>
     <a class="gt-drawer-item" href="gruplar.html"><span class="gt-drawer-item-metin">👥 Gruplar</span><span class="gt-drawer-item-ok">›</span></a>
     <div class="gt-drawer-ayrac"></div>
-    <a class="gt-drawer-item" href="profil.html"><span class="gt-drawer-item-metin">👤 Profilim</span><span class="gt-drawer-item-ok">›</span></a>
     <button class="gt-drawer-item" onclick="gtCikisYap()"><span class="gt-drawer-item-metin" style="color:#E8603A">Çıkış Yap</span><span class="gt-drawer-item-ok">›</span></button>
     <div class="gt-drawer-ayrac"></div>
-    <button class="gt-drawer-item" onclick="gtTemaToggle()" id="gt-drawer-tema-btn">
+    <div style="padding:12px 16px 6px;font-size:10px;font-weight:900;color:rgba(255,255,255,0.35);letter-spacing:1.4px;text-transform:uppercase">Ayarlar</div>
+    <button class="gt-drawer-item" onclick="gtTemaToggle()">
       <span class="gt-drawer-item-metin" id="gt-drawer-tema-metin">☀️ Açık Tema</span>
       <span class="gt-drawer-item-ok">›</span>
     </button>
+    <a class="gt-drawer-item" href="profil.html" onclick="gtDrawerKapat();setTimeout(()=>{const el=document.querySelector('[data-sekme=hesap]');if(el)el.click();},400)">
+      <span class="gt-drawer-item-metin">⚙️ Profili Düzenle</span>
+      <span class="gt-drawer-item-ok">›</span>
+    </a>
   `;
   document.body.appendChild(drawer);
 
