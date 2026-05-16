@@ -349,9 +349,9 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span id="gt-bildirim-badge" class="gt-bnav-badge" style="top:-4px;right:-4px;"></span>
       </a>
-      <button class="gt-nav-ikon" id="gt-tema-btn" aria-label="Tema değiştir">
-        <span id="gt-tema-ikon"></span>
-      </button>
+      <a href="profil.html" class="gt-nav-ikon" id="gt-profil-btn" aria-label="Profilim">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
     </div>
   `;
   document.body.insertBefore(topNav, document.body.firstChild);
@@ -395,6 +395,11 @@
     <div class="gt-drawer-ayrac"></div>
     <a class="gt-drawer-item" href="profil.html"><span class="gt-drawer-item-metin">👤 Profilim</span><span class="gt-drawer-item-ok">›</span></a>
     <button class="gt-drawer-item" onclick="gtCikisYap()"><span class="gt-drawer-item-metin" style="color:#E8603A">Çıkış Yap</span><span class="gt-drawer-item-ok">›</span></button>
+    <div class="gt-drawer-ayrac"></div>
+    <button class="gt-drawer-item" onclick="gtTemaToggle()" id="gt-drawer-tema-btn">
+      <span class="gt-drawer-item-metin" id="gt-drawer-tema-metin">☀️ Açık Tema</span>
+      <span class="gt-drawer-item-ok">›</span>
+    </button>
   `;
   document.body.appendChild(drawer);
 
@@ -506,8 +511,9 @@
 
   /* ─── TEMA İKONUNU SET ET ────────────────────────── */
   function updateTemaIkon() {
-    const ikon = document.getElementById('gt-tema-ikon');
-    if (ikon) ikon.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
+    const isLight = document.body.classList.contains('light');
+    const drawerMetin = document.getElementById('gt-drawer-tema-metin');
+    if (drawerMetin) drawerMetin.textContent = isLight ? '🌙 Koyu Tema' : '☀️ Açık Tema';
   }
   updateTemaIkon();
 
@@ -547,7 +553,6 @@
 
   /* ─── EVENT BAĞLA ────────────────────────────────── */
   document.getElementById('gt-hamburger-btn').addEventListener('click', gtDrawerAc);
-  document.getElementById('gt-tema-btn').addEventListener('click', gtTemaToggle);
   document.getElementById('gt-arama-btn').addEventListener('click', () => { window.location.href = 'ilanlar.html'; });
 
   /* ─── BADGE'LER (Supabase varsa) ─────────────────── */
