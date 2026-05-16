@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>GoTapu</title>
+<title>GoTapu — Türkiye'nin Mega Uygulaması</title>
+<meta name="description" content="Yazı, foto, video. İlan, alışveriş, eşleşme. Tek uygulama, sınırsız hayat.">
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
@@ -14,87 +15,16 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 input,textarea{-webkit-user-select:text;user-select:text}
 
-:root{
-  --bg:#0a0d14;--bg2:#111520;--card:#161b28;--card2:#1c2235;
-  --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.15);
-  --rust:#E8603A;--gold:#F5C842;--green:#2ECC71;--blue:#4A90D9;
-  --text:#fff;--text2:rgba(255,255,255,0.88);--text3:rgba(255,255,255,0.48);
-  --nav-h:58px;--bot-h:66px;
-}
-body.light{
-  --bg:#f2f4f8;--bg2:#fff;--card:#fff;--card2:#eef1f7;
-  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.14);
-  --text:#0d1117;--text2:#1a2030;--text3:#6b7280;
-}
-body{
-  background:var(--bg);color:var(--text);
-  font-family:'Nunito',sans-serif;
-  padding-top:var(--nav-h);
-  padding-bottom:calc(var(--bot-h) + 8px);
-  min-height:100vh;overflow-x:hidden;
-}
-
-/* TOP NAV */
-.top-nav{
-  position:fixed;top:0;left:0;right:0;z-index:200;
-  height:var(--nav-h);background:var(--bg2);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;
-}
-.nav-logo{font-size:22px;font-weight:900;color:var(--rust);text-decoration:none;letter-spacing:-.5px}
-.nav-sag{display:flex;align-items:center;gap:16px}
-.nav-ikon{background:none;border:none;cursor:pointer;color:var(--text2);display:flex;align-items:center;text-decoration:none;position:relative;padding:2px}
-.hamburger{display:flex;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:3px}
-.hamburger span{display:block;height:2px;border-radius:2px;background:var(--text2)}
-.hamburger span:nth-child(1){width:22px}
-.hamburger span:nth-child(2){width:14px}
-.hamburger span:nth-child(3){width:22px}
-
-/* BOTTOM NAV */
-.bottom-nav{
-  position:fixed;bottom:0;left:0;right:0;z-index:200;
-  height:var(--bot-h);background:var(--bg2);
-  border-top:1px solid var(--border);
-  display:flex;align-items:center;
-  padding:0 4px;
-  padding-bottom:env(safe-area-inset-bottom,0);
-}
-.bnav-item{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:3px;text-decoration:none;
-  background:none;border:none;cursor:pointer;
-  font-family:'Nunito',sans-serif;color:var(--text3);
-  position:relative;min-width:0;height:var(--bot-h);
-}
-.bnav-item.aktif{color:var(--rust)}
-.bnav-label{font-size:10px;font-weight:700;white-space:nowrap}
-.bnav-orta{flex:1;display:flex;align-items:center;justify-content:center;height:var(--bot-h)}
-.bnav-plus{
-  width:50px;height:50px;border-radius:50%;
-  background:var(--rust);
-  display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:30px;font-weight:900;
-  margin-top:-18px;
-  box-shadow:0 4px 20px rgba(232,96,58,0.55);
-  border:none;cursor:pointer;font-family:'Nunito',sans-serif;
-  line-height:1;
-}
-.bnav-badge{
-  position:absolute;top:6px;right:calc(50% - 18px);
-  background:var(--rust);color:#fff;font-size:9px;font-weight:800;
-  min-width:15px;height:15px;border-radius:50%;
-  display:none;align-items:center;justify-content:center;padding:0 2px;
-}
-
-/* SEKME BAR */
+/* ── SEKME BAR ── */
 .sekme-bar{
-  display:flex;background:var(--bg2);
+  display:flex;
+  background:var(--bg2);
   border-bottom:1px solid var(--border);
-  position:sticky;top:var(--nav-h);z-index:90;
+  position:sticky;top:var(--nav-h,58px);z-index:90;
   padding:0 8px;
+  overflow-x:auto;
 }
+.sekme-bar::-webkit-scrollbar{display:none}
 .sekme-btn{
   display:flex;align-items:center;gap:7px;
   padding:11px 14px 10px;font-size:13px;font-weight:800;
@@ -102,199 +32,144 @@ body{
   cursor:pointer;font-family:'Nunito',sans-serif;
   border-bottom:2.5px solid transparent;
   transition:color .15s,border-color .15s;white-space:nowrap;
+  flex-shrink:0;
 }
 .sekme-btn.aktif{color:var(--text);border-bottom-color:var(--rust)}
 
-/* FEED BOŞ */
-.feed-bos{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 24px;text-align:center}
-.feed-bos-emoji{font-size:54px;margin-bottom:14px}
-.feed-bos-baslik{font-size:17px;font-weight:800;color:var(--text);margin-bottom:8px}
-.feed-bos-alt{font-size:13px;color:var(--text3);line-height:1.55}
+/* ── FEED BÖLÜM ── */
+.bolum{display:none}
+.bolum.aktif{display:block}
 
-/* DRAWER */
-.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.62);z-index:300}
-.drawer-overlay.acik{display:block}
-.drawer{position:fixed;top:0;left:-285px;width:265px;height:100%;background:var(--bg2);border-right:1px solid var(--border);z-index:301;transition:left .25s ease;overflow-y:auto;padding-bottom:40px}
-.drawer.acik{left:0}
-.drawer-head{background:linear-gradient(135deg,#E8603A 0%,#ff8557 100%);padding:22px 16px 18px;position:relative}
-.drawer-head-logo{font-size:21px;font-weight:900;color:#fff;letter-spacing:-.5px}
-.drawer-head-sub{font-size:11px;color:rgba(255,255,255,.72);margin-top:3px;font-weight:600}
-.drawer-kapat{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.22);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.drawer-acc-btn{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:transparent;width:100%;border-left:none;border-right:none;border-top:none;cursor:pointer}
-.drawer-acc-baslik{font-size:14px;font-weight:800;color:var(--text);font-family:'Nunito',sans-serif}
-.drawer-acc-ok{font-size:18px;color:var(--text3);transition:transform .2s}
-.drawer-acc-btn.acik .drawer-acc-ok{transform:rotate(90deg)}
-.drawer-sub{display:none;background:var(--card)}
-.drawer-sub.acik{display:block}
-.drawer-sub-item{display:flex;align-items:center;justify-content:space-between;padding:11px 16px 11px 26px;border-bottom:1px solid var(--border);text-decoration:none}
-.drawer-sub-metin{font-size:13px;font-weight:700;color:var(--text2);font-family:'Nunito',sans-serif}
-.drawer-sub-ok{font-size:14px;color:var(--text3)}
-.drawer-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);text-decoration:none;background:transparent;width:100%;border-left:none;border-right:none;border-top:none;cursor:pointer}
-.drawer-item-metin{font-size:14px;font-weight:700;color:var(--text);font-family:'Nunito',sans-serif}
-.drawer-item-ok{font-size:16px;color:var(--text3)}
-.drawer-ayrac{height:6px;background:var(--bg);border-bottom:1px solid var(--border)}
-
-/* MEGA APP */
-.mega-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:400;align-items:flex-end}
-.mega-overlay.acik{display:flex}
-.mega-sheet{background:var(--bg2);border-radius:22px 22px 0 0;width:100%;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom,16px)}
-.mega-header{background:linear-gradient(135deg,#E8603A 0%,#ff8557 100%);padding:18px 18px 16px;border-radius:22px 22px 0 0;position:sticky;top:0;z-index:2}
-.mega-header-ust{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
-.mega-logo{font-size:20px;font-weight:900;color:#fff;letter-spacing:-.5px}
-.mega-sub{font-size:11px;color:rgba(255,255,255,.78);margin-top:3px;font-weight:600}
-.mega-kapat-btn{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.22);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.mega-arama-wrap{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.18);border-radius:12px;padding:10px 14px}
-.mega-arama-input{background:transparent;border:none;outline:none;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;flex:1}
-.mega-arama-input::placeholder{color:rgba(255,255,255,.62)}
-.mega-govde{padding:0 14px 14px}
-.mega-kat-baslik{display:flex;align-items:center;justify-content:space-between;padding:18px 2px 10px;font-size:11px;font-weight:900;color:var(--text3);letter-spacing:1.6px;text-transform:uppercase}
-.mega-kat-sayi{background:var(--rust);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:50px;letter-spacing:0;text-transform:none}
-.mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.mega-kart{background:var(--card);border-radius:15px;padding:15px 8px 13px;display:flex;flex-direction:column;align-items:center;gap:9px;text-decoration:none;border:1px solid var(--border2);box-shadow:0 3px 16px rgba(0,0,0,0.35);transition:transform .13s;position:relative;overflow:hidden}
-.mega-kart::after{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(180deg,rgba(255,255,255,0.05) 0%,transparent 100%);pointer-events:none}
-.mega-kart:active{transform:scale(0.92)}
-.mega-kart-ikon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,0.32)}
-.ikon-pazar{background:linear-gradient(135deg,#ff6b35,#f7931e)}
-.ikon-hizmet{background:linear-gradient(135deg,#00b4d8,#0077b6)}
-.ikon-sosyal{background:linear-gradient(135deg,#9b5de5,#f15bb5)}
-.ikon-yasam{background:linear-gradient(135deg,#06d6a0,#118ab2)}
-.mega-kart-ad{font-size:12px;font-weight:800;color:var(--text);text-align:center;line-height:1.25}
-.mega-kart-alt{font-size:10px;color:var(--text3);text-align:center;font-weight:600;line-height:1.35}
-.mega-bilgi{margin:14px 0 4px;background:var(--card);border-radius:14px;padding:14px 16px;text-align:center;font-size:12px;color:var(--text3);font-weight:700;border:1px solid var(--border)}
-.mega-bilgi strong{color:var(--rust)}
-
-/* PAYLAŞIM */
-.paylasim-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.62);z-index:400;align-items:flex-end}
-.paylasim-overlay.acik{display:flex}
-.paylasim-sheet{background:var(--card);border-radius:20px 20px 0 0;padding:16px 16px 40px;width:100%}
-.paylasim-handle{width:36px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 16px}
-.paylasim-baslik{text-align:center;font-size:15px;font-weight:900;color:var(--text);margin-bottom:16px}
-.paylasim-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.paylasim-item{display:flex;align-items:center;gap:10px;padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;text-decoration:none}
-.paylasim-metin{font-size:12px;font-weight:800;color:var(--text)}
-
-@media(min-width:900px){
-  .bottom-nav{display:none!important}
-  body{padding-bottom:40px!important}
+/* ── FEED BOŞ ── */
+.feed-bos{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:80px 24px;text-align:center;
 }
+.feed-bos-emoji{font-size:56px;margin-bottom:16px;line-height:1}
+.feed-bos-baslik{font-size:18px;font-weight:900;color:var(--text);margin-bottom:8px}
+.feed-bos-alt{font-size:13px;color:var(--text3);line-height:1.6;max-width:260px}
+
+/* ── VIDEO FEED ── */
+.video-feed{
+  height:calc(100dvh - var(--nav-h,58px) - 44px - var(--bot-h,66px));
+  overflow-y:scroll;scroll-snap-type:y mandatory;
+  -webkit-overflow-scrolling:touch;
+}
+.video-feed::-webkit-scrollbar{display:none}
+.video-kart{
+  position:relative;
+  height:calc(100dvh - var(--nav-h,58px) - 44px - var(--bot-h,66px));
+  scroll-snap-align:start;overflow:hidden;
+  background:var(--card);
+  margin:0 12px 10px;border-radius:22px;
+}
+.video-kart img{width:100%;height:100%;object-fit:cover}
+.video-badge{
+  position:absolute;right:12px;top:12px;
+  display:flex;align-items:center;gap:5px;
+  background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);
+  color:#fff;font-size:11px;font-weight:700;
+  padding:5px 10px;border-radius:50px;
+}
+.video-gradient{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.1) 50%,transparent 100%);
+  pointer-events:none;
+}
+.video-alt{
+  position:absolute;inset-x:0;bottom:0;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:12px;padding:18px 16px;
+}
+.video-info{flex:1;min-width:0;color:#fff}
+.video-kullanici{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.video-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--rust)}
+.video-isim{font-size:14px;font-weight:800}
+.video-takip-btn{
+  margin-left:4px;border:1.5px solid rgba(255,255,255,.5);
+  border-radius:50px;padding:3px 10px;font-size:10px;
+  font-weight:800;background:transparent;color:#fff;cursor:pointer;
+  font-family:'Nunito',sans-serif;letter-spacing:.3px;
+  text-transform:uppercase;
+}
+.video-caption{font-size:13px;line-height:1.45;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.video-muzik{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11px;color:rgba(255,255,255,.75)}
+.video-aksiyonlar{display:flex;flex-direction:column;align-items:center;gap:16px;padding-bottom:4px}
+.video-aksiyon-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  background:none;border:none;color:#fff;cursor:pointer;
+  font-family:'Nunito',sans-serif;
+}
+.video-aksiyon-cember{
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+}
+.video-aksiyon-sayi{font-size:11px;font-weight:700}
+
+/* ── FOTO FEED ── */
+.foto-feed{
+  height:calc(100dvh - var(--nav-h,58px) - 44px - var(--bot-h,66px));
+  overflow-y:scroll;scroll-snap-type:y mandatory;
+  -webkit-overflow-scrolling:touch;
+  padding:0 8px;
+}
+.foto-feed::-webkit-scrollbar{display:none}
+.foto-kart{
+  background:var(--card);border-radius:18px;
+  border:1px solid var(--border);overflow:hidden;
+  margin-bottom:10px;scroll-snap-align:start;
+}
+.foto-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px}
+.foto-kullanici{display:flex;align-items:center;gap:10px}
+.foto-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid rgba(232,96,58,.5)}
+.foto-isim{font-size:14px;font-weight:800;color:var(--text)}
+.foto-handle{font-size:11px;color:var(--text3);margin-top:1px}
+.foto-more-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px}
+.foto-gorsel{width:100%;aspect-ratio:1;object-fit:cover}
+.foto-aksiyonlar{display:flex;align-items:center;gap:16px;padding:12px 14px 6px}
+.foto-aksiyon-btn{background:none;border:none;color:var(--text2);cursor:pointer;display:flex;align-items:center}
+.foto-kaydet{margin-left:auto}
+.foto-bilgi{padding:0 14px 14px}
+.foto-begenme{font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px}
+.foto-caption{font-size:13px;line-height:1.45;color:var(--text2)}
+.foto-caption strong{font-weight:800;color:var(--text)}
+.foto-yorum-link{font-size:12px;color:var(--text3);margin-top:4px;cursor:pointer}
+
+/* ── YAZI FEED ── */
+.yazi-feed{padding:0}
+.yazi-kart{
+  display:flex;gap:12px;
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  transition:background .15s;
+}
+.yazi-kart:active{background:var(--card)}
+.yazi-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.yazi-govde{flex:1;min-width:0}
+.yazi-ust{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.yazi-isim{font-size:14px;font-weight:800;color:var(--text)}
+.yazi-handle{font-size:12px;color:var(--text3);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.yazi-zaman{font-size:12px;color:var(--text3);flex-shrink:0}
+.yazi-more-btn{background:none;border:none;color:var(--text3);cursor:pointer;margin-left:auto;padding:2px}
+.yazi-metin{font-size:15px;line-height:1.5;color:var(--text2);white-space:pre-line}
+.yazi-aksiyonlar{display:flex;align-items:center;justify-content:space-between;margin-top:12px;max-width:320px}
+.yazi-aksiyon{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;padding:4px 0}
+.yazi-aksiyon:hover{color:var(--rust)}
+
+/* ── GRADIENT YAZI ARKA PLAN ── */
+.yazi-kart-bg{
+  border-radius:14px;margin-bottom:12px;padding:20px 18px;
+  display:flex;align-items:center;justify-content:center;
+  min-height:120px;text-align:center;
+}
+.yazi-kart-bg p{font-size:16px;font-weight:800;color:#fff;line-height:1.5;white-space:pre-line}
 </style>
 </head>
-<body style="visibility:hidden">
+<body data-page="home" style="visibility:hidden">
 <script>(function(){if(localStorage.getItem('gotapu_tema')==='light')document.body.classList.add('light')})();</script>
-
-<!-- TOP NAV -->
-<nav class="top-nav">
-  <button class="hamburger" onclick="drawerAc()">
-    <span></span><span></span><span></span>
-  </button>
-  <a href="home.html" class="nav-logo">GoTapu</a>
-  <div class="nav-sag">
-    <button class="nav-ikon" onclick="aramaOdakla()">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    </button>
-    <a href="bildirimler.html" class="nav-ikon" style="position:relative">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span id="bildirimBadge" class="bnav-badge" style="top:-4px;right:-4px"></span>
-    </a>
-  </div>
-</nav>
-
-<!-- DRAWER -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="drawerKapat()"></div>
-<div class="drawer" id="drawerPanel">
-  <div class="drawer-head">
-    <div class="drawer-head-logo">GoTapu</div>
-    <div class="drawer-head-sub">Mega App — tek çatı altında</div>
-    <button class="drawer-kapat" onclick="drawerKapat()">✕</button>
-  </div>
-  <button class="drawer-acc-btn" id="ilanlarBtn" onclick="ilanlarToggle()">
-    <span class="drawer-acc-baslik">İlanlar</span>
-    <span class="drawer-acc-ok">›</span>
-  </button>
-  <div class="drawer-sub" id="ilanlarSub">
-    <a class="drawer-sub-item" href="ilanlar.html?kategori=emlak" onclick="drawerKapat()"><span class="drawer-sub-metin">Emlak</span><span class="drawer-sub-ok">›</span></a>
-    <a class="drawer-sub-item" href="ilanlar.html?kategori=vasita" onclick="drawerKapat()"><span class="drawer-sub-metin">Vasıta</span><span class="drawer-sub-ok">›</span></a>
-    <a class="drawer-sub-item" href="ilanlar.html?kategori=ikinciel" onclick="drawerKapat()"><span class="drawer-sub-metin">2. El Eşya</span><span class="drawer-sub-ok">›</span></a>
-    <a class="drawer-sub-item" href="ilanlar.html?kategori=yedekparca" onclick="drawerKapat()"><span class="drawer-sub-metin">Yedek Parça</span><span class="drawer-sub-ok">›</span></a>
-    <a class="drawer-sub-item" href="ilanlar.html?kategori=pet" onclick="drawerKapat()"><span class="drawer-sub-metin">Pet</span><span class="drawer-sub-ok">›</span></a>
-    <a class="drawer-sub-item" href="ilanlar.html?kategori=isbulma" onclick="drawerKapat()"><span class="drawer-sub-metin">İş Bulma</span><span class="drawer-sub-ok">›</span></a>
-  </div>
-  <div class="drawer-ayrac"></div>
-  <a class="drawer-item" href="alisveris.html" onclick="drawerKapat()"><span class="drawer-item-metin">0 km Eşya</span><span class="drawer-item-ok">›</span></a>
-  <a class="drawer-item" href="yemek.html" onclick="drawerKapat()"><span class="drawer-item-metin">Yemek</span><span class="drawer-item-ok">›</span></a>
-  <a class="drawer-item" href="market.html" onclick="drawerKapat()"><span class="drawer-item-metin">Market</span><span class="drawer-item-ok">›</span></a>
-  <a class="drawer-item" href="taksi.html" onclick="drawerKapat()"><span class="drawer-item-metin">Taksi</span><span class="drawer-item-ok">›</span></a>
-  <a class="drawer-item" href="muzik.html" onclick="drawerKapat()"><span class="drawer-item-metin">Müzik</span><span class="drawer-item-ok">›</span></a>
-  <a class="drawer-item" href="etkinlikler.html" onclick="drawerKapat()"><span class="drawer-item-metin">Etkinlikler</span><span class="drawer-item-ok">›</span></a>
-  <a class="drawer-item" href="gruplar.html" onclick="drawerKapat()"><span class="drawer-item-metin">Gruplar</span><span class="drawer-item-ok">›</span></a>
-</div>
-
-<!-- MEGA APP MODAL -->
-<div class="mega-overlay" id="megaOverlay" onclick="megaKapatDis(event)">
-  <div class="mega-sheet">
-    <div class="mega-header">
-      <div class="mega-header-ust">
-        <div><div class="mega-logo">GoTapu</div><div class="mega-sub">Tüm uygulamalar tek çatı altında — site içi, üyeden üyeye.</div></div>
-        <button class="mega-kapat-btn" onclick="megaKapat()">✕</button>
-      </div>
-      <div class="mega-arama-wrap">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input class="mega-arama-input" id="megaArama" placeholder="Uygulamalarda ara..." oninput="megaFiltrele(this.value)">
-      </div>
-    </div>
-    <div class="mega-govde">
-      <div class="mega-kat-baslik">Pazar<span class="mega-kat-sayi">5</span></div>
-      <div class="mega-grid">
-        <a class="mega-kart" href="ilanlar.html"><div class="mega-kart-ikon ikon-pazar">🏷️</div><div class="mega-kart-ad">İlanlar</div><div class="mega-kart-alt">Emlak, vasıta, 2.el...</div></a>
-        <a class="mega-kart" href="alisveris.html"><div class="mega-kart-ikon ikon-pazar">🛍️</div><div class="mega-kart-ad">Alışveriş</div><div class="mega-kart-alt">%1 komisyonla mağaza</div></a>
-        <a class="mega-kart" href="ilanlar.html?kategori=ikinciel"><div class="mega-kart-ikon ikon-pazar">♻️</div><div class="mega-kart-ad">2. El</div><div class="mega-kart-alt">Garantili 2. el ürünler</div></a>
-        <a class="mega-kart" href="mobilya.html"><div class="mega-kart-ikon ikon-pazar">🛋️</div><div class="mega-kart-ad">Mobilya</div><div class="mega-kart-alt">Evine özel tasarım</div></a>
-        <a class="mega-kart" href="ilanlar.html?kategori=isbulma"><div class="mega-kart-ikon ikon-pazar">💼</div><div class="mega-kart-ad">İş İlanları</div><div class="mega-kart-alt">Tam zamanlı, freelance</div></a>
-      </div>
-      <div class="mega-kat-baslik">Hizmet<span class="mega-kat-sayi">7</span></div>
-      <div class="mega-grid">
-        <a class="mega-kart" href="taksi.html"><div class="mega-kart-ikon ikon-hizmet">🚕</div><div class="mega-kart-ad">Taksi</div><div class="mega-kart-alt">Şoför çağır, üye...</div></a>
-        <a class="mega-kart" href="yemek.html"><div class="mega-kart-ikon ikon-hizmet">🍔</div><div class="mega-kart-ad">Yemek</div><div class="mega-kart-alt">Komşu mutfağından...</div></a>
-        <a class="mega-kart" href="yoresel.html"><div class="mega-kart-ikon ikon-hizmet">🍽️</div><div class="mega-kart-ad">Yöresel Lezzetler</div><div class="mega-kart-alt">Şehirden şehre, ev...</div></a>
-        <a class="mega-kart" href="kurye.html"><div class="mega-kart-ikon ikon-hizmet">🛵</div><div class="mega-kart-ad">Kurye</div><div class="mega-kart-alt">Aynı gün teslimat</div></a>
-        <a class="mega-kart" href="nakliyat.html"><div class="mega-kart-ikon ikon-hizmet">📦</div><div class="mega-kart-ad">Nakliyat</div><div class="mega-kart-alt">Şehir içi & şehirler arası</div></a>
-        <a class="mega-kart" href="hizmetler.html"><div class="mega-kart-ikon ikon-hizmet">🔧</div><div class="mega-kart-ad">Usta</div><div class="mega-kart-alt">Tesisat, elektrik, boya</div></a>
-        <a class="mega-kart" href="temizlik.html"><div class="mega-kart-ikon ikon-hizmet">🧹</div><div class="mega-kart-ad">Temizlik</div><div class="mega-kart-alt">Ev & ofis temizliği</div></a>
-      </div>
-      <div class="mega-kat-baslik">Sosyal<span class="mega-kat-sayi">3</span></div>
-      <div class="mega-grid">
-        <a class="mega-kart" href="eslesmeler.html"><div class="mega-kart-ikon ikon-sosyal">❤️</div><div class="mega-kart-ad">Eşleşme</div><div class="mega-kart-alt">Ev, araba, usta, insan</div></a>
-        <a class="mega-kart" href="etkinlikler.html"><div class="mega-kart-ikon ikon-hizmet">🎫</div><div class="mega-kart-ad">Etkinlikler</div><div class="mega-kart-alt">Konser, buluşma, gece</div></a>
-        <a class="mega-kart" href="gruplar.html"><div class="mega-kart-ikon ikon-sosyal">👥</div><div class="mega-kart-ad">Topluluklar</div><div class="mega-kart-alt">İlgi alanına göre...</div></a>
-      </div>
-      <div class="mega-kat-baslik">Yaşam<span class="mega-kat-sayi">5</span></div>
-      <div class="mega-grid">
-        <a class="mega-kart" href="sana-ozel.html"><div class="mega-kart-ikon ikon-yasam">🏠</div><div class="mega-kart-ad">Senin Evin</div><div class="mega-kart-alt">3D ev tasarla, mobilya...</div></a>
-        <a class="mega-kart" href="saglik.html"><div class="mega-kart-ikon ikon-yasam">🩺</div><div class="mega-kart-ad">Sağlık</div><div class="mega-kart-alt">Doktor, randevu, ilaç</div></a>
-        <a class="mega-kart" href="egitim.html"><div class="mega-kart-ikon ikon-yasam">🎓</div><div class="mega-kart-ad">Eğitim</div><div class="mega-kart-alt">Özel ders, kurslar</div></a>
-        <a class="mega-kart" href="ilanlar.html?kategori=pet"><div class="mega-kart-ikon ikon-yasam">🐾</div><div class="mega-kart-ad">Evcil Dostlar</div><div class="mega-kart-alt">Veteriner, bakım...</div></a>
-        <a class="mega-kart" href="profil.html#cuzdan"><div class="mega-kart-ikon ikon-yasam">💳</div><div class="mega-kart-ad">Cüzdan</div><div class="mega-kart-alt">Ödeme, kredi, referans</div></a>
-      </div>
-      <div class="mega-bilgi">Komisyon <strong>%1</strong> · Referans linkin <strong>%1/yıl</strong></div>
-    </div>
-  </div>
-</div>
-
-<!-- PAYLAŞIM SHEET -->
-<div class="paylasim-overlay" id="paylasimOverlay" onclick="paylasimKapat(event)">
-  <div class="paylasim-sheet">
-    <div class="paylasim-handle"></div>
-    <div class="paylasim-baslik">Ne paylaşmak istersin?</div>
-    <div class="paylasim-grid">
-      <a class="paylasim-item" href="#"><span style="font-size:20px">🎬</span><span class="paylasim-metin">Video Yükle</span></a>
-      <a class="paylasim-item" href="#"><span style="font-size:20px">📷</span><span class="paylasim-metin">Fotoğraf Paylaş</span></a>
-      <a class="paylasim-item" href="#"><span style="font-size:20px">✏️</span><span class="paylasim-metin">Yazı Yaz</span></a>
-      <a class="paylasim-item" href="ilan-ver.html"><span style="font-size:20px">📋</span><span class="paylasim-metin">İlan Ver</span></a>
-      <a class="paylasim-item" href="alisveris.html"><span style="font-size:20px">🛒</span><span class="paylasim-metin">Ürün Sat</span></a>
-      <a class="paylasim-item" href="sana-ozel.html"><span style="font-size:20px">✨</span><span class="paylasim-metin">Sana Özel</span></a>
-    </div>
-  </div>
-</div>
 
 <!-- SEKME BAR -->
 <div class="sekme-bar">
@@ -312,71 +187,247 @@ body{
   </button>
 </div>
 
-<div id="bolumVideo"><div class="feed-bos"><div class="feed-bos-emoji">🎬</div><div class="feed-bos-baslik">Video akışı yakında</div><div class="feed-bos-alt">Takip ettiğin kişilerin videoları burada akacak</div></div></div>
-<div id="bolumFoto" style="display:none"><div class="feed-bos"><div class="feed-bos-emoji">📷</div><div class="feed-bos-baslik">Fotoğraf akışı yakında</div><div class="feed-bos-alt">Takip ettiğin kişilerin fotoğrafları burada görünecek</div></div></div>
-<div id="bolumYazi" style="display:none"><div class="feed-bos"><div class="feed-bos-emoji">✏️</div><div class="feed-bos-baslik">Yazı akışı yakında</div><div class="feed-bos-alt">Takip ettiğin kişilerin paylaşımları burada görünecek</div></div></div>
+<!-- VIDEO FEED -->
+<div id="bolumVideo" class="bolum aktif">
+  <div class="video-feed" id="videoFeed">
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-  <a href="home.html" class="bnav-item aktif">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--rust)" stroke="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-    <span class="bnav-label" style="color:var(--rust)">Anasayfa</span>
-  </a>
-  <a href="kesfet.html" class="bnav-item">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <span class="bnav-label">Keşfet</span>
-  </a>
-  <div class="bnav-orta">
-    <button class="bnav-plus" onclick="paylasimAc()">+</button>
+    <div class="video-kart">
+      <img src="https://picsum.photos/seed/v1/720/1280" alt="Video">
+      <span class="video-badge">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Video
+      </span>
+      <div class="video-gradient"></div>
+      <div class="video-alt">
+        <div class="video-info">
+          <div class="video-kullanici">
+            <img class="video-avatar" src="https://picsum.photos/seed/a1/80/80" alt="">
+            <span class="video-isim">Ayşe Nur</span>
+            <button class="video-takip-btn">Takip Et</button>
+          </div>
+          <div class="video-caption">Beşiktaş'ta sahil yürüyüşü 🌊 sesi açın!</div>
+          <div class="video-muzik">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            orijinal ses — aysenur
+          </div>
+        </div>
+        <div class="video-aksiyonlar">
+          <button class="video-aksiyon-btn">
+            <div class="video-aksiyon-cember"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+            <span class="video-aksiyon-sayi">12.4B</span>
+          </button>
+          <button class="video-aksiyon-btn">
+            <div class="video-aksiyon-cember"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <span class="video-aksiyon-sayi">312</span>
+          </button>
+          <button class="video-aksiyon-btn">
+            <div class="video-aksiyon-cember"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+            <span class="video-aksiyon-sayi">89</span>
+          </button>
+          <button class="video-aksiyon-btn">
+            <div class="video-aksiyon-cember"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+            <span class="video-aksiyon-sayi">Paylaş</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-kart">
+      <img src="https://picsum.photos/seed/v2/720/1280" alt="Video">
+      <span class="video-badge">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Video
+      </span>
+      <div class="video-gradient"></div>
+      <div class="video-alt">
+        <div class="video-info">
+          <div class="video-kullanici">
+            <img class="video-avatar" src="https://picsum.photos/seed/a2/80/80" alt="">
+            <span class="video-isim">Mehmet</span>
+            <button class="video-takip-btn">Takip Et</button>
+          </div>
+          <div class="video-caption">Sabah kahvesi rituelim ☕ sizi de çağırıyorum</div>
+          <div class="video-muzik">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            lo-fi beats
+          </div>
+        </div>
+        <div class="video-aksiyonlar">
+          <button class="video-aksiyon-btn">
+            <div class="video-aksiyon-cember"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+            <span class="video-aksiyon-sayi">21B</span>
+          </button>
+          <button class="video-aksiyon-btn">
+            <div class="video-aksiyon-cember"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <span class="video-aksiyon-sayi">1.2B</span>
+          </button>
+          <button class="video-aksiyon-btn">
+            <div class="video-aksiyon-cember"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+            <span class="video-aksiyon-sayi">220</span>
+          </button>
+          <button class="video-aksiyon-btn">
+            <div class="video-aksiyon-cember"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+            <span class="video-aksiyon-sayi">Paylaş</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
-  <a href="eslesmeler.html" class="bnav-item">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-    <span class="bnav-badge" id="eslesmeBadge"></span>
-    <span class="bnav-label">Eşleşme</span>
-  </a>
-  <a href="mesajlar.html" class="bnav-item">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    <span class="bnav-badge" id="mesajBadge"></span>
-    <span class="bnav-label">Mesajlar</span>
-  </a>
-</nav>
+</div>
+
+<!-- FOTO FEED -->
+<div id="bolumFoto" class="bolum">
+  <div class="foto-feed" id="fotoFeed">
+
+    <div class="foto-kart">
+      <div class="foto-header">
+        <div class="foto-kullanici">
+          <img class="foto-avatar" src="https://picsum.photos/seed/a3/80/80" alt="">
+          <div>
+            <div class="foto-isim">Zeynep</div>
+            <div class="foto-handle">@zeynep</div>
+          </div>
+        </div>
+        <button class="foto-more-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </button>
+      </div>
+      <img class="foto-gorsel" src="https://picsum.photos/seed/p3/720/720" alt="Yeni sezon trençkot">
+      <div class="foto-aksiyonlar">
+        <button class="foto-aksiyon-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        <button class="foto-aksiyon-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+        <button class="foto-aksiyon-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+        <button class="foto-aksiyon-btn foto-kaydet"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+      </div>
+      <div class="foto-bilgi">
+        <div class="foto-begenme">5.200 beğenme</div>
+        <div class="foto-caption"><strong>Zeynep</strong> Yeni sezon trençkot ✨</div>
+        <div class="foto-yorum-link">188 yorumun tümünü gör</div>
+      </div>
+    </div>
+
+    <div class="foto-kart">
+      <div class="foto-header">
+        <div class="foto-kullanici">
+          <img class="foto-avatar" src="https://picsum.photos/seed/a5/80/80" alt="">
+          <div>
+            <div class="foto-isim">Elif</div>
+            <div class="foto-handle">@elif</div>
+          </div>
+        </div>
+        <button class="foto-more-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </button>
+      </div>
+      <img class="foto-gorsel" src="https://picsum.photos/seed/p5/720/720" alt="İstanbul manzarası">
+      <div class="foto-aksiyonlar">
+        <button class="foto-aksiyon-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        <button class="foto-aksiyon-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+        <button class="foto-aksiyon-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+        <button class="foto-aksiyon-btn foto-kaydet"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+      </div>
+      <div class="foto-bilgi">
+        <div class="foto-begenme">9.400 beğenme</div>
+        <div class="foto-caption"><strong>Elif</strong> İstanbul'dan akşam manzarası 🌆🧡</div>
+        <div class="foto-yorum-link">241 yorumun tümünü gör</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- YAZI FEED -->
+<div id="bolumYazi" class="bolum">
+  <div class="yazi-feed">
+
+    <div class="yazi-kart">
+      <img class="yazi-avatar" src="https://picsum.photos/seed/a4/80/80" alt="">
+      <div class="yazi-govde">
+        <div class="yazi-ust">
+          <span class="yazi-isim">Kaan</span>
+          <span class="yazi-handle">@kaan · 2sa</span>
+          <button class="yazi-more-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+        </div>
+        <div class="yazi-kart-bg" style="background:linear-gradient(135deg,#E8603A,#ff8557)">
+          <p>Bugün öğrendim:<br>GoTapu'da %1 komisyon var.<br>Trendyol'da %25.<br><br>Matematik basit. 🧮</p>
+        </div>
+        <div class="yazi-aksiyonlar">
+          <button class="yazi-aksiyon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 540</button>
+          <button class="yazi-aksiyon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> 410</button>
+          <button class="yazi-aksiyon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 8.9B</button>
+          <button class="yazi-aksiyon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="yazi-kart">
+      <img class="yazi-avatar" src="https://picsum.photos/seed/a5/80/80" alt="">
+      <div class="yazi-govde">
+        <div class="yazi-ust">
+          <span class="yazi-isim">Elif</span>
+          <span class="yazi-handle">@elif · 4sa</span>
+          <button class="yazi-more-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+        </div>
+        <div class="yazi-kart-bg" style="background:linear-gradient(135deg,#9b5de5,#f15bb5)">
+          <p>Bir öneri:<br><br>Genç girişimciler GoTapu'da satış yapsın.<br>Komisyon %1 — kâr sizde kalır. 🚀</p>
+        </div>
+        <div class="yazi-aksiyonlar">
+          <button class="yazi-aksiyon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 92</button>
+          <button class="yazi-aksiyon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> 28</button>
+          <button class="yazi-aksiyon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 3.3B</button>
+          <button class="yazi-aksiyon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="yazi-kart">
+      <img class="yazi-avatar" src="https://picsum.photos/seed/a1/80/80" alt="">
+      <div class="yazi-govde">
+        <div class="yazi-ust">
+          <span class="yazi-isim">Ayşe Nur</span>
+          <span class="yazi-handle">@aysenur · 1g</span>
+          <button class="yazi-more-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+        </div>
+        <div class="yazi-metin">İstanbul'da ev kiraları artık çok pahalı 😔 Ama GoTapu'da hâlâ uygun fiyatlı ilanlar var, doğrudan sahibinden alıyorsunuz, aracı yok. Bugün güzel bir 2+1 gördüm Kadıköy'de 💙</div>
+        <div class="yazi-aksiyonlar">
+          <button class="yazi-aksiyon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 214</button>
+          <button class="yazi-aksiyon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> 67</button>
+          <button class="yazi-aksiyon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 1.1B</button>
+          <button class="yazi-aksiyon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 <script>
+/* ── SUPABASE ── */
 const SUPABASE_URL='https://ncmzfaszaowiynzjdefb.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
 const{createClient}=supabase;
 const sb=createClient(SUPABASE_URL,SUPABASE_KEY);
 window._sbClient=sb;
 
-function drawerAc(){document.getElementById('drawerPanel').classList.add('acik');document.getElementById('drawerOverlay').classList.add('acik')}
-function drawerKapat(){document.getElementById('drawerPanel').classList.remove('acik');document.getElementById('drawerOverlay').classList.remove('acik')}
-function ilanlarToggle(){document.getElementById('ilanlarBtn').classList.toggle('acik');document.getElementById('ilanlarSub').classList.toggle('acik')}
-function megaAc(){document.getElementById('megaOverlay').classList.add('acik');document.getElementById('megaArama').value='';megaFiltrele('')}
-function megaKapat(){document.getElementById('megaOverlay').classList.remove('acik')}
-function megaKapatDis(e){if(e.target===document.getElementById('megaOverlay'))megaKapat()}
-function megaFiltrele(q){
-  q=q.toLowerCase().trim();
-  document.querySelectorAll('.mega-kart').forEach(k=>{
-    const ad=k.querySelector('.mega-kart-ad').textContent.toLowerCase();
-    const alt=k.querySelector('.mega-kart-alt').textContent.toLowerCase();
-    k.style.display=(q===''||ad.includes(q)||alt.includes(q))?'flex':'none';
-  });
-}
-function paylasimAc(){document.getElementById('paylasimOverlay').classList.add('acik')}
-function paylasimKapat(e){if(e.target===document.getElementById('paylasimOverlay'))document.getElementById('paylasimOverlay').classList.remove('acik')}
-function aramaOdakla(){window.location.href='ilanlar.html'}
+/* ── SEKME ── */
 function sekmeGec(s){
   document.querySelectorAll('.sekme-btn').forEach(b=>b.classList.remove('aktif'));
   document.getElementById('tab'+s).classList.add('aktif');
-  ['Video','Foto','Yazi'].forEach(id=>document.getElementById('bolum'+id).style.display='none');
-  document.getElementById('bolum'+s).style.display='block';
+  document.querySelectorAll('.bolum').forEach(b=>b.classList.remove('aktif'));
+  document.getElementById('bolum'+s).classList.add('aktif');
 }
 
+/* ── AUTH REDIRECT ── */
 if(window.location.hash&&window.location.hash.includes('access_token')){
   const hp=new URLSearchParams(window.location.hash.substring(1));
   const at=hp.get('access_token'),rt=hp.get('refresh_token');
-  if(at){sb.auth.setSession({access_token:at,refresh_token:rt}).then(({data,error})=>{if(error)window.location.replace('index.html');else{window.history.replaceState(null,'',window.location.pathname);init();}});}
-  else init();
+  if(at){
+    sb.auth.setSession({access_token:at,refresh_token:rt}).then(({data,error})=>{
+      if(error)window.location.replace('index.html');
+      else{window.history.replaceState(null,'',window.location.pathname);init();}
+    });
+  }else init();
 }else if(new URLSearchParams(window.location.search).get('code')){
   window.location.replace('index.html'+window.location.search);
 }else{init();}
@@ -385,18 +436,11 @@ function init(){
   sb.auth.getSession().then(({data})=>{
     if(!data.session){window.location.replace('index.html');return;}
     document.body.style.visibility='visible';
-    mesajSay();
-    try{const t=JSON.parse(localStorage.getItem('gotapu_tercihler')||'{}');if(t.sehir||t.minFiyat||t.oda?.length)document.getElementById('eslesmeBadge').style.display='flex';}catch(e){}
   });
 }
-async function mesajSay(){
-  const{data:{user}}=await sb.auth.getUser();
-  if(!user)return;
-  const{count}=await sb.from('mesajlar').select('*',{count:'exact',head:true}).eq('alici_id',user.id).eq('okundu',false);
-  if(count>0){const b=document.getElementById('mesajBadge');b.textContent=count;b.style.display='flex';}
-  const{count:bCount}=await sb.from('bildirimler').select('*',{count:'exact',head:true}).eq('user_id',user.id).eq('okundu',false);
-  if(bCount>0){const bb=document.getElementById('bildirimBadge');bb.textContent=bCount>9?'9+':bCount;bb.style.display='flex';}
-}
 </script>
+
+<!-- NAVBAR (en sona ekleniyor) -->
+<script src="navbar.js"></script>
 </body>
 </html>
