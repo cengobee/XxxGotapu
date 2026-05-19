@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yemek — GoTapu</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .yemek-hero {
+      background: linear-gradient(135deg, #b5360f 0%, #E8603A 50%, #ff8557 100%);
+      padding: 22px 16px 18px; position: relative; overflow: hidden;
+    }
+    .yemek-hero::before {
+      content: '🍔'; position: absolute; right: -10px; top: -10px;
+      font-size: 100px; opacity: 0.15; pointer-events: none;
+    }
+    .hero-baslik { font-size: 22px; font-weight: 900; color: #fff; }
+    .hero-alt { font-size: 13px; color: rgba(255,255,255,0.82); margin-top: 4px; font-weight: 600; }
+    .hero-chip-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .hero-chip {
+      background: rgba(255,255,255,0.2); color: #fff;
+      padding: 5px 12px; border-radius: 50px; font-size: 12px; font-weight: 700;
+    }
+
+    .adres-bar {
+      margin: 12px 16px 0;
+      background: var(--card); border: 1.5px solid var(--border2);
+      border-radius: 14px; padding: 12px 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .adres-bar-metin { flex: 1; }
+    .adres-baslik { font-size: 12px; color: var(--text3); font-weight: 700; }
+    .adres-deger { font-size: 14px; font-weight: 800; color: var(--text); }
+    .adres-degistir { font-size: 12px; color: var(--rust); font-weight: 800; }
+
+    .kategori-scroll {
+      display: flex; gap: 8px; overflow-x: auto;
+      padding: 14px 16px 4px; scrollbar-width: none;
+    }
+    .kategori-scroll::-webkit-scrollbar { display: none; }
+    .kat-chip {
+      flex-shrink: 0; display: flex; flex-direction: column;
+      align-items: center; gap: 6px; cursor: pointer;
+    }
+    .kat-chip-ikon {
+      width: 58px; height: 58px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; background: var(--card);
+      border: 2px solid var(--border2);
+      transition: all .2s;
+    }
+    .kat-chip.aktif .kat-chip-ikon {
+      background: linear-gradient(135deg, #E8603A, #ff8557);
+      border-color: transparent;
+    }
+    .kat-chip-ad { font-size: 11px; font-weight: 800; color: var(--text2); }
+
+    .bolum-baslik {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 16px 10px;
+    }
+    .bolum-baslik-metin { font-size: 17px; font-weight: 900; }
+    .bolum-link { font-size: 13px; color: var(--rust); font-weight: 700; text-decoration: none; }
+
+    .restoran-scroll {
+      display: flex; gap: 12px; overflow-x: auto;
+      padding: 0 16px 4px; scrollbar-width: none;
+    }
+    .restoran-scroll::-webkit-scrollbar { display: none; }
+    .restoran-kart {
+      flex-shrink: 0; width: 200px;
+      background: var(--card); border-radius: 16px;
+      border: 1px solid var(--border); overflow: hidden;
+      text-decoration: none;
+      box-shadow: var(--shadow-card);
+    }
+    .restoran-resim {
+      width: 100%; height: 110px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 52px; background: var(--card2);
+      position: relative;
+    }
+    .restoran-badge {
+      position: absolute; top: 8px; left: 8px;
+      background: var(--rust); color: #fff;
+      font-size: 10px; font-weight: 900;
+      padding: 3px 8px; border-radius: 8px;
+    }
+    .restoran-bilgi { padding: 10px; }
+    .restoran-ad { font-size: 14px; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+    .restoran-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .restoran-puan {
+      display: flex; align-items: center; gap: 3px;
+      font-size: 12px; font-weight: 800; color: var(--gold);
+    }
+    .restoran-sure { font-size: 11px; color: var(--text3); font-weight: 700; }
+    .restoran-min { font-size: 11px; color: var(--text3); font-weight: 700; }
+
+    .urun-liste { padding: 0 16px 8px; display: flex; flex-direction: column; gap: 10px; }
+    .urun-satir {
+      background: var(--card); border-radius: 14px;
+      border: 1px solid var(--border); padding: 12px;
+      display: flex; gap: 12px; align-items: center;
+      text-decoration: none;
+    }
+    .urun-satir-resim {
+      width: 72px; height: 72px; border-radius: 12px;
+      background: var(--card2); display: flex;
+      align-items: center; justify-content: center;
+      font-size: 36px; flex-shrink: 0;
+    }
+    .urun-satir-bilgi { flex: 1; min-width: 0; }
+    .urun-satir-ad { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+    .urun-satir-alt { font-size: 12px; color: var(--text3); font-weight: 600; line-height: 1.4; margin-bottom: 6px; }
+    .urun-satir-alt-row { display: flex; align-items: center; justify-content: space-between; }
+    .urun-satir-fiyat { font-size: 16px; font-weight: 900; color: var(--rust); }
+    .urun-ekle-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      background: var(--rust); color: #fff; border: none;
+      font-size: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900;
+    }
+
+    .siparis-bar {
+      position: fixed; bottom: calc(var(--bot-h) + 12px);
+      left: 16px; right: 16px; z-index: 100;
+      background: var(--rust); border-radius: 16px;
+      padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 8px 32px rgba(232,96,58,0.45);
+      cursor: pointer; display: none;
+    }
+    .siparis-bar.goster { display: flex; }
+    .siparis-sol { display: flex; align-items: center; gap: 10px; }
+    .siparis-sayi {
+      background: rgba(255,255,255,0.25); color: #fff;
+      width: 26px; height: 26px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 900;
+    }
+    .siparis-metin { font-size: 14px; font-weight: 800; color: #fff; }
+    .siparis-fiyat { font-size: 16px; font-weight: 900; color: #fff; }
+  </style>
+</head>
+<body data-page="home">
+
+<div class="yemek-hero">
+  <div class="hero-baslik">🍔 Yemek</div>
+  <div class="hero-alt">Komşu mutfağından kapına kadar</div>
+  <div class="hero-chip-row">
+    <div class="hero-chip">🕐 20-45 dk teslimat</div>
+    <div class="hero-chip">🏠 Ev yapımı</div>
+  </div>
+</div>
+
+<!-- Adres -->
+<div class="adres-bar">
+  <span style="font-size:20px">📍</span>
+  <div class="adres-bar-metin">
+    <div class="adres-baslik">TESLİMAT ADRESİ</div>
+    <div class="adres-deger">Çankaya, Ankara</div>
+  </div>
+  <div class="adres-degistir">Değiştir</div>
+</div>
+
+<!-- Kategoriler -->
+<div class="kategori-scroll">
+  <div class="kat-chip aktif" onclick="katSec(this)">
+    <div class="kat-chip-ikon">🔥</div>
+    <div class="kat-chip-ad">Tümü</div>
+  </div>
+  <div class="kat-chip" onclick="katSec(this)">
+    <div class="kat-chip-ikon">🍕</div>
+    <div class="kat-chip-ad">Pizza</div>
+  </div>
+  <div class="kat-chip" onclick="katSec(this)">
+    <div class="kat-chip-ikon">🍔</div>
+    <div class="kat-chip-ad">Burger</div>
+  </div>
+  <div class="kat-chip" onclick="katSec(this)">
+    <div class="kat-chip-ikon">🥙</div>
+    <div class="kat-chip-ad">Döner</div>
+  </div>
+  <div class="kat-chip" onclick="katSec(this)">
+    <div class="kat-chip-ikon">🍜</div>
+    <div class="kat-chip-ad">Ev Yemeği</div>
+  </div>
+  <div class="kat-chip" onclick="katSec(this)">
+    <div class="kat-chip-ikon">🥗</div>
+    <div class="kat-chip-ad">Sağlıklı</div>
+  </div>
+  <div class="kat-chip" onclick="katSec(this)">
+    <div class="kat-chip-ikon">🍰</div>
+    <div class="kat-chip-ad">Tatlı</div>
+  </div>
+</div>
+
+<!-- Önerilen Restoranlar -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">⭐ Önerilen</div>
+  <a class="bolum-link" href="#">Tümü</a>
+</div>
+<div class="restoran-scroll">
+  <a class="restoran-kart" href="#">
+    <div class="restoran-resim">
+      🍕
+      <div class="restoran-badge">Çok Sipariş</div>
+    </div>
+    <div class="restoran-bilgi">
+      <div class="restoran-ad">Firına Gizli Pizza</div>
+      <div class="restoran-meta">
+        <span class="restoran-puan">★ 4.8</span>
+        <span class="restoran-sure">25-35 dk</span>
+        <span class="restoran-min">Min. ₺50</span>
+      </div>
+    </div>
+  </a>
+  <a class="restoran-kart" href="#">
+    <div class="restoran-resim">
+      🥙
+      <div class="restoran-badge">Hızlı</div>
+    </div>
+    <div class="restoran-bilgi">
+      <div class="restoran-ad">Usta Dönerci</div>
+      <div class="restoran-meta">
+        <span class="restoran-puan">★ 4.6</span>
+        <span class="restoran-sure">15-25 dk</span>
+        <span class="restoran-min">Min. ₺30</span>
+      </div>
+    </div>
+  </a>
+  <a class="restoran-kart" href="#">
+    <div class="restoran-resim">🍜</div>
+    <div class="restoran-bilgi">
+      <div class="restoran-ad">Annem'in Mutfağı</div>
+      <div class="restoran-meta">
+        <span class="restoran-puan">★ 4.9</span>
+        <span class="restoran-sure">30-45 dk</span>
+        <span class="restoran-min">Min. ₺60</span>
+      </div>
+    </div>
+  </a>
+  <a class="restoran-kart" href="#">
+    <div class="restoran-resim">🍔</div>
+    <div class="restoran-bilgi">
+      <div class="restoran-ad">Burger Lab</div>
+      <div class="restoran-meta">
+        <span class="restoran-puan">★ 4.7</span>
+        <span class="restoran-sure">20-30 dk</span>
+        <span class="restoran-min">Min. ₺45</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+<!-- Popüler Ürünler -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">🍽️ Popüler Yemekler</div>
+  <a class="bolum-link" href="#">Filtrele</a>
+</div>
+<div class="urun-liste">
+  <div class="urun-satir">
+    <div class="urun-satir-resim">🍕</div>
+    <div class="urun-satir-bilgi">
+      <div class="urun-satir-ad">Karışık Pizza (30 cm)</div>
+      <div class="urun-satir-alt">Mozarella, mantar, biber, sucuk</div>
+      <div class="urun-satir-alt-row">
+        <div class="urun-satir-fiyat">₺189</div>
+        <button class="urun-ekle-btn" onclick="ekle(this)">+</button>
+      </div>
+    </div>
+  </div>
+  <div class="urun-satir">
+    <div class="urun-satir-resim">🥙</div>
+    <div class="urun-satir-bilgi">
+      <div class="urun-satir-ad">Tavuk Döner Porsiyon</div>
+      <div class="urun-satir-alt">Lavaş, ayran, salata ile</div>
+      <div class="urun-satir-alt-row">
+        <div class="urun-satir-fiyat">₺129</div>
+        <button class="urun-ekle-btn" onclick="ekle(this)">+</button>
+      </div>
+    </div>
+  </div>
+  <div class="urun-satir">
+    <div class="urun-satir-resim">🍜</div>
+    <div class="urun-satir-bilgi">
+      <div class="urun-satir-ad">Mercimek Çorbası</div>
+      <div class="urun-satir-alt">Ev yapımı, kıtır ekmek ile</div>
+      <div class="urun-satir-alt-row">
+        <div class="urun-satir-fiyat">₺59</div>
+        <button class="urun-ekle-btn" onclick="ekle(this)">+</button>
+      </div>
+    </div>
+  </div>
+  <div class="urun-satir">
+    <div class="urun-satir-resim">🍔</div>
+    <div class="urun-satir-bilgi">
+      <div class="urun-satir-ad">Smash Burger</div>
+      <div class="urun-satir-alt">Dana eti, cheddar, özel sos</div>
+      <div class="urun-satir-alt-row">
+        <div class="urun-satir-fiyat">₺149</div>
+        <button class="urun-ekle-btn" onclick="ekle(this)">+</button>
+      </div>
+    </div>
+  </div>
+  <div class="urun-satir">
+    <div class="urun-satir-resim">🥗</div>
+    <div class="urun-satir-bilgi">
+      <div class="urun-satir-ad">Akdeniz Salatası</div>
+      <div class="urun-satir-alt">Taze sebze, zeytin, peynir</div>
+      <div class="urun-satir-alt-row">
+        <div class="urun-satir-fiyat">₺89</div>
+        <button class="urun-ekle-btn" onclick="ekle(this)">+</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sipariş Bar -->
+<div class="siparis-bar" id="siparis-bar">
+  <div class="siparis-sol">
+    <div class="siparis-sayi" id="siparis-sayi">0</div>
+    <div class="siparis-metin">Sepete Git</div>
+  </div>
+  <div class="siparis-fiyat" id="siparis-fiyat">₺0</div>
+</div>
+
+<script>
+  let sepet = 0, toplam = 0;
+  const fiyatlar = [189, 129, 59, 149, 89];
+
+  function ekle(btn) {
+    const satir = btn.closest('.urun-satir');
+    const idx = [...document.querySelectorAll('.urun-satir')].indexOf(satir);
+    sepet++;
+    toplam += fiyatlar[idx] || 99;
+    document.getElementById('siparis-sayi').textContent = sepet;
+    document.getElementById('siparis-fiyat').textContent = '₺' + toplam;
+    document.getElementById('siparis-bar').classList.add('goster');
+    btn.textContent = '✓';
+    btn.style.background = '#2ECC71';
+    setTimeout(() => { btn.textContent = '+'; btn.style.background = ''; }, 1500);
+  }
+
+  function katSec(el) {
+    document.querySelectorAll('.kat-chip').forEach(k => k.classList.remove('aktif'));
+    el.classList.add('aktif');
+  }
+</script>
+
+<script src="navbar.js"></script>
+</body>
+</html>

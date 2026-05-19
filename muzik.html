@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Müzik — GoTapu</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .muzik-hero {
+      background: linear-gradient(135deg, #1a0533 0%, #9b5de5 60%, #f15bb5 100%);
+      padding: 22px 16px 18px; position: relative; overflow: hidden;
+    }
+    .muzik-hero::before {
+      content: '🎵'; position: absolute; right: -10px; top: -10px;
+      font-size: 100px; opacity: 0.15; pointer-events: none;
+    }
+    .hero-baslik { font-size: 22px; font-weight: 900; color: #fff; }
+    .hero-alt { font-size: 13px; color: rgba(255,255,255,0.82); margin-top: 4px; font-weight: 600; }
+
+    .aktif-player {
+      margin: 14px 16px 0;
+      background: linear-gradient(135deg, #1a0533, #2d1055);
+      border: 1px solid rgba(155,93,229,0.3);
+      border-radius: 18px; padding: 16px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .player-kapak {
+      width: 64px; height: 64px; border-radius: 14px;
+      background: linear-gradient(135deg, #9b5de5, #f15bb5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; flex-shrink: 0;
+      animation: diskDon 4s linear infinite; position: relative;
+    }
+    .player-kapak.durakladi { animation-play-state: paused; }
+    @keyframes diskDon {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .player-bilgi { flex: 1; min-width: 0; }
+    .player-sarki { font-size: 15px; font-weight: 900; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .player-sanatci { font-size: 13px; color: rgba(255,255,255,0.65); font-weight: 700; margin-top: 2px; }
+    .player-sure { font-size: 11px; color: rgba(155,93,229,0.9); font-weight: 700; margin-top: 6px; }
+    .player-kontrol { display: flex; gap: 6px; align-items: center; }
+    .player-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,0.12); border: none; cursor: pointer;
+      color: #fff; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .player-btn.oynat {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #9b5de5, #f15bb5);
+      font-size: 18px;
+    }
+
+    .bolum-baslik {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 16px 10px;
+    }
+    .bolum-baslik-metin { font-size: 17px; font-weight: 900; }
+    .bolum-link { font-size: 13px; color: #9b5de5; font-weight: 700; text-decoration: none; }
+
+    .kategori-scroll {
+      display: flex; gap: 8px; overflow-x: auto;
+      padding: 0 16px 4px; scrollbar-width: none;
+    }
+    .kategori-scroll::-webkit-scrollbar { display: none; }
+    .muzik-chip {
+      flex-shrink: 0; padding: 8px 16px; border-radius: 50px;
+      background: var(--card); border: 1.5px solid var(--border2);
+      font-size: 13px; font-weight: 700; color: var(--text2);
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+    }
+    .muzik-chip.aktif { background: #9b5de5; border-color: #9b5de5; color: #fff; }
+
+    .playlist-scroll {
+      display: flex; gap: 10px; overflow-x: auto;
+      padding: 0 16px 4px; scrollbar-width: none;
+    }
+    .playlist-scroll::-webkit-scrollbar { display: none; }
+    .playlist-kart {
+      flex-shrink: 0; width: 130px; cursor: pointer; text-decoration: none;
+    }
+    .playlist-kapak {
+      width: 130px; height: 130px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 52px; margin-bottom: 8px; position: relative; overflow: hidden;
+    }
+    .playlist-kapak-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.3); opacity: 0; transition: opacity .2s;
+    }
+    .playlist-kart:hover .playlist-kapak-overlay,
+    .playlist-kart:active .playlist-kapak-overlay { opacity: 1; }
+    .playlist-play {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: #333;
+    }
+    .plist-1 { background: linear-gradient(135deg, #1a0533, #9b5de5); }
+    .plist-2 { background: linear-gradient(135deg, #0a1a3a, #f15bb5); }
+    .plist-3 { background: linear-gradient(135deg, #0a2a1a, #2ECC71); }
+    .plist-4 { background: linear-gradient(135deg, #2a1a00, #f7931e); }
+    .playlist-ad { font-size: 13px; font-weight: 800; color: var(--text); }
+    .playlist-alt { font-size: 11px; color: var(--text3); font-weight: 700; }
+
+    .sarki-liste { padding: 0 16px 8px; display: flex; flex-direction: column; gap: 2px; }
+    .sarki-satir {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 12px; cursor: pointer;
+      transition: background .15s;
+    }
+    .sarki-satir:active, .sarki-satir.aktif { background: var(--card); }
+    .sarki-no { font-size: 14px; font-weight: 800; color: var(--text3); width: 20px; text-align: center; flex-shrink: 0; }
+    .sarki-aktif-bar {
+      display: flex; gap: 2px; align-items: flex-end; width: 20px; flex-shrink: 0;
+    }
+    .bar { width: 3px; background: #9b5de5; border-radius: 2px; }
+    .bar:nth-child(1) { height: 10px; animation: barAnim .6s infinite alternate; }
+    .bar:nth-child(2) { height: 16px; animation: barAnim .6s .2s infinite alternate; }
+    .bar:nth-child(3) { height: 8px; animation: barAnim .6s .4s infinite alternate; }
+    @keyframes barAnim {
+      from { transform: scaleY(0.4); }
+      to { transform: scaleY(1); }
+    }
+    .sarki-kapak {
+      width: 42px; height: 42px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+      background: var(--card2);
+    }
+    .sarki-bilgi { flex: 1; min-width: 0; }
+    .sarki-ad { font-size: 14px; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sarki-sanatci { font-size: 12px; color: var(--text3); font-weight: 700; }
+    .sarki-sure { font-size: 12px; color: var(--text3); font-weight: 700; flex-shrink: 0; }
+    .sarki-more { font-size: 18px; color: var(--text3); cursor: pointer; flex-shrink: 0; }
+  </style>
+</head>
+<body data-page="home">
+
+<div class="muzik-hero">
+  <div class="hero-baslik">🎵 Müzik</div>
+  <div class="hero-alt">GoTapu'nun ritmiyle dinle, keşfet, paylaş</div>
+</div>
+
+<!-- Aktif Player -->
+<div class="aktif-player">
+  <div class="player-kapak" id="player-kapak">🎸</div>
+  <div class="player-bilgi">
+    <div class="player-sarki" id="player-sarki">Anatolian Rock</div>
+    <div class="player-sanatci" id="player-sanatci">GoTapu Seçkisi</div>
+    <div class="player-sure">2:34 / 4:12</div>
+  </div>
+  <div class="player-kontrol">
+    <button class="player-btn">⏮</button>
+    <button class="player-btn oynat" id="oynat-btn" onclick="oynatToggle()">⏸</button>
+    <button class="player-btn">⏭</button>
+  </div>
+</div>
+
+<!-- Kategoriler -->
+<div class="kategori-scroll" style="padding-top:14px">
+  <div class="muzik-chip aktif" onclick="katSec(this)">🔥 Keşfet</div>
+  <div class="muzik-chip" onclick="katSec(this)">🎸 Rock</div>
+  <div class="muzik-chip" onclick="katSec(this)">🎹 Pop</div>
+  <div class="muzik-chip" onclick="katSec(this)">🥁 Hip-Hop</div>
+  <div class="muzik-chip" onclick="katSec(this)">🎷 Arabesk</div>
+  <div class="muzik-chip" onclick="katSec(this)">🪗 Halk</div>
+  <div class="muzik-chip" onclick="katSec(this)">🎻 Klasik</div>
+</div>
+
+<!-- Playlistler -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">🎧 Playlistler</div>
+  <a class="bolum-link" href="#">Tümü</a>
+</div>
+<div class="playlist-scroll">
+  <a class="playlist-kart" href="#">
+    <div class="playlist-kapak plist-1">
+      🎸
+      <div class="playlist-kapak-overlay"><div class="playlist-play">▶</div></div>
+    </div>
+    <div class="playlist-ad">Gece Sürüşü</div>
+    <div class="playlist-alt">24 parça</div>
+  </a>
+  <a class="playlist-kart" href="#">
+    <div class="playlist-kapak plist-2">
+      💫
+      <div class="playlist-kapak-overlay"><div class="playlist-play">▶</div></div>
+    </div>
+    <div class="playlist-ad">Lofi Çalışma</div>
+    <div class="playlist-alt">38 parça</div>
+  </a>
+  <a class="playlist-kart" href="#">
+    <div class="playlist-kapak plist-3">
+      🌿
+      <div class="playlist-kapak-overlay"><div class="playlist-play">▶</div></div>
+    </div>
+    <div class="playlist-ad">Sabah Enerjisi</div>
+    <div class="playlist-alt">15 parça</div>
+  </a>
+  <a class="playlist-kart" href="#">
+    <div class="playlist-kapak plist-4">
+      🌅
+      <div class="playlist-kapak-overlay"><div class="playlist-play">▶</div></div>
+    </div>
+    <div class="playlist-ad">Akşamüstü</div>
+    <div class="playlist-alt">20 parça</div>
+  </a>
+</div>
+
+<!-- Şarkılar -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">🔥 Trend Şarkılar</div>
+  <a class="bolum-link" href="#">Tümü</a>
+</div>
+<div class="sarki-liste">
+  <div class="sarki-satir aktif" onclick="sarkiSec(this)">
+    <div class="sarki-aktif-bar">
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    </div>
+    <div class="sarki-kapak" style="background:linear-gradient(135deg,#9b5de5,#f15bb5)">🎸</div>
+    <div class="sarki-bilgi">
+      <div class="sarki-ad" style="color:#9b5de5">Anatolian Rock</div>
+      <div class="sarki-sanatci">GoTapu Seçkisi</div>
+    </div>
+    <div class="sarki-sure">4:12</div>
+    <div class="sarki-more">⋯</div>
+  </div>
+  <div class="sarki-satir" onclick="sarkiSec(this)">
+    <div class="sarki-no">2</div>
+    <div class="sarki-kapak">🎹</div>
+    <div class="sarki-bilgi">
+      <div class="sarki-ad">İstanbul Geceleri</div>
+      <div class="sarki-sanatci">Yıldız K.</div>
+    </div>
+    <div class="sarki-sure">3:45</div>
+    <div class="sarki-more">⋯</div>
+  </div>
+  <div class="sarki-satir" onclick="sarkiSec(this)">
+    <div class="sarki-no">3</div>
+    <div class="sarki-kapak">🎷</div>
+    <div class="sarki-bilgi">
+      <div class="sarki-ad">Hasret</div>
+      <div class="sarki-sanatci">Orhan B.</div>
+    </div>
+    <div class="sarki-sure">5:02</div>
+    <div class="sarki-more">⋯</div>
+  </div>
+  <div class="sarki-satir" onclick="sarkiSec(this)">
+    <div class="sarki-no">4</div>
+    <div class="sarki-kapak">🥁</div>
+    <div class="sarki-bilgi">
+      <div class="sarki-ad">Ritim Ankara</div>
+      <div class="sarki-sanatci">MC Tapu</div>
+    </div>
+    <div class="sarki-sure">3:18</div>
+    <div class="sarki-more">⋯</div>
+  </div>
+  <div class="sarki-satir" onclick="sarkiSec(this)">
+    <div class="sarki-no">5</div>
+    <div class="sarki-kapak">🪗</div>
+    <div class="sarki-bilgi">
+      <div class="sarki-ad">Karadeniz Türküsü</div>
+      <div class="sarki-sanatci">Halk Sanatçısı</div>
+    </div>
+    <div class="sarki-sure">4:33</div>
+    <div class="sarki-more">⋯</div>
+  </div>
+</div>
+
+<script>
+  let oynuyor = true;
+  function oynatToggle() {
+    oynuyor = !oynuyor;
+    document.getElementById('oynat-btn').textContent = oynuyor ? '⏸' : '▶';
+    document.getElementById('player-kapak').classList.toggle('durakladi', !oynuyor);
+  }
+  function katSec(el) {
+    document.querySelectorAll('.muzik-chip').forEach(k => k.classList.remove('aktif'));
+    el.classList.add('aktif');
+  }
+  function sarkiSec(el) {
+    document.querySelectorAll('.sarki-satir').forEach(s => s.classList.remove('aktif'));
+    el.classList.add('aktif');
+    const ad = el.querySelector('.sarki-ad').textContent;
+    const san = el.querySelector('.sarki-sanatci').textContent;
+    document.getElementById('player-sarki').textContent = ad;
+    document.getElementById('player-sanatci').textContent = san;
+    if (!oynuyor) oynatToggle();
+  }
+</script>
+
+<script src="navbar.js"></script>
+</body>
+</html>

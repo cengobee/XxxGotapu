@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gruplar — GoTapu</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .gruplar-hero {
+      background: linear-gradient(135deg, #1a0a2e 0%, #6a1a8a 50%, #f15bb5 100%);
+      padding: 22px 16px 18px; position: relative; overflow: hidden;
+    }
+    .gruplar-hero::before {
+      content: '👥'; position: absolute; right: -10px; top: -10px;
+      font-size: 100px; opacity: 0.15; pointer-events: none;
+    }
+    .hero-baslik { font-size: 22px; font-weight: 900; color: #fff; }
+    .hero-alt { font-size: 13px; color: rgba(255,255,255,0.82); margin-top: 4px; font-weight: 600; }
+    .hero-chip-row { display: flex; gap: 8px; margin-top: 12px; }
+    .hero-chip {
+      background: rgba(255,255,255,0.2); color: #fff;
+      padding: 5px 12px; border-radius: 50px; font-size: 12px; font-weight: 700;
+    }
+
+    .arama-bar {
+      margin: 12px 16px 0;
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card); border: 1.5px solid var(--border2);
+      border-radius: 14px; padding: 12px 14px;
+    }
+    .arama-bar input {
+      background: transparent; border: none; outline: none;
+      color: var(--text); font-family: 'Nunito', sans-serif;
+      font-size: 14px; font-weight: 600; flex: 1;
+    }
+    .arama-bar input::placeholder { color: var(--text3); }
+
+    .kategori-scroll {
+      display: flex; gap: 8px; overflow-x: auto;
+      padding: 14px 16px 4px; scrollbar-width: none;
+    }
+    .kategori-scroll::-webkit-scrollbar { display: none; }
+    .grup-chip {
+      flex-shrink: 0; padding: 8px 14px; border-radius: 50px;
+      background: var(--card); border: 1.5px solid var(--border2);
+      font-size: 13px; font-weight: 700; color: var(--text2);
+      cursor: pointer; display: flex; align-items: center; gap: 5px;
+    }
+    .grup-chip.aktif { background: #9b5de5; border-color: #9b5de5; color: #fff; }
+
+    .bolum-baslik {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 16px 10px;
+    }
+    .bolum-baslik-metin { font-size: 17px; font-weight: 900; }
+    .bolum-link { font-size: 13px; color: #9b5de5; font-weight: 700; text-decoration: none; }
+
+    /* Üyem olduğum gruplar */
+    .benim-gruplar { padding: 0 16px; display: flex; flex-direction: column; gap: 8px; }
+    .benim-grup-satir {
+      background: var(--card); border-radius: 14px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px; text-decoration: none; position: relative;
+    }
+    .benim-grup-satir.yeni-mesaj { border-color: rgba(155,93,229,0.4); }
+    .grup-avatar {
+      width: 50px; height: 50px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0;
+    }
+    .grup-bilgi { flex: 1; min-width: 0; }
+    .grup-ad { font-size: 14px; font-weight: 900; color: var(--text); }
+    .grup-son-mesaj { font-size: 12px; color: var(--text3); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .grup-sag { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+    .grup-saat { font-size: 11px; color: var(--text3); font-weight: 700; }
+    .grup-badge {
+      background: #9b5de5; color: #fff;
+      font-size: 10px; font-weight: 900;
+      min-width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; padding: 0 4px;
+    }
+
+    /* Keşfet grupları */
+    .kesfet-scroll {
+      display: flex; gap: 12px; overflow-x: auto;
+      padding: 0 16px 4px; scrollbar-width: none;
+    }
+    .kesfet-scroll::-webkit-scrollbar { display: none; }
+    .kesfet-kart {
+      flex-shrink: 0; width: 160px;
+      background: var(--card); border-radius: 16px;
+      border: 1px solid var(--border); overflow: hidden;
+      text-decoration: none; box-shadow: var(--shadow-card);
+    }
+    .kesfet-kapak {
+      height: 80px; display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+    }
+    .kesfet-bilgi { padding: 10px; }
+    .kesfet-ad { font-size: 13px; font-weight: 900; color: var(--text); margin-bottom: 3px; }
+    .kesfet-meta { display: flex; align-items: center; gap: 6px; }
+    .kesfet-uye { font-size: 11px; color: var(--text3); font-weight: 700; }
+    .kesfet-kat {
+      font-size: 10px; font-weight: 800; padding: 2px 8px;
+      border-radius: 6px; background: rgba(155,93,229,0.15); color: #9b5de5;
+    }
+    .katil-btn {
+      width: calc(100% - 20px); margin: 0 10px 10px;
+      background: rgba(155,93,229,0.15); border: 1.5px solid rgba(155,93,229,0.3);
+      color: #9b5de5; border-radius: 10px; padding: 7px;
+      font-size: 12px; font-weight: 800; cursor: pointer;
+      font-family: 'Nunito', sans-serif; transition: all .2s;
+    }
+    .katil-btn.katildi { background: #9b5de5; color: #fff; border-color: #9b5de5; }
+
+    /* Tüm gruplar listesi */
+    .tum-gruplar { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+    .grup-kart-buyuk {
+      background: var(--card); border-radius: 16px;
+      border: 1px solid var(--border); padding: 14px;
+      display: flex; gap: 14px; align-items: flex-start;
+      text-decoration: none;
+    }
+    .gbuyuk-avatar {
+      width: 56px; height: 56px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; flex-shrink: 0;
+    }
+    .gbuyuk-bilgi { flex: 1; min-width: 0; }
+    .gbuyuk-ad { font-size: 15px; font-weight: 900; color: var(--text); margin-bottom: 3px; }
+    .gbuyuk-aciklama { font-size: 12px; color: var(--text3); font-weight: 600; line-height: 1.4; margin-bottom: 8px; }
+    .gbuyuk-alt { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .gbuyuk-uye { font-size: 12px; color: var(--text2); font-weight: 700; }
+    .gbuyuk-kat {
+      font-size: 11px; font-weight: 800; padding: 3px 10px;
+      border-radius: 8px;
+    }
+    .gbuyuk-katil {
+      margin-left: auto; background: var(--rust); color: #fff;
+      border: none; border-radius: 12px; padding: 8px 16px;
+      font-size: 13px; font-weight: 900; cursor: pointer;
+      font-family: 'Nunito', sans-serif; flex-shrink: 0;
+      transition: all .2s;
+    }
+    .gbuyuk-katil.katildi { background: var(--card2); color: var(--text3); }
+
+    .grup-olustur-btn {
+      position: fixed; bottom: calc(var(--bot-h) + 16px); right: 16px;
+      background: linear-gradient(135deg, #9b5de5, #f15bb5);
+      color: #fff; border: none; border-radius: 50px;
+      padding: 12px 20px; font-size: 14px; font-weight: 900;
+      cursor: pointer; font-family: 'Nunito', sans-serif;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 6px 24px rgba(155,93,229,0.4); z-index: 100;
+    }
+  </style>
+</head>
+<body data-page="home">
+
+<div class="gruplar-hero">
+  <div class="hero-baslik">👥 Gruplar</div>
+  <div class="hero-alt">İlgi alanına göre topluluklara katıl</div>
+  <div class="hero-chip-row">
+    <div class="hero-chip">🏙️ Ankara</div>
+    <div class="hero-chip">1.240 grup</div>
+  </div>
+</div>
+
+<div class="arama-bar">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+  <input placeholder="Grup ara…"/>
+</div>
+
+<!-- Kategoriler -->
+<div class="kategori-scroll">
+  <div class="grup-chip aktif" onclick="katSec(this)">🔥 Tümü</div>
+  <div class="grup-chip" onclick="katSec(this)">🏠 Emlak</div>
+  <div class="grup-chip" onclick="katSec(this)">🚗 Araç</div>
+  <div class="grup-chip" onclick="katSec(this)">🛍️ Alışveriş</div>
+  <div class="grup-chip" onclick="katSec(this)">🎮 Oyun</div>
+  <div class="grup-chip" onclick="katSec(this)">🌿 Doğa</div>
+  <div class="grup-chip" onclick="katSec(this)">📚 Kitap</div>
+  <div class="grup-chip" onclick="katSec(this)">💼 İş</div>
+</div>
+
+<!-- Üyem Olduğum Gruplar -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">💬 Gruplarım</div>
+  <a class="bolum-link" href="#">Tümü</a>
+</div>
+<div class="benim-gruplar">
+  <a class="benim-grup-satir yeni-mesaj" href="#">
+    <div class="grup-avatar" style="background:linear-gradient(135deg,#1a3a1a,#2ECC71)">🏠</div>
+    <div class="grup-bilgi">
+      <div class="grup-ad">Ankara Kiralık Ev</div>
+      <div class="grup-son-mesaj">Ahmet: Çankaya'da 2+1 müsait mi?</div>
+    </div>
+    <div class="grup-sag">
+      <div class="grup-saat">14:32</div>
+      <div class="grup-badge">7</div>
+    </div>
+  </a>
+  <a class="benim-grup-satir" href="#">
+    <div class="grup-avatar" style="background:linear-gradient(135deg,#0d2137,#4a90d9)">🚗</div>
+    <div class="grup-bilgi">
+      <div class="grup-ad">2. El Araç Ankara</div>
+      <div class="grup-son-mesaj">Yeni ilan: 2020 Clio 1.0 TCe</div>
+    </div>
+    <div class="grup-sag">
+      <div class="grup-saat">11:15</div>
+    </div>
+  </a>
+  <a class="benim-grup-satir yeni-mesaj" href="#">
+    <div class="grup-avatar" style="background:linear-gradient(135deg,#1a0533,#9b5de5)">🎮</div>
+    <div class="grup-bilgi">
+      <div class="grup-ad">GoTapu Oyuncuları</div>
+      <div class="grup-son-mesaj">Fatma: Bu akşam turnuva var!</div>
+    </div>
+    <div class="grup-sag">
+      <div class="grup-saat">Dün</div>
+      <div class="grup-badge">3</div>
+    </div>
+  </a>
+</div>
+
+<!-- Keşfet -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">🔍 Keşfet</div>
+  <a class="bolum-link" href="#">Tümü</a>
+</div>
+<div class="kesfet-scroll">
+  <div class="kesfet-kart">
+    <div class="kesfet-kapak" style="background:linear-gradient(135deg,#0a2a0a,#2ECC71)">🌿</div>
+    <div class="kesfet-bilgi">
+      <div class="kesfet-ad">Organik Yaşam</div>
+      <div class="kesfet-meta">
+        <span class="kesfet-uye">👥 4.2K üye</span>
+        <span class="kesfet-kat">Yaşam</span>
+      </div>
+    </div>
+    <button class="katil-btn" onclick="katil(this)">+ Katıl</button>
+  </div>
+  <div class="kesfet-kart">
+    <div class="kesfet-kapak" style="background:linear-gradient(135deg,#2a1a00,#f7931e)">📚</div>
+    <div class="kesfet-bilgi">
+      <div class="kesfet-ad">Kitap Kulübü</div>
+      <div class="kesfet-meta">
+        <span class="kesfet-uye">👥 1.8K üye</span>
+        <span class="kesfet-kat">Kültür</span>
+      </div>
+    </div>
+    <button class="katil-btn" onclick="katil(this)">+ Katıl</button>
+  </div>
+  <div class="kesfet-kart">
+    <div class="kesfet-kapak" style="background:linear-gradient(135deg,#0d2137,#00b4d8)">💼</div>
+    <div class="kesfet-bilgi">
+      <div class="kesfet-ad">Girişimciler</div>
+      <div class="kesfet-meta">
+        <span class="kesfet-uye">👥 3.1K üye</span>
+        <span class="kesfet-kat">İş</span>
+      </div>
+    </div>
+    <button class="katil-btn" onclick="katil(this)">+ Katıl</button>
+  </div>
+  <div class="kesfet-kart">
+    <div class="kesfet-kapak" style="background:linear-gradient(135deg,#2a0a0a,#e63946)">🏃</div>
+    <div class="kesfet-bilgi">
+      <div class="kesfet-ad">Ankara Koşucular</div>
+      <div class="kesfet-meta">
+        <span class="kesfet-uye">👥 890 üye</span>
+        <span class="kesfet-kat">Spor</span>
+      </div>
+    </div>
+    <button class="katil-btn" onclick="katil(this)">+ Katıl</button>
+  </div>
+</div>
+
+<!-- Tüm Gruplar -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">🌐 Tüm Gruplar</div>
+  <a class="bolum-link" href="#">Filtrele</a>
+</div>
+<div class="tum-gruplar">
+  <a class="grup-kart-buyuk" href="#">
+    <div class="gbuyuk-avatar" style="background:linear-gradient(135deg,#1a3a1a,#2ECC71)">🏡</div>
+    <div class="gbuyuk-bilgi">
+      <div class="gbuyuk-ad">Ankara Kiralık & Satılık</div>
+      <div class="gbuyuk-aciklama">Ankara'daki tüm emlak ilanları, fiyat tartışmaları ve mahalle tavsiyeleri</div>
+      <div class="gbuyuk-alt">
+        <span class="gbuyuk-uye">👥 12.4K üye</span>
+        <span class="gbuyuk-kat tag-green">Emlak</span>
+        <button class="gbuyuk-katil" onclick="buyukKatil(event,this)">Katıl</button>
+      </div>
+    </div>
+  </a>
+  <a class="grup-kart-buyuk" href="#">
+    <div class="gbuyuk-avatar" style="background:linear-gradient(135deg,#0d2137,#4a90d9)">🔧</div>
+    <div class="gbuyuk-bilgi">
+      <div class="gbuyuk-ad">Ev Tadilat & Dekorasyon</div>
+      <div class="gbuyuk-aciklama">Usta tavsiyesi, tadilat fiyatları, dekorasyon fikirleri paylaşın</div>
+      <div class="gbuyuk-alt">
+        <span class="gbuyuk-uye">👥 5.8K üye</span>
+        <span class="gbuyuk-kat tag-blue">Yaşam</span>
+        <button class="gbuyuk-katil" onclick="buyukKatil(event,this)">Katıl</button>
+      </div>
+    </div>
+  </a>
+  <a class="grup-kart-buyuk" href="#">
+    <div class="gbuyuk-avatar" style="background:linear-gradient(135deg,#1a0533,#9b5de5)">🛍️</div>
+    <div class="gbuyuk-bilgi">
+      <div class="gbuyuk-ad">GoTapu Alıcı & Satıcılar</div>
+      <div class="gbuyuk-aciklama">Platform kullanım ipuçları, mağaza açma, ürün fotoğraflama rehberleri</div>
+      <div class="gbuyuk-alt">
+        <span class="gbuyuk-uye">👥 8.2K üye</span>
+        <span class="gbuyuk-kat tag-rust">Ticaret</span>
+        <button class="gbuyuk-katil" onclick="buyukKatil(event,this)">Katıl</button>
+      </div>
+    </div>
+  </a>
+  <a class="grup-kart-buyuk" href="#">
+    <div class="gbuyuk-avatar" style="background:linear-gradient(135deg,#2a1a00,#f7931e)">🍽️</div>
+    <div class="gbuyuk-bilgi">
+      <div class="gbuyuk-ad">Ankara Yemek Severler</div>
+      <div class="gbuyuk-aciklama">Ankara'nın en iyi restoranları, kafeler ve ev yapımı tarifler</div>
+      <div class="gbuyuk-alt">
+        <span class="gbuyuk-uye">👥 7.1K üye</span>
+        <span class="gbuyuk-kat tag-gold">Yemek</span>
+        <button class="gbuyuk-katil" onclick="buyukKatil(event,this)">Katıl</button>
+      </div>
+    </div>
+  </a>
+</div>
+<div style="height:16px"></div>
+
+<!-- Grup Oluştur FAB -->
+<button class="grup-olustur-btn">
+  ✦ Grup Oluştur
+</button>
+
+<script>
+  function katSec(el) {
+    document.querySelectorAll('.grup-chip').forEach(k => k.classList.remove('aktif'));
+    el.classList.add('aktif');
+  }
+  function katil(btn) {
+    if (btn.classList.contains('katildi')) {
+      btn.classList.remove('katildi');
+      btn.textContent = '+ Katıl';
+    } else {
+      btn.classList.add('katildi');
+      btn.textContent = '✓ Üyesin';
+    }
+  }
+  function buyukKatil(e, btn) {
+    e.preventDefault();
+    if (btn.classList.contains('katildi')) {
+      btn.classList.remove('katildi');
+      btn.textContent = 'Katıl';
+    } else {
+      btn.classList.add('katildi');
+      btn.textContent = '✓ Üye';
+    }
+  }
+</script>
+
+<script src="navbar.js"></script>
+</body>
+</html>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alışveriş — GoTapu</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .alisveris-banner {
+      background: linear-gradient(135deg, #E8603A 0%, #ff8557 60%, #ffb347 100%);
+      padding: 20px 16px 18px;
+      position: relative; overflow: hidden;
+    }
+    .alisveris-banner::before {
+      content: ''; position: absolute; top: -40px; right: -40px;
+      width: 160px; height: 160px; border-radius: 50%;
+      background: rgba(255,255,255,0.12); pointer-events: none;
+    }
+    .alisveris-banner::after {
+      content: ''; position: absolute; bottom: -30px; left: 30px;
+      width: 100px; height: 100px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); pointer-events: none;
+    }
+    .banner-baslik { font-size: 22px; font-weight: 900; color: #fff; }
+    .banner-alt { font-size: 13px; color: rgba(255,255,255,0.82); margin-top: 4px; font-weight: 600; }
+    .banner-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.25); border-radius: 50px;
+      padding: 4px 12px; font-size: 11px; font-weight: 800; color: #fff;
+      margin-top: 10px;
+    }
+
+    .arama-bar {
+      margin: 14px 16px 0;
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card); border: 1.5px solid var(--border2);
+      border-radius: 14px; padding: 12px 14px;
+    }
+    .arama-bar input {
+      background: transparent; border: none; outline: none;
+      color: var(--text); font-family: 'Nunito', sans-serif;
+      font-size: 14px; font-weight: 600; flex: 1;
+    }
+    .arama-bar input::placeholder { color: var(--text3); }
+
+    .kategori-scroll {
+      display: flex; gap: 10px; overflow-x: auto;
+      padding: 14px 16px 4px; scrollbar-width: none;
+    }
+    .kategori-scroll::-webkit-scrollbar { display: none; }
+    .kat-kart {
+      flex-shrink: 0; display: flex; flex-direction: column;
+      align-items: center; gap: 6px; text-decoration: none;
+    }
+    .kat-kart-ikon {
+      width: 56px; height: 56px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      border: 1.5px solid var(--border2);
+      background: var(--card);
+    }
+    .kat-kart-ikon.active { background: linear-gradient(135deg, #E8603A, #ff8557); border-color: transparent; }
+    .kat-kart-ad { font-size: 11px; font-weight: 800; color: var(--text2); text-align: center; white-space: nowrap; }
+
+    .flash-sale-banner {
+      margin: 16px 16px 0;
+      background: linear-gradient(135deg, #1a0a00, #2d1200);
+      border-radius: 16px; padding: 14px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      border: 1px solid rgba(232,96,58,0.3);
+    }
+    .flash-sol { display: flex; align-items: center; gap: 10px; }
+    .flash-ikon { font-size: 28px; }
+    .flash-baslik { font-size: 15px; font-weight: 900; color: #fff; }
+    .flash-alt { font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 600; }
+    .flash-sayac {
+      display: flex; gap: 4px; align-items: center;
+    }
+    .sayac-blok {
+      background: var(--rust); color: #fff;
+      border-radius: 8px; padding: 6px 10px;
+      font-size: 16px; font-weight: 900; min-width: 36px; text-align: center;
+    }
+    .sayac-sep { font-size: 16px; font-weight: 900; color: var(--rust); }
+
+    .urun-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; padding: 14px 16px;
+    }
+    .urun-kart {
+      background: var(--card); border-radius: 16px;
+      border: 1px solid var(--border); overflow: hidden;
+      text-decoration: none;
+      display: flex; flex-direction: column;
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+    .urun-kart-resim {
+      width: 100%; aspect-ratio: 1;
+      background: var(--card2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 52px; position: relative;
+    }
+    .urun-badge-indirim {
+      position: absolute; top: 8px; left: 8px;
+      background: #e63946; color: #fff;
+      font-size: 11px; font-weight: 900;
+      padding: 3px 8px; border-radius: 8px;
+    }
+    .urun-favori {
+      position: absolute; top: 8px; right: 8px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(0,0,0,0.4); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .urun-bilgi { padding: 10px; }
+    .urun-magaza { font-size: 10px; color: var(--text3); font-weight: 700; margin-bottom: 4px; }
+    .urun-ad { font-size: 13px; font-weight: 800; color: var(--text2); line-height: 1.3; margin-bottom: 6px; }
+    .urun-fiyat-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .urun-fiyat { font-size: 16px; font-weight: 900; color: var(--rust); }
+    .urun-eski-fiyat { font-size: 12px; color: var(--text3); text-decoration: line-through; font-weight: 600; }
+    .urun-puan { display: flex; align-items: center; gap: 3px; margin-top: 4px; }
+    .urun-yildiz { font-size: 11px; color: var(--gold); }
+    .urun-puan-sayi { font-size: 11px; color: var(--text3); font-weight: 700; }
+
+    .sepet-fab {
+      position: fixed; bottom: calc(var(--bot-h) + 16px); right: 16px;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--rust); color: #fff;
+      border: none; cursor: pointer; font-size: 22px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 24px rgba(232,96,58,0.5); z-index: 100;
+    }
+    .sepet-fab-badge {
+      position: absolute; top: -2px; right: -2px;
+      background: var(--gold); color: #0d1117;
+      font-size: 10px; font-weight: 900;
+      width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .bolum-baslik {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 16px 0;
+    }
+    .bolum-baslik-metin { font-size: 17px; font-weight: 900; }
+    .bolum-link { font-size: 13px; color: var(--rust); font-weight: 700; text-decoration: none; }
+
+    .magaza-scroll {
+      display: flex; gap: 10px; overflow-x: auto;
+      padding: 12px 16px; scrollbar-width: none;
+    }
+    .magaza-scroll::-webkit-scrollbar { display: none; }
+    .magaza-kart {
+      flex-shrink: 0; width: 120px;
+      background: var(--card); border-radius: 14px;
+      border: 1px solid var(--border); padding: 14px 10px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      text-decoration: none;
+    }
+    .magaza-logo { width: 44px; height: 44px; border-radius: 12px; font-size: 24px; display: flex; align-items: center; justify-content: center; background: var(--card2); }
+    .magaza-ad { font-size: 12px; font-weight: 800; color: var(--text2); text-align: center; }
+    .magaza-urun { font-size: 10px; color: var(--text3); font-weight: 700; }
+  </style>
+</head>
+<body data-page="home">
+
+<div class="alisveris-banner">
+  <div class="banner-baslik">🛍️ Alışveriş</div>
+  <div class="banner-alt">Yerel mağazalar, uygun fiyat, %1 komisyon</div>
+  <div class="banner-badge">✦ 1.240 aktif mağaza</div>
+</div>
+
+<div class="arama-bar">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+  <input placeholder="Ürün, mağaza veya marka ara…"/>
+</div>
+
+<!-- Kategoriler -->
+<div class="kategori-scroll">
+  <div class="kat-kart">
+    <div class="kat-kart-ikon active">🔥</div>
+    <div class="kat-kart-ad">Tümü</div>
+  </div>
+  <div class="kat-kart">
+    <div class="kat-kart-ikon">👗</div>
+    <div class="kat-kart-ad">Giyim</div>
+  </div>
+  <div class="kat-kart">
+    <div class="kat-kart-ikon">📱</div>
+    <div class="kat-kart-ad">Elektronik</div>
+  </div>
+  <div class="kat-kart">
+    <div class="kat-kart-ikon">🏠</div>
+    <div class="kat-kart-ad">Ev & Yaşam</div>
+  </div>
+  <div class="kat-kart">
+    <div class="kat-kart-ikon">💄</div>
+    <div class="kat-kart-ad">Kozmetik</div>
+  </div>
+  <div class="kat-kart">
+    <div class="kat-kart-ikon">⚽</div>
+    <div class="kat-kart-ad">Spor</div>
+  </div>
+  <div class="kat-kart">
+    <div class="kat-kart-ikon">🍕</div>
+    <div class="kat-kart-ad">Gıda</div>
+  </div>
+  <div class="kat-kart">
+    <div class="kat-kart-ikon">🧸</div>
+    <div class="kat-kart-ad">Oyuncak</div>
+  </div>
+</div>
+
+<!-- Flash Sale -->
+<div class="flash-sale-banner">
+  <div class="flash-sol">
+    <div class="flash-ikon">⚡</div>
+    <div>
+      <div class="flash-baslik">Flaş İndirim</div>
+      <div class="flash-alt">%70'e varan indirim</div>
+    </div>
+  </div>
+  <div class="flash-sayac">
+    <div class="sayac-blok" id="s-saat">04</div>
+    <div class="sayac-sep">:</div>
+    <div class="sayac-blok" id="s-dak">37</div>
+    <div class="sayac-sep">:</div>
+    <div class="sayac-blok" id="s-san">22</div>
+  </div>
+</div>
+
+<!-- Öne Çıkan Mağazalar -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">🏪 Mağazalar</div>
+  <a class="bolum-link" href="#">Tümünü Gör</a>
+</div>
+<div class="magaza-scroll">
+  <a class="magaza-kart" href="#">
+    <div class="magaza-logo">👗</div>
+    <div class="magaza-ad">ModaHane</div>
+    <div class="magaza-urun">142 ürün</div>
+  </a>
+  <a class="magaza-kart" href="#">
+    <div class="magaza-logo">📱</div>
+    <div class="magaza-ad">TeknoDepot</div>
+    <div class="magaza-urun">89 ürün</div>
+  </a>
+  <a class="magaza-kart" href="#">
+    <div class="magaza-logo">🌿</div>
+    <div class="magaza-ad">DoğalYaşam</div>
+    <div class="magaza-urun">211 ürün</div>
+  </a>
+  <a class="magaza-kart" href="#">
+    <div class="magaza-logo">⚽</div>
+    <div class="magaza-ad">SportZone</div>
+    <div class="magaza-urun">67 ürün</div>
+  </a>
+  <a class="magaza-kart" href="#">
+    <div class="magaza-logo">🏠</div>
+    <div class="magaza-ad">EvimGüzel</div>
+    <div class="magaza-urun">334 ürün</div>
+  </a>
+</div>
+
+<!-- Ürünler -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">🔥 Öne Çıkanlar</div>
+  <a class="bolum-link" href="#">Filtrele</a>
+</div>
+
+<div class="urun-grid">
+  <a class="urun-kart" href="#">
+    <div class="urun-kart-resim">
+      👟
+      <div class="urun-badge-indirim">-%35</div>
+      <button class="urun-favori">🤍</button>
+    </div>
+    <div class="urun-bilgi">
+      <div class="urun-magaza">SportZone</div>
+      <div class="urun-ad">Koşu Ayakkabısı Pro</div>
+      <div class="urun-fiyat-row">
+        <div class="urun-fiyat">₺649</div>
+        <div class="urun-eski-fiyat">₺999</div>
+      </div>
+      <div class="urun-puan">
+        <span class="urun-yildiz">★★★★★</span>
+        <span class="urun-puan-sayi">(128)</span>
+      </div>
+    </div>
+  </a>
+  <a class="urun-kart" href="#">
+    <div class="urun-kart-resim">
+      👗
+      <div class="urun-badge-indirim">-%20</div>
+      <button class="urun-favori">🤍</button>
+    </div>
+    <div class="urun-bilgi">
+      <div class="urun-magaza">ModaHane</div>
+      <div class="urun-ad">Yazlık Elbise</div>
+      <div class="urun-fiyat-row">
+        <div class="urun-fiyat">₺319</div>
+        <div class="urun-eski-fiyat">₺399</div>
+      </div>
+      <div class="urun-puan">
+        <span class="urun-yildiz">★★★★☆</span>
+        <span class="urun-puan-sayi">(84)</span>
+      </div>
+    </div>
+  </a>
+  <a class="urun-kart" href="#">
+    <div class="urun-kart-resim">
+      🎧
+      <button class="urun-favori">🤍</button>
+    </div>
+    <div class="urun-bilgi">
+      <div class="urun-magaza">TeknoDepot</div>
+      <div class="urun-ad">Kablosuz Kulaklık</div>
+      <div class="urun-fiyat-row">
+        <div class="urun-fiyat">₺1.249</div>
+      </div>
+      <div class="urun-puan">
+        <span class="urun-yildiz">★★★★★</span>
+        <span class="urun-puan-sayi">(256)</span>
+      </div>
+    </div>
+  </a>
+  <a class="urun-kart" href="#">
+    <div class="urun-kart-resim">
+      🕯️
+      <div class="urun-badge-indirim">-%15</div>
+      <button class="urun-favori">🤍</button>
+    </div>
+    <div class="urun-bilgi">
+      <div class="urun-magaza">EvimGüzel</div>
+      <div class="urun-ad">Dekoratif Mum Seti</div>
+      <div class="urun-fiyat-row">
+        <div class="urun-fiyat">₺189</div>
+        <div class="urun-eski-fiyat">₺222</div>
+      </div>
+      <div class="urun-puan">
+        <span class="urun-yildiz">★★★★☆</span>
+        <span class="urun-puan-sayi">(47)</span>
+      </div>
+    </div>
+  </a>
+  <a class="urun-kart" href="#">
+    <div class="urun-kart-resim">
+      🌿
+      <button class="urun-favori">🤍</button>
+    </div>
+    <div class="urun-bilgi">
+      <div class="urun-magaza">DoğalYaşam</div>
+      <div class="urun-ad">Organik Şampuan</div>
+      <div class="urun-fiyat-row">
+        <div class="urun-fiyat">₺129</div>
+      </div>
+      <div class="urun-puan">
+        <span class="urun-yildiz">★★★★★</span>
+        <span class="urun-puan-sayi">(312)</span>
+      </div>
+    </div>
+  </a>
+  <a class="urun-kart" href="#">
+    <div class="urun-kart-resim">
+      ⌚
+      <div class="urun-badge-indirim">-%40</div>
+      <button class="urun-favori">🤍</button>
+    </div>
+    <div class="urun-bilgi">
+      <div class="urun-magaza">TeknoDepot</div>
+      <div class="urun-ad">Akıllı Saat</div>
+      <div class="urun-fiyat-row">
+        <div class="urun-fiyat">₺1.799</div>
+        <div class="urun-eski-fiyat">₺2.999</div>
+      </div>
+      <div class="urun-puan">
+        <span class="urun-yildiz">★★★★☆</span>
+        <span class="urun-puan-sayi">(95)</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+<!-- Sepet FAB -->
+<button class="sepet-fab">
+  🛒
+  <span class="sepet-fab-badge">3</span>
+</button>
+
+<script>
+  // Sayaç
+  let toplam = 4*3600 + 37*60 + 22;
+  function sayacGuncelle() {
+    if (toplam <= 0) return;
+    toplam--;
+    const s = Math.floor(toplam/3600);
+    const d = Math.floor((toplam%3600)/60);
+    const sn = toplam%60;
+    document.getElementById('s-saat').textContent = String(s).padStart(2,'0');
+    document.getElementById('s-dak').textContent = String(d).padStart(2,'0');
+    document.getElementById('s-san').textContent = String(sn).padStart(2,'0');
+  }
+  setInterval(sayacGuncelle, 1000);
+
+  // Favori toggle
+  document.querySelectorAll('.urun-favori').forEach(b => {
+    b.addEventListener('click', (e) => {
+      e.preventDefault();
+      b.textContent = b.textContent === '🤍' ? '❤️' : '🤍';
+    });
+  });
+</script>
+
+<script src="navbar.js"></script>
+</body>
+</html>

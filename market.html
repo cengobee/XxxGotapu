@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Market — GoTapu</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .market-hero {
+      background: linear-gradient(135deg, #0077b6 0%, #00b4d8 60%, #48cae4 100%);
+      padding: 22px 16px 18px; position: relative; overflow: hidden;
+    }
+    .market-hero::before {
+      content: '🛒'; position: absolute; right: -10px; top: -10px;
+      font-size: 100px; opacity: 0.15; pointer-events: none;
+    }
+    .hero-baslik { font-size: 22px; font-weight: 900; color: #fff; }
+    .hero-alt { font-size: 13px; color: rgba(255,255,255,0.82); margin-top: 4px; font-weight: 600; }
+    .hero-chip-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .hero-chip {
+      background: rgba(255,255,255,0.22); color: #fff;
+      padding: 5px 12px; border-radius: 50px; font-size: 12px; font-weight: 700;
+    }
+
+    .arama-bar {
+      margin: 12px 16px 0;
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card); border: 1.5px solid var(--border2);
+      border-radius: 14px; padding: 12px 14px;
+    }
+    .arama-bar input {
+      background: transparent; border: none; outline: none;
+      color: var(--text); font-family: 'Nunito', sans-serif;
+      font-size: 14px; font-weight: 600; flex: 1;
+    }
+    .arama-bar input::placeholder { color: var(--text3); }
+
+    .hizli-teslimat-banner {
+      margin: 12px 16px 0;
+      background: linear-gradient(135deg, #00171f, #001d29);
+      border-radius: 16px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 14px;
+      border: 1px solid rgba(0,180,216,0.3);
+    }
+    .ht-ikon { font-size: 36px; }
+    .ht-baslik { font-size: 15px; font-weight: 900; color: #fff; }
+    .ht-alt { font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 600; }
+    .ht-sure {
+      margin-left: auto;
+      background: #00b4d8; color: #fff;
+      border-radius: 12px; padding: 8px 14px;
+      font-size: 14px; font-weight: 900; text-align: center;
+    }
+    .ht-sure span { font-size: 10px; display: block; font-weight: 700; }
+
+    .kategori-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 8px; padding: 14px 16px 4px;
+    }
+    .kat-item {
+      background: var(--card); border-radius: 14px;
+      border: 1.5px solid var(--border2);
+      padding: 12px 8px; display: flex; flex-direction: column;
+      align-items: center; gap: 6px; cursor: pointer;
+      text-decoration: none; transition: all .2s;
+    }
+    .kat-item.aktif {
+      border-color: #00b4d8;
+      background: rgba(0,180,216,0.1);
+    }
+    .kat-item-ikon { font-size: 28px; }
+    .kat-item-ad { font-size: 11px; font-weight: 800; color: var(--text2); text-align: center; }
+
+    .bolum-baslik {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 16px 10px;
+    }
+    .bolum-baslik-metin { font-size: 17px; font-weight: 900; }
+    .bolum-link { font-size: 13px; color: #00b4d8; font-weight: 700; text-decoration: none; }
+
+    .urun-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; padding: 0 16px 14px;
+    }
+    .urun-kart {
+      background: var(--card); border-radius: 14px;
+      border: 1px solid var(--border); padding: 10px 8px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 6px; text-decoration: none; position: relative;
+    }
+    .urun-resim {
+      width: 70px; height: 70px; background: var(--card2);
+      border-radius: 12px; display: flex; align-items: center;
+      justify-content: center; font-size: 36px;
+    }
+    .urun-indirim-badge {
+      position: absolute; top: 8px; right: 8px;
+      background: #e63946; color: #fff;
+      font-size: 9px; font-weight: 900;
+      padding: 2px 6px; border-radius: 6px;
+    }
+    .urun-ad { font-size: 12px; font-weight: 800; color: var(--text2); text-align: center; line-height: 1.3; }
+    .urun-miktar { font-size: 10px; color: var(--text3); font-weight: 700; }
+    .urun-fiyat { font-size: 14px; font-weight: 900; color: var(--rust); }
+    .urun-eski { font-size: 10px; color: var(--text3); text-decoration: line-through; font-weight: 600; }
+    .urun-ekle {
+      width: 100%; background: rgba(0,180,216,0.15);
+      border: 1.5px solid rgba(0,180,216,0.3);
+      color: #00b4d8; border-radius: 10px; padding: 6px;
+      font-size: 12px; font-weight: 800; cursor: pointer;
+      font-family: 'Nunito', sans-serif; transition: all .2s;
+    }
+    .urun-ekle:active { background: #00b4d8; color: #fff; }
+
+    .kampanya-scroll {
+      display: flex; gap: 10px; overflow-x: auto;
+      padding: 0 16px 4px; scrollbar-width: none;
+    }
+    .kampanya-scroll::-webkit-scrollbar { display: none; }
+    .kampanya-kart {
+      flex-shrink: 0; width: 260px; height: 100px;
+      border-radius: 16px; display: flex; align-items: center;
+      padding: 16px; gap: 12px; position: relative; overflow: hidden;
+      text-decoration: none;
+    }
+    .kamp-1 { background: linear-gradient(135deg, #1a3a1a, #2d5a2d); border: 1px solid rgba(46,204,113,0.2); }
+    .kamp-2 { background: linear-gradient(135deg, #1a1a3a, #2d2d5a); border: 1px solid rgba(74,144,217,0.2); }
+    .kamp-3 { background: linear-gradient(135deg, #3a1a1a, #5a2d2d); border: 1px solid rgba(232,96,58,0.2); }
+    .kamp-ikon { font-size: 44px; }
+    .kamp-baslik { font-size: 14px; font-weight: 900; color: #fff; }
+    .kamp-alt { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 600; margin-top: 2px; }
+
+    .sepet-bar {
+      position: fixed; bottom: calc(var(--bot-h) + 12px);
+      left: 16px; right: 16px; z-index: 100;
+      background: #00b4d8; border-radius: 16px;
+      padding: 14px 18px;
+      display: none; align-items: center; justify-content: space-between;
+      box-shadow: 0 8px 32px rgba(0,180,216,0.4);
+      cursor: pointer;
+    }
+    .sepet-bar.goster { display: flex; }
+    .sepet-sol { display: flex; align-items: center; gap: 10px; }
+    .sepet-sayi {
+      background: rgba(255,255,255,0.25); color: #fff;
+      width: 26px; height: 26px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 900;
+    }
+    .sepet-metin { font-size: 14px; font-weight: 800; color: #fff; }
+    .sepet-tutar { font-size: 16px; font-weight: 900; color: #fff; }
+  </style>
+</head>
+<body data-page="home">
+
+<div class="market-hero">
+  <div class="hero-baslik">🛒 Market</div>
+  <div class="hero-alt">Mahallenin marketi kapına gelir</div>
+  <div class="hero-chip-row">
+    <div class="hero-chip">⚡ 30 dk'da teslimat</div>
+    <div class="hero-chip">🏪 Yerel market</div>
+  </div>
+</div>
+
+<div class="arama-bar">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+  <input placeholder="Ürün veya marka ara…"/>
+</div>
+
+<!-- Hızlı Teslimat -->
+<div class="hizli-teslimat-banner">
+  <div class="ht-ikon">⚡</div>
+  <div>
+    <div class="ht-baslik">Hızlı Teslimat</div>
+    <div class="ht-alt">Şu an aktif • 3 kurye müsait</div>
+  </div>
+  <div class="ht-sure">30 dk<span>içinde</span></div>
+</div>
+
+<!-- Kategoriler -->
+<div class="kategori-grid">
+  <div class="kat-item aktif">
+    <div class="kat-item-ikon">🔥</div>
+    <div class="kat-item-ad">Tümü</div>
+  </div>
+  <div class="kat-item">
+    <div class="kat-item-ikon">🥬</div>
+    <div class="kat-item-ad">Sebze & Meyve</div>
+  </div>
+  <div class="kat-item">
+    <div class="kat-item-ikon">🥛</div>
+    <div class="kat-item-ad">Süt & Kahvaltı</div>
+  </div>
+  <div class="kat-item">
+    <div class="kat-item-ikon">🍗</div>
+    <div class="kat-item-ad">Et & Tavuk</div>
+  </div>
+  <div class="kat-item">
+    <div class="kat-item-ikon">🍞</div>
+    <div class="kat-item-ad">Fırın</div>
+  </div>
+  <div class="kat-item">
+    <div class="kat-item-ikon">🧃</div>
+    <div class="kat-item-ad">İçecek</div>
+  </div>
+  <div class="kat-item">
+    <div class="kat-item-ikon">🧴</div>
+    <div class="kat-item-ad">Kişisel Bakım</div>
+  </div>
+  <div class="kat-item">
+    <div class="kat-item-ikon">🧹</div>
+    <div class="kat-item-ad">Temizlik</div>
+  </div>
+</div>
+
+<!-- Kampanyalar -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">🎯 Kampanyalar</div>
+</div>
+<div class="kampanya-scroll">
+  <a class="kampanya-kart kamp-1" href="#">
+    <div class="kamp-ikon">🥬</div>
+    <div>
+      <div class="kamp-baslik">Organik Sebzeler</div>
+      <div class="kamp-alt">%20 indirim</div>
+    </div>
+  </a>
+  <a class="kampanya-kart kamp-2" href="#">
+    <div class="kamp-ikon">🥛</div>
+    <div>
+      <div class="kamp-baslik">Süt Ürünleri</div>
+      <div class="kamp-alt">2 al 1 öde</div>
+    </div>
+  </a>
+  <a class="kampanya-kart kamp-3" href="#">
+    <div class="kamp-ikon">☕</div>
+    <div>
+      <div class="kamp-baslik">Kahvaltılık</div>
+      <div class="kamp-alt">Ücretsiz teslimat</div>
+    </div>
+  </a>
+</div>
+
+<!-- Ürünler -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">🛍️ Öne Çıkanlar</div>
+  <a class="bolum-link" href="#">Tümü</a>
+</div>
+<div class="urun-grid">
+  <div class="urun-kart">
+    <div class="urun-resim">🍎</div>
+    <div class="urun-ad">Elma</div>
+    <div class="urun-miktar">1 kg</div>
+    <div class="urun-fiyat">₺39</div>
+    <button class="urun-ekle" onclick="ekle(this, 39)">+ Ekle</button>
+  </div>
+  <div class="urun-kart">
+    <div class="urun-resim">🥛</div>
+    <div class="urun-indirim-badge">-%10</div>
+    <div class="urun-ad">Tam Yağlı Süt</div>
+    <div class="urun-miktar">1 lt</div>
+    <div class="urun-fiyat">₺34</div>
+    <div class="urun-eski">₺38</div>
+    <button class="urun-ekle" onclick="ekle(this, 34)">+ Ekle</button>
+  </div>
+  <div class="urun-kart">
+    <div class="urun-resim">🍞</div>
+    <div class="urun-ad">Somun Ekmek</div>
+    <div class="urun-miktar">500 g</div>
+    <div class="urun-fiyat">₺18</div>
+    <button class="urun-ekle" onclick="ekle(this, 18)">+ Ekle</button>
+  </div>
+  <div class="urun-kart">
+    <div class="urun-resim">🥚</div>
+    <div class="urun-ad">Köy Yumurtası</div>
+    <div class="urun-miktar">10'lu</div>
+    <div class="urun-fiyat">₺85</div>
+    <button class="urun-ekle" onclick="ekle(this, 85)">+ Ekle</button>
+  </div>
+  <div class="urun-kart">
+    <div class="urun-resim">🧀</div>
+    <div class="urun-indirim-badge">-%15</div>
+    <div class="urun-ad">Beyaz Peynir</div>
+    <div class="urun-miktar">250 g</div>
+    <div class="urun-fiyat">₺64</div>
+    <div class="urun-eski">₺75</div>
+    <button class="urun-ekle" onclick="ekle(this, 64)">+ Ekle</button>
+  </div>
+  <div class="urun-kart">
+    <div class="urun-resim">🧃</div>
+    <div class="urun-ad">Meyve Suyu</div>
+    <div class="urun-miktar">1 lt</div>
+    <div class="urun-fiyat">₺42</div>
+    <button class="urun-ekle" onclick="ekle(this, 42)">+ Ekle</button>
+  </div>
+</div>
+
+<!-- Sepet Bar -->
+<div class="sepet-bar" id="sepet-bar">
+  <div class="sepet-sol">
+    <div class="sepet-sayi" id="sepet-sayi">0</div>
+    <div class="sepet-metin">Sepete Git</div>
+  </div>
+  <div class="sepet-tutar" id="sepet-tutar">₺0</div>
+</div>
+
+<script>
+  let adet = 0, toplam = 0;
+  function ekle(btn, fiyat) {
+    adet++;
+    toplam += fiyat;
+    document.getElementById('sepet-sayi').textContent = adet;
+    document.getElementById('sepet-tutar').textContent = '₺' + toplam;
+    document.getElementById('sepet-bar').classList.add('goster');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Eklendi';
+    btn.style.background = 'rgba(46,204,113,0.2)';
+    btn.style.borderColor = 'rgba(46,204,113,0.3)';
+    btn.style.color = '#2ECC71';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+    }, 1500);
+  }
+  document.querySelectorAll('.kat-item').forEach(k => {
+    k.addEventListener('click', () => {
+      document.querySelectorAll('.kat-item').forEach(x => x.classList.remove('aktif'));
+      k.classList.add('aktif');
+    });
+  });
+</script>
+
+<script src="navbar.js"></script>
+</body>
+</html>

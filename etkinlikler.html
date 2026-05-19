@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Etkinlikler — GoTapu</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .etkinlik-hero {
+      background: linear-gradient(135deg, #0d2137 0%, #1a3a5c 50%, #4a90d9 100%);
+      padding: 22px 16px 18px; position: relative; overflow: hidden;
+    }
+    .etkinlik-hero::before {
+      content: '🎟️'; position: absolute; right: -10px; top: -10px;
+      font-size: 100px; opacity: 0.15; pointer-events: none;
+    }
+    .hero-baslik { font-size: 22px; font-weight: 900; color: #fff; }
+    .hero-alt { font-size: 13px; color: rgba(255,255,255,0.82); margin-top: 4px; font-weight: 600; }
+    .hero-chip-row { display: flex; gap: 8px; margin-top: 12px; }
+    .hero-chip {
+      background: rgba(255,255,255,0.2); color: #fff;
+      padding: 5px 12px; border-radius: 50px; font-size: 12px; font-weight: 700;
+    }
+
+    .tarih-scroll {
+      display: flex; gap: 8px; overflow-x: auto;
+      padding: 14px 16px 4px; scrollbar-width: none;
+    }
+    .tarih-scroll::-webkit-scrollbar { display: none; }
+    .tarih-kart {
+      flex-shrink: 0; width: 52px; padding: 10px 6px;
+      background: var(--card); border-radius: 14px;
+      border: 2px solid var(--border2);
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      cursor: pointer; transition: all .2s;
+    }
+    .tarih-kart.aktif { background: #4a90d9; border-color: #4a90d9; }
+    .tarih-gun { font-size: 10px; font-weight: 800; color: var(--text3); }
+    .tarih-kart.aktif .tarih-gun { color: rgba(255,255,255,0.8); }
+    .tarih-sayi { font-size: 20px; font-weight: 900; color: var(--text); }
+    .tarih-kart.aktif .tarih-sayi { color: #fff; }
+    .tarih-nokta { width: 5px; height: 5px; border-radius: 50%; background: #4a90d9; }
+    .tarih-kart.aktif .tarih-nokta { background: rgba(255,255,255,0.6); }
+
+    .kategori-scroll {
+      display: flex; gap: 8px; overflow-x: auto;
+      padding: 8px 16px 4px; scrollbar-width: none;
+    }
+    .kategori-scroll::-webkit-scrollbar { display: none; }
+    .etkl-chip {
+      flex-shrink: 0; padding: 8px 14px; border-radius: 50px;
+      background: var(--card); border: 1.5px solid var(--border2);
+      font-size: 13px; font-weight: 700; color: var(--text2);
+      cursor: pointer; display: flex; align-items: center; gap: 5px;
+    }
+    .etkl-chip.aktif { background: #4a90d9; border-color: #4a90d9; color: #fff; }
+
+    .bolum-baslik {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 16px 10px;
+    }
+    .bolum-baslik-metin { font-size: 17px; font-weight: 900; }
+    .bolum-link { font-size: 13px; color: #4a90d9; font-weight: 700; text-decoration: none; }
+
+    .one-cikan-scroll {
+      display: flex; gap: 12px; overflow-x: auto;
+      padding: 0 16px 4px; scrollbar-width: none;
+    }
+    .one-cikan-scroll::-webkit-scrollbar { display: none; }
+    .one-etkl-kart {
+      flex-shrink: 0; width: 240px; border-radius: 18px;
+      overflow: hidden; text-decoration: none;
+      box-shadow: var(--shadow);
+    }
+    .one-etkl-resim {
+      height: 130px; display: flex; align-items: center; justify-content: center;
+      font-size: 52px; position: relative;
+    }
+    .one-etkl-resim-1 { background: linear-gradient(135deg, #1a0533, #9b5de5); }
+    .one-etkl-resim-2 { background: linear-gradient(135deg, #0d2137, #4a90d9); }
+    .one-etkl-resim-3 { background: linear-gradient(135deg, #1a3300, #2ECC71); }
+    .one-etkl-tarih-badge {
+      position: absolute; bottom: 8px; left: 8px;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+      border-radius: 8px; padding: 4px 10px;
+      font-size: 11px; font-weight: 800; color: #fff;
+    }
+    .one-etkl-bilgi { background: var(--card); padding: 12px; }
+    .one-etkl-ad { font-size: 15px; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+    .one-etkl-meta { display: flex; gap: 8px; align-items: center; }
+    .one-etkl-yer { font-size: 12px; color: var(--text3); font-weight: 700; }
+    .one-etkl-fiyat {
+      font-size: 13px; font-weight: 900; color: #4a90d9;
+      margin-left: auto;
+    }
+
+    .etkl-liste { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+    .etkl-satir {
+      background: var(--card); border-radius: 16px;
+      border: 1px solid var(--border); overflow: hidden;
+      display: flex; text-decoration: none;
+    }
+    .etkl-tarih-kolon {
+      width: 62px; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 12px 8px;
+      background: var(--card2);
+    }
+    .etkl-ay { font-size: 10px; font-weight: 900; color: #4a90d9; text-transform: uppercase; letter-spacing: 1px; }
+    .etkl-gun-sayi { font-size: 28px; font-weight: 900; color: var(--text); line-height: 1; }
+    .etkl-icin { flex: 1; padding: 12px; }
+    .etkl-kat-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(74,144,217,0.15); color: #4a90d9;
+      font-size: 10px; font-weight: 800; padding: 3px 8px;
+      border-radius: 6px; margin-bottom: 6px;
+    }
+    .etkl-ad { font-size: 14px; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+    .etkl-yer { font-size: 12px; color: var(--text3); font-weight: 700; }
+    .etkl-fiyat-btn {
+      padding: 0 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .bilet-al {
+      background: #4a90d9; color: #fff;
+      border: none; border-radius: 12px; padding: 10px 14px;
+      font-size: 12px; font-weight: 900; cursor: pointer;
+      font-family: 'Nunito', sans-serif; text-align: center;
+      white-space: nowrap;
+    }
+    .bilet-ucret { font-size: 12px; color: var(--text3); font-weight: 700; margin-top: 4px; text-align: center; }
+  </style>
+</head>
+<body data-page="home">
+
+<div class="etkinlik-hero">
+  <div class="hero-baslik">🎟️ Etkinlikler</div>
+  <div class="hero-alt">Yakınındaki konser, festival ve buluşmalar</div>
+  <div class="hero-chip-row">
+    <div class="hero-chip">📍 Ankara</div>
+    <div class="hero-chip">42 etkinlik</div>
+  </div>
+</div>
+
+<!-- Tarih Scroll -->
+<div class="tarih-scroll">
+  <div class="tarih-kart" onclick="tarihSec(this)">
+    <div class="tarih-gun">PRZ</div>
+    <div class="tarih-sayi">17</div>
+  </div>
+  <div class="tarih-kart" onclick="tarihSec(this)">
+    <div class="tarih-gun">CTS</div>
+    <div class="tarih-sayi">18</div>
+    <div class="tarih-nokta"></div>
+  </div>
+  <div class="tarih-kart aktif" onclick="tarihSec(this)">
+    <div class="tarih-gun">PAZ</div>
+    <div class="tarih-sayi">19</div>
+    <div class="tarih-nokta"></div>
+  </div>
+  <div class="tarih-kart" onclick="tarihSec(this)">
+    <div class="tarih-gun">PTS</div>
+    <div class="tarih-sayi">20</div>
+  </div>
+  <div class="tarih-kart" onclick="tarihSec(this)">
+    <div class="tarih-gun">SAL</div>
+    <div class="tarih-sayi">21</div>
+    <div class="tarih-nokta"></div>
+  </div>
+  <div class="tarih-kart" onclick="tarihSec(this)">
+    <div class="tarih-gun">ÇRS</div>
+    <div class="tarih-sayi">22</div>
+  </div>
+  <div class="tarih-kart" onclick="tarihSec(this)">
+    <div class="tarih-gun">PER</div>
+    <div class="tarih-sayi">23</div>
+    <div class="tarih-nokta"></div>
+  </div>
+</div>
+
+<!-- Kategori Filtreleri -->
+<div class="kategori-scroll">
+  <div class="etkl-chip aktif" onclick="katSec(this)">🔥 Tümü</div>
+  <div class="etkl-chip" onclick="katSec(this)">🎵 Konser</div>
+  <div class="etkl-chip" onclick="katSec(this)">🎭 Tiyatro</div>
+  <div class="etkl-chip" onclick="katSec(this)">🎪 Festival</div>
+  <div class="etkl-chip" onclick="katSec(this)">🏃 Spor</div>
+  <div class="etkl-chip" onclick="katSec(this)">🎨 Sanat</div>
+  <div class="etkl-chip" onclick="katSec(this)">💡 Seminer</div>
+</div>
+
+<!-- Öne Çıkan -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">⭐ Öne Çıkan</div>
+  <a class="bolum-link" href="#">Tümü</a>
+</div>
+<div class="one-cikan-scroll">
+  <a class="one-etkl-kart" href="#">
+    <div class="one-etkl-resim one-etkl-resim-1">
+      🎸
+      <div class="one-etkl-tarih-badge">19 Mayıs • 21:00</div>
+    </div>
+    <div class="one-etkl-bilgi">
+      <div class="one-etkl-ad">Ankara Rock Festivali</div>
+      <div class="one-etkl-meta">
+        <span class="one-etkl-yer">📍 Atatürk Parkı</span>
+        <span class="one-etkl-fiyat">₺150</span>
+      </div>
+    </div>
+  </a>
+  <a class="one-etkl-kart" href="#">
+    <div class="one-etkl-resim one-etkl-resim-2">
+      🎹
+      <div class="one-etkl-tarih-badge">21 Mayıs • 20:00</div>
+    </div>
+    <div class="one-etkl-bilgi">
+      <div class="one-etkl-ad">Klasik Müzik Gecesi</div>
+      <div class="one-etkl-meta">
+        <span class="one-etkl-yer">📍 AKM Sahnesi</span>
+        <span class="one-etkl-fiyat">₺250</span>
+      </div>
+    </div>
+  </a>
+  <a class="one-etkl-kart" href="#">
+    <div class="one-etkl-resim one-etkl-resim-3">
+      🌿
+      <div class="one-etkl-tarih-badge">23 Mayıs • 10:00</div>
+    </div>
+    <div class="one-etkl-bilgi">
+      <div class="one-etkl-ad">Yöresel Ürünler Festivali</div>
+      <div class="one-etkl-meta">
+        <span class="one-etkl-yer">📍 Kızılay Meydan</span>
+        <span class="one-etkl-fiyat">Ücretsiz</span>
+      </div>
+    </div>
+  </a>
+</div>
+
+<!-- Yaklaşan Etkinlikler -->
+<div class="bolum-baslik">
+  <div class="bolum-baslik-metin">📅 Yaklaşanlar</div>
+  <a class="bolum-link" href="#">Filtrele</a>
+</div>
+<div class="etkl-liste">
+  <a class="etkl-satir" href="#">
+    <div class="etkl-tarih-kolon">
+      <div class="etkl-ay">MAY</div>
+      <div class="etkl-gun-sayi">19</div>
+    </div>
+    <div class="etkl-icin">
+      <div class="etkl-kat-badge">🎵 Konser</div>
+      <div class="etkl-ad">Ankara Rock Festivali</div>
+      <div class="etkl-yer">📍 Atatürk Parkı • 21:00</div>
+    </div>
+    <div class="etkl-fiyat-btn">
+      <button class="bilet-al">Bilet Al</button>
+      <div class="bilet-ucret">₺150</div>
+    </div>
+  </a>
+  <a class="etkl-satir" href="#">
+    <div class="etkl-tarih-kolon">
+      <div class="etkl-ay">MAY</div>
+      <div class="etkl-gun-sayi">20</div>
+    </div>
+    <div class="etkl-icin">
+      <div class="etkl-kat-badge">🎭 Tiyatro</div>
+      <div class="etkl-ad">Devlet Tiyatrosu: Kral Lear</div>
+      <div class="etkl-yer">📍 Devlet Tiyatrosu • 19:30</div>
+    </div>
+    <div class="etkl-fiyat-btn">
+      <button class="bilet-al">Bilet Al</button>
+      <div class="bilet-ucret">₺80</div>
+    </div>
+  </a>
+  <a class="etkl-satir" href="#">
+    <div class="etkl-tarih-kolon">
+      <div class="etkl-ay">MAY</div>
+      <div class="etkl-gun-sayi">21</div>
+    </div>
+    <div class="etkl-icin">
+      <div class="etkl-kat-badge">🏃 Spor</div>
+      <div class="etkl-ad">Ankara Maratonu</div>
+      <div class="etkl-yer">📍 Gençlik Parkı • 08:00</div>
+    </div>
+    <div class="etkl-fiyat-btn">
+      <button class="bilet-al">Kayıt Ol</button>
+      <div class="bilet-ucret">₺50</div>
+    </div>
+  </a>
+  <a class="etkl-satir" href="#">
+    <div class="etkl-tarih-kolon">
+      <div class="etkl-ay">MAY</div>
+      <div class="etkl-gun-sayi">23</div>
+    </div>
+    <div class="etkl-icin">
+      <div class="etkl-kat-badge">🎨 Sanat</div>
+      <div class="etkl-ad">Çağdaş Sanat Sergisi</div>
+      <div class="etkl-yer">📍 Çankaya Sanat Evi • 10:00</div>
+    </div>
+    <div class="etkl-fiyat-btn">
+      <button class="bilet-al">Ücretsiz</button>
+      <div class="bilet-ucret">Serbest</div>
+    </div>
+  </a>
+</div>
+<div style="height:16px"></div>
+
+<script>
+  function tarihSec(el) {
+    document.querySelectorAll('.tarih-kart').forEach(k => k.classList.remove('aktif'));
+    el.classList.add('aktif');
+  }
+  function katSec(el) {
+    document.querySelectorAll('.etkl-chip').forEach(k => k.classList.remove('aktif'));
+    el.classList.add('aktif');
+  }
+  document.querySelectorAll('.bilet-al').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const orig = btn.textContent;
+      btn.textContent = '✓';
+      btn.style.background = '#2ECC71';
+      setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 2000);
+    });
+  });
+</script>
+
+<script src="navbar.js"></script>
+</body>
+</html>
