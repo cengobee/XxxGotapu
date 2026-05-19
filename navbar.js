@@ -222,6 +222,7 @@
     .gt-ikon-hizmet { background: linear-gradient(135deg, #00b4d8, #0077b6); }
     .gt-ikon-sosyal { background: linear-gradient(135deg, #9b5de5, #f15bb5); }
     .gt-ikon-yasam  { background: linear-gradient(135deg, #06d6a0, #118ab2); }
+    .gt-ikon-yoresel { background: linear-gradient(135deg, #7cb518, #4a8c00); }
     .gt-mega-kart-ad {
       font-size: 12px; font-weight: 800; color: var(--text, #fff);
       text-align: center; line-height: 1.25;
@@ -386,6 +387,7 @@
     </div>
     <div class="gt-drawer-ayrac"></div>
     <a class="gt-drawer-item" href="alisveris.html"><span class="gt-drawer-item-metin">🛍️ Alışveriş</span><span class="gt-drawer-item-ok">›</span></a>
+    <a class="gt-drawer-item" href="yoresel.html"><span class="gt-drawer-item-metin">🌾 Yöresel</span><span class="gt-drawer-item-ok">›</span></a>
     <a class="gt-drawer-item" href="yemek.html"><span class="gt-drawer-item-metin">🍔 Yemek</span><span class="gt-drawer-item-ok">›</span></a>
     <a class="gt-drawer-item" href="market.html"><span class="gt-drawer-item-metin">🛒 Market</span><span class="gt-drawer-item-ok">›</span></a>
     <a class="gt-drawer-item" href="taksi.html"><span class="gt-drawer-item-metin">🚕 Taksi</span><span class="gt-drawer-item-ok">›</span></a>
@@ -436,11 +438,12 @@
           <a class="gt-mega-kart" href="mobilya.html"><div class="gt-mega-kart-ikon gt-ikon-pazar">🛋️</div><div class="gt-mega-kart-ad">Mobilya</div><div class="gt-mega-kart-alt">Evine özel tasarım</div></a>
           <a class="gt-mega-kart" href="ilanlar.html?kategori=isbulma"><div class="gt-mega-kart-ikon gt-ikon-pazar">💼</div><div class="gt-mega-kart-ad">İş İlanları</div><div class="gt-mega-kart-alt">Tam zamanlı, freelance</div></a>
         </div>
-        <div class="gt-mega-kat-baslik">Hizmet <span class="gt-mega-kat-sayi">7</span></div>
+        <div class="gt-mega-kat-baslik">Hizmet <span class="gt-mega-kat-sayi">8</span></div>
         <div class="gt-mega-grid">
           <a class="gt-mega-kart" href="taksi.html"><div class="gt-mega-kart-ikon gt-ikon-hizmet">🚕</div><div class="gt-mega-kart-ad">Taksi</div><div class="gt-mega-kart-alt">Şoför çağır</div></a>
           <a class="gt-mega-kart" href="yemek.html"><div class="gt-mega-kart-ikon gt-ikon-hizmet">🍔</div><div class="gt-mega-kart-ad">Yemek</div><div class="gt-mega-kart-alt">Komşu mutfağından</div></a>
-          <a class="gt-mega-kart" href="yoresel.html"><div class="gt-mega-kart-ikon gt-ikon-hizmet">🥘</div><div class="gt-mega-kart-ad">Yöresel</div><div class="gt-mega-kart-alt">Ev yapımı lezzetler</div></a>
+          <a class="gt-mega-kart" href="alisveris.html"><div class="gt-mega-kart-ikon gt-ikon-hizmet">🛍️</div><div class="gt-mega-kart-ad">Alışveriş</div><div class="gt-mega-kart-alt">%1 komisyonla mağaza</div></a>
+          <a class="gt-mega-kart" href="yoresel.html"><div class="gt-mega-kart-ikon gt-ikon-yoresel">🌾</div><div class="gt-mega-kart-ad">Yöresel</div><div class="gt-mega-kart-alt">Üreticiden doğrudan</div></a>
           <a class="gt-mega-kart" href="kurye.html"><div class="gt-mega-kart-ikon gt-ikon-hizmet">🛵</div><div class="gt-mega-kart-ad">Kurye</div><div class="gt-mega-kart-alt">Aynı gün teslimat</div></a>
           <a class="gt-mega-kart" href="nakliyat.html"><div class="gt-mega-kart-ikon gt-ikon-hizmet">📦</div><div class="gt-mega-kart-ad">Nakliyat</div><div class="gt-mega-kart-alt">Şehir içi & arası</div></a>
           <a class="gt-mega-kart" href="hizmetler.html"><div class="gt-mega-kart-ikon gt-ikon-hizmet">🔧</div><div class="gt-mega-kart-ad">Usta</div><div class="gt-mega-kart-alt">Tesisat, elektrik</div></a>
@@ -596,7 +599,6 @@
   }
 
   // Supabase client hazır olunca badge'leri yükle
-  // (sayfa kendi sb'sini window._sbClient'a atar, biz de 500ms sonra deneriz)
   setTimeout(gtBadgeYukle, 600);
 
 })();
