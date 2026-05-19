@@ -2,415 +2,308 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yöresel Market — Anadolu'nun 81 İlinden Sofranıza</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Yöresel — GoTapu</title>
+<meta name="description" content="Anadolu'nun 81 ilinden yöresel ürünler ve üreticiler. Üreticiden direkt sipariş.">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Cormorant+Garamond:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="kredi.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#0D0908;--surface:#160D0A;--card:#1E1210;
-  --red:#B22222;--red2:#D4342A;--red3:#8B1A1A;--red4:#FADBD8;
-  --gold:#C8922A;--gold2:#E8B84B;
-  --cream:#F5ECD7;--cream2:#E8D5B0;
-  --text:#F0E6D3;--muted:#8A7260;--faint:#3A2820;
-  --border:#2A1A12;
-}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
-::-webkit-scrollbar{width:5px;}
-::-webkit-scrollbar-track{background:var(--bg);}
-::-webkit-scrollbar-thumb{background:var(--red3);border-radius:3px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+input,textarea,select{-webkit-user-select:text;user-select:text;font-family:'Nunito',sans-serif;}
 
-/* NAV */
-#nav{display:flex;align-items:center;justify-content:space-between;padding:14px 40px;border-bottom:1px solid var(--border);background:rgba(13,9,8,0.96);position:sticky;top:0;z-index:90;backdrop-filter:blur(8px);}
-#nav-logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--cream);letter-spacing:1px;cursor:pointer;text-decoration:none;}
-#nav-logo span{color:var(--gold);}
-#nav-links{display:flex;gap:28px;}
-.nav-link{font-size:13px;color:var(--muted);cursor:pointer;transition:color .15s;text-decoration:none;}
-.nav-link:hover{color:var(--cream);}
-#nav-right{display:flex;gap:10px;align-items:center;}
-.btn-ghost{padding:7px 16px;border:1px solid var(--faint);border-radius:6px;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
-.btn-ghost:hover{border-color:var(--red);color:var(--cream);}
-.btn-red{padding:7px 18px;border:none;border-radius:6px;background:var(--red);color:#fff;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
-.btn-red:hover{background:var(--red2);}
-#cart-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--faint);border-radius:6px;cursor:pointer;color:var(--muted);font-size:12px;background:transparent;font-family:'Inter',sans-serif;transition:all .15s;}
-#cart-btn:hover{border-color:var(--gold);color:var(--gold);}
-#cart-badge{background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:600;}
+:root{--yr:#7cb518;--yr2:#5e9410;--yr3:#4a7a0d;--yrl:rgba(124,181,24,0.15);}
+
+html{scroll-behavior:smooth;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg,#0a0d14);}
+::-webkit-scrollbar-thumb{background:var(--yr3);border-radius:3px;}
 
 /* HERO */
-#hero{padding:56px 40px 0;text-align:center;position:relative;overflow:hidden;}
-#hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(178,34,34,0.10) 0%,transparent 65%);pointer-events:none;}
-.hero-eyebrow{font-size:11px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
-.hero-title{font-family:'Cormorant Garamond',serif;font-size:60px;font-weight:700;color:var(--cream);line-height:1.05;margin-bottom:16px;}
-.hero-title span{color:var(--gold);}
-.hero-sub{font-size:15px;color:var(--muted);max-width:520px;margin:0 auto 32px;line-height:1.75;}
+#yr-hero{padding:28px 16px 20px;text-align:center;position:relative;overflow:hidden;margin-top:var(--nav-h,58px);}
+#yr-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(124,181,24,0.12) 0%,transparent 65%);pointer-events:none;}
+.yr-eyebrow{font-size:10px;color:var(--yr);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;font-weight:800;}
+.yr-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--text,#fff);line-height:1.05;margin-bottom:8px;}
+.yr-title span{color:var(--yr);}
+.yr-sub{font-size:13px;color:var(--text3,rgba(255,255,255,0.48));max-width:480px;margin:0 auto 16px;line-height:1.6;}
 
-/* SEARCH */
-#search-wrap{max-width:580px;margin:0 auto 40px;display:flex;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s;}
-#search-wrap:focus-within{border-color:var(--red);}
-#search-wrap input{flex:1;background:transparent;border:none;padding:15px 20px;font-size:14px;color:var(--text);outline:none;font-family:'Inter',sans-serif;}
-#search-wrap input::placeholder{color:var(--muted);}
-#search-wrap button{background:var(--red);border:none;padding:0 28px;color:#fff;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
-#search-wrap button:hover{background:var(--red2);}
+/* ARAMA */
+#yr-search-wrap{max-width:520px;margin:0 auto;display:flex;background:var(--card,#161b28);border:1px solid var(--border,rgba(255,255,255,0.09));border-radius:12px;overflow:hidden;transition:border-color .2s;}
+#yr-search-wrap:focus-within{border-color:var(--yr);}
+#yr-search-wrap input{flex:1;background:transparent;border:none;padding:13px 16px;font-size:14px;color:var(--text,#fff);outline:none;font-family:'Nunito',sans-serif;font-weight:600;}
+#yr-search-wrap input::placeholder{color:var(--text3,rgba(255,255,255,0.48));}
+#yr-search-wrap button{background:var(--yr);border:none;padding:0 22px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:background .15s;}
+#yr-search-wrap button:hover{background:var(--yr2);}
 
 /* STATS */
-#stats-row{display:flex;justify-content:center;gap:52px;margin-bottom:52px;flex-wrap:wrap;}
-.stat{text-align:center;}
-.stat-n{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;color:var(--gold);}
-.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+#yr-stats{display:flex;justify-content:center;gap:36px;padding:20px 16px 0;flex-wrap:wrap;}
+.yr-stat{text-align:center;}
+.yr-stat-n{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--yr);}
+.yr-stat-l{font-size:10px;color:var(--text3,rgba(255,255,255,0.48));text-transform:uppercase;letter-spacing:1px;margin-top:2px;font-weight:700;}
 
 /* TRUST BAR */
-#trust-bar{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 40px;display:flex;justify-content:center;gap:40px;flex-wrap:wrap;}
-.trust-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);}
-.trust-icon{font-size:16px;}
+#yr-trust{background:var(--bg2,#111520);border-top:1px solid var(--border,rgba(255,255,255,0.09));border-bottom:1px solid var(--border,rgba(255,255,255,0.09));padding:12px 16px;display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:20px;}
+.yr-trust-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3,rgba(255,255,255,0.48));font-weight:700;}
 
-/* MAIN LAYOUT */
-#main{display:flex;min-height:700px;}
+/* ANA LAYOUT */
+#yr-main{display:block;min-height:600px;}
 
-/* MAP SIDE */
-#map-side{width:480px;flex-shrink:0;padding:28px;border-right:1px solid var(--border);background:#fff;}
-#map-side-label{font-size:10px;color:#888;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:7px;}
-.pulse{width:7px;height:7px;border-radius:50%;background:#B22222;display:inline-block;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
-#map-foot{font-size:11px;color:#bbb;text-align:center;margin-top:8px;}
-
-/* ✅ DÜZELTME: Tek SVG harita — tüm içerik aynı koordinat sisteminde */
-#tr-map-svg{
-  width:100%;
-  height:auto;
-  display:block;
-  border-radius:14px;
-  border:1px solid #e8e0da;
-  box-shadow:0 2px 12px rgba(0,0,0,0.06);
-  background:#f8f4f0;
-  overflow:visible;
-}
+/* HARİTA */
+#yr-map-side{width:100%;padding:20px 16px;border-bottom:1px solid var(--border,rgba(255,255,255,0.09));background:var(--bg,#0a0d14);}
+#yr-map-label{font-size:10px;color:var(--text3,rgba(255,255,255,0.48));letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:7px;font-weight:800;}
+.yr-pulse{width:7px;height:7px;border-radius:50%;background:var(--yr);display:inline-block;animation:yrpulse 2s infinite;}
+@keyframes yrpulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
+#yr-map-foot{font-size:11px;color:var(--text3,rgba(255,255,255,0.48));text-align:center;margin-top:8px;font-weight:600;}
+#yr-map-svg{width:100%;max-width:1280px;height:auto;display:block;margin:0 auto;border-radius:12px;border:1px solid var(--border,rgba(255,255,255,0.09));box-shadow:0 2px 18px rgba(0,0,0,0.5);background:var(--bg2,#111520);overflow:visible;}
 
 /* TOOLTIP */
-#map-tooltip{
-  position:fixed;
-  background:rgba(10,5,5,0.96);
-  color:#fff;
-  padding:10px 14px;
-  border-radius:10px;
-  font-size:12px;
-  line-height:1.6;
-  pointer-events:none;
-  opacity:0;
-  transition:opacity .15s, transform .15s;
-  z-index:9999;
-  border:1px solid rgba(178,34,34,0.25);
-  backdrop-filter:blur(10px);
-  transform:translateY(6px);
-  box-shadow:0 10px 30px rgba(0,0,0,.45);
-  min-width:130px;
-}
-#map-tooltip.show{
-  opacity:1;
-  transform:translateY(0);
-}
+#yr-tooltip{position:fixed;background:var(--bg2,#111520);color:var(--text,#fff);padding:10px 14px;border-radius:10px;font-size:12px;line-height:1.6;pointer-events:none;opacity:0;transition:opacity .15s,transform .15s;z-index:9999;border:1px solid var(--yr);backdrop-filter:blur(10px);transform:translateY(6px);box-shadow:0 10px 30px rgba(0,0,0,.6);min-width:130px;}
+#yr-tooltip.show{opacity:1;transform:translateY(0);}
 
 /* ŞEHİR ETİKETİ */
-.map-city-label{
-  font-size:7.5px;
-  fill:#666;
-  font-family:Inter,sans-serif;
-  font-weight:600;
-  pointer-events:none;
-  letter-spacing:.2px;
-}
-.map-city-label.active{
-  fill:#B22222;
-  font-weight:700;
-}
+.yr-city-label{font-size:20px;fill:rgba(255,255,255,0.9);font-family:'Nunito',sans-serif;font-weight:800;pointer-events:none;}
+.yr-city-label.active{fill:#fff;}
+.yr-city-label-box{fill:transparent;stroke:transparent;stroke-width:0;}
 
-/* IL INFO BOX */
-#il-box{margin-top:16px;padding:16px;background:#FFF8F5;border:1px solid #f5ddd5;border-radius:10px;display:none;}
-#il-box-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-#il-box-name{font-family:'Cormorant Garamond',serif;font-size:20px;color:#1a0808;}
-#il-box-clear{background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;line-height:1;}
-#il-box-clear:hover{color:#999;}
-#il-foods{display:flex;flex-wrap:wrap;gap:5px;}
-.il-food-tag{padding:4px 11px;border-radius:20px;font-size:11px;border:1px solid #f0c8b8;color:#a04030;cursor:pointer;background:#fff;transition:all .15s;}
-.il-food-tag:hover{background:var(--red);border-color:var(--red);color:#fff;}
-#il-stats{margin-top:12px;display:flex;gap:12px;}
-.il-stat{flex:1;background:#fff;border:1px solid #f5ddd5;border-radius:8px;padding:8px 10px;text-align:center;}
-.il-stat-n{font-size:16px;font-weight:600;color:var(--red);}
-.il-stat-l{font-size:10px;color:#aaa;margin-top:1px;}
+/* İL BOX */
+#yr-il-box{margin-top:14px;padding:14px;background:var(--card,#161b28);border:1px solid var(--yr);border-radius:10px;display:none;}
+#yr-il-box-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+#yr-il-box-name{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--yr);}
+#yr-il-box-clear{background:none;border:none;color:var(--text3,rgba(255,255,255,0.48));cursor:pointer;font-size:18px;line-height:1;}
+#yr-il-foods{display:flex;flex-wrap:wrap;gap:5px;}
+.yr-food-tag{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid var(--border,rgba(255,255,255,0.09));color:var(--text2,rgba(255,255,255,0.88));cursor:pointer;background:var(--bg2,#111520);transition:all .15s;}
+.yr-food-tag:hover{background:var(--yr);border-color:var(--yr);color:#fff;}
+#yr-il-stats{margin-top:12px;display:flex;gap:10px;}
+.yr-il-stat{flex:1;background:var(--bg2,#111520);border:1px solid var(--border,rgba(255,255,255,0.09));border-radius:8px;padding:8px 10px;text-align:center;}
+.yr-il-stat-n{font-size:16px;font-weight:800;color:var(--yr);}
+.yr-il-stat-l{font-size:10px;color:var(--text3,rgba(255,255,255,0.48));margin-top:1px;font-weight:700;}
 
-/* RIGHT SIDE */
-#right-side{flex:1;min-width:0;padding:24px;background:var(--bg);}
+/* SAĞ */
+#yr-right{flex:1;min-width:0;padding:20px 16px;background:var(--bg,#0a0d14);}
 
-/* CATS */
-#cat-bar{display:flex;gap:7px;margin-bottom:18px;flex-wrap:wrap;}
-.cat-pill{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;}
-.cat-pill:hover{border-color:var(--red);color:var(--cream2);}
-.cat-pill.on{background:var(--red3);border-color:var(--red);color:var(--cream);}
+/* KATEGORİ */
+#yr-cat-bar{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;}
+.yr-cat-pill{padding:7px 14px;border-radius:20px;border:1px solid var(--border,rgba(255,255,255,0.09));background:transparent;color:var(--text3,rgba(255,255,255,0.48));font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;white-space:nowrap;}
+.yr-cat-pill:hover{border-color:var(--yr);color:var(--text2,rgba(255,255,255,0.88));}
+.yr-cat-pill.on{background:var(--yr3);border-color:var(--yr);color:#fff;}
 
-/* FILTER ROW */
-#filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
-#filter-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-#prod-count-text{font-size:13px;color:var(--muted);}
-#prod-count-text strong{color:var(--cream);}
-.active-tag{display:none;align-items:center;gap:5px;background:var(--faint);border:1px solid var(--red3);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--gold);}
-.active-tag button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0;line-height:1;}
-.active-tag button:hover{color:var(--cream);}
-#sort-select{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;outline:none;}
+/* FİLTRE */
+#yr-filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+#yr-filter-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+#yr-pcount-text{font-size:13px;color:var(--text3,rgba(255,255,255,0.48));font-weight:700;}
+#yr-pcount-text strong{color:var(--text,#fff);}
+.yr-active-tag{display:none;align-items:center;gap:5px;background:var(--yrl);border:1px solid var(--yr);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--yr);font-weight:800;}
+.yr-active-tag button{background:none;border:none;color:var(--text3,rgba(255,255,255,0.48));cursor:pointer;font-size:12px;padding:0;line-height:1;}
+#yr-sort-select{background:var(--card,#161b28);border:1px solid var(--border,rgba(255,255,255,0.09));color:var(--text2,rgba(255,255,255,0.88));padding:6px 10px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;outline:none;font-weight:700;}
 
-/* PRODUCT GRID */
-#prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px;}
-.pcard{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .2s;position:relative;}
-.pcard:hover{border-color:var(--red);transform:translateY(-3px);}
-.pcard-img{height:120px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:44px;position:relative;}
-.pcard-badge{position:absolute;top:8px;left:8px;background:var(--red3);color:var(--cream2);font-size:9px;padding:2px 7px;border-radius:4px;letter-spacing:.5px;font-weight:500;}
-.pcard-hot{position:absolute;top:8px;right:8px;background:#c47d00;color:#fff;font-size:9px;padding:2px 7px;border-radius:4px;}
-.pcard-body{padding:12px 13px;}
-.pcard-il{font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;}
-.pcard-name{font-size:13px;font-weight:500;color:var(--cream);margin-bottom:2px;line-height:1.3;}
-.pcard-seller{font-size:11px;color:var(--muted);margin-bottom:7px;}
-.pcard-stars{font-size:11px;color:var(--gold);margin-bottom:8px;}
-.pcard-stars span{color:var(--muted);font-size:10px;}
-.pcard-bottom{display:flex;align-items:center;justify-content:space-between;}
-.pcard-price{font-size:16px;font-weight:600;color:var(--gold);}
-.pcard-unit{font-size:10px;color:var(--muted);}
-.pcard-add{background:var(--red);border:none;border-radius:6px;padding:5px 11px;color:#fff;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
-.pcard-add:hover{background:var(--red2);}
-.pcard-sold{font-size:10px;color:var(--muted);margin-top:5px;}
+/* ÜRÜN GRİDİ */
+#yr-prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.yr-pcard{background:var(--card,#161b28);border:1px solid var(--border,rgba(255,255,255,0.09));border-radius:14px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .2s;position:relative;}
+.yr-pcard:hover{border-color:var(--yr);transform:translateY(-3px);}
+.yr-pcard:active{transform:scale(0.97);}
+.yr-pcard-img{height:110px;background:var(--bg2,#111520);display:flex;align-items:center;justify-content:center;font-size:42px;position:relative;}
+.yr-pcard-badge{position:absolute;top:8px;left:8px;background:var(--yr3);color:#fff;font-size:9px;padding:2px 7px;border-radius:4px;letter-spacing:.5px;font-weight:800;}
+.yr-pcard-hot{position:absolute;top:8px;right:8px;background:#c47d00;color:#fff;font-size:9px;padding:2px 7px;border-radius:4px;font-weight:800;}
+.yr-pcard-body{padding:11px 12px;}
+.yr-pcard-il{font-size:10px;color:var(--yr);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;font-weight:800;}
+.yr-pcard-name{font-size:13px;font-weight:800;color:var(--text,#fff);margin-bottom:2px;line-height:1.3;}
+.yr-pcard-seller{font-size:11px;color:var(--text3,rgba(255,255,255,0.48));margin-bottom:6px;font-weight:600;}
+.yr-pcard-stars{font-size:11px;color:#f5c542;margin-bottom:7px;}
+.yr-pcard-stars span{color:var(--text3,rgba(255,255,255,0.48));font-size:10px;}
+.yr-pcard-bottom{display:flex;align-items:center;justify-content:space-between;}
+.yr-pcard-price{font-size:15px;font-weight:900;color:var(--text,#fff);}
+.yr-pcard-unit{font-size:10px;color:var(--text3,rgba(255,255,255,0.48));}
+.yr-pcard-add{background:var(--yr);border:none;border-radius:6px;padding:5px 10px;color:#fff;font-size:11px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:background .15s;}
+.yr-pcard-add:hover{background:var(--yr2);}
+.yr-pcard-sold{font-size:10px;color:var(--text3,rgba(255,255,255,0.48));margin-top:5px;font-weight:600;}
 
-/* EMPTY */
-.empty-grid{grid-column:1/-1;text-align:center;padding:60px 0;color:var(--muted);}
-.empty-grid button{margin-top:12px;padding:8px 20px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;}
+/* BOŞ */
+.yr-empty{grid-column:1/-1;text-align:center;padding:60px 0;color:var(--text3,rgba(255,255,255,0.48));font-weight:700;}
+.yr-empty button{margin-top:12px;padding:8px 20px;border:1px solid var(--border,rgba(255,255,255,0.09));border-radius:8px;background:transparent;color:var(--text3,rgba(255,255,255,0.48));cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;}
 
-/* PRODUCT MODAL */
-#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:300;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;}
-#modal-overlay.open{display:flex;}
-#modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:680px;max-width:100%;position:relative;animation:modalIn .2s ease;}
-@keyframes modalIn{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-#modal-close{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;z-index:2;line-height:1;padding:2px 6px;border-radius:4px;}
-#modal-close:hover{color:var(--cream);}
-#modal-top{display:flex;gap:0;}
-#modal-img{width:240px;flex-shrink:0;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:80px;border-radius:16px 0 0 0;padding:30px;}
-#modal-info{flex:1;padding:28px 28px 20px;}
-#modal-badge-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
-.mbadge{font-size:10px;padding:3px 8px;border-radius:4px;font-weight:500;}
-.mbadge-red{background:var(--red3);color:var(--cream2);}
-.mbadge-gold{background:#3a2800;color:var(--gold);}
-#modal-il{font-size:11px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
-#modal-name{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--cream);margin-bottom:4px;line-height:1.2;}
-#modal-seller{font-size:13px;color:var(--muted);margin-bottom:12px;}
-#modal-stars{font-size:14px;color:var(--gold);margin-bottom:12px;}
-#modal-stars span{color:var(--muted);font-size:12px;}
-#modal-desc{font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:16px;}
-#modal-price-row{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
-#modal-price{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold);}
-#modal-unit{font-size:12px;color:var(--muted);}
-#modal-sold-bar{background:var(--faint);border-radius:4px;height:4px;margin-bottom:4px;overflow:hidden;}
-#modal-sold-fill{height:100%;background:var(--red);border-radius:4px;transition:width .5s;}
-#modal-sold-text{font-size:11px;color:var(--muted);margin-bottom:16px;}
-#modal-actions{display:flex;gap:10px;}
-#modal-actions button{flex:1;padding:12px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:all .15s;}
-#modal-fav{background:transparent;border:1px solid var(--border);color:var(--muted);}
-#modal-fav:hover{border-color:var(--red);color:var(--cream);}
-#modal-buy{background:var(--red);border:none;color:#fff;}
-#modal-buy:hover{background:var(--red2);}
+/* MODAL */
+#yr-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:flex-end;justify-content:center;}
+#yr-modal-overlay.open{display:flex;}
+#yr-modal{background:var(--bg2,#111520);border:1px solid var(--border,rgba(255,255,255,0.09));border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom,16px);animation:yrModalIn .22s ease;}
+@keyframes yrModalIn{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+#yr-modal-close{position:sticky;top:0;display:flex;justify-content:flex-end;padding:14px 16px 0;z-index:2;}
+#yr-modal-close button{background:var(--card,#161b28);border:1px solid var(--border,rgba(255,255,255,0.09));color:var(--text2,rgba(255,255,255,0.88));font-size:18px;cursor:pointer;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;}
+#yr-modal-top{padding:0 16px 16px;}
+#yr-modal-emoji{font-size:64px;text-align:center;padding:20px 0 12px;}
+#yr-modal-badge-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.yr-mbadge{font-size:10px;padding:3px 8px;border-radius:4px;font-weight:800;}
+.yr-mbadge-green{background:var(--yr3);color:#fff;}
+.yr-mbadge-gold{background:rgba(196,125,0,0.25);color:#f5c542;border:1px solid rgba(196,125,0,0.3);}
+#yr-modal-il{font-size:11px;color:var(--yr);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:800;}
+#yr-modal-name{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--text,#fff);margin-bottom:4px;line-height:1.2;}
+#yr-modal-seller-line{font-size:13px;color:var(--text3,rgba(255,255,255,0.48));margin-bottom:12px;font-weight:600;}
+#yr-modal-stars{font-size:14px;color:#f5c542;margin-bottom:12px;}
+#yr-modal-stars span{color:var(--text3,rgba(255,255,255,0.48));font-size:12px;}
+#yr-modal-desc{font-size:13px;color:var(--text2,rgba(255,255,255,0.88));line-height:1.75;margin-bottom:16px;font-weight:600;}
+#yr-modal-price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:14px;}
+#yr-modal-price{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--text,#fff);}
+#yr-modal-unit{font-size:12px;color:var(--text3,rgba(255,255,255,0.48));font-weight:700;}
+#yr-modal-sold-bar{background:var(--bg,#0a0d14);border-radius:4px;height:4px;margin-bottom:4px;overflow:hidden;}
+#yr-modal-sold-fill{height:100%;background:var(--yr);border-radius:4px;transition:width .5s;}
+#yr-modal-sold-text{font-size:11px;color:var(--text3,rgba(255,255,255,0.48));margin-bottom:16px;font-weight:600;}
+#yr-modal-actions{display:flex;gap:10px;}
+#yr-modal-actions button{flex:1;padding:13px;border-radius:10px;font-size:13px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;transition:all .15s;}
+#yr-modal-fav{background:transparent;border:1px solid var(--border,rgba(255,255,255,0.09));color:var(--text2,rgba(255,255,255,0.88));}
+#yr-modal-fav:hover{border-color:var(--yr);color:var(--yr);}
+#yr-modal-buy{background:var(--yr);border:none;color:#fff;}
+#yr-modal-buy:hover{background:var(--yr2);}
 
-/* REVIEWS */
-#modal-reviews{padding:0 28px 28px;}
-#modal-reviews-title{font-size:14px;font-weight:500;color:var(--cream);margin-bottom:14px;padding-top:16px;border-top:1px solid var(--border);}
-.review{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
-.review-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-.review-name{font-size:13px;font-weight:500;color:var(--cream);}
-.review-date{font-size:11px;color:var(--muted);}
-.review-stars{font-size:12px;color:var(--gold);margin-bottom:5px;}
-.review-text{font-size:12px;color:var(--muted);line-height:1.65;}
-.review-verified{font-size:10px;color:#2e8b57;margin-top:5px;}
+/* SATICI */
+#yr-modal-seller-box{margin:0 16px 16px;padding:14px;background:var(--card,#161b28);border:1px solid var(--border,rgba(255,255,255,0.09));border-radius:12px;}
+.yr-seller-head{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.yr-seller-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--yr3),var(--yr));display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:900;flex-shrink:0;}
+.yr-seller-name{font-size:14px;font-weight:800;color:var(--text,#fff);}
+.yr-seller-sub{font-size:11px;color:var(--text3,rgba(255,255,255,0.48));margin-top:1px;font-weight:600;}
+.yr-seller-stats{display:flex;gap:16px;}
+.yr-seller-stat{text-align:center;}
+.yr-seller-stat-n{font-size:14px;font-weight:800;color:var(--yr);}
+.yr-seller-stat-l{font-size:10px;color:var(--text3,rgba(255,255,255,0.48));font-weight:700;}
 
-/* SELLER SECTION */
-#modal-seller-box{margin:0 28px 28px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;}
-.seller-head{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-.seller-avatar{width:40px;height:40px;border-radius:50%;background:var(--red3);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--cream);font-weight:600;flex-shrink:0;}
-.seller-name{font-size:14px;font-weight:500;color:var(--cream);}
-.seller-sub{font-size:11px;color:var(--muted);margin-top:1px;}
-.seller-stats{display:flex;gap:16px;}
-.seller-stat{text-align:center;}
-.seller-stat-n{font-size:14px;font-weight:500;color:var(--gold);}
-.seller-stat-l{font-size:10px;color:var(--muted);}
+/* YORUMLAR */
+#yr-modal-reviews{padding:0 16px 24px;}
+#yr-modal-reviews-title{font-size:14px;font-weight:800;color:var(--text,#fff);margin-bottom:14px;padding-top:16px;border-top:1px solid var(--border,rgba(255,255,255,0.09));}
+.yr-review{background:var(--card,#161b28);border:1px solid var(--border,rgba(255,255,255,0.09));border-radius:10px;padding:12px 14px;margin-bottom:10px;}
+.yr-review-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.yr-review-name{font-size:13px;font-weight:800;color:var(--text,#fff);}
+.yr-review-date{font-size:11px;color:var(--text3,rgba(255,255,255,0.48));}
+.yr-review-stars{font-size:12px;color:#f5c542;margin-bottom:5px;}
+.yr-review-text{font-size:12px;color:var(--text2,rgba(255,255,255,0.88));line-height:1.65;font-weight:600;}
+.yr-review-verified{font-size:10px;color:var(--yr);margin-top:5px;font-weight:800;}
 
-/* CART SIDEBAR */
-#cart-side{position:fixed;top:0;right:-380px;width:360px;height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:400;transition:right .3s ease;display:flex;flex-direction:column;overflow:hidden;}
-#cart-side.open{right:0;}
-#cart-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-#cart-head h3{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--cream);}
-#cart-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
-#cart-items{flex:1;overflow-y:auto;padding:16px;}
-.cart-empty{text-align:center;color:var(--muted);padding:40px 0;font-size:13px;}
-.cart-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
-.ci-emoji{font-size:28px;flex-shrink:0;}
-.ci-info{flex:1;min-width:0;}
-.ci-name{font-size:13px;font-weight:500;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ci-sub{font-size:11px;color:var(--muted);}
-.ci-price{font-size:13px;color:var(--gold);font-weight:500;white-space:nowrap;}
-.ci-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 4px;}
-.ci-remove:hover{color:var(--red2);}
-#cart-foot{padding:16px 20px;border-top:1px solid var(--border);}
-#cart-total-row{display:flex;justify-content:space-between;margin-bottom:14px;font-size:15px;}
-#cart-total-label{color:var(--muted);}
-#cart-total-price{color:var(--gold);font-weight:600;font-family:'Cormorant Garamond',serif;font-size:22px;}
-#checkout-btn{width:100%;padding:13px;background:var(--red);border:none;color:#fff;border-radius:8px;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:background .15s;}
-#checkout-btn:hover{background:var(--red2);}
+/* ÖZEL BÖLÜM */
+#yr-featured{padding:28px 16px 0;}
+.yr-section-title{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--text,#fff);margin-bottom:4px;}
+.yr-section-sub{font-size:13px;color:var(--text3,rgba(255,255,255,0.48));margin-bottom:18px;font-weight:600;}
+#yr-featured-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:32px;}
 
-/* CART OVERLAY */
-#cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:390;}
-#cart-overlay.open{display:block;}
+/* NASIL ÇALIŞIR */
+#yr-how{padding:28px 16px;background:var(--bg2,#111520);border-top:1px solid var(--border,rgba(255,255,255,0.09));border-bottom:1px solid var(--border,rgba(255,255,255,0.09));}
+#yr-how-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:600px;margin:16px auto 0;}
+.yr-how-item{text-align:center;padding:14px;}
+.yr-how-num{width:36px;height:36px;border-radius:50%;background:var(--yr3);border:1px solid var(--yr);color:#fff;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
+.yr-how-title{font-size:13px;font-weight:800;color:var(--text,#fff);margin-bottom:4px;}
+.yr-how-desc{font-size:11px;color:var(--text3,rgba(255,255,255,0.48));line-height:1.6;font-weight:600;}
+
+/* SEPET */
+#yr-cart-side{position:fixed;top:0;right:-380px;width:340px;height:100vh;background:var(--bg2,#111520);border-left:1px solid var(--border,rgba(255,255,255,0.09));z-index:400;transition:right .3s ease;display:flex;flex-direction:column;overflow:hidden;}
+#yr-cart-side.open{right:0;}
+#yr-cart-head{padding:18px 16px;border-bottom:1px solid var(--border,rgba(255,255,255,0.09));display:flex;align-items:center;justify-content:space-between;}
+#yr-cart-head h3{font-size:16px;font-weight:900;color:var(--text,#fff);}
+#yr-cart-close{background:none;border:none;color:var(--text3,rgba(255,255,255,0.48));font-size:20px;cursor:pointer;}
+#yr-cart-items{flex:1;overflow-y:auto;padding:14px;}
+.yr-cart-empty{text-align:center;color:var(--text3,rgba(255,255,255,0.48));padding:40px 0;font-size:13px;font-weight:700;}
+.yr-cart-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border,rgba(255,255,255,0.09));}
+.yr-ci-emoji{font-size:26px;flex-shrink:0;}
+.yr-ci-info{flex:1;min-width:0;}
+.yr-ci-name{font-size:13px;font-weight:800;color:var(--text,#fff);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.yr-ci-sub{font-size:11px;color:var(--text3,rgba(255,255,255,0.48));font-weight:600;}
+.yr-ci-price{font-size:13px;color:var(--yr);font-weight:800;white-space:nowrap;}
+.yr-ci-remove{background:none;border:none;color:var(--text3,rgba(255,255,255,0.48));cursor:pointer;font-size:16px;padding:0 4px;}
+.yr-ci-remove:hover{color:var(--yr);}
+#yr-cart-foot{padding:14px 16px;border-top:1px solid var(--border,rgba(255,255,255,0.09));}
+#yr-cart-total-row{display:flex;justify-content:space-between;margin-bottom:12px;font-size:14px;}
+#yr-cart-total-label{color:var(--text3,rgba(255,255,255,0.48));font-weight:700;}
+#yr-cart-total-price{color:var(--yr);font-weight:900;font-size:20px;}
+#yr-checkout-btn{width:100%;padding:13px;background:var(--yr);border:none;color:#fff;border-radius:10px;font-size:14px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;transition:background .15s;}
+#yr-checkout-btn:hover{background:var(--yr2);}
+#yr-cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:390;}
+#yr-cart-overlay.open{display:block;}
+
+/* SEPET FAB */
+#yr-cart-fab{position:fixed;bottom:calc(var(--bot-h,66px) + 14px);right:14px;width:50px;height:50px;border-radius:50%;background:var(--yr);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:150;box-shadow:0 4px 18px rgba(124,181,24,0.5);transition:transform .15s;}
+#yr-cart-fab:active{transform:scale(0.92);}
+#yr-cart-fab-badge{position:absolute;top:-3px;right:-3px;background:var(--rust,#E8603A);color:#fff;font-size:9px;font-weight:900;min-width:16px;height:16px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 3px;}
 
 /* TOAST */
-#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--red);color:#fff;padding:12px 24px;border-radius:8px;font-size:13px;z-index:500;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#yr-toast{position:fixed;bottom:calc(var(--bot-h,66px) + 80px);left:50%;transform:translateX(-50%) translateY(10px);background:var(--yr);color:#fff;padding:11px 22px;border-radius:10px;font-size:13px;font-weight:800;z-index:500;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;}
+#yr-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* FEATURED SECTION */
-#featured{padding:40px 40px 0;background:var(--bg);}
-.section-title{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--cream);margin-bottom:6px;}
-.section-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
-#featured-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:40px;}
+#yr-bottom{padding:24px 16px;padding-bottom:calc(var(--bot-h,66px) + 24px);}
 
-/* HOW IT WORKS */
-#how{padding:40px;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-#how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:860px;margin:20px auto 0;}
-.how-item{text-align:center;padding:16px;}
-.how-num{width:36px;height:36px;border-radius:50%;background:var(--red3);border:1px solid var(--red);color:var(--cream);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
-.how-title{font-size:13px;font-weight:500;color:var(--cream);margin-bottom:4px;}
-.how-desc{font-size:11px;color:var(--muted);line-height:1.6;}
-
-/* FOOTER */
-#footer{padding:32px 40px;border-top:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:24px;}
-.footer-col h4{font-size:12px;font-weight:500;color:var(--cream);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
-.footer-col a{display:block;font-size:12px;color:var(--muted);text-decoration:none;margin-bottom:6px;transition:color .15s;}
-.footer-col a:hover{color:var(--cream);}
-#footer-logo{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--faint);}
-#footer-logo span{color:var(--gold);}
-#footer-copy{font-size:11px;color:var(--faint);margin-top:40px;text-align:center;padding-bottom:24px;}
-
-@media(max-width:900px){
-  #map-side{width:100%;border-right:none;border-bottom:1px solid var(--border);}
-  #main{flex-direction:column;}
-  #how-grid{grid-template-columns:repeat(2,1fr);}
-}
-@media(max-width:600px){
-  #nav{padding:12px 16px;}
-  #nav-links{display:none;}
-  .hero-title{font-size:36px;}
-  #stats-row{gap:24px;}
-  #hero{padding:32px 16px 0;}
-  #right-side{padding:16px;}
-  #featured,#how,#footer{padding:24px 16px;}
-  #how-grid{grid-template-columns:1fr 1fr;}
-  #prod-grid{grid-template-columns:1fr 1fr;}
-  #modal-top{flex-direction:column;}
-  #modal-img{width:100%;border-radius:16px 16px 0 0;}
+@media(min-width:768px){
+  #yr-prod-grid,#yr-featured-grid{grid-template-columns:repeat(auto-fill,minmax(185px,1fr));}
+  #yr-how-grid{grid-template-columns:repeat(4,1fr);}
+  #yr-hero{padding:32px 40px 20px;}
+  #yr-map-side,#yr-right,#yr-featured,#yr-how,#yr-bottom{padding-left:40px;padding-right:40px;}
 }
 </style>
 </head>
-<body>
+<body data-page="yoresel" style="visibility:hidden">
+<script>(function(){if(localStorage.getItem('gotapu_tema')==='light')document.body.classList.add('light')})();</script>
 
-<nav id="nav">
-  <a id="nav-logo" href="#">Yöresel<span>.</span>Market</a>
-  <div id="nav-links">
-    <a class="nav-link" href="#main">Keşfet</a>
-    <a class="nav-link" href="#featured">Öne Çıkanlar</a>
-    <a class="nav-link" href="#how">Nasıl Çalışır</a>
-    <a class="nav-link" href="#footer">İletişim</a>
-  </div>
-  <div id="nav-right">
-    <button class="btn-ghost">Giriş Yap</button>
-    <button class="btn-red">Üretici Ol</button>
-    <button id="cart-btn" onclick="toggleCart()">🛒 Sepet <span id="cart-badge">0</span></button>
-  </div>
-</nav>
-
-<section id="hero">
-  <div class="hero-eyebrow">Anadolu'nun 81 İlinden</div>
-  <h1 class="hero-title">Yöresel Lezzetler<br><span>Sofranıza Geliyor</span></h1>
-  <p class="hero-sub">Üreticiden direkt sipariş. Coğrafi işaretli ürünler. Gerçek Anadolu tatları.</p>
-  <div id="search-wrap">
-    <input id="search-inp" type="text" placeholder="Ürün, il veya üretici ara..." />
-    <button onclick="doSearch()">Ara</button>
-  </div>
-  <div id="stats-row">
-    <div class="stat"><div class="stat-n">81</div><div class="stat-l">İl</div></div>
-    <div class="stat"><div class="stat-n">340+</div><div class="stat-l">Üretici</div></div>
-    <div class="stat"><div class="stat-n">1.200+</div><div class="stat-l">Ürün</div></div>
-    <div class="stat"><div class="stat-n">%98</div><div class="stat-l">Memnuniyet</div></div>
-    <div class="stat"><div class="stat-n">48s</div><div class="stat-l">Kargo</div></div>
+<!-- HERO -->
+<section id="yr-hero">
+  <div class="yr-eyebrow">Anadolu'nun 81 İlinden</div>
+  <h1 class="yr-title">Yöresel Lezzetler<br><span>Sofranıza Geliyor</span></h1>
+  <p class="yr-sub">Üreticiden direkt sipariş. Coğrafi işaretli ürünler. Gerçek Anadolu tatları.</p>
+  <div id="yr-search-wrap">
+    <input id="yr-search-inp" type="text" placeholder="Ürün, il veya üretici ara…" />
+    <button onclick="yrDoSearch()">Ara</button>
   </div>
 </section>
 
-<div id="trust-bar">
-  <div class="trust-item"><span class="trust-icon">🔒</span> SSL Güvenli Ödeme</div>
-  <div class="trust-item"><span class="trust-icon">↩️</span> 14 Gün İade Garantisi</div>
-  <div class="trust-item"><span class="trust-icon">📦</span> Soğuk Zincir Kargo</div>
-  <div class="trust-item"><span class="trust-icon">✅</span> Coğrafi İşaret Doğrulaması</div>
-  <div class="trust-item"><span class="trust-icon">🌾</span> Doğrudan Üreticiden</div>
+<div id="yr-stats">
+  <div class="yr-stat"><div class="yr-stat-n">81</div><div class="yr-stat-l">İl</div></div>
+  <div class="yr-stat"><div class="yr-stat-n">340+</div><div class="yr-stat-l">Üretici</div></div>
+  <div class="yr-stat"><div class="yr-stat-n">1.200+</div><div class="yr-stat-l">Ürün</div></div>
+  <div class="yr-stat"><div class="yr-stat-n">%98</div><div class="yr-stat-l">Memnuniyet</div></div>
 </div>
 
-<div id="main">
-  <aside id="map-side">
-    <div id="map-side-label"><span class="pulse"></span> Haritadan il seçerek filtrele</div>
+<div id="yr-trust">
+  <div class="yr-trust-item">🔒 SSL Güvenli Ödeme</div>
+  <div class="yr-trust-item">↩️ 14 Gün İade</div>
+  <div class="yr-trust-item">📦 Soğuk Zincir Kargo</div>
+  <div class="yr-trust-item">✅ Coğrafi İşaret</div>
+  <div class="yr-trust-item">🌾 Direkt Üreticiden</div>
+</div>
 
-    <!--
-      ✅ ÇÖZÜM: Tek SVG — PNG harita + noktalar AYNI koordinat sisteminde
-      viewBox="0 0 700 330" → PNG de bu boyuta sığıyor, noktalar da aynı scale'de
-      preserveAspectRatio="xMidYMid meet" → responsive olurken orantı korunuyor
-    -->
-    <svg
-      id="tr-map-svg"
-      viewBox="0 0 700 330"
-      preserveAspectRatio="xMidYMid meet"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <!-- PNG harita: x=0 y=0 genişlik=700 yükseklik=330 — noktalarla TAM AYNI alan -->
-      <image
-        href="https://raw.githubusercontent.com/cengobee/XxxGotapu/main/9a310694-860c-493b-9cb1-a454e0a6bcf8.png"
-        x="0" y="0"
-        width="700" height="330"
-        preserveAspectRatio="xMidYMid meet"
-      />
-      <!-- Noktalar JS ile buraya ekleniyor — aynı viewBox'ta -->
-      <g id="map-g"></g>
+<div id="yr-main">
+  <aside id="yr-map-side">
+    <div id="yr-map-label"><span class="yr-pulse"></span> Haritadan il seçerek filtrele</div>
+    <svg id="yr-map-svg" viewBox="0 0 1716 917" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+      <image href="https://raw.githubusercontent.com/cengobee/yoresel/main/9a310694-860c-493b-9cb1-a454e0a6bcf8.png" x="0" y="0" width="1716" height="917" preserveAspectRatio="xMidYMid meet"/>
+      <g id="yr-map-g"></g>
     </svg>
-
-    <p id="map-foot">Noktaya tıkla → o ilin ürünleri filtrelenir</p>
-    <div id="il-box">
-      <div id="il-box-head">
-        <div id="il-box-name"></div>
-        <button id="il-box-clear" onclick="clearIl()">✕</button>
+    <p id="yr-map-foot">Noktaya tıkla → o ilin ürünleri filtrelenir</p>
+    <div id="yr-il-box">
+      <div id="yr-il-box-head">
+        <div id="yr-il-box-name"></div>
+        <button id="yr-il-box-clear" onclick="yrClearIl()">✕</button>
       </div>
-      <div id="il-foods"></div>
-      <div id="il-stats">
-        <div class="il-stat"><div class="il-stat-n" id="il-prod-count">0</div><div class="il-stat-l">Ürün</div></div>
-        <div class="il-stat"><div class="il-stat-n" id="il-seller-count">0</div><div class="il-stat-l">Üretici</div></div>
-        <div class="il-stat"><div class="il-stat-n" id="il-avg-rating">0</div><div class="il-stat-l">Ort. Puan</div></div>
+      <div id="yr-il-foods"></div>
+      <div id="yr-il-stats">
+        <div class="yr-il-stat"><div class="yr-il-stat-n" id="yr-il-prod-count">0</div><div class="yr-il-stat-l">Ürün</div></div>
+        <div class="yr-il-stat"><div class="yr-il-stat-n" id="yr-il-seller-count">0</div><div class="yr-il-stat-l">Üretici</div></div>
+        <div class="yr-il-stat"><div class="yr-il-stat-n" id="yr-il-avg-rating">0</div><div class="yr-il-stat-l">Ort. Puan</div></div>
       </div>
     </div>
   </aside>
 
-  <main id="right-side">
-    <div id="cat-bar">
-      <button class="cat-pill on" data-cat="all">Tümü</button>
-      <button class="cat-pill" data-cat="peynir">🧀 Peynir</button>
-      <button class="cat-pill" data-cat="kebap">🍖 Kebap & Et</button>
-      <button class="cat-pill" data-cat="tatli">🍯 Tatlı & Reçel</button>
-      <button class="cat-pill" data-cat="meyve">🍑 Meyve & Kuruyemiş</button>
-      <button class="cat-pill" data-cat="icecek">🍵 İçecek</button>
-      <button class="cat-pill" data-cat="zeytinyagi">🫒 Zeytinyağı</button>
+  <main id="yr-right">
+    <div id="yr-cat-bar">
+      <button class="yr-cat-pill on" data-cat="all">Tümü</button>
+      <button class="yr-cat-pill" data-cat="peynir">🧀 Peynir</button>
+      <button class="yr-cat-pill" data-cat="kebap">🍖 Kebap & Et</button>
+      <button class="yr-cat-pill" data-cat="tatli">🍯 Tatlı & Reçel</button>
+      <button class="yr-cat-pill" data-cat="meyve">🍑 Meyve & Kuruyemiş</button>
+      <button class="yr-cat-pill" data-cat="icecek">🍵 İçecek</button>
+      <button class="yr-cat-pill" data-cat="zeytinyagi">🫒 Zeytinyağı</button>
     </div>
-    <div id="filter-row">
-      <div id="filter-left">
-        <div id="prod-count-text">Gösterilen: <strong id="pcount">0</strong> ürün</div>
-        <div class="active-tag" id="il-tag"><span id="il-tag-text"></span><button onclick="clearIl()">✕</button></div>
-        <div class="active-tag" id="food-tag"><span id="food-tag-text"></span><button onclick="clearFoodFilter()">✕</button></div>
+    <div id="yr-filter-row">
+      <div id="yr-filter-left">
+        <div id="yr-pcount-text">Gösterilen: <strong id="yr-pcount">0</strong> ürün</div>
+        <div class="yr-active-tag" id="yr-il-tag"><span id="yr-il-tag-text"></span><button onclick="yrClearIl()">✕</button></div>
+        <div class="yr-active-tag" id="yr-food-tag"><span id="yr-food-tag-text"></span><button onclick="yrClearFoodFilter()">✕</button></div>
       </div>
-      <select id="sort-select" onchange="renderProds()">
+      <select id="yr-sort-select" onchange="yrRenderProds()">
         <option value="pop">En Popüler</option>
         <option value="price_asc">Fiyat ↑</option>
         <option value="price_desc">Fiyat ↓</option>
@@ -418,193 +311,200 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <option value="new">En Yeni</option>
       </select>
     </div>
-    <div id="prod-grid"></div>
+    <div id="yr-prod-grid"></div>
   </main>
 </div>
 
-<!-- FEATURED -->
-<section id="featured">
-  <div class="section-title">⭐ Öne Çıkan Ürünler</div>
-  <div class="section-sub">Bu hafta en çok satılan yöresel lezzetler</div>
-  <div id="featured-grid"></div>
+<section id="yr-featured">
+  <div class="yr-section-title">⭐ Öne Çıkan Ürünler</div>
+  <div class="yr-section-sub">Bu hafta en çok satılan yöresel lezzetler</div>
+  <div id="yr-featured-grid"></div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section id="how">
+<section id="yr-how">
   <div style="text-align:center;">
-    <div class="section-title">Nasıl Çalışır?</div>
-    <div class="section-sub">4 adımda Anadolu'nun lezzetleri kapınızda</div>
+    <div class="yr-section-title">Nasıl Çalışır?</div>
+    <div class="yr-section-sub">4 adımda Anadolu'nun lezzetleri kapınızda</div>
   </div>
-  <div id="how-grid">
-    <div class="how-item"><div class="how-num">1</div><div class="how-title">İli Seç</div><div class="how-desc">Haritadan ilgi duyduğun ili seç ya da arama kutusunu kullan</div></div>
-    <div class="how-item"><div class="how-num">2</div><div class="how-title">Ürünü Bul</div><div class="how-desc">Kategorilere göre filtrele, üretici bilgilerini incele</div></div>
-    <div class="how-item"><div class="how-num">3</div><div class="how-title">Güvenli Öde</div><div class="how-desc">iyzico güvencesiyle kredi kartı veya havale ile öde</div></div>
-    <div class="how-item"><div class="how-num">4</div><div class="how-title">Kapında</div><div class="how-desc">Soğuk zincir kargo ile 48 saat içinde taze teslim</div></div>
+  <div id="yr-how-grid">
+    <div class="yr-how-item"><div class="yr-how-num">1</div><div class="yr-how-title">İli Seç</div><div class="yr-how-desc">Haritadan ilgi duyduğun ili seç ya da arama kutusunu kullan</div></div>
+    <div class="yr-how-item"><div class="yr-how-num">2</div><div class="yr-how-title">Ürünü Bul</div><div class="yr-how-desc">Kategorilere göre filtrele, üretici bilgilerini incele</div></div>
+    <div class="yr-how-item"><div class="yr-how-num">3</div><div class="yr-how-title">Güvenli Öde</div><div class="yr-how-desc">GoTapu cüzdanın veya kart ile güvenli ödeme</div></div>
+    <div class="yr-how-item"><div class="yr-how-num">4</div><div class="yr-how-title">Kapında</div><div class="yr-how-desc">Soğuk zincir kargo ile 48 saat içinde taze teslim</div></div>
   </div>
 </section>
 
-<footer id="footer">
-  <div>
-    <div id="footer-logo">Yöresel<span>.</span>Market</div>
-    <div style="font-size:12px;color:var(--muted);margin-top:6px;max-width:200px;line-height:1.6;">Anadolu'nun 81 ilinden yöresel lezzetleri sofranıza taşıyoruz.</div>
-  </div>
-  <div class="footer-col"><h4>Market</h4><a href="#">Tüm Ürünler</a><a href="#">Üreticiler</a><a href="#">Coğrafi İşaretliler</a><a href="#">Kampanyalar</a></div>
-  <div class="footer-col"><h4>Kurumsal</h4><a href="#">Hakkımızda</a><a href="#">Üretici Ol</a><a href="#">Basın</a><a href="#">Kariyer</a></div>
-  <div class="footer-col"><h4>Destek</h4><a href="#">SSS</a><a href="#">Kargo & İade</a><a href="#">KVKK</a><a href="#">İletişim</a></div>
-</footer>
-<div id="footer-copy">© 2025 Yöresel Market — Tüm hakları saklıdır</div>
+<div id="yr-bottom"></div>
 
-<!-- PRODUCT MODAL -->
-<div id="modal-overlay" onclick="e => { if(e.target===this) closeModal(); }">
-  <div id="modal">
-    <button id="modal-close" onclick="closeModal()">✕</button>
-    <div id="modal-top">
-      <div id="modal-img"></div>
-      <div id="modal-info">
-        <div id="modal-badge-row"></div>
-        <div id="modal-il"></div>
-        <div id="modal-name"></div>
-        <div id="modal-seller"></div>
-        <div id="modal-stars"></div>
-        <div id="modal-desc"></div>
-        <div id="modal-price-row"><div id="modal-price"></div><div id="modal-unit"></div></div>
-        <div id="modal-sold-bar"><div id="modal-sold-fill" style="width:0%"></div></div>
-        <div id="modal-sold-text"></div>
-        <div id="modal-actions">
-          <button id="modal-fav" onclick="toggleFav()">♡ Favorile</button>
-          <button id="modal-buy" onclick="addToCart()">Sepete Ekle 🛒</button>
+<!-- ÜRÜN MODAL -->
+<div id="yr-modal-overlay">
+  <div id="yr-modal">
+    <div id="yr-modal-close"><button onclick="yrCloseModal()">✕</button></div>
+    <div id="yr-modal-top">
+      <div id="yr-modal-emoji"></div>
+      <div id="yr-modal-info">
+        <div id="yr-modal-badge-row"></div>
+        <div id="yr-modal-il"></div>
+        <div id="yr-modal-name"></div>
+        <div id="yr-modal-seller-line"></div>
+        <div id="yr-modal-stars"></div>
+        <div id="yr-modal-desc"></div>
+        <div id="yr-modal-price-row"><div id="yr-modal-price"></div><div id="yr-modal-unit"></div></div>
+        <div id="yr-modal-sold-bar"><div id="yr-modal-sold-fill" style="width:0%"></div></div>
+        <div id="yr-modal-sold-text"></div>
+        <div id="yr-modal-actions">
+          <button id="yr-modal-fav" onclick="yrToggleFav()">♡ Favorile</button>
+          <button id="yr-modal-buy" onclick="yrAddToCart()">Sepete Ekle 🛒</button>
         </div>
       </div>
     </div>
-    <div id="modal-seller-box"></div>
-    <div id="modal-reviews"></div>
+    <div id="yr-modal-seller-box"></div>
+    <div id="yr-modal-reviews"></div>
   </div>
 </div>
 
-<!-- CART SIDEBAR -->
-<div id="cart-overlay" onclick="toggleCart()"></div>
-<div id="cart-side">
-  <div id="cart-head"><h3>🛒 Sepetim</h3><button id="cart-close" onclick="toggleCart()">✕</button></div>
-  <div id="cart-items"><div class="cart-empty">Sepetiniz boş<br><span style="font-size:24px;display:block;margin-top:8px;">🧺</span></div></div>
-  <div id="cart-foot">
-    <div id="cart-total-row"><span id="cart-total-label">Toplam</span><span id="cart-total-price">₺0</span></div>
-    <button id="checkout-btn" onclick="alert('Ödeme sayfası yakında! 🚀')">Ödemeye Geç →</button>
+<!-- SEPET -->
+<div id="yr-cart-overlay" onclick="yrToggleCart()"></div>
+<div id="yr-cart-side">
+  <div id="yr-cart-head"><h3>🛒 Sepetim</h3><button id="yr-cart-close" onclick="yrToggleCart()">✕</button></div>
+  <div id="yr-cart-items"><div class="yr-cart-empty">Sepetiniz boş<br><span style="font-size:24px;display:block;margin-top:8px;">🧺</span></div></div>
+  <div id="yr-cart-foot">
+    <div id="yr-cart-total-row"><span id="yr-cart-total-label">Toplam</span><span id="yr-cart-total-price">₺0</span></div>
+    <button id="yr-checkout-btn" onclick="alert('Ödeme sayfası yakında! 🚀')">Ödemeye Geç →</button>
   </div>
 </div>
 
-<div id="toast"></div>
-<div id="map-tooltip"></div>
+<button id="yr-cart-fab" onclick="yrToggleCart()" aria-label="Sepet">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+  <span id="yr-cart-fab-badge"></span>
+</button>
+
+<div id="yr-toast"></div>
+<div id="yr-tooltip"></div>
 
 <script>
-const ILLER = [
-  {id:"istanbul",n:"İstanbul",x:110,y:65,foods:["Balık Ekmek","Midye Dolma","Kokoreç"]},
-  {id:"edirne",n:"Edirne",x:60,y:50,foods:["Tava Ciğeri","Badem Ezmesi","Kavun"]},
-  {id:"tekirdag",n:"Tekirdağ",x:85,y:63,foods:["Tekirdağ Köftesi","Kavurma","Peynir"]},
-  {id:"kirklareli",n:"Kırklareli",x:95,y:43,foods:["Kapuska","Pestil","Kavurma"]},
-  {id:"canakkale",n:"Çanakkale",x:65,y:90,foods:["Ezine Peyniri","Bozcaada Şarabı","Domates"]},
-  {id:"balikesir",n:"Balıkesir",x:93,y:113,foods:["Gömeç Balığı","Susamlı Gevrek","Sucuk"]},
-  {id:"bursa",n:"Bursa",x:130,y:105,foods:["İskender Kebap","Kestane Şekeri","İnegöl Köftesi"]},
-  {id:"kocaeli",n:"Kocaeli",x:153,y:73,foods:["İzmit Pişmaniyesi","Tahini Pide","Köfte"]},
-  {id:"yalova",n:"Yalova",x:140,y:88,foods:["Bal","Çilek","Kestane Şekeri"]},
-  {id:"sakarya",n:"Sakarya",x:170,y:71,foods:["Kaz Kavurması","Mısır Ekmeği","Fındık"]},
-  {id:"bolu",n:"Bolu",x:190,y:83,foods:["Köy Tereyağı","Mudurnu Tavuğu","Abant Balığı"]},
-  {id:"duzce",n:"Düzce",x:180,y:75,foods:["Fındık","Taze Fasulye"]},
-  {id:"bilecik",n:"Bilecik",x:163,y:98,foods:["Pestil","Köy Peyniri","Lokum"]},
-  {id:"eskisehir",n:"Eskişehir",x:195,y:120,foods:["Çibörek","Balaban Sarması"]},
-  {id:"kutahya",n:"Kütahya",x:163,y:135,foods:["Kütahya Mantısı","Pastırmalı Börek"]},
-  {id:"afyon",n:"Afyonkarahisar",x:170,y:163,foods:["Afyon Kaymağı","Sucuk","Lokum"]},
-  {id:"manisa",n:"Manisa",x:95,y:145,foods:["Mesir Macunu","Balık"]},
-  {id:"izmir",n:"İzmir",x:75,y:158,foods:["Boyoz","Kumru","Gevrek","İncir"]},
-  {id:"usak",n:"Uşak",x:133,y:160,foods:["Tarhana","Keklik"]},
-  {id:"aydin",n:"Aydın",x:100,y:185,foods:["İncir","Kestane","Zeytinyağlı Yemek"]},
-  {id:"denizli",n:"Denizli",x:130,y:185,foods:["Honaz Elması","Sarayköy Peyniri"]},
-  {id:"mugla",n:"Muğla",x:110,y:213,foods:["Marmaris Balığı","Organik Bal"]},
-  {id:"burdur",n:"Burdur",x:160,y:208,foods:["Pelte","Keş Peyniri"]},
-  {id:"isparta",n:"Isparta",x:185,y:203,foods:["Gül Lokumu","Elma","Gülsuyu"]},
-  {id:"antalya",n:"Antalya",x:203,y:235,foods:["Hibeş","Piyaz","Kabak Tatlısı"]},
-  {id:"konya",n:"Konya",x:215,y:198,foods:["Etli Ekmek","Fırın Kebabı","Höşmerim"]},
-  {id:"karaman",n:"Karaman",x:233,y:218,foods:["Tahinli","Sucuk","Vişne"]},
-  {id:"ankara",n:"Ankara",x:225,y:133,foods:["Beypazarı Kurusu","Ankara Tavası"]},
-  {id:"kirsehir",n:"Kırşehir",x:260,y:145,foods:["Tarhana","Cücük Salatası"]},
-  {id:"aksaray",n:"Aksaray",x:248,y:183,foods:["Tulum Peyniri","Pastırma","Sucuk"]},
-  {id:"nevsehir",n:"Nevşehir",x:265,y:185,foods:["Testi Kebabı","Şarap"]},
-  {id:"nigde",n:"Niğde",x:270,y:208,foods:["Niğde Peyniri","Patates"]},
-  {id:"kayseri",n:"Kayseri",x:295,y:178,foods:["Pastırma","Sucuk","Mantı"]},
-  {id:"sivas",n:"Sivas",x:323,y:143,foods:["Sivas Köftesi","Divriği Üzümü"]},
-  {id:"tokat",n:"Tokat",x:308,y:120,foods:["Tokat Kebabı"]},
-  {id:"yozgat",n:"Yozgat",x:285,y:135,foods:["Yozgat Çorbası","Keşkek"]},
-  {id:"kirikkale",n:"Kırıkkale",x:245,y:130,foods:["Keşkek","Gözleme"]},
-  {id:"corum",n:"Çorum",x:270,y:113,foods:["Çorum Leblebisi","Simidi"]},
-  {id:"amasya",n:"Amasya",x:288,y:98,foods:["Amasya Elması","Elma Şekeri"]},
-  {id:"sinop",n:"Sinop",x:273,y:73,foods:["Kalkan Balığı","Midye"]},
-  {id:"samsun",n:"Samsun",x:300,y:73,foods:["Samsun Pide","Hamsi"]},
-  {id:"ordu",n:"Ordu",x:320,y:75,foods:["Fındık","Mıhlama"]},
-  {id:"giresun",n:"Giresun",x:340,y:73,foods:["Giresun Fındığı","Laz Böreği"]},
-  {id:"trabzon",n:"Trabzon",x:365,y:70,foods:["Trabzon Ekmeği","Hamsili Pilav","Akçaabat Köftesi"]},
-  {id:"rize",n:"Rize",x:388,y:63,foods:["Rize Çayı","Muhlama"]},
-  {id:"artvin",n:"Artvin",x:410,y:55,foods:["Karalahana Çorbası","Muhlama"]},
-  {id:"gumushane",n:"Gümüşhane",x:375,y:90,foods:["Pestil","Kuskus"]},
-  {id:"bayburt",n:"Bayburt",x:395,y:88,foods:["Bez Ayran","Tarhana"]},
-  {id:"erzincan",n:"Erzincan",x:370,y:115,foods:["Tulum Peyniri","Şehriye"]},
-  {id:"erzurum",n:"Erzurum",x:413,y:113,foods:["Cağ Kebabı","Kadayıf Dolması","Pastırma"]},
-  {id:"kars",n:"Kars",x:448,y:83,foods:["Kars Gravyeri","Kaz Eti","Bal"]},
-  {id:"ardahan",n:"Ardahan",x:450,y:60,foods:["Ardahan Balı","Peynir"]},
-  {id:"agri",n:"Ağrı",x:470,y:100,foods:["Bandırma","Kavut"]},
-  {id:"igdir",n:"Iğdır",x:488,y:103,foods:["Iğdır Kayısısı","Bal"]},
-  {id:"van",n:"Van",x:478,y:148,foods:["Van Kahvaltısı","Otlu Peynir","Van Balığı"]},
-  {id:"hakkari",n:"Hakkari",x:470,y:188,foods:["Hakkari Balı","Kavut"]},
-  {id:"bingol",n:"Bingöl",x:418,y:140,foods:["Bingöl Balı","Tulum Peyniri"]},
-  {id:"tunceli",n:"Tunceli",x:388,y:148,foods:["Tunceli Balı","Kavut"]},
-  {id:"mus",n:"Muş",x:440,y:148,foods:["Muş Peyniri","Tandır Ekmeği"]},
-  {id:"bitlis",n:"Bitlis",x:450,y:165,foods:["Bitlis Balı","Peynir"]},
-  {id:"siirt",n:"Siirt",x:448,y:195,foods:["Büryan Kebabı","Perde Pilavı"]},
-  {id:"batman",n:"Batman",x:428,y:200,foods:["Kavurma","Tarhana"]},
-  {id:"mardin",n:"Mardin",x:408,y:215,foods:["Kaburga Dolması","Kibe","Reyhan Şerbeti"]},
-  {id:"sirnak",n:"Şırnak",x:458,y:210,foods:["Şırnak Cevizi","Köy Peyniri"]},
-  {id:"diyarbakir",n:"Diyarbakır",x:383,y:203,foods:["Diyarbakır Karpuzu","Kaburga Dolması"]},
-  {id:"sanliurfa",n:"Şanlıurfa",x:353,y:233,foods:["Urfa Kebabı","Çiğ Köfte","Lahmacun"]},
-  {id:"gaziantep",n:"Gaziantep",x:323,y:245,foods:["Antep Baklavası","Antep Kebabı","Katmer","Beyran"]},
-  {id:"kilis",n:"Kilis",x:305,y:263,foods:["Kilis Tava","Zeytin"]},
-  {id:"hatay",n:"Hatay",x:295,y:263,foods:["Künefe","Humus","Zahter"]},
-  {id:"kahramanmaras",n:"Kahramanmaraş",x:293,y:230,foods:["Maraş Dondurması"]},
-  {id:"adiyaman",n:"Adıyaman",x:333,y:220,foods:["Patlıcan Kebabı","Katmer"]},
-  {id:"adana",n:"Adana",x:263,y:250,foods:["Adana Kebabı","Şalgam","Bici Bici"]},
-  {id:"osmaniye",n:"Osmaniye",x:278,y:250,foods:["Osmaniye Köftesi","Portakal"]},
-  {id:"mersin",n:"Mersin",x:245,y:253,foods:["Tantuni","Taş Kebabı","Cezerye"]},
-  {id:"zonguldak",n:"Zonguldak",x:205,y:75,foods:["Zonguldak Böreği","Firikik"]},
-  {id:"karabuk",n:"Karabük",x:218,y:85,foods:["Safranbolu Safranı","Lokum"]},
-  {id:"bartin",n:"Bartın",x:200,y:68,foods:["Bartın Elması","Bal"]},
-  {id:"kastamonu",n:"Kastamonu",x:238,y:85,foods:["Kastamonu Sucuğu","Taşköprü Sarımsağı"]},
-  {id:"cankiri",n:"Çankırı",x:240,y:105,foods:["Çankırı Şekeri","Tuz"]},
-  {id:"malatya",n:"Malatya",x:350,y:185,foods:["Malatya Kayısısı","Tarhana"]},
-  {id:"elazig",n:"Elazığ",x:368,y:165,foods:["Hardaliye","Harput Köftesi"]},
+/* ── SUPABASE & AUTH ── */
+const SUPA_URL='https://ncmzfaszaowiynzjdefb.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbXpmYXN6YW93aXluempkZWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDEwOTQsImV4cCI6MjA4OTQxNzA5NH0.Kw1JQ65KQFPU0r6mIT9buFkMrolnH14_jRvLY7o63tY';
+const{createClient}=supabase;
+const sb=createClient(SUPA_URL,SUPA_KEY);
+window._sbClient=sb;
+
+(function(){
+  if(window.location.hash&&window.location.hash.includes('access_token')){
+    const hp=new URLSearchParams(window.location.hash.substring(1));
+    const at=hp.get('access_token'),rt=hp.get('refresh_token');
+    if(at){sb.auth.setSession({access_token:at,refresh_token:rt}).then(({data,error})=>{if(error)window.location.replace('index.html');else{window.history.replaceState(null,'',window.location.pathname);yrInit();}});}
+    else yrInit();
+  }else if(new URLSearchParams(window.location.search).get('code')){
+    window.location.replace('index.html'+window.location.search);
+  }else{yrInit();}
+  function yrInit(){sb.auth.getSession().then(({data})=>{if(!data.session){window.location.replace('index.html');return;}document.body.style.visibility='visible';});}
+})();
+
+/* ── VERİ ── */
+const YR_ILLER=[
+  {id:"istanbul",n:"İstanbul",x:278,y:187.98,foods:["Balık Ekmek","Midye Dolma","Kokoreç"]},
+  {id:"edirne",n:"Edirne",x:107,y:189.26,foods:["Tava Ciğeri","Badem Ezmesi","Kavun"]},
+  {id:"tekirdag",n:"Tekirdağ",x:164,y:217.88,foods:["Tekirdağ Köftesi","Kavurma","Peynir"]},
+  {id:"kirklareli",n:"Kırklareli",x:186,y:129.38,foods:["Kapuska","Pestil","Kavurma"]},
+  {id:"canakkale",n:"Çanakkale",x:129,y:338.93,foods:["Ezine Peyniri","Bozcaada Şarabı","Domates"]},
+  {id:"balikesir",n:"Balıkesir",x:216,y:380.56,foods:["Gömeç Balığı","Susamlı Gevrek","Sucuk"]},
+  {id:"bursa",n:"Bursa",x:300,y:340.21,foods:["İskender Kebap","Kestane Şekeri","İnegöl Köftesi"]},
+  {id:"kocaeli",n:"Kocaeli",x:383,y:240.06,foods:["İzmit Pişmaniyesi","Tahini Pide","Köfte"]},
+  {id:"yalova",n:"Yalova",x:335,y:272.54,foods:["Bal","Çilek","Kestane Şekeri"]},
+  {id:"sakarya",n:"Sakarya",x:453,y:279.05,foods:["Kaz Kavurması","Mısır Ekmeği","Fındık"]},
+  {id:"bolu",n:"Bolu",x:545,y:288.02,foods:["Köy Tereyağı","Mudurnu Tavuğu","Abant Balığı"]},
+  {id:"duzce",n:"Düzce",x:514,y:234.84,foods:["Fındık","Taze Fasulye"]},
+  {id:"bilecik",n:"Bilecik",x:406,y:336.34,foods:["Pestil","Köy Peyniri","Lokum"]},
+  {id:"eskisehir",n:"Eskişehir",x:497,y:394.95,foods:["Çibörek","Balaban Sarması"]},
+  {id:"kutahya",n:"Kütahya",x:352,y:433.94,foods:["Kütahya Mantısı","Pastırmalı Börek"]},
+  {id:"afyon",n:"Afyonkarahisar",x:508,y:495.1,foods:["Afyon Kaymağı","Sucuk","Lokum"]},
+  {id:"manisa",n:"Manisa",x:218,y:472.98,foods:["Mesir Macunu","Balık"]},
+  {id:"izmir",n:"İzmir",x:146,y:526.36,foods:["Boyoz","Kumru","Gevrek","İncir"]},
+  {id:"usak",n:"Uşak",x:323,y:515.91,foods:["Tarhana","Keklik"]},
+  {id:"aydin",n:"Aydın",x:193,y:600.55,foods:["İncir","Kestane","Zeytinyağlı Yemek"]},
+  {id:"denizli",n:"Denizli",x:331,y:582.3,foods:["Honaz Elması","Sarayköy Peyniri"]},
+  {id:"mugla",n:"Muğla",x:266,y:686.47,foods:["Marmaris Balığı","Organik Bal"]},
+  {id:"burdur",n:"Burdur",x:402,y:627.87,foods:["Pelte","Keş Peyniri"]},
+  {id:"isparta",n:"Isparta",x:486,y:590.19,foods:["Gül Lokumu","Elma","Gülsuyu"]},
+  {id:"antalya",n:"Antalya",x:461,y:690.31,foods:["Hibeş","Piyaz","Kabak Tatlısı"]},
+  {id:"konya",n:"Konya",x:599,y:572.68,foods:["Etli Ekmek","Fırın Kebabı","Höşmerim"]},
+  {id:"karaman",n:"Karaman",x:680,y:666.94,foods:["Tahinli","Sucuk","Vişne"]},
+  {id:"ankara",n:"Ankara",x:635,y:362.41,foods:["Beypazarı Kurusu","Ankara Tavası"]},
+  {id:"kirsehir",n:"Kırşehir",x:779,y:436.58,foods:["Tarhana","Cücük Salatası"]},
+  {id:"aksaray",n:"Aksaray",x:749,y:536.81,foods:["Tulum Peyniri","Pastırma","Sucuk"]},
+  {id:"nevsehir",n:"Nevşehir",x:818,y:499.04,foods:["Testi Kebabı","Şarap"]},
+  {id:"nigde",n:"Niğde",x:812,y:578.43,foods:["Niğde Peyniri","Patates"]},
+  {id:"kayseri",n:"Kayseri",x:908,y:491.23,foods:["Pastırma","Sucuk","Mantı"]},
+  {id:"sivas",n:"Sivas",x:1028,y:388.45,foods:["Sivas Köftesi","Divriği Üzümü"]},
+  {id:"tokat",n:"Tokat",x:968,y:298.58,foods:["Tokat Kebabı"]},
+  {id:"yozgat",n:"Yozgat",x:860,y:387.06,foods:["Yozgat Çorbası","Keşkek"]},
+  {id:"kirikkale",n:"Kırıkkale",x:735,y:370.19,foods:["Keşkek","Gözleme"]},
+  {id:"corum",n:"Çorum",x:803,y:292.08,foods:["Çorum Leblebisi","Simidi"]},
+  {id:"amasya",n:"Amasya",x:894,y:266.01,foods:["Amasya Elması","Elma Şekeri"]},
+  {id:"sinop",n:"Sinop",x:822,y:130.69,foods:["Kalkan Balığı","Midye"]},
+  {id:"samsun",n:"Samsun",x:913,y:189.26,foods:["Samsun Pide","Hamsi"]},
+  {id:"ordu",n:"Ordu",x:1033,y:238.7,foods:["Fındık","Mıhlama"]},
+  {id:"giresun",n:"Giresun",x:1145,y:263.46,foods:["Giresun Fındığı","Laz Böreği"]},
+  {id:"trabzon",n:"Trabzon",x:1228,y:237.14,foods:["Trabzon Ekmeği","Hamsili Pilav","Akçaabat Köftesi"]},
+  {id:"rize",n:"Rize",x:1324,y:225.67,foods:["Rize Çayı","Muhlama"]},
+  {id:"artvin",n:"Artvin",x:1409,y:191.85,foods:["Karalahana Çorbası","Muhlama"]},
+  {id:"gumushane",n:"Gümüşhane",x:1230,y:288.22,foods:["Pestil","Kuskus"]},
+  {id:"bayburt",n:"Bayburt",x:1273,y:310.31,foods:["Bez Ayran","Tarhana"]},
+  {id:"erzincan",n:"Erzincan",x:1173,y:380.56,foods:["Tulum Peyniri","Şehriye"]},
+  {id:"erzurum",n:"Erzurum",x:1372,y:344.15,foods:["Cağ Kebabı","Kadayıf Dolması","Pastırma"]},
+  {id:"kars",n:"Kars",x:1519,y:275.18,foods:["Kars Gravyeri","Kaz Eti","Bal"]},
+  {id:"ardahan",n:"Ardahan",x:1500,y:198.35,foods:["Ardahan Balı","Peynir"]},
+  {id:"agri",n:"Ağrı",x:1519,y:385.78,foods:["Bandırma","Kavut"]},
+  {id:"igdir",n:"Iğdır",x:1592,y:335.07,foods:["Iğdır Kayısısı","Bal"]},
+  {id:"van",n:"Van",x:1559,y:480.7,foods:["Van Kahvaltısı","Otlu Peynir","Van Balığı"]},
+  {id:"hakkari",n:"Hakkari",x:1591,y:611,foods:["Hakkari Balı","Kavut"]},
+  {id:"bingol",n:"Bingöl",x:1329,y:449.61,foods:["Bingöl Balı","Tulum Peyniri"]},
+  {id:"tunceli",n:"Tunceli",x:1198,y:445.66,foods:["Tunceli Balı","Kavut"]},
+  {id:"mus",n:"Muş",x:1424,y:450.89,foods:["Muş Peyniri","Tandır Ekmeği"]},
+  {id:"bitlis",n:"Bitlis",x:1463,y:499.04,foods:["Bitlis Balı","Peynir"]},
+  {id:"siirt",n:"Siirt",x:1449,y:566.71,foods:["Büryan Kebabı","Perde Pilavı"]},
+  {id:"batman",n:"Batman",x:1392,y:573.21,foods:["Kavurma","Tarhana"]},
+  {id:"mardin",n:"Mardin",x:1318,y:651.35,foods:["Kaburga Dolması","Kibe","Reyhan Şerbeti"]},
+  {id:"sirnak",n:"Şırnak",x:1481,y:625.31,foods:["Şırnak Cevizi","Köy Peyniri"]},
+  {id:"diyarbakir",n:"Diyarbakır",x:1272,y:546.34,foods:["Diyarbakır Karpuzu","Kaburga Dolması"]},
+  {id:"sanliurfa",n:"Şanlıurfa",x:1178,y:653.9,foods:["Urfa Kebabı","Çiğ Köfte","Lahmacun"]},
+  {id:"gaziantep",n:"Gaziantep",x:1036,y:686.47,foods:["Antep Baklavası","Antep Kebabı","Katmer","Beyran"]},
+  {id:"kilis",n:"Kilis",x:1007,y:719.01,foods:["Kilis Tava","Zeytin"]},
+  {id:"hatay",n:"Hatay",x:934,y:761.94,foods:["Künefe","Humus","Zahter"]},
+  {id:"kahramanmaras",n:"Kahramanmaraş",x:1048,y:584.96,foods:["Maraş Dondurması"]},
+  {id:"adiyaman",n:"Adıyaman",x:1138,y:608.33,foods:["Patlıcan Kebabı","Katmer"]},
+  {id:"adana",n:"Adana",x:876,y:652.63,foods:["Adana Kebabı","Şalgam","Bici Bici"]},
+  {id:"osmaniye",n:"Osmaniye",x:944,y:673.44,foods:["Osmaniye Köftesi","Portakal"]},
+  {id:"mersin",n:"Mersin",x:747,y:712.51,foods:["Tantuni","Taş Kebabı","Cezerye"]},
+  {id:"zonguldak",n:"Zonguldak",x:588,y:186.71,foods:["Zonguldak Böreği","Firikik"]},
+  {id:"karabuk",n:"Karabük",x:647,y:225.67,foods:["Safranbolu Safranı","Lokum"]},
+  {id:"bartin",n:"Bartın",x:632,y:150.19,foods:["Bartın Elması","Bal"]},
+  {id:"kastamonu",n:"Kastamonu",x:757,y:169.73,foods:["Kastamonu Sucuğu","Taşköprü Sarımsağı"]},
+  {id:"cankiri",n:"Çankırı",x:690,y:271.24,foods:["Çankırı Şekeri","Tuz"]},
+  {id:"malatya",n:"Malatya",x:1069,y:504.27,foods:["Malatya Kayısısı","Tarhana"]},
+  {id:"elazig",n:"Elazığ",x:1223,y:505.54,foods:["Hardaliye","Harput Köftesi"]},
 ];
 
-const REVIEWS_DB = {
-  1:[{name:"Ayşe K.",date:"12 Nis 2025",rating:5,text:"Gerçekten efsanevi bir baklava! Fıstığı bol, şerbeti tam kıvamında.","verified":true},
-     {name:"Mehmet D.",date:"3 Nis 2025",rating:5,text:"Anneme hediye gönderdim, çok beğendi. Kutu açılınca kokusu eve yayıldı.","verified":true},
-     {name:"Zeynep A.",date:"28 Mar 2025",rating:4,text:"Harika lezzet ama kargo biraz geç geldi. Ürün soğuk gelmişti yine de.","verified":false}],
-  2:[{name:"Hasan B.",date:"8 Nis 2025",rating:5,text:"Kars'ta 5 yıl yaşadım, Kafkas Süt'ün gravyerini çok özlemiştim. Birebir aynı lezzet.","verified":true},
-     {name:"Leyla M.",date:"1 Nis 2025",rating:5,text:"Eşim için sürpriz aldım, çok sevdi. Sert yapısı ve fındıksı aroması bambaşka.","verified":true}],
-  3:[{name:"Osman Y.",date:"15 Nis 2025",rating:5,text:"Erzurum'da cağ kebabı yedim, o tadı özlemiştim. Güzelyurt aynı lezzeti vermiş.","verified":true},
-     {name:"Fatma S.",date:"6 Nis 2025",rating:5,text:"Etle gelen baharat ve pişirme yöntemi gerçekten özel. Lavaş ile harika oluyor.","verified":true},
-     {name:"Ali R.",date:"2 Nis 2025",rating:4,text:"Çok lezzetli ama porsiyon biraz küçük geldi. Bir dahaki sefere iki porsiyon alacağım.","verified":false}],
-  5:[{name:"Selin T.",date:"10 Nis 2025",rating:5,text:"Çaykur'un bu çayı başka. Demleme 15 dakika, rengi koyu kırmızı, acısı yok.","verified":true},
-     {name:"Bora K.",date:"5 Nis 2025",rating:4,text:"Kaliteli çay ama paketleme biraz dağınık geldi.","verified":false}],
-  6:[{name:"Nihal D.",date:"14 Nis 2025",rating:5,text:"Kayseri pastırması başka hiçbir şeye benzemez. Çemeni mükemmel, kıvamı tam.","verified":true},
-     {name:"Erkan S.",date:"9 Nis 2025",rating:5,text:"İstanbul'daki marketlerdeki pastırmayla aynı marka ama buradan çok daha taze geliyor.","verified":true}],
+const YR_REVIEWS={
+  1:[{name:"Ayşe K.",date:"12 Nis 2025",rating:5,text:"Gerçekten efsanevi bir baklava! Fıstığı bol, şerbeti tam kıvamında.",verified:true},{name:"Mehmet D.",date:"3 Nis 2025",rating:5,text:"Anneme hediye gönderdim, çok beğendi.",verified:true}],
+  2:[{name:"Hasan B.",date:"8 Nis 2025",rating:5,text:"Kars'ta 5 yıl yaşadım, Kafkas Süt'ün gravyerini çok özlemiştim. Birebir aynı lezzet.",verified:true}],
+  3:[{name:"Osman Y.",date:"15 Nis 2025",rating:5,text:"Erzurum'da cağ kebabı yedim, o tadı özlemiştim. Güzelyurt aynı lezzeti vermiş.",verified:true}],
+  5:[{name:"Selin T.",date:"10 Nis 2025",rating:5,text:"Çaykur'un bu çayı başka. Demleme 15 dakika, rengi koyu kırmızı.",verified:true}],
+  6:[{name:"Nihal D.",date:"14 Nis 2025",rating:5,text:"Kayseri pastırması başka hiçbir şeye benzemez.",verified:true}],
 };
 
-const PRODUCTS = [
-  {id:1,name:"Antep Baklavası",il:"Gaziantep",seller:"Güllüoğlu",price:320,unit:"kg",rating:4.9,reviews:128,cat:"tatli",emoji:"🍯",badge:"COĞ. İŞARET",hot:true,sold:82,desc:"El açması yufka, Antep fıstığı ve tereyağıyla hazırlanan efsanevi baklava. 180 yıllık Güllüoğlu ustalığıyla.",sellerName:"Güllüoğlu Baklava",sellerSince:"1844",sellerRating:4.9,sellerSales:3420},
-  {id:2,name:"Kars Gravyeri",il:"Kars",seller:"Kafkas Süt",price:420,unit:"kg",rating:4.9,reviews:87,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:true,sold:74,desc:"12 ay dinlendirilmiş, sert dokulu, fındıksı aromaya sahip Kars gravyeri. Türkiye'nin en prestijli peyniri.",sellerName:"Kafkas Süt Ürünleri",sellerSince:"1978",sellerRating:4.8,sellerSales:1850},
+let YR_PRODUCTS=[
+  {id:1,name:"Antep Baklavası",il:"Gaziantep",seller:"Güllüoğlu",price:320,unit:"kg",rating:4.9,reviews:128,cat:"tatli",emoji:"🍯",badge:"COĞ. İŞARET",hot:true,sold:82,desc:"El açması yufka, Antep fıstığı ve tereyağıyla hazırlanan efsanevi baklava.",sellerName:"Güllüoğlu Baklava",sellerSince:"1844",sellerRating:4.9,sellerSales:3420},
+  {id:2,name:"Kars Gravyeri",il:"Kars",seller:"Kafkas Süt",price:420,unit:"kg",rating:4.9,reviews:87,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:true,sold:74,desc:"12 ay dinlendirilmiş, sert dokulu, fındıksı aromaya sahip Kars gravyeri.",sellerName:"Kafkas Süt Ürünleri",sellerSince:"1978",sellerRating:4.8,sellerSales:1850},
   {id:3,name:"Cağ Kebabı",il:"Erzurum",seller:"Güzelyurt",price:195,unit:"porsiyon",rating:4.9,reviews:214,cat:"kebap",emoji:"🍖",badge:"YEREL USTA",hot:true,sold:91,desc:"Yatay şişte döndürülen kuzu etinin dilim dilim kesilmesiyle hazırlanan Erzurum'a özgü kebap.",sellerName:"Güzelyurt Cağ Kebabı",sellerSince:"1967",sellerRating:4.9,sellerSales:5600},
   {id:4,name:"Malatya Kayısısı",il:"Malatya",seller:"Kayısı Bahçesi",price:120,unit:"kg",rating:4.9,reviews:163,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",hot:false,sold:65,desc:"Dünya kayısı üretiminin %20'sini karşılayan Malatya'nın güneşte doğal kurutulmuş kayısısı.",sellerName:"Malatya Kayısı Bahçeleri",sellerSince:"1995",sellerRating:4.8,sellerSales:2100},
   {id:5,name:"Rize Çayı",il:"Rize",seller:"Çaykur",price:180,unit:"kg",rating:4.8,reviews:342,cat:"icecek",emoji:"🍵",badge:"COĞ. İŞARET",hot:false,sold:88,desc:"Karadeniz yağmurlarıyla yetişen, derin demli, tok aromalı siyah çay.",sellerName:"Çaykur Rize Çay Fabrikası",sellerSince:"1947",sellerRating:4.9,sellerSales:9800},
-  {id:6,name:"Kayseri Pastırması",il:"Kayseri",seller:"Oğuzhan Et",price:680,unit:"kg",rating:4.9,reviews:97,cat:"kebap",emoji:"🥩",badge:"COĞ. İŞARET",hot:true,sold:55,desc:"60 günlük kuruma süreciyle hazırlanan, çemenli Kayseri pastırması.",sellerName:"Oğuzhan Pastırma",sellerSince:"1953",sellerRating:4.9,sellerSales:1200},
+  {id:6,name:"Kayseri Pastırması",il:"Kayseri",seller:"Oğuzhan Et",price:680,unit:"kg",rating:4.9,reviews:97,cat:"kebap",emoji:"🥩",badge:"COĞ. İŞARET",hot:true,sold:55,desc:"60 günlük kuruma süreciyle hazırlanan çemenli Kayseri pastırması.",sellerName:"Oğuzhan Pastırma",sellerSince:"1953",sellerRating:4.9,sellerSales:1200},
   {id:7,name:"Van Otlu Peyniri",il:"Van",seller:"Divan Peynir",price:280,unit:"kg",rating:4.8,reviews:76,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:false,sold:48,desc:"Bahar otlarıyla hazırlanan, Van'a özgü salamura beyaz peynir.",sellerName:"Divan Peynircilik",sellerSince:"1985",sellerRating:4.8,sellerSales:890},
   {id:8,name:"Hatay Künefesi",il:"Hatay",seller:"Antakya Tatlıcısı",price:95,unit:"porsiyon",rating:4.9,reviews:289,cat:"tatli",emoji:"🍰",badge:"TAŞ FIRIN",hot:true,sold:93,desc:"Taş fırında pişirilen, Hatay usulü tel kadayıf ve eriyen peynirle hazırlanan efsane tatlı.",sellerName:"Antakya Tatlıcısı",sellerSince:"1922",sellerRating:4.9,sellerSales:4300},
-  {id:9,name:"Afyon Kaymağı",il:"Afyonkarahisar",seller:"Afyon Lezzet",price:240,unit:"kg",rating:4.8,reviews:118,cat:"peynir",emoji:"🥛",badge:"GÜNLÜK TAZE",hot:false,sold:71,desc:"Manda sütünden elde edilen kaymak katmanlarıyla ünlü Afyon kaymağı.",sellerName:"Afyon Lezzet",sellerSince:"2001",sellerRating:4.7,sellerSales:730},
+  {id:9,name:"Afyon Kaymağı",il:"Afyonkarahisar",seller:"Afyon Lezzet",price:240,unit:"kg",rating:4.8,reviews:118,cat:"peynir",emoji:"🥛",badge:"GÜNLÜK TAZE",hot:false,sold:71,desc:"Manda sütünden elde edilen Afyon kaymağı.",sellerName:"Afyon Lezzet",sellerSince:"2001",sellerRating:4.7,sellerSales:730},
   {id:10,name:"İskender Kebap",il:"Bursa",seller:"İskender",price:175,unit:"porsiyon",rating:4.9,reviews:456,cat:"kebap",emoji:"🍖",badge:"ORİJİNAL",hot:false,sold:79,desc:"1867'den bu yana aynı tarifle hazırlanan döner kebabının tereyağı ve domates sosuyla buluşması.",sellerName:"İskender Kebap A.Ş.",sellerSince:"1867",sellerRating:5.0,sellerSales:12000},
   {id:11,name:"Adana Kebabı",il:"Adana",seller:"Adana Ocakbaşı",price:180,unit:"porsiyon",rating:4.9,reviews:334,cat:"kebap",emoji:"🍖",badge:"COĞ. İŞARET",hot:true,sold:87,desc:"Kıyma ve iç yağından hazırlanan, acı isot biberli Adana kebabı.",sellerName:"Adana Ocakbaşı",sellerSince:"1975",sellerRating:4.9,sellerSales:6700},
   {id:12,name:"Giresun Fındığı",il:"Giresun",seller:"Karadeniz Fındık",price:160,unit:"kg",rating:4.8,reviews:201,cat:"meyve",emoji:"🌰",badge:"COĞ. İŞARET",hot:false,sold:66,desc:"Dünyanın en kaliteli fındığı olarak bilinen Giresun tombul fındığı.",sellerName:"Karadeniz Fındık",sellerSince:"1990",sellerRating:4.8,sellerSales:3400},
@@ -613,362 +513,165 @@ const PRODUCTS = [
   {id:15,name:"Kastamonu Sucuğu",il:"Kastamonu",seller:"Kastamonu Et",price:340,unit:"kg",rating:4.8,reviews:167,cat:"kebap",emoji:"🌭",badge:"COĞ. İŞARET",hot:false,sold:61,desc:"Sarımsaklı, baharatlı, doğal bağırsakta hazırlanan Kastamonu sucuğu.",sellerName:"Kastamonu Et",sellerSince:"1971",sellerRating:4.8,sellerSales:2100},
   {id:16,name:"Tunceli Balı",il:"Tunceli",seller:"Munzur Arı",price:480,unit:"kg",rating:5.0,reviews:94,cat:"tatli",emoji:"🍯",badge:"ÇIÇEK BALI",hot:true,sold:78,desc:"Munzur dağlarının yabani çiçeklerinden elde edilen Türkiye'nin en değerli balı.",sellerName:"Munzur Arıcılık",sellerSince:"2005",sellerRating:5.0,sellerSales:420},
   {id:17,name:"Urfa Kebabı",il:"Şanlıurfa",seller:"Urfa Ocakbaşı",price:165,unit:"porsiyon",rating:4.8,reviews:278,cat:"kebap",emoji:"🍖",badge:"ACI",hot:false,sold:69,desc:"İsot biberli, yoğun baharatlı Urfa kebabı.",sellerName:"Urfa Ocakbaşı",sellerSince:"1980",sellerRating:4.8,sellerSales:3900},
-  {id:18,name:"Ezine Peyniri",il:"Çanakkale",seller:"Ezine Peynircilik",price:290,unit:"kg",rating:4.8,reviews:131,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:false,sold:57,desc:"Koyun, keçi ve inek sütünün karışımından yapılan, salamurada yıllandırılan Ezine beyaz peyniri.",sellerName:"Ezine Peynircilik",sellerSince:"1930",sellerRating:4.8,sellerSales:1760},
-  {id:19,name:"Zeytinyağı",il:"Aydın",seller:"Aydın Zeytin",price:220,unit:"litre",rating:4.7,reviews:89,cat:"zeytinyagi",emoji:"🫒",badge:"ORGANIK",hot:false,sold:52,desc:"Erken hasat, soğuk sıkım naturel sızma zeytinyağı.",sellerName:"Aydın Zeytin Bahçeleri",sellerSince:"1968",sellerRating:4.7,sellerSales:950},
-  {id:20,name:"İğdır Kayısısı",il:"Iğdır",seller:"Aras Meyve",price:95,unit:"kg",rating:4.8,reviews:112,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",hot:false,sold:63,desc:"Ağrı Dağı'nın eteklerinde Aras nehri kıyısında yetişen, dünyaca ünlü Iğdır kayısısı.",sellerName:"Aras Meyve",sellerSince:"1997",sellerRating:4.8,sellerSales:680},
+  {id:18,name:"Ezine Peyniri",il:"Çanakkale",seller:"Ezine Peynircilik",price:290,unit:"kg",rating:4.8,reviews:131,cat:"peynir",emoji:"🧀",badge:"COĞ. İŞARET",hot:false,sold:57,desc:"Koyun, keçi ve inek sütünün karışımından yapılan salamurada yıllandırılan Ezine beyaz peyniri.",sellerName:"Ezine Peynircilik",sellerSince:"1930",sellerRating:4.8,sellerSales:1760},
+  {id:19,name:"Zeytinyağı",il:"Aydın",seller:"Aydın Zeytin",price:220,unit:"litre",rating:4.7,reviews:89,cat:"zeytinyagi",emoji:"🫒",badge:"ORGANİK",hot:false,sold:52,desc:"Erken hasat, soğuk sıkım naturel sızma zeytinyağı.",sellerName:"Aydın Zeytin Bahçeleri",sellerSince:"1968",sellerRating:4.7,sellerSales:950},
+  {id:20,name:"İğdır Kayısısı",il:"Iğdır",seller:"Aras Meyve",price:95,unit:"kg",rating:4.8,reviews:112,cat:"meyve",emoji:"🍑",badge:"COĞ. İŞARET",hot:false,sold:63,desc:"Ağrı Dağı'nın eteklerinde Aras nehri kıyısında yetişen dünyaca ünlü Iğdır kayısısı.",sellerName:"Aras Meyve",sellerSince:"1997",sellerRating:4.8,sellerSales:680},
   {id:21,name:"Antep Katmeri",il:"Gaziantep",seller:"Tahmis",price:45,unit:"adet",rating:4.9,reviews:387,cat:"tatli",emoji:"🥞",badge:"KAHVALTILIK",hot:true,sold:96,desc:"El açması yufkanın içine fıstıklı kaymak konularak tavada pişirilen Gaziantep'e özgü kahvaltı tatlısı.",sellerName:"Tahmis Katmer",sellerSince:"1901",sellerRating:4.9,sellerSales:7800},
   {id:22,name:"Çorum Leblebisi",il:"Çorum",seller:"Çorum Kuruyemiş",price:85,unit:"kg",rating:4.7,reviews:203,cat:"meyve",emoji:"🫘",badge:"COĞ. İŞARET",hot:false,sold:58,desc:"Özel fırınlama yöntemiyle hazırlanan Türkiye'nin en ünlü çerezidir.",sellerName:"Çorum Kuruyemiş",sellerSince:"1955",sellerRating:4.7,sellerSales:1900},
 ];
 
-let activeIl=null, activeCat="all", activeFoodFilter=null;
-let cart=[], favs=new Set(), openProdId=null;
+let yrActiveIl=null,yrActiveCat="all",yrActiveFoodFilter=null;
+let yrCart=[],yrFavs=new Set(),yrOpenProdId=null;
 
-// ✅ DÜZELTME: scaleX/scaleY artık KULLANILMIYOR
-// Koordinatlar doğrudan viewBox="0 0 700 330" içinde kullanılıyor
-// PNG de tam bu alan içinde — mükemmel hizalama
-
-function renderMap(){
-  const g=document.getElementById("map-g");
-  const tooltip=document.getElementById("map-tooltip");
+/* HARİTA */
+function yrRenderMap(){
+  const g=document.getElementById("yr-map-g"),tooltip=document.getElementById("yr-tooltip");
   g.innerHTML="";
-
-  ILLER.forEach(il=>{
-    // ✅ Artık scale yok — x,y değerleri direkt SVG koordinatı
-    const cx = il.x;
-    const cy = il.y;
-    const isActive = activeIl && activeIl.id === il.id;
-    const hasProds = PRODUCTS.some(p=>p.il===il.n);
-
+  YR_ILLER.forEach(il=>{
+    const cx=il.x-3,cy=il.y,isActive=yrActiveIl&&yrActiveIl.id===il.id;
     const group=document.createElementNS("http://www.w3.org/2000/svg","g");
-
-    // GLOW RING
-    const glow=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    glow.setAttribute("cx",cx);
-    glow.setAttribute("cy",cy);
-    glow.setAttribute("r", isActive ? 14 : hasProds ? 9 : 6);
-    glow.setAttribute("fill", isActive ? "rgba(178,34,34,0.22)" : hasProds ? "rgba(200,57,43,0.12)" : "rgba(220,180,170,0.08)");
-    group.appendChild(glow);
-
-    // PULSE ANİMASYONU — sadece aktif il
     if(isActive){
       const pulse=document.createElementNS("http://www.w3.org/2000/svg","circle");
-      pulse.setAttribute("cx",cx);
-      pulse.setAttribute("cy",cy);
-      pulse.setAttribute("r","8");
-      pulse.setAttribute("fill","none");
-      pulse.setAttribute("stroke","#B22222");
-      pulse.setAttribute("stroke-width","1.5");
-      pulse.innerHTML=`
-        <animate attributeName="r" from="8" to="22" dur="1.6s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" from="0.8" to="0" dur="1.6s" repeatCount="indefinite"/>
-      `;
+      pulse.setAttribute("cx",cx);pulse.setAttribute("cy",cy);pulse.setAttribute("r","20");
+      pulse.setAttribute("fill","none");pulse.setAttribute("stroke","#7cb518");pulse.setAttribute("stroke-width","4");
+      pulse.innerHTML=`<animate attributeName="r" from="20" to="54" dur="1.6s" repeatCount="indefinite"/><animate attributeName="opacity" from="0.8" to="0" dur="1.6s" repeatCount="indefinite"/>`;
       group.appendChild(pulse);
     }
-
-    // ANA NOKTA
     const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    c.setAttribute("cx",cx);
-    c.setAttribute("cy",cy);
-    c.setAttribute("r", isActive ? 6 : hasProds ? 4.5 : 3);
-    c.setAttribute("fill", isActive ? "#B22222" : hasProds ? "#C8392B" : "#d8b0a0");
-    c.setAttribute("stroke","#fff");
-    c.setAttribute("stroke-width", isActive ? "1.5" : "1");
-    c.style.cursor="pointer";
-    c.style.transition="r .18s ease, fill .18s ease";
-
+    c.setAttribute("cx",cx);c.setAttribute("cy",cy);c.setAttribute("r",isActive?15:13);
+    c.setAttribute("fill",isActive?"#7cb518":"rgba(255,255,255,0.08)");
+    c.setAttribute("stroke",isActive?"#fff":"rgba(255,255,255,0.4)");
+    c.setAttribute("stroke-width","2");c.style.cursor="pointer";c.style.transition="r .18s ease, fill .18s ease";
+    const hit=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    hit.setAttribute("cx",cx);hit.setAttribute("cy",cy);hit.setAttribute("r","30");
+    hit.setAttribute("fill","transparent");hit.setAttribute("stroke","transparent");
+    hit.style.cursor="pointer";hit.style.pointerEvents="all";
+    hit.addEventListener("click",()=>yrSelectIl(il));
+    group.appendChild(hit);
     c.addEventListener("mouseenter",()=>{
-      if(!isActive) c.setAttribute("r","7");
-      c.setAttribute("fill","#B22222");
+      if(!isActive)c.setAttribute("r","17");
+      c.setAttribute("fill",isActive?"#7cb518":"rgba(124,181,24,0.3)");
       tooltip.classList.add("show");
-      const prodCount=PRODUCTS.filter(p=>p.il===il.n).length;
-      tooltip.innerHTML=`
-        <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:3px;">${il.n}</div>
-        <div style="color:#e8b88b;font-size:11px;margin-bottom:5px;">${il.foods[0]}</div>
-        ${prodCount > 0
-          ? `<div style="color:#aaa;font-size:10px;">🛒 ${prodCount} ürün mevcut</div>`
-          : `<div style="color:#666;font-size:10px;">Henüz ürün yok</div>`
-        }
-      `;
+      const n=YR_PRODUCTS.filter(p=>p.il===il.n).length;
+      tooltip.innerHTML=`<div style="font-size:13px;font-weight:800;color:var(--text,#fff);margin-bottom:3px;">${il.n}</div><div style="color:#7cb518;font-size:11px;font-weight:700;margin-bottom:5px;">${il.foods[0]}</div><div style="font-size:10px;color:var(--text3,rgba(255,255,255,0.48));font-weight:700;">${n>0?`🛒 ${n} ürün`:"Henüz ürün yok"}</div>`;
     });
-
-    c.addEventListener("mousemove",(e)=>{
-      tooltip.style.left=e.clientX+16+"px";
-      tooltip.style.top=e.clientY+16+"px";
-    });
-
-    c.addEventListener("mouseleave",()=>{
-      tooltip.classList.remove("show");
-      if(!isActive){
-        c.setAttribute("r", hasProds ? "4.5" : "3");
-        c.setAttribute("fill", hasProds ? "#C8392B" : "#d8b0a0");
-      }
-    });
-
-    c.addEventListener("click",()=>selectIl(il));
+    c.addEventListener("mousemove",(e)=>{tooltip.style.left=e.clientX+16+"px";tooltip.style.top=e.clientY+16+"px";});
+    c.addEventListener("mouseleave",()=>{tooltip.classList.remove("show");if(!isActive){c.setAttribute("r","13");c.setAttribute("fill","rgba(255,255,255,0.08)");}});
+    c.addEventListener("click",()=>yrSelectIl(il));
     group.appendChild(c);
-
-    // ŞEHİR ETİKETİ — sadece ürünü olan ya da aktif iller
-    if(hasProds || isActive){
-      const t=document.createElementNS("http://www.w3.org/2000/svg","text");
-      t.setAttribute("x",cx);
-      t.setAttribute("y",cy-9);
-      t.setAttribute("text-anchor","middle");
-      t.setAttribute("class", isActive ? "map-city-label active" : "map-city-label");
-      t.textContent=il.n;
-      group.appendChild(t);
-    }
-
+    const labelGroup=document.createElementNS("http://www.w3.org/2000/svg","g");
+    labelGroup.style.pointerEvents="none";
+    const lw=Math.max(84,il.n.length*13+32),lh=39;
+    let lx=cx-lw/2,ly=cy-lh-18;
+    if(lx+lw>1706)lx=1706-lw;if(ly<10)ly=10;
+    const lb=document.createElementNS("http://www.w3.org/2000/svg","rect");
+    lb.setAttribute("x",lx);lb.setAttribute("y",ly);lb.setAttribute("width",lw);lb.setAttribute("height",lh);lb.setAttribute("rx","7");lb.setAttribute("class","yr-city-label-box");
+    labelGroup.appendChild(lb);
+    const t=document.createElementNS("http://www.w3.org/2000/svg","text");
+    t.setAttribute("x",cx);t.setAttribute("y",ly+28);t.setAttribute("text-anchor","middle");
+    t.setAttribute("class",isActive?"yr-city-label active":"yr-city-label");
+    t.textContent=il.n;labelGroup.appendChild(t);
+    group.appendChild(labelGroup);
     g.appendChild(group);
   });
 }
 
-function selectIl(il){
-  if(activeIl&&activeIl.id===il.id){clearIl();return;}
-  activeIl=il;activeFoodFilter=null;
-  document.getElementById("food-tag").style.display="none";
-  renderMap();showIlBox(il);renderProds();
+function yrSelectIl(il){if(yrActiveIl&&yrActiveIl.id===il.id){yrClearIl();return;}yrActiveIl=il;yrActiveFoodFilter=null;document.getElementById("yr-food-tag").style.display="none";yrRenderMap();yrShowIlBox(il);yrRenderProds();}
+
+function yrShowIlBox(il){
+  document.getElementById("yr-il-box").style.display="block";
+  document.getElementById("yr-il-box-name").textContent=il.n+" İli";
+  const fe=document.getElementById("yr-il-foods");fe.innerHTML="";
+  il.foods.forEach(f=>{const t=document.createElement("span");t.className="yr-food-tag";t.textContent=f;t.onclick=()=>{yrActiveFoodFilter=f;document.getElementById("yr-food-tag-text").textContent=f;document.getElementById("yr-food-tag").style.display="flex";document.getElementById("yr-search-inp").value=f;yrRenderProds();};fe.appendChild(t);});
+  const ip=YR_PRODUCTS.filter(p=>p.il===il.n);
+  document.getElementById("yr-il-prod-count").textContent=ip.length;
+  document.getElementById("yr-il-seller-count").textContent=new Set(ip.map(p=>p.seller)).size;
+  document.getElementById("yr-il-avg-rating").textContent=ip.length?(ip.reduce((a,p)=>a+p.rating,0)/ip.length).toFixed(1):"—";
+  document.getElementById("yr-il-tag-text").textContent=il.n;
+  document.getElementById("yr-il-tag").style.display="flex";
 }
 
-function showIlBox(il){
-  const box=document.getElementById("il-box");
-  box.style.display="block";
-  document.getElementById("il-box-name").textContent=il.n+" İli";
-  const foodsEl=document.getElementById("il-foods");
-  foodsEl.innerHTML="";
-  il.foods.forEach(f=>{
-    const t=document.createElement("span");
-    t.className="il-food-tag";t.textContent=f;
-    t.onclick=()=>{
-      activeFoodFilter=f;
-      document.getElementById("food-tag-text").textContent=f;
-      document.getElementById("food-tag").style.display="flex";
-      document.getElementById("search-inp").value=f;
-      renderProds();
-    };
-    foodsEl.appendChild(t);
-  });
-  const ilProds=PRODUCTS.filter(p=>p.il===il.n);
-  document.getElementById("il-prod-count").textContent=ilProds.length;
-  const sellers=new Set(ilProds.map(p=>p.seller));
-  document.getElementById("il-seller-count").textContent=sellers.size;
-  const avgR=ilProds.length>0?(ilProds.reduce((a,p)=>a+p.rating,0)/ilProds.length).toFixed(1):"—";
-  document.getElementById("il-avg-rating").textContent=avgR;
-  document.getElementById("il-tag-text").textContent=il.n;
-  document.getElementById("il-tag").style.display="flex";
+function yrClearIl(){yrActiveIl=null;yrActiveFoodFilter=null;document.getElementById("yr-il-box").style.display="none";document.getElementById("yr-il-tag").style.display="none";document.getElementById("yr-food-tag").style.display="none";document.getElementById("yr-search-inp").value="";yrRenderMap();yrRenderProds();}
+function yrClearFoodFilter(){yrActiveFoodFilter=null;document.getElementById("yr-food-tag").style.display="none";document.getElementById("yr-search-inp").value="";yrRenderProds();}
+
+/* ÜRÜNLER */
+function yrGetFiltered(){
+  let p=[...YR_PRODUCTS];
+  if(yrActiveCat!=="all")p=p.filter(x=>x.cat===yrActiveCat);
+  if(yrActiveIl)p=p.filter(x=>x.il===yrActiveIl.n);
+  const q=(yrActiveFoodFilter||document.getElementById("yr-search-inp").value).trim().toLowerCase();
+  if(q)p=p.filter(x=>x.name.toLowerCase().includes(q)||x.il.toLowerCase().includes(q)||x.seller.toLowerCase().includes(q)||x.desc.toLowerCase().includes(q));
+  const s=document.getElementById("yr-sort-select").value;
+  if(s==="price_asc")p.sort((a,b)=>a.price-b.price);
+  else if(s==="price_desc")p.sort((a,b)=>b.price-a.price);
+  else if(s==="rating")p.sort((a,b)=>b.rating-a.rating);
+  else if(s==="new")p.sort((a,b)=>b.id-a.id);
+  else p.sort((a,b)=>b.reviews-a.reviews);
+  return p;
 }
 
-function clearIl(){
-  activeIl=null;activeFoodFilter=null;
-  document.getElementById("il-box").style.display="none";
-  document.getElementById("il-tag").style.display="none";
-  document.getElementById("food-tag").style.display="none";
-  document.getElementById("search-inp").value="";
-  renderMap();renderProds();
-}
+function yrCard(p){return`<article class="yr-pcard" onclick="yrOpenProd(${p.id})"><div class="yr-pcard-img">${p.emoji}<span class="yr-pcard-badge">${p.badge}</span>${p.hot?'<span class="yr-pcard-hot">🔥 Çok Satan</span>':''}</div><div class="yr-pcard-body"><div class="yr-pcard-il">${p.il}</div><div class="yr-pcard-name">${p.name}</div><div class="yr-pcard-seller">${p.seller}</div><div class="yr-pcard-stars">${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))} <span>${p.rating} (${p.reviews})</span></div><div class="yr-pcard-bottom"><div><span class="yr-pcard-price">₺${p.price.toLocaleString('tr-TR')}</span><span class="yr-pcard-unit"> / ${p.unit}</span></div><button class="yr-pcard-add" onclick="event.stopPropagation();yrQuickAdd(${p.id})">+ Sepet</button></div><div class="yr-pcard-sold">Son 30 günde ${p.sold} sipariş</div></div></article>`;}
 
-function clearFoodFilter(){
-  activeFoodFilter=null;
-  document.getElementById("food-tag").style.display="none";
-  document.getElementById("search-inp").value="";
-  renderProds();
-}
+function yrRenderProds(){const p=yrGetFiltered();document.getElementById("yr-pcount").textContent=p.length;const g=document.getElementById("yr-prod-grid");if(!p.length){g.innerHTML='<div class="yr-empty">Bu kriterlerde ürün bulunamadı.<br><button onclick="yrClearIl()">Filtreleri Temizle</button></div>';return;}g.innerHTML=p.map(yrCard).join("");}
+function yrRenderFeatured(){document.getElementById("yr-featured-grid").innerHTML=YR_PRODUCTS.filter(p=>p.hot).slice(0,6).map(yrCard).join("");}
 
-function getFiltered(){
-  let prods=[...PRODUCTS];
-  if(activeCat!=="all") prods=prods.filter(p=>p.cat===activeCat);
-  if(activeIl) prods=prods.filter(p=>p.il===activeIl.n);
-  const q=(activeFoodFilter||document.getElementById("search-inp").value).trim().toLowerCase();
-  if(q) prods=prods.filter(p=>p.name.toLowerCase().includes(q)||p.il.toLowerCase().includes(q)||p.seller.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q));
-  const s=document.getElementById("sort-select").value;
-  if(s==="price_asc") prods.sort((a,b)=>a.price-b.price);
-  else if(s==="price_desc") prods.sort((a,b)=>b.price-a.price);
-  else if(s==="rating") prods.sort((a,b)=>b.rating-a.rating);
-  else if(s==="new") prods.sort((a,b)=>b.id-a.id);
-  else prods.sort((a,b)=>b.reviews-a.reviews);
-  return prods;
-}
-
-function renderProds(){
-  const prods=getFiltered();
-  document.getElementById("pcount").textContent=prods.length;
-  const g=document.getElementById("prod-grid");
-  if(!prods.length){
-    g.innerHTML='<div class="empty-grid">Bu kriterlerde ürün bulunamadı.<br><button onclick="clearIl()">Filtreleri Temizle</button></div>';
-    return;
-  }
-  g.innerHTML=prods.map(p=>`
-    <article class="pcard" onclick="openProd(${p.id})">
-      <div class="pcard-img">${p.emoji}
-        <span class="pcard-badge">${p.badge}</span>
-        ${p.hot?'<span class="pcard-hot">🔥 Çok Satan</span>':''}
-      </div>
-      <div class="pcard-body">
-        <div class="pcard-il">${p.il}</div>
-        <div class="pcard-name">${p.name}</div>
-        <div class="pcard-seller">${p.seller}</div>
-        <div class="pcard-stars">${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))} <span>${p.rating} (${p.reviews})</span></div>
-        <div class="pcard-bottom">
-          <div><span class="pcard-price">₺${p.price.toLocaleString('tr-TR')}</span><span class="pcard-unit"> / ${p.unit}</span></div>
-          <button class="pcard-add" onclick="event.stopPropagation();quickAdd(${p.id})">+ Sepet</button>
-        </div>
-        <div class="pcard-sold">Son 30 günde ${p.sold} sipariş</div>
-      </div>
-    </article>
-  `).join("");
-}
-
-function renderFeatured(){
-  const featured=PRODUCTS.filter(p=>p.hot).slice(0,6);
-  document.getElementById("featured-grid").innerHTML=featured.map(p=>`
-    <article class="pcard" onclick="openProd(${p.id})">
-      <div class="pcard-img">${p.emoji}
-        <span class="pcard-badge">${p.badge}</span>
-        <span class="pcard-hot">🔥 Çok Satan</span>
-      </div>
-      <div class="pcard-body">
-        <div class="pcard-il">${p.il}</div>
-        <div class="pcard-name">${p.name}</div>
-        <div class="pcard-seller">${p.seller}</div>
-        <div class="pcard-stars">${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))} <span>${p.rating} (${p.reviews})</span></div>
-        <div class="pcard-bottom">
-          <div><span class="pcard-price">₺${p.price.toLocaleString('tr-TR')}</span><span class="pcard-unit"> / ${p.unit}</span></div>
-          <button class="pcard-add" onclick="event.stopPropagation();quickAdd(${p.id})">+ Sepet</button>
-        </div>
-        <div class="pcard-sold">Son 30 günde ${p.sold} sipariş</div>
-      </div>
-    </article>
-  `).join("");
-}
-
-function openProd(id){
-  const p=PRODUCTS.find(x=>x.id===id);if(!p)return;
-  openProdId=id;
-  const ov=document.getElementById("modal-overlay");
-  document.getElementById("modal-img").textContent=p.emoji;
-  let badges=`<span class="mbadge mbadge-red">${p.badge}</span>`;
-  if(p.hot) badges+=`<span class="mbadge mbadge-gold">🔥 Çok Satan</span>`;
-  document.getElementById("modal-badge-row").innerHTML=badges;
-  document.getElementById("modal-il").textContent=p.il.toUpperCase()+" · "+p.seller;
-  document.getElementById("modal-name").textContent=p.name;
-  document.getElementById("modal-seller").textContent=p.seller+" — Güvenilir Üretici";
-  document.getElementById("modal-stars").innerHTML=`${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))} <span>${p.rating} · ${p.reviews} değerlendirme</span>`;
-  document.getElementById("modal-desc").textContent=p.desc;
-  document.getElementById("modal-price").textContent="₺"+p.price.toLocaleString('tr-TR');
-  document.getElementById("modal-unit").textContent="/ "+p.unit;
-  document.getElementById("modal-sold-fill").style.width=p.sold+"%";
-  document.getElementById("modal-sold-text").textContent=`Bu ürün son 30 günde ${p.sold} kez satıldı`;
-  document.getElementById("modal-fav").textContent=favs.has(id)?"♥ Favorilendi":"♡ Favorile";
-  const initials=p.sellerName.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
-  document.getElementById("modal-seller-box").innerHTML=`
-    <div class="seller-head">
-      <div class="seller-avatar">${initials}</div>
-      <div><div class="seller-name">${p.sellerName}</div><div class="seller-sub">${p.sellerSince}'den beri üretici · ★ ${p.sellerRating}</div></div>
-    </div>
-    <div class="seller-stats">
-      <div class="seller-stat"><div class="seller-stat-n">${p.sellerSales.toLocaleString('tr-TR')}</div><div class="seller-stat-l">Toplam Satış</div></div>
-      <div class="seller-stat"><div class="seller-stat-n">★ ${p.sellerRating}</div><div class="seller-stat-l">Üretici Puanı</div></div>
-      <div class="seller-stat"><div class="seller-stat-n">${2025-parseInt(p.sellerSince)}</div><div class="seller-stat-l">Yıllık Deneyim</div></div>
-    </div>`;
-  const revs=REVIEWS_DB[id]||[];
-  const revsHtml=revs.length?revs.map(r=>`
-    <div class="review">
-      <div class="review-head"><span class="review-name">${r.name}</span><span class="review-date">${r.date}</span></div>
-      <div class="review-stars">${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</div>
-      <div class="review-text">${r.text}</div>
-      ${r.verified?'<div class="review-verified">✓ Doğrulanmış Satın Alma</div>':''}
-    </div>`).join(""):'<div style="color:var(--muted);font-size:13px;text-align:center;padding:16px;">Henüz yorum yapılmamış</div>';
-  document.getElementById("modal-reviews").innerHTML=`<div id="modal-reviews-title">Müşteri Yorumları (${revs.length})</div>${revsHtml}`;
-  ov.classList.add("open");
+/* MODAL */
+function yrOpenProd(id){
+  const p=YR_PRODUCTS.find(x=>x.id===id);if(!p)return;
+  yrOpenProdId=id;
+  document.getElementById("yr-modal-emoji").textContent=p.emoji;
+  document.getElementById("yr-modal-badge-row").innerHTML=`<span class="yr-mbadge yr-mbadge-green">${p.badge}</span>${p.hot?'<span class="yr-mbadge yr-mbadge-gold">🔥 Çok Satan</span>':''}`;
+  document.getElementById("yr-modal-il").textContent=p.il.toUpperCase()+" · "+p.seller;
+  document.getElementById("yr-modal-name").textContent=p.name;
+  document.getElementById("yr-modal-seller-line").textContent=p.seller+" — Güvenilir Üretici";
+  document.getElementById("yr-modal-stars").innerHTML=`${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))} <span>${p.rating} · ${p.reviews} değerlendirme</span>`;
+  document.getElementById("yr-modal-desc").textContent=p.desc;
+  document.getElementById("yr-modal-price").textContent="₺"+p.price.toLocaleString('tr-TR');
+  document.getElementById("yr-modal-unit").textContent="/ "+p.unit;
+  document.getElementById("yr-modal-sold-fill").style.width=p.sold+"%";
+  document.getElementById("yr-modal-sold-text").textContent=`Bu ürün son 30 günde ${p.sold} kez satıldı`;
+  document.getElementById("yr-modal-fav").textContent=yrFavs.has(id)?"♥ Favorilendi":"♡ Favorile";
+  const ini=p.sellerName.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+  document.getElementById("yr-modal-seller-box").innerHTML=`<div class="yr-seller-head"><div class="yr-seller-avatar">${ini}</div><div><div class="yr-seller-name">${p.sellerName}</div><div class="yr-seller-sub">${p.sellerSince}'den beri · ★ ${p.sellerRating}</div></div></div><div class="yr-seller-stats"><div class="yr-seller-stat"><div class="yr-seller-stat-n">${p.sellerSales.toLocaleString('tr-TR')}</div><div class="yr-seller-stat-l">Toplam Satış</div></div><div class="yr-seller-stat"><div class="yr-seller-stat-n">★ ${p.sellerRating}</div><div class="yr-seller-stat-l">Puan</div></div><div class="yr-seller-stat"><div class="yr-seller-stat-n">${2025-parseInt(p.sellerSince)}</div><div class="yr-seller-stat-l">Yıl</div></div></div>`;
+  const revs=YR_REVIEWS[id]||[];
+  document.getElementById("yr-modal-reviews").innerHTML=`<div id="yr-modal-reviews-title">Müşteri Yorumları (${revs.length})</div>${revs.length?revs.map(r=>`<div class="yr-review"><div class="yr-review-head"><span class="yr-review-name">${r.name}</span><span class="yr-review-date">${r.date}</span></div><div class="yr-review-stars">${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</div><div class="yr-review-text">${r.text}</div>${r.verified?'<div class="yr-review-verified">✓ Doğrulanmış Satın Alma</div>':''}</div>`).join(""):'<div style="color:var(--text3,rgba(255,255,255,0.48));font-size:13px;text-align:center;padding:16px;font-weight:700;">Henüz yorum yok</div>'}`;
+  document.getElementById("yr-modal-overlay").classList.add("open");
   document.body.style.overflow="hidden";
 }
 
-function closeModal(){
-  document.getElementById("modal-overlay").classList.remove("open");
-  document.body.style.overflow="";
-  openProdId=null;
+function yrCloseModal(){document.getElementById("yr-modal-overlay").classList.remove("open");document.body.style.overflow="";yrOpenProdId=null;}
+document.getElementById("yr-modal-overlay").addEventListener("click",e=>{if(e.target===document.getElementById("yr-modal-overlay"))yrCloseModal();});
+function yrToggleFav(){if(!yrOpenProdId)return;if(yrFavs.has(yrOpenProdId)){yrFavs.delete(yrOpenProdId);document.getElementById("yr-modal-fav").textContent="♡ Favorile";}else{yrFavs.add(yrOpenProdId);document.getElementById("yr-modal-fav").textContent="♥ Favorilendi";}}
+function yrAddToCart(){if(!yrOpenProdId)return;const p=YR_PRODUCTS.find(x=>x.id===yrOpenProdId);yrCloseModal();yrAddItem(p);}
+function yrQuickAdd(id){yrAddItem(YR_PRODUCTS.find(x=>x.id===id));}
+
+function yrAddItem(p){const ex=yrCart.find(i=>i.id===p.id);if(ex)ex.qty++;else yrCart.push({id:p.id,name:p.name,emoji:p.emoji,price:p.price,unit:p.unit,qty:1});yrUpdateCartBadge();yrRenderCartItems();yrShowToast("✓ "+p.name+" sepete eklendi!");}
+function yrRemoveItem(id){yrCart=yrCart.filter(i=>i.id!==id);yrUpdateCartBadge();yrRenderCartItems();}
+
+function yrUpdateCartBadge(){const n=yrCart.reduce((a,i)=>a+i.qty,0);const b=document.getElementById("yr-cart-fab-badge");if(n>0){b.textContent=n>9?"9+":n;b.style.display="flex";}else b.style.display="none";}
+
+function yrRenderCartItems(){
+  const el=document.getElementById("yr-cart-items");
+  if(!yrCart.length){el.innerHTML='<div class="yr-cart-empty">Sepetiniz boş<br><span style="font-size:24px;display:block;margin-top:8px;">🧺</span></div>';document.getElementById("yr-cart-total-price").textContent="₺0";return;}
+  el.innerHTML=yrCart.map(i=>`<div class="yr-cart-item"><div class="yr-ci-emoji">${i.emoji}</div><div class="yr-ci-info"><div class="yr-ci-name">${i.name}</div><div class="yr-ci-sub">${i.qty} × ₺${i.price.toLocaleString('tr-TR')} / ${i.unit}</div></div><div class="yr-ci-price">₺${(i.price*i.qty).toLocaleString('tr-TR')}</div><button class="yr-ci-remove" onclick="yrRemoveItem(${i.id})">✕</button></div>`).join("");
+  document.getElementById("yr-cart-total-price").textContent="₺"+yrCart.reduce((a,i)=>a+i.price*i.qty,0).toLocaleString('tr-TR');
 }
 
-document.getElementById("modal-overlay").addEventListener("click",e=>{
-  if(e.target===document.getElementById("modal-overlay"))closeModal();
-});
+function yrToggleCart(){document.getElementById("yr-cart-side").classList.toggle("open");document.getElementById("yr-cart-overlay").classList.toggle("open");}
+function yrShowToast(msg){const t=document.getElementById("yr-toast");t.textContent=msg;t.classList.add("show");clearTimeout(window._yrtt);window._yrtt=setTimeout(()=>t.classList.remove("show"),2500);}
+function yrDoSearch(){yrRenderProds();}
 
-function toggleFav(){
-  if(!openProdId)return;
-  if(favs.has(openProdId)){favs.delete(openProdId);document.getElementById("modal-fav").textContent="♡ Favorile";}
-  else{favs.add(openProdId);document.getElementById("modal-fav").textContent="♥ Favorilendi";}
-}
+document.getElementById("yr-search-inp").addEventListener("keydown",e=>{if(e.key==="Enter")yrDoSearch();});
+document.getElementById("yr-search-inp").addEventListener("input",()=>{if(!document.getElementById("yr-search-inp").value)yrRenderProds();});
+document.querySelectorAll(".yr-cat-pill").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll(".yr-cat-pill").forEach(x=>x.classList.remove("on"));b.classList.add("on");yrActiveCat=b.dataset.cat;yrRenderProds();});});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){yrCloseModal();if(document.getElementById("yr-cart-side").classList.contains("open"))yrToggleCart();}});
 
-function addToCart(){
-  if(!openProdId)return;
-  const p=PRODUCTS.find(x=>x.id===openProdId);
-  closeModal();addItem(p);
-}
-
-function quickAdd(id){
-  const p=PRODUCTS.find(x=>x.id===id);addItem(p);
-}
-
-function addItem(p){
-  const ex=cart.find(i=>i.id===p.id);
-  if(ex) ex.qty++;
-  else cart.push({id:p.id,name:p.name,emoji:p.emoji,price:p.price,unit:p.unit,qty:1});
-  updateCartBadge();renderCartItems();
-  showToast("✓ "+p.name+" sepete eklendi!");
-}
-
-function removeItem(id){
-  cart=cart.filter(i=>i.id!==id);
-  updateCartBadge();renderCartItems();
-}
-
-function updateCartBadge(){
-  const total=cart.reduce((a,i)=>a+i.qty,0);
-  document.getElementById("cart-badge").textContent=total;
-}
-
-function renderCartItems(){
-  const el=document.getElementById("cart-items");
-  if(!cart.length){
-    el.innerHTML='<div class="cart-empty">Sepetiniz boş<br><span style="font-size:24px;display:block;margin-top:8px;">🧺</span></div>';
-    document.getElementById("cart-total-price").textContent="₺0";return;
-  }
-  el.innerHTML=cart.map(i=>`
-    <div class="cart-item">
-      <div class="ci-emoji">${i.emoji}</div>
-      <div class="ci-info"><div class="ci-name">${i.name}</div><div class="ci-sub">${i.qty} × ₺${i.price.toLocaleString('tr-TR')} / ${i.unit}</div></div>
-      <div class="ci-price">₺${(i.price*i.qty).toLocaleString('tr-TR')}</div>
-      <button class="ci-remove" onclick="removeItem(${i.id})">✕</button>
-    </div>`).join("");
-  const total=cart.reduce((a,i)=>a+i.price*i.qty,0);
-  document.getElementById("cart-total-price").textContent="₺"+total.toLocaleString('tr-TR');
-}
-
-function toggleCart(){
-  document.getElementById("cart-side").classList.toggle("open");
-  document.getElementById("cart-overlay").classList.toggle("open");
-}
-
-function showToast(msg){
-  const t=document.getElementById("toast");
-  t.textContent=msg;t.classList.add("show");
-  clearTimeout(window._tt);
-  window._tt=setTimeout(()=>t.classList.remove("show"),2500);
-}
-
-function doSearch(){renderProds();}
-document.getElementById("search-inp").addEventListener("keydown",e=>{if(e.key==="Enter")doSearch();});
-document.getElementById("search-inp").addEventListener("input",()=>{if(!document.getElementById("search-inp").value)renderProds();});
-document.querySelectorAll(".cat-pill").forEach(b=>{
-  b.addEventListener("click",()=>{
-    document.querySelectorAll(".cat-pill").forEach(x=>x.classList.remove("on"));
-    b.classList.add("on");activeCat=b.dataset.cat;renderProds();
-  });
-});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();if(document.getElementById("cart-side").classList.contains("open"))toggleCart();}});
-
-renderMap();
-renderProds();
-renderFeatured();
+/* BAŞLAT */
+yrRenderMap();
+yrRenderProds();
+yrRenderFeatured();
 </script>
+
+<script src="navbar.js"></script>
 </body>
 </html>
